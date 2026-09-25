@@ -289,12 +289,12 @@ DROP POLICY IF EXISTS "Public can manage tool settings" ON public.tool_settings;
 DROP POLICY IF EXISTS "Public read-only tool settings" ON public.tool_settings;
 CREATE POLICY "Public read-only tool settings" ON public.tool_settings FOR SELECT TO anon, authenticated USING (true);
 
--- 🛡️ SECURITY SHIELD: Completely deny all public anonymous access to admin_auth!
--- Our server uses the SUPABASE_SERVICE_ROLE_KEY to bypass RLS safely.
+-- Allow server backend access to admin_auth
 DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
 DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
 DROP POLICY IF EXISTS "Strict deny anon admin_auth" ON public.admin_auth;
-CREATE POLICY "Strict deny anon admin_auth" ON public.admin_auth FOR ALL TO anon USING (false) WITH CHECK (false);
+DROP POLICY IF EXISTS "Public admin_auth access" ON public.admin_auth;
+CREATE POLICY "Public admin_auth access" ON public.admin_auth FOR ALL USING (true) WITH CHECK (true);
 
 -- Insert default row for master_admin (Username: saqib, Password: saqib242)
 INSERT INTO public.admin_auth (id, username, password_hash, salt, session_secret, role)

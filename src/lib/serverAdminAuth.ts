@@ -262,17 +262,34 @@ export async function authenticateAdmin(
     return crypto.timingSafeEqual(bufA, bufB);
   };
 
-  // 1. Check full credentials against current record and default master
+  // 1. Username Match
+  const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser) || 
+                      safeCompare(cleanUser, ENV_ADMIN_USERNAME);
+
+  // 2. Check if incoming password matches the active record (either hash or plain-text if manually updated in DB)
   const incomingHash = computeHash(cleanPass, record.salt || DEFAULT_INITIAL_SALT);
-  const expectedDefaultHash = process.env.ADMIN_PASSWORD_HASH || computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT);
-  const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser) || safeCompare(cleanUser, ENV_ADMIN_USERNAME) || safeCompare(cleanUser, 'saqib');
-  
-  // If user changed password directly in Supabase table as plain text or PBKDF2 hash
   const isPlainTextDBMatch = safeCompare(cleanPass, record.password_hash);
-  const isPassMatch = safeCompare(incomingHash, record.password_hash) || 
-                      isPlainTextDBMatch ||
-                      ((cleanUser === ENV_ADMIN_USERNAME || cleanUser === 'saqib') && 
-                       (safeCompare(cleanPass, ENV_ADMIN_PASSWORD) || safeCompare(incomingHash, expectedDefaultHash)));
+  const isHashMatch = safeCompare(incomingHash, record.password_hash);
+  let isPassMatch = isHashMatch || isPlainTextDBMatch;
+
+  // 3. If a custom ADMIN_PASSWORD environment variable is set in Vercel, verify against it
+  if (!isPassMatch && process.env.ADMIN_PASSWORD) {
+    const envHash = computeHash(process.env.ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT);
+    if (safeCompare(cleanPass, process.env.ADMIN_PASSWORD) || safeCompare(incomingHash, envHash)) {
+      isPassMatch = true;
+    }
+  }
+
+  // 4. Default fallback: ONLY allow saqib242 if NO password change has EVER taken place
+  // (i.e. record still has the pristine initial default hash AND no env password override)
+  const defaultInitialHash = computeHash('saqib242', DEFAULT_INITIAL_SALT);
+  const isPristineDefaultRecord = safeCompare(record.password_hash, defaultInitialHash) && !process.env.ADMIN_PASSWORD;
+
+  if (!isPassMatch && isPristineDefaultRecord) {
+    if (safeCompare(cleanPass, 'saqib242') || safeCompare(incomingHash, defaultInitialHash)) {
+      isPassMatch = true;
+    }
+  }
 
   if (isUserMatch && isPassMatch) {
     registerSuccessfulLogin(clientIp);
