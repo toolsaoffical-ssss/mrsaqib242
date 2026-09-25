@@ -28,6 +28,7 @@ export async function loginAdmin(username: string, password: string): Promise<Ad
     const res = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ username, password })
     });
     const data = await res.json();
@@ -51,31 +52,43 @@ export async function verifyAdminSession(): Promise<VerifySessionResponse> {
   try {
     const token = typeof window !== 'undefined' ? sessionStorage.getItem('ms_admin_token') : null;
 
-    if (!token) {
-      return { authenticated: false };
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // credentials: 'include' ensures HttpOnly cookie ms_admin_token is sent to the server
     const res = await fetch('/api/admin/verify', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ token })
+      headers,
+      credentials: 'include',
+      body: JSON.stringify({ token: token || undefined })
     });
 
     if (!res.ok) {
-      sessionStorage.removeItem('ms_admin_token');
-      sessionStorage.removeItem('ms_admin_auth');
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('ms_admin_token');
+        sessionStorage.removeItem('ms_admin_auth');
+      }
       return { authenticated: false };
     }
 
     const data = await res.json();
     if (data.authenticated) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('ms_admin_auth', 'true');
+        if (data.username) {
+          sessionStorage.setItem('ms_admin_user', data.username);
+        }
+      }
       return { authenticated: true, username: data.username };
     } else {
-      sessionStorage.removeItem('ms_admin_token');
-      sessionStorage.removeItem('ms_admin_auth');
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('ms_admin_token');
+        sessionStorage.removeItem('ms_admin_auth');
+      }
       return { authenticated: false };
     }
   } catch {
@@ -91,12 +104,17 @@ export async function changeAdminCredentials(
   try {
     const token = typeof window !== 'undefined' ? sessionStorage.getItem('ms_admin_token') : '';
 
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch('/api/admin/change-credentials', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
+      headers,
+      credentials: 'include',
       body: JSON.stringify({
         currentPassword,
         newUsername,
@@ -128,8 +146,11 @@ export function logoutAdmin(): void {
     sessionStorage.removeItem('ms_admin_auth');
     sessionStorage.removeItem('ms_admin_user');
   }
-  // Inform server asynchronously
-  fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
+  // Inform server asynchronously with credentials: 'include' to clear HttpOnly cookie
+  fetch('/api/admin/logout', { 
+    method: 'POST',
+    credentials: 'include'
+  }).catch(() => {});
 }
 
 export function getCachedAdminUsername(): string {

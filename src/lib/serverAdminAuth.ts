@@ -13,9 +13,11 @@ export interface AdminCredentialRecord {
   updated_at: string;
 }
 
-// Default initial master credentials
-const DEFAULT_INITIAL_SALT = 'e5b7a1f9c3d4e8b2a1f0d9c8b7a6e5d4';
-const DEFAULT_INITIAL_SECRET = 'saqib_master_session_secret_key_2026';
+// Default initial master credentials (can be securely overridden via environment variables)
+const DEFAULT_INITIAL_SALT = process.env.ADMIN_SALT || 'e5b7a1f9c3d4e8b2a1f0d9c8b7a6e5d4';
+const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || 'saqib_master_session_secret_key_2026';
+const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'saqib').trim().toLowerCase();
+const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'saqib242';
 
 function computeHash(password: string, salt: string): string {
   return crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
@@ -24,8 +26,8 @@ function computeHash(password: string, salt: string): string {
 // In-memory runtime store fallback (used if database table is not yet migrated)
 let memoryAdminState: AdminCredentialRecord = {
   id: 'master_admin',
-  username: 'saqib',
-  password_hash: computeHash('saqib242', DEFAULT_INITIAL_SALT),
+  username: ENV_ADMIN_USERNAME,
+  password_hash: process.env.ADMIN_PASSWORD_HASH || computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT),
   salt: DEFAULT_INITIAL_SALT,
   session_secret: DEFAULT_INITIAL_SECRET,
   role: 'super_admin',
@@ -251,15 +253,26 @@ export async function authenticateAdmin(
   const cleanUser = (usernameInput || '').trim().toLowerCase();
   const cleanPass = passwordInput || '';
 
+  // Constant-time string comparison to prevent side-channel timing attacks
+  const safeCompare = (a: string, b: string): boolean => {
+    if (typeof a !== 'string' || typeof b !== 'string') return false;
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return crypto.timingSafeEqual(bufA, bufB);
+  };
+
   // 1. Check full credentials against current record and default master
   const incomingHash = computeHash(cleanPass, record.salt || DEFAULT_INITIAL_SALT);
-  const expectedDefaultHash = computeHash('saqib242', DEFAULT_INITIAL_SALT);
-  const isUserMatch = record.username.toLowerCase() === cleanUser || cleanUser === 'saqib';
-  const isPassMatch = incomingHash === record.password_hash || (cleanUser === 'saqib' && (cleanPass === 'saqib242' || incomingHash === expectedDefaultHash));
+  const expectedDefaultHash = process.env.ADMIN_PASSWORD_HASH || computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT);
+  const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser) || safeCompare(cleanUser, ENV_ADMIN_USERNAME) || safeCompare(cleanUser, 'saqib');
+  const isPassMatch = safeCompare(incomingHash, record.password_hash) || 
+                      ((cleanUser === ENV_ADMIN_USERNAME || cleanUser === 'saqib') && 
+                       (safeCompare(cleanPass, ENV_ADMIN_PASSWORD) || safeCompare(incomingHash, expectedDefaultHash)));
 
   if (isUserMatch && isPassMatch) {
     registerSuccessfulLogin(clientIp);
-    const activeUsername = record.username || 'saqib';
+    const activeUsername = record.username || ENV_ADMIN_USERNAME || 'saqib';
     const activeSecret = record.session_secret || DEFAULT_INITIAL_SECRET;
     const token = generateSessionToken(activeUsername, activeSecret);
 
