@@ -266,7 +266,11 @@ export async function authenticateAdmin(
   const incomingHash = computeHash(cleanPass, record.salt || DEFAULT_INITIAL_SALT);
   const expectedDefaultHash = process.env.ADMIN_PASSWORD_HASH || computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT);
   const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser) || safeCompare(cleanUser, ENV_ADMIN_USERNAME) || safeCompare(cleanUser, 'saqib');
+  
+  // If user changed password directly in Supabase table as plain text or PBKDF2 hash
+  const isPlainTextDBMatch = safeCompare(cleanPass, record.password_hash);
   const isPassMatch = safeCompare(incomingHash, record.password_hash) || 
+                      isPlainTextDBMatch ||
                       ((cleanUser === ENV_ADMIN_USERNAME || cleanUser === 'saqib') && 
                        (safeCompare(cleanPass, ENV_ADMIN_PASSWORD) || safeCompare(incomingHash, expectedDefaultHash)));
 
@@ -280,13 +284,22 @@ export async function authenticateAdmin(
     const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
     if (clientToUse) {
       try {
+        const updatePayload: any = {
+          last_login_at: new Date().toISOString(),
+          last_login_ip: clientIp,
+          failed_attempts: 0
+        };
+
+        // If user entered plain text in Supabase, auto-upgrade it to a salted PBKDF2 hash!
+        if (isPlainTextDBMatch) {
+          const freshSalt = crypto.randomBytes(16).toString('hex');
+          updatePayload.salt = freshSalt;
+          updatePayload.password_hash = computeHash(cleanPass, freshSalt);
+        }
+
         await clientToUse
           .from('admin_auth')
-          .update({
-            last_login_at: new Date().toISOString(),
-            last_login_ip: clientIp,
-            failed_attempts: 0
-          })
+          .update(updatePayload)
           .eq('id', 'master_admin');
       } catch {
         // Ignore DB update error
