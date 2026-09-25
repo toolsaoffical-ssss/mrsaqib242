@@ -6,20 +6,24 @@ import {
   Wrench, 
   Inbox, 
   Activity, 
-  Database, 
   Lock, 
   LogOut, 
   ArrowLeft, 
   CheckCircle2, 
   AlertCircle,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  FolderGit2,
+  Image as ImageIcon,
+  CreditCard
 } from 'lucide-react';
 
 import AdminInquiriesManager from './AdminInquiriesManager';
+import AdminProjectsManager from './AdminProjectsManager';
+import AdminGalleryManager from './AdminGalleryManager';
+import AdminPricingManager from './AdminPricingManager';
 import AdminToolsManager from './AdminToolsManager';
 import AdminTrafficAnalytics from './AdminTrafficAnalytics';
-import AdminSqlStudio from './AdminSqlStudio';
 import AdminSecurityManager from './AdminSecurityManager';
 
 import { 
@@ -36,7 +40,7 @@ interface AdminAuthenticatedDashboardProps {
   onLogout: () => void;
 }
 
-type TabType = 'tools' | 'inquiries' | 'analytics' | 'sql' | 'security';
+type TabType = 'inquiries' | 'projects' | 'gallery' | 'pricing' | 'tools' | 'analytics' | 'security';
 
 export default function AdminAuthenticatedDashboard({
   adminUsername,
@@ -83,9 +87,11 @@ export default function AdminAuthenticatedDashboard({
 
   const navItems = [
     { id: 'inquiries' as TabType, label: 'Client Inquiries', icon: Inbox, badge: 'Leads' },
+    { id: 'projects' as TabType, label: 'Projects', icon: FolderGit2 },
+    { id: 'gallery' as TabType, label: 'Gallery', icon: ImageIcon },
+    { id: 'pricing' as TabType, label: 'Pricing Plans', icon: CreditCard },
     { id: 'tools' as TabType, label: 'Tools & Utilities', icon: Wrench },
     { id: 'analytics' as TabType, label: 'Traffic & Geo', icon: Activity },
-    { id: 'sql' as TabType, label: 'Database Studio', icon: Database },
     { id: 'security' as TabType, label: 'Security & PIN', icon: Lock }
   ];
 
@@ -137,7 +143,7 @@ export default function AdminAuthenticatedDashboard({
           </div>
 
           {/* Navigation Tabs */}
-          <nav className="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5">
+          <nav className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5">
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -145,7 +151,7 @@ export default function AdminAuthenticatedDashboard({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                     isActive
                       ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-lg shadow-orange-500/20 font-black'
                       : 'text-zinc-400 hover:text-white hover:bg-white/5'
@@ -170,8 +176,8 @@ export default function AdminAuthenticatedDashboard({
           </div>
         </div>
 
-        {/* Mobile Nav Tabs */}
-        <div className="md:hidden flex items-center gap-1 overflow-x-auto px-4 py-2 border-t border-white/5 no-scrollbar">
+        {/* Mobile & Medium screen Nav Tabs */}
+        <div className="lg:hidden flex items-center gap-1 overflow-x-auto px-4 py-2 border-t border-white/5 no-scrollbar">
           {navItems.map(item => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -199,6 +205,18 @@ export default function AdminAuthenticatedDashboard({
           <AdminInquiriesManager onNotify={showToast} />
         )}
 
+        {activeTab === 'projects' && (
+          <AdminProjectsManager onNotify={showToast} />
+        )}
+
+        {activeTab === 'gallery' && (
+          <AdminGalleryManager onNotify={showToast} />
+        )}
+
+        {activeTab === 'pricing' && (
+          <AdminPricingManager onNotify={showToast} />
+        )}
+
         {activeTab === 'tools' && (
           <AdminToolsManager
             tools={tools}
@@ -216,10 +234,6 @@ export default function AdminAuthenticatedDashboard({
 
         {activeTab === 'analytics' && (
           <AdminTrafficAnalytics onNotify={showToast} />
-        )}
-
-        {activeTab === 'sql' && (
-          <AdminSqlStudio onNotify={showToast} />
         )}
 
         {activeTab === 'security' && (
