@@ -1,0 +1,31 @@
+# Standard SEO & AEO Optimized robots.txt for Saqib242 Portfolio
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /mradmin
+Disallow: /private/
+
+# AI-Friendly Crawling Directives (Open-Access for LLMs and AI Search)
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: FacebookBot
+Allow: /
+
+# LLM Direct Index File Link (Modern standard for Cursor, ChatGPT, Perplexity)
+Markdown-Index: https://saqib242.vercel.app/llms.txt
+Sitemap: https://saqib242.vercel.app/sitemap.xml
+

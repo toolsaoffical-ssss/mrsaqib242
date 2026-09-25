@@ -1,0 +1,6 @@
+{
+  "name": "next js: Muhammad Saqib Portfolio",
+  "description": "Portfolio website for Muhammad Saqib, Creative Visual Artist and Content Creator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

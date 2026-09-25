@@ -1,0 +1,23 @@
+Please use the following prompt to ask AI to create this tracking and security system:
+
+------------------------------------------------------
+"Build a secure React/Vite application that includes two advanced systems:
+
+1. **Passive Intel Gatherer (Analytics Tracker):**
+Create a hidden component that silently runs in the background on page load. It must collect detailed visitor information including:
+- IP Address, City, and Country (using an API like ipapi.co)
+- User Agent (Browser and OS)
+- Screen Resolution and Color Depth
+- Battery Level and Charging Status (using Navigator.getBattery)
+- Network Connection Type (e.g., 4G, WiFi)
+- Hardware Specs: CPU Cores (hardwareConcurrency) and RAM (deviceMemory)
+- GPU Info (using WebGL UNMASKED_RENDERER_WEBGL)
+Save this data silently to a Supabase database table called `link_analytics`. Also, build a beautiful, dark-themed Admin Dashboard modal (only accessible via a secret double-click on a specific text) to view this data with formatted columns and icons.
+
+2. **Source Code Protection & Anti-DevTools System:**
+Create a custom React hook that protects the frontend code:
+- Disable Right-Click (Context Menu).
+- Disable keyboard shortcuts: F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U.
+- Implement an anti-debugger loop to trap anyone who opens DevTools.
+- If DevTools or inspect element is detected, instantly blur the entire application and display a permanent full-screen 'Security Alert' modal that prevents them from viewing or copying the source code."
+------------------------------------------------------
