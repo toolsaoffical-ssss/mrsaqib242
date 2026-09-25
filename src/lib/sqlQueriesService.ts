@@ -301,7 +301,7 @@ INSERT INTO public.admin_auth (id, username, password_hash, salt, session_secret
 VALUES (
   'master_admin',
   'saqib',
-  'b44df8bb3fe95fcffcbe6dae76c1bc0ef7e1b559b15e4f40f0980cf7bc5ec868c704f0524fc28b86d99f939e6a00ebf965d1ca4150537ef6ba914489b6b7a5a5',
+  '4a9bc30538a31fee6fd02b0e9e0d99f43574b5c37166cb7c21ae94455bf74229941d8ef04f91438251643b5d4cc9ce463d5ddcb1b4f2c24ef30263131c44a012',
   'e5b7a1f9c3d4e8b2a1f0d9c8b7a6e5d4',
   'saqib_master_session_secret_key_2026',
   'super_admin'
@@ -367,7 +367,7 @@ INSERT INTO public.admin_auth (
 VALUES (
     'master_admin',
     'saqib',
-    'b44df8bb3fe95fcffcbe6dae76c1bc0ef7e1b559b15e4f40f0980cf7bc5ec868c704f0524fc28b86d99f939e6a00ebf965d1ca4150537ef6ba914489b6b7a5a5',
+    '4a9bc30538a31fee6fd02b0e9e0d99f43574b5c37166cb7c21ae94455bf74229941d8ef04f91438251643b5d4cc9ce463d5ddcb1b4f2c24ef30263131c44a012',
     'e5b7a1f9c3d4e8b2a1f0d9c8b7a6e5d4',
     'saqib_master_session_secret_key_2026',
     'super_admin'
