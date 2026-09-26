@@ -4,7 +4,6 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin
-Disallow: /mradmin
 Disallow: /private/
 
 # AI-Friendly Crawling Directives (Open-Access for LLMs and AI Search)
