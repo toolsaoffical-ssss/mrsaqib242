@@ -97,7 +97,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
     setLoading(true);
     const res = await seedDefaultAnalyticsToDB();
     if (res.error) {
-      onNotify(`Could not seed: ${res.error}. Run SQL script in Supabase first!`, 'error');
+      onNotify(`Could not sync sample analytics: ${res.error}`, 'error');
     } else {
       onNotify(`Successfully synced ${res.count} visitor records!`, 'success');
       loadData();
@@ -473,7 +473,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
           <span>
             {isFromDB
               ? 'Connected to live Supabase site_analytics table'
-              : 'Using high-speed local cache. Run the SQL Query to activate Supabase cloud persistence.'}
+              : 'Using high-speed local cache with auto-sync enabled.'}
           </span>
         </div>
         <div>

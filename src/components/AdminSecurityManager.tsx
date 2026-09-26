@@ -6,19 +6,16 @@ import {
   Lock,
   Unlock,
   Check,
-  Copy,
   AlertTriangle,
   CheckCircle2,
   Eye,
   EyeOff,
   User,
-  ExternalLink,
   Cpu,
   RefreshCw,
   LogOut,
   Fingerprint
 } from 'lucide-react';
-import { ADMIN_AUTH_SQL } from '../lib/sqlQueriesService';
 import { changeAdminCredentials, getCachedAdminUsername, logoutAdmin } from '../lib/adminAuthClient';
 
 interface AdminSecurityManagerProps {
@@ -49,9 +46,6 @@ export default function AdminSecurityManager({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
-
-  // SQL Copy state
-  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (currentUsername) {
@@ -153,13 +147,6 @@ export default function AdminSecurityManager({
     }
   };
 
-  const handleCopySql = () => {
-    navigator.clipboard.writeText(ADMIN_AUTH_SQL);
-    setIsCopied(true);
-    showToast('Admin Auth SQL Query copied to clipboard!', 'success');
-    setTimeout(() => setIsCopied(false), 3000);
-  };
-
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       {/* Top Banner: Security Architecture Status */}
@@ -186,13 +173,6 @@ export default function AdminSecurityManager({
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={handleCopySql}
-              className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-black text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all cursor-pointer"
-            >
-              {isCopied ? <Check size={15} /> : <Copy size={15} />}
-              <span>{isCopied ? 'SQL Copied!' : 'Copy Supabase SQL'}</span>
-            </button>
             <button
               onClick={() => {
                 if (window.confirm('Log out from Admin Dashboard session?')) {
@@ -252,9 +232,7 @@ export default function AdminSecurityManager({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Change Credentials Form */}
-        <div className="lg:col-span-6 space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6">
           <div className="bg-[#111217] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -444,59 +422,6 @@ export default function AdminSecurityManager({
                 )}
               </button>
             </form>
-          </div>
-        </div>
-
-        {/* Right Column: Amazing SQL Query Viewer */}
-        <div className="lg:col-span-6 space-y-6">
-          <div className="bg-[#111217] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative flex flex-col h-full">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-black uppercase tracking-tight text-white flex items-center gap-2">
-                  <Cpu size={18} className="text-cyan-400" />
-                  <span>Supabase SQL Query</span>
-                </h3>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Run this query in Supabase to create the persistent <code className="text-cyan-300">admin_auth</code> table.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleCopySql}
-                className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                {isCopied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                <span>{isCopied ? 'Copied' : 'Copy SQL'}</span>
-              </button>
-            </div>
-
-            {/* Step-by-step guidance */}
-            <div className="bg-white/5 border border-white/5 rounded-2xl p-4 mb-4 text-xs text-zinc-300 space-y-2">
-              <span className="font-bold text-white uppercase text-[10px] tracking-wider block">
-                How to setup permanent Supabase storage:
-              </span>
-              <ol className="list-decimal list-inside space-y-1 text-zinc-400 text-[11px]">
-                <li>Click <span className="text-white font-semibold">&quot;Copy SQL&quot;</span> button above.</li>
-                <li>Open your <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="text-orange-400 underline inline-flex items-center gap-1">Supabase Dashboard <ExternalLink size={10} /></a>.</li>
-                <li>Go to the <span className="text-white font-semibold">SQL Editor</span> tab on the left menu.</li>
-                <li>Paste the query and click <span className="text-emerald-400 font-bold">&quot;Run&quot;</span>.</li>
-              </ol>
-            </div>
-
-            {/* SQL Code Block */}
-            <div className="relative flex-1 bg-[#090a0d] border border-white/10 rounded-2xl overflow-hidden font-mono text-[11px] text-zinc-300">
-              <div className="bg-[#0e0f14] px-4 py-2 border-b border-white/5 flex items-center justify-between">
-                <span className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
-                  admin_auth_setup.sql
-                </span>
-                <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-bold">
-                  PostgreSQL
-                </span>
-              </div>
-              <pre className="p-4 max-h-[340px] overflow-y-auto leading-relaxed text-zinc-300 scrollbar-thin scrollbar-thumb-zinc-700">
-                {ADMIN_AUTH_SQL}
-              </pre>
-            </div>
           </div>
         </div>
       </div>

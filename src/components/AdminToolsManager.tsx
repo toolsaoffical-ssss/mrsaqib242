@@ -48,8 +48,7 @@ import {
   deleteToolItemFromDB,
   saveToolCategoryToDB,
   deleteToolCategoryFromDB,
-  resetToolsToDefaults,
-  generateToolsSQLQuery
+  resetToolsToDefaults
 } from '../lib/toolsService';
 
 interface AdminToolsManagerProps {
@@ -95,7 +94,6 @@ export default function AdminToolsManager({
 }: AdminToolsManagerProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sqlCopied, setSqlCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pageSettings, setPageSettings] = useState<ToolPageSettings>(DEFAULT_TOOL_PAGE_SETTINGS);
   const [isSavingSettings, setIsSavingSettings] = useState(false);
@@ -475,20 +473,6 @@ export default function AdminToolsManager({
     }
   };
 
-  const handleCopySQL = () => {
-    const query = generateToolsSQLQuery();
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(query);
-      setSqlCopied(true);
-      showToast('Supabase SQL query copied to clipboard!', 'success');
-      setTimeout(() => setSqlCopied(false), 3000);
-    } else {
-      showToast('Could not access clipboard automatically. Please copy the text below.', 'error');
-    }
-  };
-
-  const toolsSQL = useMemo(() => generateToolsSQLQuery(), []);
-
   return (
     <div className="space-y-6">
       {/* Header Banner */}
@@ -564,7 +548,7 @@ export default function AdminToolsManager({
         </div>
       </div>
 
-      {/* Sub-Tabs: Tools vs Categories vs SQL */}
+      {/* Sub-Tabs: Tools vs Categories vs Settings */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2 p-1.5 bg-[#121319] border border-white/10 rounded-2xl">
           <button
