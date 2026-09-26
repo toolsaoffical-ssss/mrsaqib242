@@ -23,6 +23,8 @@ export interface AdminRecordResult {
 const DEFAULT_INITIAL_SALT = process.env.ADMIN_SALT || crypto.randomBytes(16).toString('hex');
 const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
+// Note: ADMIN_PASSWORD is used solely to seed the initial in-memory fallback state during dev/initialization.
+// Runtime authentication (login & credential updates) strictly checks database credentials without env override.
 const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export function computeHash(password: string, salt: string, iterations = 100000): string {
@@ -580,17 +582,10 @@ export async function authenticateAdmin(
                       safeCompare(cleanUser, ENV_ADMIN_USERNAME);
 
   // 4. Password Verification (Strictly PBKDF2 Cryptographic Hashes - Plaintext NEVER accepted)
+  // CRITICAL SECURITY: Password verification strictly relies on the active database record.password_hash.
+  // Runtime process.env.ADMIN_PASSWORD override is removed so database password updates take immediate effect without stale env bypasses.
   const passwordCheck = verifyPassword(cleanPass, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
-  let isPassMatch = passwordCheck.match;
-
-  // 5. Environment override (hashed with salt, timing-safe compare)
-  if (!isPassMatch && process.env.ADMIN_PASSWORD) {
-    const envHash = computeHash(process.env.ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT, 100000);
-    const inputHash = computeHash(cleanPass, record.salt || DEFAULT_INITIAL_SALT, 100000);
-    if (safeCompare(inputHash, envHash)) {
-      isPassMatch = true;
-    }
-  }
+  const isPassMatch = passwordCheck.match;
 
   if (isUserMatch && isPassMatch) {
     await registerSuccessfulLogin(clientIp);
@@ -701,13 +696,10 @@ export async function updateAdminCredentials(
   }
 
   // Verify current password strictly using timing-safe PBKDF2 hash comparison
+  // CRITICAL SECURITY: Validates strictly against active record.password_hash.
+  // Environment variable override is removed so stale Vercel env cannot authorize changes.
   const checkCurrent = verifyPassword(currentPassword, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
-  let isCurrentValid = checkCurrent.match;
-  if (!isCurrentValid && ENV_ADMIN_PASSWORD) {
-    const envHash = computeHash(ENV_ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT, 100000);
-    const inputHash = computeHash(currentPassword, record.salt || DEFAULT_INITIAL_SALT, 100000);
-    isCurrentValid = safeCompare(inputHash, envHash);
-  }
+  const isCurrentValid = checkCurrent.match;
 
   if (!isCurrentValid) {
     return { success: false, message: 'Current password verification failed. Unauthorized change.' };
