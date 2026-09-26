@@ -43,7 +43,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https: https://ik.imagekit.io; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://www.google-analytics.com https://analytics.google.com https://*.imagekit.io; object-src 'none'; base-uri 'self'; frame-ancestors 'none';",
+            value: "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' https://fonts.googleapis.com 'sha256-dvy/zx3Lt8YA0e9q27genNTMLa1t+CR4JKar/XVu4K0=' 'sha256-IDh2k2l3z5Di2wzyZ+riushVqge3kUsuv28YXF0pXfk=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; style-src-elem 'self' https://fonts.googleapis.com 'sha256-dvy/zx3Lt8YA0e9q27genNTMLa1t+CR4JKar/XVu4K0=' 'sha256-IDh2k2l3z5Di2wzyZ+riushVqge3kUsuv28YXF0pXfk=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https: https://ik.imagekit.io; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.googleapis.com https://www.google-analytics.com https://analytics.google.com https://*.imagekit.io; object-src 'none'; base-uri 'self'; frame-ancestors 'none';",
           },
         ],
       },
