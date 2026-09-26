@@ -48,15 +48,18 @@ export function safeCompare(a: string, b: string): boolean {
 export function verifyPassword(inputPassword: string, salt: string, storedHash: string): { match: boolean; needsUpgrade: boolean } {
   if (!inputPassword || !storedHash || !salt) return { match: false, needsUpgrade: false };
 
+  const cleanSalt = salt.trim();
+  const cleanStoredHash = storedHash.trim();
+
   // 1. Check 100,000 iterations (standard hardened PBKDF2)
-  const hash100k = computeHash(inputPassword, salt, 100000);
-  if (safeCompare(hash100k, storedHash)) {
+  const hash100k = computeHash(inputPassword, cleanSalt, 100000);
+  if (safeCompare(hash100k, cleanStoredHash)) {
     return { match: true, needsUpgrade: false };
   }
 
   // 2. Check 10,000 iterations (legacy PBKDF2 hash, triggers upgrade to 100k)
-  const hash10k = computeHash(inputPassword, salt, 10000);
-  if (safeCompare(hash10k, storedHash)) {
+  const hash10k = computeHash(inputPassword, cleanSalt, 10000);
+  if (safeCompare(hash10k, cleanStoredHash)) {
     return { match: true, needsUpgrade: true };
   }
 
@@ -439,10 +442,10 @@ export async function getAdminRecord(): Promise<AdminRecordResult> {
       } else if (data && data.password_hash) {
         memoryAdminState = {
           id: data.id,
-          username: data.username,
-          password_hash: data.password_hash,
-          salt: data.salt,
-          session_secret: data.session_secret,
+          username: (data.username || '').trim(),
+          password_hash: (data.password_hash || '').trim(),
+          salt: (data.salt || '').trim(),
+          session_secret: (data.session_secret || '').trim(),
           role: data.role || 'super_admin',
           updated_at: data.updated_at || new Date().toISOString()
         };
