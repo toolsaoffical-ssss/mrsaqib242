@@ -13,11 +13,17 @@ export interface AdminCredentialRecord {
   updated_at: string;
 }
 
-// Securely require environment variables, generate strong secrets if missing in memory
+export interface AdminRecordResult {
+  record: AdminCredentialRecord | null;
+  fromDatabase: boolean;
+  error?: string;
+}
+
+// Securely require environment variables or generate strong secrets for memory state
 const DEFAULT_INITIAL_SALT = process.env.ADMIN_SALT || crypto.randomBytes(16).toString('hex');
 const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
-const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD; // Remove hardcoded fallback
+const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export function computeHash(password: string, salt: string, iterations = 100000): string {
   return crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha256').toString('hex');
@@ -31,8 +37,12 @@ export function safeCompare(a: string, b: string): boolean {
   return crypto.timingSafeEqual(bufA, bufB);
 }
 
+/**
+ * Verifies a password against the stored PBKDF2 hash using timing-safe comparison.
+ * Plaintext passwords are NEVER matched or accepted under any circumstances.
+ */
 export function verifyPassword(inputPassword: string, salt: string, storedHash: string): { match: boolean; needsUpgrade: boolean } {
-  if (!inputPassword || !storedHash) return { match: false, needsUpgrade: false };
+  if (!inputPassword || !storedHash || !salt) return { match: false, needsUpgrade: false };
 
   // 1. Check 100,000 iterations (standard hardened PBKDF2)
   const hash100k = computeHash(inputPassword, salt, 100000);
@@ -40,21 +50,17 @@ export function verifyPassword(inputPassword: string, salt: string, storedHash: 
     return { match: true, needsUpgrade: false };
   }
 
-  // 2. Check 10,000 iterations (legacy fallback so existing passwords never break)
+  // 2. Check 10,000 iterations (legacy PBKDF2 hash, triggers upgrade to 100k)
   const hash10k = computeHash(inputPassword, salt, 10000);
   if (safeCompare(hash10k, storedHash)) {
     return { match: true, needsUpgrade: true };
   }
 
-  // 3. Check plain text (if password was manually updated directly in Supabase table)
-  if (safeCompare(inputPassword, storedHash)) {
-    return { match: true, needsUpgrade: true };
-  }
-
+  // Plaintext comparison is strictly disallowed
   return { match: false, needsUpgrade: false };
 }
 
-// In-memory runtime store fallback (used if database table is not yet migrated)
+// In-memory runtime store fallback (ONLY active in development mode when DB is unavailable)
 let memoryAdminState: AdminCredentialRecord = {
   id: 'master_admin',
   username: ENV_ADMIN_USERNAME,
@@ -65,11 +71,43 @@ let memoryAdminState: AdminCredentialRecord = {
   updated_at: new Date().toISOString()
 };
 
-// Rate limiter / brute force shield: IP -> { failedAttempts, lockedUntil }
+// =========================================================================
+// 🛡️ RATE LIMITER: SHARED DATABASE-BACKED SHIELD (CROSS-INSTANCE VERCEL SUPPORT)
+// =========================================================================
 const rateLimitMap = new Map<string, { failedAttempts: number; lockedUntil: number }>();
+const MAX_ATTEMPTS = 5;
+const LOCK_DURATION_MS = 60 * 1000; // 60 seconds lockout
 
-export function checkRateLimit(clientIp: string): { allowed: boolean; remainingLockSeconds?: number } {
+/**
+ * Checks whether an IP address is currently locked out.
+ * Synchronizes across multiple Vercel serverless containers via Supabase shared table `admin_rate_limits`.
+ */
+export async function checkRateLimit(clientIp: string): Promise<{ allowed: boolean; remainingLockSeconds?: number }> {
   const now = Date.now();
+  const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
+
+  // 1. Check Shared Database Table (cross-instance Vercel synchronization)
+  if (clientToUse) {
+    try {
+      const { data, error } = await clientToUse
+        .from('admin_rate_limits')
+        .select('failed_attempts, locked_until')
+        .eq('ip', clientIp)
+        .maybeSingle();
+
+      if (!error && data && data.locked_until) {
+        const lockTime = new Date(data.locked_until).getTime();
+        if (lockTime > now) {
+          const remainingSec = Math.ceil((lockTime - now) / 1000);
+          return { allowed: false, remainingLockSeconds: remainingSec };
+        }
+      }
+    } catch (err) {
+      console.warn('[SECURITY] Could not check shared DB rate limit, using memory shield:', err);
+    }
+  }
+
+  // 2. Local in-memory check (fast-path fallback)
   const record = rateLimitMap.get(clientIp);
   if (!record) return { allowed: true };
 
@@ -78,7 +116,6 @@ export function checkRateLimit(clientIp: string): { allowed: boolean; remainingL
     return { allowed: false, remainingLockSeconds: remainingSec };
   }
 
-  // If lock expired, reset
   if (record.lockedUntil > 0 && record.lockedUntil <= now) {
     rateLimitMap.delete(clientIp);
   }
@@ -86,26 +123,105 @@ export function checkRateLimit(clientIp: string): { allowed: boolean; remainingL
   return { allowed: true };
 }
 
-export function registerFailedAttempt(clientIp: string): { locked: boolean; remainingLockSeconds?: number; attemptsLeft: number } {
+/**
+ * Registers a failed login attempt for a client IP.
+ * Persists the attempt count and lockout status to Supabase so all Vercel instances share the state.
+ */
+export async function registerFailedAttempt(clientIp: string): Promise<{ locked: boolean; remainingLockSeconds?: number; attemptsLeft: number }> {
   const now = Date.now();
-  const record = rateLimitMap.get(clientIp) || { failedAttempts: 0, lockedUntil: 0 };
-  record.failedAttempts += 1;
+  const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
 
-  const MAX_ATTEMPTS = 5;
-  const LOCK_DURATION_MS = 60 * 1000; // 60 seconds lockout (1 minute)
+  // 1. In-memory update for fast local tracking
+  const memRecord = rateLimitMap.get(clientIp) || { failedAttempts: 0, lockedUntil: 0 };
+  if (memRecord.lockedUntil > 0 && memRecord.lockedUntil <= now) {
+    memRecord.failedAttempts = 0;
+    memRecord.lockedUntil = 0;
+  }
+  memRecord.failedAttempts += 1;
 
-  if (record.failedAttempts >= MAX_ATTEMPTS) {
-    record.lockedUntil = now + LOCK_DURATION_MS;
-    rateLimitMap.set(clientIp, record);
-    return { locked: true, remainingLockSeconds: Math.ceil(LOCK_DURATION_MS / 1000), attemptsLeft: 0 };
+  if (memRecord.failedAttempts >= MAX_ATTEMPTS) {
+    memRecord.lockedUntil = now + LOCK_DURATION_MS;
+  }
+  rateLimitMap.set(clientIp, memRecord);
+
+  // 2. Shared database persistence (synchronizes across all Vercel serverless containers)
+  if (clientToUse) {
+    try {
+      const { data: existing, error: selectErr } = await clientToUse
+        .from('admin_rate_limits')
+        .select('failed_attempts, locked_until')
+        .eq('ip', clientIp)
+        .maybeSingle();
+
+      let dbAttempts = 1;
+      if (!selectErr && existing) {
+        const existingLockTime = existing.locked_until ? new Date(existing.locked_until).getTime() : 0;
+        if (existingLockTime > 0 && existingLockTime <= now) {
+          dbAttempts = 1; // Previous lock expired
+        } else {
+          dbAttempts = (existing.failed_attempts || 0) + 1;
+        }
+      }
+
+      const isLocked = dbAttempts >= MAX_ATTEMPTS;
+      const lockedUntilIso = isLocked ? new Date(now + LOCK_DURATION_MS).toISOString() : null;
+
+      const { error: upsertErr } = await clientToUse
+        .from('admin_rate_limits')
+        .upsert({
+          ip: clientIp,
+          failed_attempts: dbAttempts,
+          locked_until: lockedUntilIso,
+          last_attempt_at: new Date(now).toISOString(),
+          updated_at: new Date(now).toISOString()
+        });
+
+      if (!upsertErr) {
+        if (isLocked) {
+          return {
+            locked: true,
+            remainingLockSeconds: Math.ceil(LOCK_DURATION_MS / 1000),
+            attemptsLeft: 0
+          };
+        }
+        return {
+          locked: false,
+          attemptsLeft: Math.max(0, MAX_ATTEMPTS - dbAttempts)
+        };
+      }
+    } catch (err) {
+      console.warn('[SECURITY] Could not record failed attempt in database, used in-memory shield:', err);
+    }
   }
 
-  rateLimitMap.set(clientIp, record);
-  return { locked: false, attemptsLeft: MAX_ATTEMPTS - record.failedAttempts };
+  // Memory fallback return
+  const isMemLocked = memRecord.failedAttempts >= MAX_ATTEMPTS;
+  return {
+    locked: isMemLocked,
+    remainingLockSeconds: isMemLocked ? Math.ceil(LOCK_DURATION_MS / 1000) : 0,
+    attemptsLeft: Math.max(0, MAX_ATTEMPTS - memRecord.failedAttempts)
+  };
 }
 
-export function registerSuccessfulLogin(clientIp: string): void {
+/**
+ * Resets the failed attempts and lock status for a client IP upon successful login.
+ */
+export async function registerSuccessfulLogin(clientIp: string): Promise<void> {
+  // Clear memory
   rateLimitMap.delete(clientIp);
+
+  // Clear shared database rate limit record across Vercel instances
+  const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
+  if (clientToUse) {
+    try {
+      await clientToUse
+        .from('admin_rate_limits')
+        .delete()
+        .eq('ip', clientIp);
+    } catch (err) {
+      console.warn('[SECURITY] Could not delete rate limit record from database:', err);
+    }
+  }
 }
 
 // CSRF & Request Origin Validation
@@ -194,8 +310,13 @@ export function extractSessionToken(req: NextApiRequest): string | null {
   return null;
 }
 
-// Retrieve admin credentials from Supabase using Service Role Key (bypasses anon RLS) or fallback
-export async function getAdminRecord(): Promise<AdminCredentialRecord> {
+/**
+ * Retrieve admin credentials from Supabase using Service Role Key (bypasses anon RLS).
+ * CRITICAL SECURITY: In production, in-memory credential fallback is strictly restricted
+ * if the database connection fails or is unavailable.
+ */
+export async function getAdminRecord(): Promise<AdminRecordResult> {
+  const isProd = process.env.NODE_ENV === 'production';
   const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
 
   if (clientToUse) {
@@ -206,8 +327,16 @@ export async function getAdminRecord(): Promise<AdminCredentialRecord> {
         .eq('id', 'master_admin')
         .maybeSingle();
 
-      if (!error && data && data.password_hash) {
-        // Update memory cache
+      if (error) {
+        console.error('[SECURITY ERROR] Failed to fetch admin_auth from database:', error.message);
+        if (isProd) {
+          return {
+            record: null,
+            fromDatabase: false,
+            error: 'Database query failed. In-memory authentication fallback is strictly restricted in production.'
+          };
+        }
+      } else if (data && data.password_hash) {
         memoryAdminState = {
           id: data.id,
           username: data.username,
@@ -217,13 +346,39 @@ export async function getAdminRecord(): Promise<AdminCredentialRecord> {
           role: data.role || 'super_admin',
           updated_at: data.updated_at || new Date().toISOString()
         };
-        return memoryAdminState;
+        return { record: memoryAdminState, fromDatabase: true };
+      } else {
+        if (isProd) {
+          return {
+            record: null,
+            fromDatabase: false,
+            error: 'Admin record not found in database. In-memory fallback is strictly restricted in production.'
+          };
+        }
       }
-    } catch {
-      // Fallback to memoryAdminState
+    } catch (err: any) {
+      console.error('[SECURITY ERROR] Database connection error during admin auth fetch:', err?.message || err);
+      if (isProd) {
+        return {
+          record: null,
+          fromDatabase: false,
+          error: 'Database connection failed. In-memory authentication fallback is strictly restricted in production.'
+        };
+      }
+    }
+  } else {
+    if (isProd) {
+      return {
+        record: null,
+        fromDatabase: false,
+        error: 'Database client not configured (SUPABASE_SERVICE_ROLE_KEY missing). In-memory fallback is strictly restricted in production.'
+      };
     }
   }
-  return memoryAdminState;
+
+  // Development environment only fallback:
+  console.warn('[DEV SECURITY WARNING] Supabase database unavailable. Falling back to in-memory admin credentials for development only.');
+  return { record: memoryAdminState, fromDatabase: false };
 }
 
 // Generate secure session token
@@ -253,7 +408,10 @@ export async function verifyAdminSessionToken(token: string): Promise<{ valid: b
     return { valid: false };
   }
 
-  const record = await getAdminRecord();
+  const { record } = await getAdminRecord();
+  if (!record) {
+    return { valid: false };
+  }
 
   const expectedSignature = crypto
     .createHmac('sha256', record.session_secret)
@@ -270,7 +428,12 @@ export async function verifyAdminSessionToken(token: string): Promise<{ valid: b
   return { valid: false };
 }
 
-// Authenticate Admin (Check username & password OR legacy master PIN)
+/**
+ * Authenticate Admin:
+ * 1. Checks shared database-backed rate limit (protects across Vercel instances)
+ * 2. Fetches credentials from database (strictly disables memory fallback in production)
+ * 3. Compares username and PBKDF2 cryptographic password hash (plaintext rejected)
+ */
 export async function authenticateAdmin(
   usernameInput: string,
   passwordInput: string,
@@ -284,35 +447,48 @@ export async function authenticateAdmin(
   remainingLockSeconds?: number;
   attemptsLeft?: number;
 }> {
-  const record = await getAdminRecord();
+  // 1. IP & Rate Limiting Check (Shared Database-backed across all Vercel instances)
+  const rateLimit = await checkRateLimit(clientIp);
+  if (!rateLimit.allowed) {
+    return {
+      success: false,
+      locked: true,
+      remainingLockSeconds: rateLimit.remainingLockSeconds,
+      message: `Security Lockout Triggered: Too many failed login attempts. System locked for ${rateLimit.remainingLockSeconds} seconds.`
+    };
+  }
+
+  // 2. Fetch admin credentials (Strictly restricted in production if database is unavailable)
+  const { record, error: dbError } = await getAdminRecord();
+  if (!record) {
+    return {
+      success: false,
+      message: dbError || 'Authentication service unavailable: Database connection failed.'
+    };
+  }
 
   const cleanUser = (usernameInput || '').trim().toLowerCase();
   const cleanPass = passwordInput || '';
 
-  // 1. Username Match
+  // 3. Username Match
   const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser) || 
                       safeCompare(cleanUser, ENV_ADMIN_USERNAME);
 
-  // 2. Check if incoming password matches active record (100k iterations, 10k legacy, or plain-text)
+  // 4. Password Verification (Strictly PBKDF2 Cryptographic Hashes - Plaintext NEVER accepted)
   const passwordCheck = verifyPassword(cleanPass, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
-  const isPlainTextDBMatch = safeCompare(cleanPass, record.password_hash);
   let isPassMatch = passwordCheck.match;
 
-  // 3. If a custom ADMIN_PASSWORD environment variable is set in Vercel, verify against it
+  // 5. Environment override (hashed with salt, timing-safe compare)
   if (!isPassMatch && process.env.ADMIN_PASSWORD) {
-    if (safeCompare(cleanPass, process.env.ADMIN_PASSWORD)) {
+    const envHash = computeHash(process.env.ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT, 100000);
+    const inputHash = computeHash(cleanPass, record.salt || DEFAULT_INITIAL_SALT, 100000);
+    if (safeCompare(inputHash, envHash)) {
       isPassMatch = true;
-    } else {
-      const envCheck = verifyPassword(cleanPass, record.salt || DEFAULT_INITIAL_SALT, computeHash(process.env.ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT, 100000));
-      if (envCheck.match) {
-        isPassMatch = true;
-      }
     }
   }
 
-  // Removed hardcoded fallback password check
   if (isUserMatch && isPassMatch) {
-    registerSuccessfulLogin(clientIp);
+    await registerSuccessfulLogin(clientIp);
     const activeUsername = record.username || ENV_ADMIN_USERNAME || 'saqib';
     const activeSecret = record.session_secret || DEFAULT_INITIAL_SECRET;
     const token = generateSessionToken(activeUsername, activeSecret);
@@ -327,8 +503,8 @@ export async function authenticateAdmin(
           failed_attempts: 0
         };
 
-        // If legacy 10k hash or plain text was detected, auto-upgrade to 100k salted hash!
-        if (passwordCheck.needsUpgrade || isPlainTextDBMatch) {
+        // If legacy 10k hash was used, auto-upgrade to 100k salted hash!
+        if (passwordCheck.needsUpgrade) {
           const freshSalt = crypto.randomBytes(16).toString('hex');
           updatePayload.salt = freshSalt;
           updatePayload.password_hash = computeHash(cleanPass, freshSalt, 100000);
@@ -351,8 +527,8 @@ export async function authenticateAdmin(
     };
   }
 
-  // Failed login attempt
-  const failResult = registerFailedAttempt(clientIp);
+  // Failed login attempt: Register in shared database across Vercel instances
+  const failResult = await registerFailedAttempt(clientIp);
   if (failResult.locked) {
     return {
       success: false,
@@ -369,7 +545,11 @@ export async function authenticateAdmin(
   };
 }
 
-// Change Credentials (Requires current password verification)
+/**
+ * Update Admin Credentials:
+ * Requires current password verification using timing-safe PBKDF2 hash.
+ * Encrypts new credentials with 100k iterations PBKDF2 and updates database.
+ */
 export async function updateAdminCredentials(
   currentPassword: string,
   newUsername: string,
@@ -392,12 +572,22 @@ export async function updateAdminCredentials(
     return { success: false, message: 'New password must be at least 6 characters long with strong entropy.' };
   }
 
-  const record = await getAdminRecord();
+  const { record, error: dbError } = await getAdminRecord();
+  if (!record) {
+    return {
+      success: false,
+      message: dbError || 'Database unavailable. Updating credentials requires an active database connection.'
+    };
+  }
 
-  // Verify current password strictly using timing-safe comparison
+  // Verify current password strictly using timing-safe PBKDF2 hash comparison
   const checkCurrent = verifyPassword(currentPassword, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
-  const isCurrentValid = checkCurrent.match ||
-                         (ENV_ADMIN_PASSWORD && safeCompare(currentPassword, ENV_ADMIN_PASSWORD));
+  let isCurrentValid = checkCurrent.match;
+  if (!isCurrentValid && ENV_ADMIN_PASSWORD) {
+    const envHash = computeHash(ENV_ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT, 100000);
+    const inputHash = computeHash(currentPassword, record.salt || DEFAULT_INITIAL_SALT, 100000);
+    isCurrentValid = safeCompare(inputHash, envHash);
+  }
 
   if (!isCurrentValid) {
     return { success: false, message: 'Current password verification failed. Unauthorized change.' };
@@ -445,6 +635,14 @@ export async function updateAdminCredentials(
     }
   }
 
+  // In production, require database persistence!
+  if (process.env.NODE_ENV === 'production' && !dbSaved) {
+    return {
+      success: false,
+      message: 'Failed to persist credentials to Supabase database. Changes not saved in production.'
+    };
+  }
+
   // Generate new session token with new secret
   const newToken = generateSessionToken(sanitizedUsername, newSecret);
 
@@ -458,9 +656,9 @@ export async function updateAdminCredentials(
   };
 }
 
-// Supabase SQL initialization script specifically for the admin_auth table
+// Supabase SQL initialization script specifically for the admin_auth & admin_rate_limits tables
 export const ADMIN_AUTH_SQL_SCRIPT = `-- =========================================================================
--- 🛡️ SAQIB PORTFOLIO: MASTER ADMIN AUTH & SECURITY SHIELD TABLE
+-- 🛡️ SAQIB PORTFOLIO: MASTER ADMIN AUTH & SECURITY SHIELD TABLES
 -- Execute in Supabase SQL Editor: https://supabase.com/dashboard/project/_/sql
 -- =========================================================================
 
@@ -475,6 +673,16 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
     locked_until TIMESTAMPTZ,
     last_login_at TIMESTAMPTZ,
     last_login_ip TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Shared login rate limits across all Vercel serverless instances
+CREATE TABLE IF NOT EXISTS public.admin_rate_limits (
+    ip TEXT PRIMARY KEY,
+    failed_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMPTZ,
+    last_attempt_at TIMESTAMPTZ DEFAULT NOW(),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -502,8 +710,9 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
 
--- 🛡️ SECURITY SHIELD: Completely deny all public anonymous access!
+-- 🛡️ SECURITY SHIELD: Strictly deny public anonymous access to both tables!
 -- Supabase Service Role Key automatically bypasses RLS safely on the server.
 DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
 DROP POLICY IF EXISTS "Public admin_auth access" ON public.admin_auth;
@@ -515,7 +724,15 @@ TO anon
 USING (false) 
 WITH CHECK (false);
 
--- Auto-update updated_at timestamp trigger
+DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
+CREATE POLICY "Deny anonymous access to admin_rate_limits" 
+ON public.admin_rate_limits 
+FOR ALL 
+TO anon 
+USING (false) 
+WITH CHECK (false);
+
+-- Auto-update updated_at timestamp trigger for admin_auth
 CREATE OR REPLACE FUNCTION update_admin_auth_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

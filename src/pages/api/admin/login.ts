@@ -50,6 +50,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
+    if (result.attemptsLeft === undefined) {
+      return res.status(503).json({
+        success: false,
+        message: result.message
+      });
+    }
+
     return res.status(401).json({
       success: false,
       attemptsLeft: result.attemptsLeft,

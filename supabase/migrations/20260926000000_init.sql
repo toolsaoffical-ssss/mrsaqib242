@@ -210,6 +210,16 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Shared login rate limits across all Vercel serverless instances
+CREATE TABLE IF NOT EXISTS public.admin_rate_limits (
+    ip TEXT PRIMARY KEY,
+    failed_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMPTZ,
+    last_attempt_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES (Enables safe anonymous read/write access)
 -- =========================================================================
@@ -225,6 +235,7 @@ ALTER TABLE public.tool_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tools ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tool_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
 
 -- Secure Row Level Security Policies
 DROP POLICY IF EXISTS "Public site analytics access" ON public.site_analytics;
@@ -286,6 +297,14 @@ DROP POLICY IF EXISTS "Strict deny anon admin_auth" ON public.admin_auth;
 DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
 CREATE POLICY "Deny anonymous access to admin_auth" 
 ON public.admin_auth 
+FOR ALL 
+TO anon 
+USING (false) 
+WITH CHECK (false);
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
+CREATE POLICY "Deny anonymous access to admin_rate_limits" 
+ON public.admin_rate_limits 
 FOR ALL 
 TO anon 
 USING (false) 

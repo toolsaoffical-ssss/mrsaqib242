@@ -222,6 +222,16 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Shared login rate limits across all Vercel serverless instances
+CREATE TABLE IF NOT EXISTS public.admin_rate_limits (
+    ip TEXT PRIMARY KEY,
+    failed_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMPTZ,
+    last_attempt_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES (Enables safe anonymous read/write access)
 -- =========================================================================
@@ -237,6 +247,7 @@ ALTER TABLE public.tool_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tools ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tool_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
 
 -- Secure Row Level Security Policies
 DROP POLICY IF EXISTS "Public site analytics access" ON public.site_analytics;
@@ -303,6 +314,14 @@ TO anon
 USING (false) 
 WITH CHECK (false);
 
+DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
+CREATE POLICY "Deny anonymous access to admin_rate_limits" 
+ON public.admin_rate_limits 
+FOR ALL 
+TO anon 
+USING (false) 
+WITH CHECK (false);
+
 -- Insert default row for master_admin using ENV variables (handled via Next.js backend)
 -- (Initial seeding should happen via the backend application code on startup to avoid hardcoded credentials in SQL)
 
@@ -328,9 +347,10 @@ ON CONFLICT (id) DO NOTHING;
 `;
 
 export const ADMIN_AUTH_SQL = `-- =========================================================================
--- 🛡️ TABLE: MASTER ADMIN AUTH & SECURITY SHIELD
--- Table: public.admin_auth
+-- 🛡️ TABLE: MASTER ADMIN AUTH & RATE LIMIT SECURITY SHIELD
+-- Tables: public.admin_auth, public.admin_rate_limits
 -- Security: Passwords stored as SHA-256 PBKDF2 hashes with cryptographic salt.
+--           Rate limits synchronized across all Vercel serverless instances.
 --           Frontend receives ONLY boolean true/false responses.
 -- =========================================================================
 
@@ -349,19 +369,38 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Shared login rate limits across all Vercel serverless instances
+CREATE TABLE IF NOT EXISTS public.admin_rate_limits (
+    ip TEXT PRIMARY KEY,
+    failed_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMPTZ,
+    last_attempt_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Seed initial master admin credentials:
 -- (Initial seeding should happen via the backend application code on startup to avoid hardcoded credentials in SQL)
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
 
 -- 🛡️ SECURITY SHIELD: Completely deny all public anonymous access!
 -- Since our backend uses the SUPABASE_SERVICE_ROLE_KEY, it bypasses RLS safely.
--- Any attacker attempting to query admin_auth via public Anon Key will be rejected!
+-- Any attacker attempting to query admin_auth or admin_rate_limits via public Anon Key will be rejected!
 DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
 DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
 CREATE POLICY "Deny anonymous access to admin_auth" 
 ON public.admin_auth 
+FOR ALL 
+TO anon 
+USING (false) 
+WITH CHECK (false);
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
+CREATE POLICY "Deny anonymous access to admin_rate_limits" 
+ON public.admin_rate_limits 
 FOR ALL 
 TO anon 
 USING (false) 
