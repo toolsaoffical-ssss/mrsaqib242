@@ -29,15 +29,15 @@ const supabaseUrl = getValidSupabaseUrl();
 const supabaseAnonKey = getValidSupabaseAnonKey();
 
 // Safe initialization that will never crash the app
-let clientInstance: ReturnType<typeof createClient>;
+let clientInstance: ReturnType<typeof createClient<any, any, any>>;
 try {
-  clientInstance = createClient(supabaseUrl, supabaseAnonKey);
+  clientInstance = createClient<any, any, any>(supabaseUrl, supabaseAnonKey);
 } catch (err) {
   console.warn("Falling back to default Supabase client due to invalid configuration:", err);
-  clientInstance = createClient(DEFAULT_SUPABASE_URL, DEFAULT_SUPABASE_ANON_KEY);
+  clientInstance = createClient<any, any, any>(DEFAULT_SUPABASE_URL, DEFAULT_SUPABASE_ANON_KEY);
 }
 
-export const supabase = clientInstance;
+export const supabase = clientInstance as any;
 
 export const isSupabaseConfigured = () => {
   return Boolean(supabaseUrl && supabaseAnonKey && supabase);

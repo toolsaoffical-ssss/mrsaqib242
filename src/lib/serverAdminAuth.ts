@@ -13,11 +13,11 @@ export interface AdminCredentialRecord {
   updated_at: string;
 }
 
-// Default initial master credentials (can be securely overridden via environment variables)
-const DEFAULT_INITIAL_SALT = process.env.ADMIN_SALT || 'e5b7a1f9c3d4e8b2a1f0d9c8b7a6e5d4';
-const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || 'saqib_master_session_secret_key_2026';
-const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'saqib').trim().toLowerCase();
-const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'saqib242';
+// Securely require environment variables, generate strong secrets if missing in memory
+const DEFAULT_INITIAL_SALT = process.env.ADMIN_SALT || crypto.randomBytes(16).toString('hex');
+const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
+const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD; // Remove hardcoded fallback
 
 export function computeHash(password: string, salt: string, iterations = 100000): string {
   return crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha256').toString('hex');
@@ -58,7 +58,7 @@ export function verifyPassword(inputPassword: string, salt: string, storedHash: 
 let memoryAdminState: AdminCredentialRecord = {
   id: 'master_admin',
   username: ENV_ADMIN_USERNAME,
-  password_hash: process.env.ADMIN_PASSWORD_HASH || computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT, 100000),
+  password_hash: process.env.ADMIN_PASSWORD_HASH || (ENV_ADMIN_PASSWORD ? computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT, 100000) : crypto.randomBytes(32).toString('hex')),
   salt: DEFAULT_INITIAL_SALT,
   session_secret: DEFAULT_INITIAL_SECRET,
   role: 'super_admin',
@@ -310,17 +310,7 @@ export async function authenticateAdmin(
     }
   }
 
-  // 4. Default fallback: ONLY allow saqib242 if NO password change has EVER taken place
-  const default10k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 10000);
-  const default100k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 100000);
-  const isPristineDefaultRecord = (safeCompare(record.password_hash, default10k) || safeCompare(record.password_hash, default100k)) && !process.env.ADMIN_PASSWORD;
-
-  if (!isPassMatch && isPristineDefaultRecord) {
-    if (safeCompare(cleanPass, 'saqib242')) {
-      isPassMatch = true;
-    }
-  }
-
+  // Removed hardcoded fallback password check
   if (isUserMatch && isPassMatch) {
     registerSuccessfulLogin(clientIp);
     const activeUsername = record.username || ENV_ADMIN_USERNAME || 'saqib';
@@ -406,12 +396,8 @@ export async function updateAdminCredentials(
 
   // Verify current password strictly using timing-safe comparison
   const checkCurrent = verifyPassword(currentPassword, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
-  const default10k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 10000);
-  const default100k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 100000);
-
   const isCurrentValid = checkCurrent.match ||
-                         ((record.username.toLowerCase() === 'saqib' || record.username.toLowerCase() === ENV_ADMIN_USERNAME) && 
-                          (safeCompare(currentPassword, ENV_ADMIN_PASSWORD) || safeCompare(currentPassword, 'saqib242') || safeCompare(record.password_hash, default10k) || safeCompare(record.password_hash, default100k)));
+                         (ENV_ADMIN_PASSWORD && safeCompare(currentPassword, ENV_ADMIN_PASSWORD));
 
   if (!isCurrentValid) {
     return { success: false, message: 'Current password verification failed. Unauthorized change.' };
@@ -493,7 +479,7 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Seed initial master admin credentials (Username: saqib, Password: saqib242)
+-- Seed initial master admin credentials (Username from env, Password from env)
 INSERT INTO public.admin_auth (
     id, 
     username, 
@@ -504,8 +490,8 @@ INSERT INTO public.admin_auth (
 )
 VALUES (
     'master_admin',
-    'saqib',
-    '${computeHash('saqib242', DEFAULT_INITIAL_SALT)}',
+    '${ENV_ADMIN_USERNAME}',
+    '${memoryAdminState.password_hash}',
     '${DEFAULT_INITIAL_SALT}',
     '${DEFAULT_INITIAL_SECRET}',
     'super_admin'

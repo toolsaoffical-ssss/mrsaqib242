@@ -205,18 +205,12 @@ DROP POLICY IF EXISTS "Public can manage pricing plans" ON public.pricing_plans;
 DROP POLICY IF EXISTS "Public can view pricing addons" ON public.pricing_addons;
 DROP POLICY IF EXISTS "Public can manage pricing addons" ON public.pricing_addons;
 
--- 5. Create Permissive Policies
+-- 5. Create Permissive Policies (Read-only for public, Admin managed via service key)
 CREATE POLICY "Public can view pricing plans" 
 ON public.pricing_plans FOR SELECT USING (true);
 
-CREATE POLICY "Public can manage pricing plans" 
-ON public.pricing_plans FOR ALL USING (true) WITH CHECK (true);
-
 CREATE POLICY "Public can view pricing addons" 
 ON public.pricing_addons FOR SELECT USING (true);
-
-CREATE POLICY "Public can manage pricing addons" 
-ON public.pricing_addons FOR ALL USING (true) WITH CHECK (true);
 
 -- 6. Insert Default Website Plans
 INSERT INTO public.pricing_plans (id, name, price, is_starting, color, emoji, description, features, recommended, badge, display_order, is_active)

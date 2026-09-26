@@ -210,7 +210,7 @@ export default function AdminPricingManager({ onNotify }: AdminPricingManagerPro
         is_active: planForm.is_active
       };
 
-      const res = await savePricingPlanToDB(planPayload);
+      const res = await savePricingPlanToDB(planPayload, plans);
       if (!res.success) {
         onNotify(`Save error: ${res.error || 'Failed to save plan'}`, 'error');
       } else {
@@ -276,7 +276,7 @@ export default function AdminPricingManager({ onNotify }: AdminPricingManagerPro
         is_active: addOnForm.is_active
       };
 
-      const res = await savePricingAddOnToDB(addOnPayload);
+      const res = await savePricingAddOnToDB(addOnPayload, addOns);
       if (!res.success) {
         onNotify(`Save error: ${res.error || 'Failed to save add-on'}`, 'error');
       } else {

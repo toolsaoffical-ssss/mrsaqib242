@@ -18,10 +18,10 @@ const supabaseUrl = getValidServerSupabaseUrl();
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 // Create admin client strictly from environment variable, never hardcoded in source files
-let adminClient: ReturnType<typeof createClient>;
+let adminClient: ReturnType<typeof createClient<any, any, any>>;
 if (serviceRoleKey && serviceRoleKey.length > 20) {
   try {
-    adminClient = createClient(supabaseUrl, serviceRoleKey, {
+    adminClient = createClient<any, any, any>(supabaseUrl, serviceRoleKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false
@@ -30,18 +30,18 @@ if (serviceRoleKey && serviceRoleKey.length > 20) {
   } catch (err) {
     console.warn("Could not initialize Supabase Admin client from environment:", err);
     // Dummy fallback client
-    adminClient = createClient(DEFAULT_SUPABASE_URL, 'placeholder-key', {
+    adminClient = createClient<any, any, any>(DEFAULT_SUPABASE_URL, 'placeholder-key', {
       auth: { persistSession: false, autoRefreshToken: false }
     });
   }
 } else {
   // If no environment variable is provided, avoid crashing Next.js builds or routes
-  adminClient = createClient(DEFAULT_SUPABASE_URL, 'placeholder-key', {
+  adminClient = createClient<any, any, any>(DEFAULT_SUPABASE_URL, 'placeholder-key', {
     auth: { persistSession: false, autoRefreshToken: false }
   });
 }
 
-export const supabaseAdmin = adminClient;
+export const supabaseAdmin = adminClient as any;
 
 export const isSupabaseAdminConfigured = () => {
   return Boolean(

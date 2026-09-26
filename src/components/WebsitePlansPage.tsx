@@ -378,7 +378,7 @@ Please let me know how we can get started! Thanks.`;
                           <span className="text-sm sm:text-lg md:text-xl font-black text-white">
                             ${p.price}
                           </span>
-                          {p.isStarting && <span className="text-[8px] sm:text-[10px] text-zinc-500 font-mono">start</span>}
+                          {p.is_starting && <span className="text-[8px] sm:text-[10px] text-zinc-500 font-mono">start</span>}
                         </div>
                       </motion.button>
                     ))}
@@ -463,7 +463,7 @@ Please let me know how we can get started! Thanks.`;
                             return (
                               <div key={addon.id} className="flex items-center justify-between text-xs text-zinc-400">
                                 <span className="truncate pr-4">{addon.emoji} {addon.name}</span>
-                                <span className="font-semibold text-white">+{addon.isStarting ? 'Starting ' : ''}${addon.price}</span>
+                                <span className="font-semibold text-white">+{addon.is_starting ? 'Starting ' : ''}${addon.price}</span>
                               </div>
                             );
                           })}
@@ -557,7 +557,7 @@ Please let me know how we can get started! Thanks.`;
                     <span className="text-zinc-500 text-[7px] sm:text-[8px] tracking-widest font-mono uppercase block">Budget</span>
                     <div className="flex items-baseline gap-0.5 sm:gap-1">
                       <span className="text-base sm:text-2xl md:text-3xl font-black text-white">${p.price}</span>
-                      {p.isStarting && <span className="text-[8px] sm:text-[10px] text-zinc-500 font-mono">start</span>}
+                      {p.is_starting && <span className="text-[8px] sm:text-[10px] text-zinc-500 font-mono">start</span>}
                     </div>
                   </div>
                   

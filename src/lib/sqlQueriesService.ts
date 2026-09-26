@@ -303,19 +303,8 @@ TO anon
 USING (false) 
 WITH CHECK (false);
 
--- Insert default row for master_admin (Username: saqib, Password: saqib242)
-INSERT INTO public.admin_auth (id, username, password_hash, salt, session_secret, role)
-VALUES (
-  'master_admin',
-  'saqib',
-  '4a9bc30538a31fee6fd02b0e9e0d99f43574b5c37166cb7c21ae94455bf74229941d8ef04f91438251643b5d4cc9ce463d5ddcb1b4f2c24ef30263131c44a012',
-  'e5b7a1f9c3d4e8b2a1f0d9c8b7a6e5d4',
-  'saqib_master_session_secret_key_2026',
-  'super_admin'
-)
-ON CONFLICT (id) DO UPDATE SET
-  username = EXCLUDED.username,
-  role = EXCLUDED.role;
+-- Insert default row for master_admin using ENV variables (handled via Next.js backend)
+-- (Initial seeding should happen via the backend application code on startup to avoid hardcoded credentials in SQL)
 
 -- Insert default row for profile_settings if not present
 INSERT INTO public.profile_settings (id, name, short_name, brand_name, tagline, bio, phone, email, location)
@@ -361,27 +350,7 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
 );
 
 -- Seed initial master admin credentials:
--- Default Username: saqib
--- Default Password: saqib242
-INSERT INTO public.admin_auth (
-    id, 
-    username, 
-    password_hash, 
-    salt, 
-    session_secret, 
-    role
-)
-VALUES (
-    'master_admin',
-    'saqib',
-    '4a9bc30538a31fee6fd02b0e9e0d99f43574b5c37166cb7c21ae94455bf74229941d8ef04f91438251643b5d4cc9ce463d5ddcb1b4f2c24ef30263131c44a012',
-    'e5b7a1f9c3d4e8b2a1f0d9c8b7a6e5d4',
-    'saqib_master_session_secret_key_2026',
-    'super_admin'
-)
-ON CONFLICT (id) DO UPDATE SET
-    username = EXCLUDED.username,
-    role = EXCLUDED.role;
+-- (Initial seeding should happen via the backend application code on startup to avoid hardcoded credentials in SQL)
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;

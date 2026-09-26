@@ -955,24 +955,15 @@ DROP POLICY IF EXISTS "Public can manage tools" ON public.tools;
 DROP POLICY IF EXISTS "Public can view tool settings" ON public.tool_settings;
 DROP POLICY IF EXISTS "Public can manage tool settings" ON public.tool_settings;
 
--- 6. Create Permissive Policies (Full read/write for Admin & App)
+-- 6. Create Permissive Policies (Read-only for public, Admin managed via service key)
 CREATE POLICY "Public can view tool categories" 
 ON public.tool_categories FOR SELECT USING (true);
-
-CREATE POLICY "Public can manage tool categories" 
-ON public.tool_categories FOR ALL USING (true) WITH CHECK (true);
 
 CREATE POLICY "Public can view tools" 
 ON public.tools FOR SELECT USING (true);
 
-CREATE POLICY "Public can manage tools" 
-ON public.tools FOR ALL USING (true) WITH CHECK (true);
-
 CREATE POLICY "Public can view tool settings" 
 ON public.tool_settings FOR SELECT USING (true);
-
-CREATE POLICY "Public can manage tool settings" 
-ON public.tool_settings FOR ALL USING (true) WITH CHECK (true);
 
 -- 7. Insert Default Tool Categories
 INSERT INTO public.tool_categories (id, name, slug, icon, emoji, color, description, display_order, is_active)

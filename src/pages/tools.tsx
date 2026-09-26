@@ -29,15 +29,15 @@ export default function ToolsRoute() {
 
       {/* Embedded Modals if triggered from tools */}
       {isWebsitePlansOpen && (
-        <WebsitePlansPage onClose={() => setIsWebsitePlansOpen(false)} />
+        <WebsitePlansPage onBack={() => setIsWebsitePlansOpen(false)} />
       )}
 
       {isFreeCoursesOpen && (
-        <FreeCoursesModal isOpen={isFreeCoursesOpen} onClose={() => setIsFreeCoursesOpen(false)} />
+        <FreeCoursesModal onClose={() => setIsFreeCoursesOpen(false)} />
       )}
 
       {isSourceCodeOpen && (
-        <SourceCodeModal isOpen={isSourceCodeOpen} onClose={() => setIsSourceCodeOpen(false)} />
+        <SourceCodeModal onClose={() => setIsSourceCodeOpen(false)} />
       )}
     </>
   );
