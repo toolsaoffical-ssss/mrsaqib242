@@ -399,3 +399,11 @@ BEGIN
 END;
 $$;
 
+-- 🛡️ STRICT PERMISSIONS: Revoke public execution on SECURITY DEFINER function
+REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM authenticated;
+
+-- Grant execution strictly to trusted backend role (Service Role Key)
+GRANT EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) TO service_role;
+

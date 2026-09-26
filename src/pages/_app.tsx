@@ -142,14 +142,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         src="https://www.googletagmanager.com/gtag/js?id=G-F768LWQ7CB" 
         strategy="lazyOnload" 
       />
-      <Script id="google-analytics" strategy="lazyOnload">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-F768LWQ7CB');
-        `}
-      </Script>
+      <Script 
+        src="/ga.js" 
+        strategy="lazyOnload" 
+      />
 
       <AnalyticsTracker />
       <Component {...pageProps} />

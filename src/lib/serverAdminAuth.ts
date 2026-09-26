@@ -675,8 +675,21 @@ export async function updateAdminCredentials(
     return { success: false, message: 'New username must be at least 3 characters long.' };
   }
 
-  if (!newPassword || newPassword.length < 6) {
-    return { success: false, message: 'New password must be at least 6 characters long with strong entropy.' };
+  if (!newPassword || newPassword.length < 12) {
+    return { success: false, message: 'New password must be at least 12 characters long with strong entropy.' };
+  }
+
+  // Enforce strong entropy: uppercase, lowercase, number, special character
+  const hasUpper = /[A-Z]/.test(newPassword);
+  const hasLower = /[a-z]/.test(newPassword);
+  const hasNumber = /[0-9]/.test(newPassword);
+  const hasSymbol = /[^A-Za-z0-9]/.test(newPassword);
+
+  if (!hasUpper || !hasLower || !hasNumber || !hasSymbol) {
+    return {
+      success: false,
+      message: 'New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+    };
   }
 
   const { record, error: dbError } = await getAdminRecord();
@@ -919,4 +932,12 @@ BEGIN
     END IF;
 END;
 $$;
+
+-- 🛡️ STRICT PERMISSIONS: Revoke public execution on SECURITY DEFINER function
+REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM authenticated;
+
+-- Grant execution strictly to trusted backend role (Service Role Key)
+GRANT EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) TO service_role;
 `;

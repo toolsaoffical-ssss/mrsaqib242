@@ -65,25 +65,25 @@ export default function AdminSecurityManager({
   const computeStrength = (pass: string) => {
     if (!pass) return { score: 0, label: 'Empty', color: 'bg-zinc-700', width: 'w-0' };
     let score = 0;
-    if (pass.length >= 6) score += 1;
-    if (pass.length >= 10) score += 1;
-    if (/[A-Z]/.test(pass)) score += 1;
+    if (pass.length >= 12) score += 1;
+    if (pass.length >= 15) score += 1;
+    if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score += 1;
     if (/[0-9]/.test(pass)) score += 1;
     if (/[^A-Za-z0-9]/.test(pass)) score += 1;
 
     switch (score) {
       case 1:
-        return { score: 1, label: 'Very Weak', color: 'bg-rose-500', width: 'w-1/5' };
+        return { score: 1, label: 'Too Weak (< 12 chars)', color: 'bg-rose-500', width: 'w-1/5' };
       case 2:
         return { score: 2, label: 'Weak', color: 'bg-amber-500', width: 'w-2/5' };
       case 3:
         return { score: 3, label: 'Medium', color: 'bg-yellow-400', width: 'w-3/5' };
       case 4:
-        return { score: 4, label: 'Strong', color: 'bg-emerald-400', width: 'w-4/5' };
+        return { score: 4, label: 'Strong (12+ chars)', color: 'bg-emerald-400', width: 'w-4/5' };
       case 5:
-        return { score: 5, label: 'Very Strong', color: 'bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]', width: 'w-full' };
+        return { score: 5, label: 'Enterprise Grade (15+ chars)', color: 'bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]', width: 'w-full' };
       default:
-        return { score: 0, label: 'Too short', color: 'bg-rose-500', width: 'w-1/5' };
+        return { score: 0, label: 'Too short (min. 12 chars)', color: 'bg-rose-500', width: 'w-1/5' };
     }
   };
 
@@ -110,8 +110,13 @@ export default function AdminSecurityManager({
       return;
     }
 
-    if (newPassword.length < 6) {
-      setFormError('New Password must be at least 6 characters long.');
+    if (newPassword.length < 12) {
+      setFormError('New Password must be at least 12–15 characters long for enterprise security.');
+      return;
+    }
+
+    if (!/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[^A-Za-z0-9]/.test(newPassword)) {
+      setFormError('New Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.');
       return;
     }
 
@@ -348,7 +353,7 @@ export default function AdminSecurityManager({
                     type={showNewPassword ? 'text' : 'password'}
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
-                    placeholder="Enter strong new password (min. 6 chars)"
+                    placeholder="Enter strong new password (min. 12–15 chars)"
                     className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 transition-colors pr-10 pl-10"
                     required
                   />
