@@ -22,6 +22,8 @@ export interface AdminRecordResult {
 // Securely require environment variables or generate strong secrets for memory state
 const DEFAULT_INITIAL_SALT = process.env.ADMIN_SALT || crypto.randomBytes(16).toString('hex');
 const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+// Note: ADMIN_USERNAME is used solely for initial seeding and dev fallback.
+// Runtime authentication strictly validates against the database record username without env alternative.
 const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
 // Note: ADMIN_PASSWORD is used solely to seed the initial in-memory fallback state during dev/initialization.
 // Runtime authentication (login & credential updates) strictly checks database credentials without env override.
@@ -578,8 +580,9 @@ export async function authenticateAdmin(
   const cleanPass = passwordInput || '';
 
   // 3. Username Match
-  const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser) || 
-                      safeCompare(cleanUser, ENV_ADMIN_USERNAME);
+  // CRITICAL SECURITY: Strictly validates against the active database record.
+  // Alternative process.env.ADMIN_USERNAME is strictly eliminated so database username updates take immediate effect without stale env bypasses.
+  const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser);
 
   // 4. Password Verification (Strictly PBKDF2 Cryptographic Hashes - Plaintext NEVER accepted)
   // CRITICAL SECURITY: Password verification strictly relies on the active database record.password_hash.
@@ -589,7 +592,7 @@ export async function authenticateAdmin(
 
   if (isUserMatch && isPassMatch) {
     await registerSuccessfulLogin(clientIp);
-    const activeUsername = record.username || ENV_ADMIN_USERNAME || 'saqib';
+    const activeUsername = record.username;
     const activeSecret = record.session_secret || DEFAULT_INITIAL_SECRET;
     const token = generateSessionToken(activeUsername, activeSecret);
 
