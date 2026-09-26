@@ -244,14 +244,13 @@ DROP POLICY IF EXISTS "Public can record analytics" ON public.site_analytics;
 DROP POLICY IF EXISTS "Public can view analytics" ON public.site_analytics;
 DROP POLICY IF EXISTS "Public can only record analytics" ON public.site_analytics;
 CREATE POLICY "Public can record analytics" ON public.site_analytics FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "Public can view analytics" ON public.site_analytics FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Public inquiries access" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can submit inquiries" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can view inquiries" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can only submit inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public can view and manage inquiries" ON public.client_inquiries;
 CREATE POLICY "Public can submit inquiries" ON public.client_inquiries FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "Public can view inquiries" ON public.client_inquiries FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Public projects access" ON public.projects;
 DROP POLICY IF EXISTS "Public read-only projects" ON public.projects;
@@ -291,12 +290,18 @@ DROP POLICY IF EXISTS "Public can manage tool settings" ON public.tool_settings;
 DROP POLICY IF EXISTS "Public read-only tool settings" ON public.tool_settings;
 CREATE POLICY "Public read-only tool settings" ON public.tool_settings FOR SELECT TO anon, authenticated USING (true);
 
--- Allow server backend access to admin_auth
+-- 🛡️ SECURITY SHIELD: Strictly deny public anonymous access to admin_auth
+-- Supabase Service Role Key automatically bypasses RLS safely from the Next.js server backend.
 DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
-DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
-DROP POLICY IF EXISTS "Strict deny anon admin_auth" ON public.admin_auth;
 DROP POLICY IF EXISTS "Public admin_auth access" ON public.admin_auth;
-CREATE POLICY "Public admin_auth access" ON public.admin_auth FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Strict deny anon admin_auth" ON public.admin_auth;
+DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
+CREATE POLICY "Deny anonymous access to admin_auth" 
+ON public.admin_auth 
+FOR ALL 
+TO anon 
+USING (false) 
+WITH CHECK (false);
 
 -- Insert default row for master_admin (Username: saqib, Password: saqib242)
 INSERT INTO public.admin_auth (id, username, password_hash, salt, session_secret, role)
@@ -458,7 +463,8 @@ CREATE TABLE IF NOT EXISTS public.projects (
 
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public projects access" ON public.projects;
-CREATE POLICY "Public projects access" ON public.projects FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only projects" ON public.projects;
+CREATE POLICY "Public read-only projects" ON public.projects FOR SELECT TO anon, authenticated USING (true);
 `
   },
   {
@@ -481,7 +487,8 @@ CREATE TABLE IF NOT EXISTS public.gallery (
 
 ALTER TABLE public.gallery ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public gallery access" ON public.gallery;
-CREATE POLICY "Public gallery access" ON public.gallery FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only gallery" ON public.gallery;
+CREATE POLICY "Public read-only gallery" ON public.gallery FOR SELECT TO anon, authenticated USING (true);
 `
   },
   {
@@ -513,7 +520,8 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
 
 ALTER TABLE public.profile_settings ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public profile access" ON public.profile_settings;
-CREATE POLICY "Public profile access" ON public.profile_settings FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only profile" ON public.profile_settings;
+CREATE POLICY "Public read-only profile" ON public.profile_settings FOR SELECT TO anon, authenticated USING (true);
 `
   },
   {
@@ -555,10 +563,12 @@ ALTER TABLE public.pricing_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pricing_addons ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public pricing plans access" ON public.pricing_plans;
-CREATE POLICY "Public pricing plans access" ON public.pricing_plans FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only pricing plans" ON public.pricing_plans;
+CREATE POLICY "Public read-only pricing plans" ON public.pricing_plans FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Public pricing addons access" ON public.pricing_addons;
-CREATE POLICY "Public pricing addons access" ON public.pricing_addons FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only pricing addons" ON public.pricing_addons;
+CREATE POLICY "Public read-only pricing addons" ON public.pricing_addons FOR SELECT TO anon, authenticated USING (true);
 `
   },
   {
@@ -635,13 +645,16 @@ ALTER TABLE public.tools ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tool_settings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public tool categories access" ON public.tool_categories;
-CREATE POLICY "Public tool categories access" ON public.tool_categories FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only tool categories" ON public.tool_categories;
+CREATE POLICY "Public read-only tool categories" ON public.tool_categories FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Public tools access" ON public.tools;
-CREATE POLICY "Public tools access" ON public.tools FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only tools" ON public.tools;
+CREATE POLICY "Public read-only tools" ON public.tools FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Public tool settings access" ON public.tool_settings;
-CREATE POLICY "Public tool settings access" ON public.tool_settings FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public read-only tool settings" ON public.tool_settings;
+CREATE POLICY "Public read-only tool settings" ON public.tool_settings FOR SELECT TO anon, authenticated USING (true);
 `
   },
   {

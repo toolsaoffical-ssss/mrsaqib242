@@ -602,17 +602,13 @@ CREATE TABLE IF NOT EXISTS public.site_analytics (
 -- Row Level Security (RLS)
 ALTER TABLE public.site_analytics ENABLE ROW LEVEL SECURITY;
 
--- Allow public / clients to record visits and tool clicks
+-- Allow public / clients to record visits and tool clicks (INSERT only)
 DROP POLICY IF EXISTS "Public can record analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public can view analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public site analytics access" ON public.site_analytics;
 CREATE POLICY "Public can record analytics"
 ON public.site_analytics FOR INSERT
-WITH CHECK (true);
-
--- Allow viewing and managing analytics
-DROP POLICY IF EXISTS "Public can view analytics" ON public.site_analytics;
-CREATE POLICY "Public can view analytics"
-ON public.site_analytics FOR ALL
-USING (true)
+TO anon, authenticated
 WITH CHECK (true);
 
 -- Indexes for lightning fast queries and aggregation

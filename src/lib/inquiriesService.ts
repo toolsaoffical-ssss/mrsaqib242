@@ -122,6 +122,23 @@ export async function fetchInquiriesFromDB(): Promise<{
 }> {
   const localData = getLocalInquiries();
 
+  try {
+    const res = await fetch('/api/admin/inquiries', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.inquiries)) {
+        setLocalInquiries(json.inquiries);
+        return { inquiries: json.inquiries, fromDatabase: true, error: null };
+      }
+    }
+  } catch (apiErr) {
+    // API fetch fallback
+  }
+
   if (!isSupabaseConfigured()) {
     return { inquiries: localData, fromDatabase: false };
   }
@@ -133,7 +150,6 @@ export async function fetchInquiriesFromDB(): Promise<{
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.warn('Supabase fetch error for client_inquiries:', error.message);
       return {
         inquiries: localData,
         fromDatabase: false,
@@ -143,7 +159,6 @@ export async function fetchInquiriesFromDB(): Promise<{
 
     if (data && Array.isArray(data)) {
       if (data.length === 0) {
-        // If table exists but is empty, try seeding defaults or return local
         return { inquiries: localData, fromDatabase: true };
       }
       setLocalInquiries(data as ClientInquiry[]);
@@ -152,7 +167,6 @@ export async function fetchInquiriesFromDB(): Promise<{
 
     return { inquiries: localData, fromDatabase: false };
   } catch (err: any) {
-    console.warn('Network error fetching inquiries:', err);
     return {
       inquiries: localData,
       fromDatabase: false,
@@ -224,7 +238,7 @@ export async function submitInquiryToDB(inquiry: Omit<ClientInquiry, 'id' | 'cre
   const updated = [fullInquiry, ...current.filter(i => i.id !== newId)];
   setLocalInquiries(updated);
 
-  // 2. Persist to Supabase if configured
+  // 2. Persist to Supabase if configured (Allowed by RLS for public INSERT)
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
@@ -263,22 +277,38 @@ export async function updateInquiryInDB(
   const updated = current.map(item => (item.id === id ? { ...item, ...payload } : item));
   setLocalInquiries(updated);
 
-  if (!isSupabaseConfigured()) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase
-      .from('client_inquiries')
-      .update(payload)
-      .eq('id', id);
+    const res = await fetch('/api/admin/inquiries', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ id, updates: payload })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, error: null };
+      return { success: false, error: json.error || 'Failed to update inquiry' };
     }
-    return { success: true, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    if (!isSupabaseConfigured()) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('client_inquiries')
+        .update(payload)
+        .eq('id', id);
+
+      if (error) return { success: false, error: error.message };
+      return { success: true, error: null };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
@@ -291,22 +321,38 @@ export async function deleteInquiryFromDB(id: string): Promise<{ success: boolea
   const updated = current.filter(item => item.id !== id);
   setLocalInquiries(updated);
 
-  if (!isSupabaseConfigured()) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase
-      .from('client_inquiries')
-      .delete()
-      .eq('id', id);
+    const res = await fetch('/api/admin/inquiries', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ id })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, error: null };
+      return { success: false, error: json.error || 'Failed to delete inquiry' };
     }
-    return { success: true, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    if (!isSupabaseConfigured()) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('client_inquiries')
+        .delete()
+        .eq('id', id);
+
+      if (error) return { success: false, error: error.message };
+      return { success: true, error: null };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
@@ -314,22 +360,38 @@ export async function deleteInquiryFromDB(id: string): Promise<{ success: boolea
  * Seed initial sample inquiries to Supabase
  */
 export async function seedDefaultInquiriesToDB(): Promise<{ count: number; error?: string | null }> {
-  if (!isSupabaseConfigured()) {
-    return { count: 0, error: 'Supabase is not configured' };
-  }
-
   try {
-    const { data, error } = await supabase
-      .from('client_inquiries')
-      .upsert(DEFAULT_INQUIRIES)
-      .select();
+    const res = await fetch('/api/admin/inquiries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ action: 'seed', inquiries: DEFAULT_INQUIRIES })
+    });
 
-    if (error) {
-      return { count: 0, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { count: json.count || DEFAULT_INQUIRIES.length, error: null };
+      return { count: 0, error: json.error || 'Failed to seed inquiries' };
     }
-    return { count: data?.length || DEFAULT_INQUIRIES.length, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { count: 0, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { count: 0, error: err.message };
+    if (!isSupabaseConfigured()) {
+      return { count: 0, error: 'Supabase is not configured' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('client_inquiries')
+        .upsert(DEFAULT_INQUIRIES)
+        .select();
+
+      if (error) return { count: 0, error: error.message };
+      return { count: data?.length || DEFAULT_INQUIRIES.length, error: null };
+    } catch (fallbackErr: any) {
+      return { count: 0, error: fallbackErr.message || err.message };
+    }
   }
 }
 
@@ -361,17 +423,14 @@ CREATE TABLE IF NOT EXISTS public.client_inquiries (
 -- Row Level Security (RLS)
 ALTER TABLE public.client_inquiries ENABLE ROW LEVEL SECURITY;
 
--- Allow public to submit inquiries (INSERT)
+-- Allow public to submit inquiries (INSERT only)
 DROP POLICY IF EXISTS "Public can submit inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public can view inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public can view and manage inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public inquiries access" ON public.client_inquiries;
 CREATE POLICY "Public can submit inquiries"
 ON public.client_inquiries FOR INSERT
-WITH CHECK (true);
-
--- Allow viewing and managing inquiries (Admin access)
-DROP POLICY IF EXISTS "Public can view and manage inquiries" ON public.client_inquiries;
-CREATE POLICY "Public can view and manage inquiries"
-ON public.client_inquiries FOR ALL
-USING (true)
+TO anon, authenticated
 WITH CHECK (true);
 
 -- Index for fast sorting and status queries

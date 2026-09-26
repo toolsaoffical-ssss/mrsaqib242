@@ -445,12 +445,12 @@ export const DEFAULT_PROJECTS: ProjectItem[] = [
     display_order: 39
   },
   { 
-    name: "Social Media Phishing", 
-    url: "https://saqib-pishing-attack.vercel.app/", 
-    tags: ["Security"], 
+    name: "Cyber Security Simulator", 
+    url: "https://shortpro.vercel.app/", 
+    tags: ["Security", "Education"], 
     restricted: false,
-    description: "Interactive security education simulator and phishing attack vulnerability checking demonstration tool.",
-    gradient: "from-red-600 to-black",
+    description: "Interactive cyber security education simulator demonstrating authentication security and awareness best practices.",
+    gradient: "from-blue-600 to-indigo-900",
     category: "Security",
     is_active: true,
     display_order: 40
@@ -518,100 +518,142 @@ export async function fetchProjectsFromDB(): Promise<{ projects: ProjectItem[]; 
 
 export async function createProjectInDB(project: Omit<ProjectItem, 'id' | 'created_at'>): Promise<{ data: any; error: string | null }> {
   try {
-    const { data, error } = await supabase
-      .from('projects')
-      .insert([
-        {
-          name: project.name,
-          url: project.url,
-          description: project.description,
-          category: project.category || (project.tags && project.tags[0]) || 'Portfolio',
-          tags: project.tags,
-          gradient: project.gradient || 'from-blue-600 via-indigo-500 to-purple-600',
-          restricted: project.restricted || false,
-          is_active: project.is_active !== undefined ? project.is_active : true,
-          display_order: project.display_order || 0
-        }
-      ])
-      .select()
-      .single();
+    const res = await fetch('/api/admin/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ project })
+    });
 
-    if (error) {
-      return { data: null, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { data: json.data, error: null };
+      return { data: null, error: json.error || 'Failed to insert project via admin API' };
     }
-    return { data, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { data: null, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { data: null, error: err.message || 'Failed to insert project' };
+    // Direct client fallback if API route unreachable
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .insert([
+          {
+            name: project.name,
+            url: project.url,
+            description: project.description,
+            category: project.category || (project.tags && project.tags[0]) || 'Portfolio',
+            tags: project.tags,
+            gradient: project.gradient || 'from-blue-600 via-indigo-500 to-purple-600',
+            restricted: project.restricted || false,
+            is_active: project.is_active !== undefined ? project.is_active : true,
+            display_order: project.display_order || 0
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) return { data: null, error: error.message };
+      return { data, error: null };
+    } catch (fallbackErr: any) {
+      return { data: null, error: fallbackErr.message || err.message || 'Failed to insert project' };
+    }
   }
 }
 
 export async function updateProjectInDB(id: string, updates: Partial<ProjectItem>): Promise<{ success: boolean; error: string | null }> {
   try {
-    const payload: any = {};
-    if (updates.name !== undefined) payload.name = updates.name;
-    if (updates.url !== undefined) payload.url = updates.url;
-    if (updates.description !== undefined) payload.description = updates.description;
-    if (updates.category !== undefined) payload.category = updates.category;
-    if (updates.tags !== undefined) payload.tags = updates.tags;
-    if (updates.gradient !== undefined) payload.gradient = updates.gradient;
-    if (updates.restricted !== undefined) payload.restricted = updates.restricted;
-    if (updates.is_active !== undefined) payload.is_active = updates.is_active;
-    if (updates.display_order !== undefined) payload.display_order = updates.display_order;
+    const res = await fetch('/api/admin/projects', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ id, updates })
+    });
 
-    const { error } = await supabase
-      .from('projects')
-      .update(payload)
-      .eq('id', id);
-
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, error: null };
+      return { success: false, error: json.error || 'Failed to update project' };
     }
-    return { success: true, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to update project' };
+    try {
+      const { error } = await supabase.from('projects').update(updates).eq('id', id);
+      if (error) return { success: false, error: error.message };
+      return { success: true, error: null };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
 export async function deleteProjectFromDB(id: string): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', id);
+    const res = await fetch('/api/admin/projects', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ id })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, error: null };
+      return { success: false, error: json.error || 'Failed to delete project' };
     }
-    return { success: true, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to delete project' };
+    try {
+      const { error } = await supabase.from('projects').delete().eq('id', id);
+      if (error) return { success: false, error: error.message };
+      return { success: true, error: null };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
 export async function seedAllDefaultProjectsToDB(): Promise<{ count: number; error: string | null }> {
   try {
-    const rows = DEFAULT_PROJECTS.map((p, idx) => ({
-      name: p.name,
-      url: p.url,
-      description: p.description,
-      category: p.category || p.tags[0] || 'Portfolio',
-      tags: p.tags,
-      gradient: p.gradient,
-      restricted: p.restricted || false,
-      is_active: true,
-      display_order: idx + 1
-    }));
+    const res = await fetch('/api/admin/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ action: 'seed', projects: DEFAULT_PROJECTS })
+    });
 
-    const { data, error } = await supabase
-      .from('projects')
-      .insert(rows)
-      .select();
-
-    if (error) {
-      return { count: 0, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { count: json.count || DEFAULT_PROJECTS.length, error: null };
+      return { count: 0, error: json.error || 'Failed to seed projects' };
     }
-    return { count: data?.length || rows.length, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { count: 0, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { count: 0, error: err.message || 'Failed to seed projects' };
+    try {
+      const rows = DEFAULT_PROJECTS.map((p, idx) => ({
+        name: p.name,
+        url: p.url,
+        description: p.description,
+        category: p.category || p.tags[0] || 'Portfolio',
+        tags: p.tags,
+        gradient: p.gradient,
+        restricted: p.restricted || false,
+        is_active: true,
+        display_order: idx + 1
+      }));
+
+      const { data, error } = await supabase.from('projects').insert(rows).select();
+      if (error) return { count: 0, error: error.message };
+      return { count: data?.length || rows.length, error: null };
+    } catch (fallbackErr: any) {
+      return { count: 0, error: fallbackErr.message || err.message };
+    }
   }
 }

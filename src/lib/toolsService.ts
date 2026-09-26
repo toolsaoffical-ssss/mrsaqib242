@@ -497,26 +497,41 @@ export async function saveToolPageSettingsToDB(
 ): Promise<{ success: boolean; error?: string }> {
   setLocalPageSettings(settings);
 
-  if (!isSupabaseConfigured()) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase
-      .from('tool_settings')
-      .upsert({
-        ...settings,
-        id: 'default',
-        updated_at: new Date().toISOString()
-      });
+    const res = await fetch('/api/admin/tools', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'settings', settings })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+      return { success: false, error: json.error || 'Failed to save tool settings' };
     }
-    return { success: true };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return { success: false, error: msg };
+    if (!isSupabaseConfigured()) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tool_settings')
+        .upsert({
+          ...settings,
+          id: 'default',
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message };
+    }
   }
 }
 
@@ -525,6 +540,22 @@ export async function saveToolPageSettingsToDB(
  */
 export async function resetToolPageSettingsToDefaults(): Promise<{ success: boolean; error?: string }> {
   setLocalPageSettings(DEFAULT_TOOL_PAGE_SETTINGS);
+
+  try {
+    const res = await fetch('/api/admin/tools', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'settings', settings: DEFAULT_TOOL_PAGE_SETTINGS })
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+    }
+  } catch {
+    // continue to fallback
+  }
 
   if (!isSupabaseConfigured()) {
     return { success: true };
@@ -636,25 +667,40 @@ export async function saveToolCategoryToDB(
     : [...currentList, category];
   setLocalCategories(updatedList);
 
-  if (!isSupabaseConfigured()) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase
-      .from('tool_categories')
-      .upsert({
-        ...category,
-        updated_at: new Date().toISOString()
-      });
+    const res = await fetch('/api/admin/tools', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'category', category })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+      return { success: false, error: json.error || 'Failed to save tool category' };
     }
-    return { success: true };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return { success: false, error: msg };
+    if (!isSupabaseConfigured()) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tool_categories')
+        .upsert({
+          ...category,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message };
+    }
   }
 }
 
@@ -668,23 +714,38 @@ export async function deleteToolCategoryFromDB(
   const updatedList = currentList.filter(c => c.id !== id);
   setLocalCategories(updatedList);
 
-  if (!isSupabaseConfigured()) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase
-      .from('tool_categories')
-      .delete()
-      .eq('id', id);
+    const res = await fetch('/api/admin/tools', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'category', id })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+      return { success: false, error: json.error || 'Failed to delete tool category' };
     }
-    return { success: true };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return { success: false, error: msg };
+    if (!isSupabaseConfigured()) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tool_categories')
+        .delete()
+        .eq('id', id);
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message };
+    }
   }
 }
 
@@ -701,25 +762,40 @@ export async function saveToolItemToDB(
     : [...currentList, tool];
   setLocalTools(updatedList);
 
-  if (!isSupabaseConfigured()) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase
-      .from('tools')
-      .upsert({
-        ...tool,
-        updated_at: new Date().toISOString()
-      });
+    const res = await fetch('/api/admin/tools', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'tool', tool })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+      return { success: false, error: json.error || 'Failed to save tool' };
     }
-    return { success: true };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return { success: false, error: msg };
+    if (!isSupabaseConfigured()) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tools')
+        .upsert({
+          ...tool,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message };
+    }
   }
 }
 
@@ -733,21 +809,40 @@ export async function deleteToolItemFromDB(
   const updatedList = currentList.filter(t => t.id !== id);
   setLocalTools(updatedList);
 
-  if (!isSupabaseConfigured()) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase
-      .from('tools')
-      .delete()
-      .eq('id', id);
+    const res = await fetch('/api/admin/tools', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'tool', id })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+      return { success: false, error: json.error || 'Failed to delete tool' };
     }
-    return { success: true };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: unknown) {
+    if (!isSupabaseConfigured()) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tools')
+        .delete()
+        .eq('id', id);
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message };
+    }
+  }
+}
     const msg = err instanceof Error ? err.message : String(err);
     return { success: false, error: msg };
   }

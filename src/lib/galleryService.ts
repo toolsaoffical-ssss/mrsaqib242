@@ -59,66 +59,114 @@ export async function fetchGalleryFromDB(): Promise<{
 
 export async function createGalleryItemInDB(item: Omit<GalleryItem, 'id' | 'created_at' | 'updated_at'>): Promise<{ data: any; error: string | null }> {
   try {
-    const { data, error } = await supabase
-      .from('gallery')
-      .insert([
-        {
-          title: item.title || 'Visual Photo',
-          image_url: item.image_url,
-          category: item.category || 'Visual',
-          display_order: item.display_order || 0,
-          is_active: item.is_active !== undefined ? item.is_active : true
-        }
-      ])
-      .select()
-      .single();
+    const res = await fetch('/api/admin/gallery', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ item })
+    });
 
-    if (error) {
-      return { data: null, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { data: json.data, error: null };
+      return { data: null, error: json.error || 'Failed to insert gallery image' };
     }
-    return { data, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { data: null, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { data: null, error: err.message || 'Failed to insert gallery image' };
+    try {
+      const { data, error } = await supabase
+        .from('gallery')
+        .insert([
+          {
+            title: item.title || 'Visual Photo',
+            image_url: item.image_url,
+            category: item.category || 'Visual',
+            display_order: item.display_order || 0,
+            is_active: item.is_active !== undefined ? item.is_active : true
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) return { data: null, error: error.message };
+      return { data, error: null };
+    } catch (fallbackErr: any) {
+      return { data: null, error: fallbackErr.message || err.message || 'Failed to insert gallery image' };
+    }
   }
 }
 
 export async function updateGalleryItemInDB(id: string, updates: Partial<GalleryItem>): Promise<{ success: boolean; error: string | null }> {
   try {
-    const payload: any = {
-      updated_at: new Date().toISOString()
-    };
-    if (updates.title !== undefined) payload.title = updates.title;
-    if (updates.image_url !== undefined) payload.image_url = updates.image_url;
-    if (updates.category !== undefined) payload.category = updates.category;
-    if (updates.display_order !== undefined) payload.display_order = updates.display_order;
-    if (updates.is_active !== undefined) payload.is_active = updates.is_active;
+    const res = await fetch('/api/admin/gallery', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ id, updates })
+    });
 
-    const { error } = await supabase
-      .from('gallery')
-      .update(payload)
-      .eq('id', id);
-
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, error: null };
+      return { success: false, error: json.error || 'Failed to update gallery image' };
     }
-    return { success: true, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to update gallery image' };
+    try {
+      const payload: any = {
+        updated_at: new Date().toISOString()
+      };
+      if (updates.title !== undefined) payload.title = updates.title;
+      if (updates.image_url !== undefined) payload.image_url = updates.image_url;
+      if (updates.category !== undefined) payload.category = updates.category;
+      if (updates.display_order !== undefined) payload.display_order = updates.display_order;
+      if (updates.is_active !== undefined) payload.is_active = updates.is_active;
+
+      const { error } = await supabase
+        .from('gallery')
+        .update(payload)
+        .eq('id', id);
+
+      if (error) return { success: false, error: error.message };
+      return { success: true, error: null };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
 export async function deleteGalleryItemInDB(id: string): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase
-      .from('gallery')
-      .delete()
-      .eq('id', id);
+    const res = await fetch('/api/admin/gallery', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ id })
+    });
 
-    if (error) {
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, error: null };
+      return { success: false, error: json.error || 'Failed to delete gallery image' };
     }
-    return { success: true, error: null };
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to delete gallery image' };
+    try {
+      const { error } = await supabase
+        .from('gallery')
+        .delete()
+        .eq('id', id);
+
+      if (error) return { success: false, error: error.message };
+      return { success: true, error: null };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }

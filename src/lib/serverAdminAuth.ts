@@ -19,15 +19,46 @@ const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || 'saqib_master
 const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'saqib').trim().toLowerCase();
 const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'saqib242';
 
-function computeHash(password: string, salt: string): string {
-  return crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
+export function computeHash(password: string, salt: string, iterations = 100000): string {
+  return crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha256').toString('hex');
+}
+
+export function safeCompare(a: string, b: string): boolean {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+export function verifyPassword(inputPassword: string, salt: string, storedHash: string): { match: boolean; needsUpgrade: boolean } {
+  if (!inputPassword || !storedHash) return { match: false, needsUpgrade: false };
+
+  // 1. Check 100,000 iterations (standard hardened PBKDF2)
+  const hash100k = computeHash(inputPassword, salt, 100000);
+  if (safeCompare(hash100k, storedHash)) {
+    return { match: true, needsUpgrade: false };
+  }
+
+  // 2. Check 10,000 iterations (legacy fallback so existing passwords never break)
+  const hash10k = computeHash(inputPassword, salt, 10000);
+  if (safeCompare(hash10k, storedHash)) {
+    return { match: true, needsUpgrade: true };
+  }
+
+  // 3. Check plain text (if password was manually updated directly in Supabase table)
+  if (safeCompare(inputPassword, storedHash)) {
+    return { match: true, needsUpgrade: true };
+  }
+
+  return { match: false, needsUpgrade: false };
 }
 
 // In-memory runtime store fallback (used if database table is not yet migrated)
 let memoryAdminState: AdminCredentialRecord = {
   id: 'master_admin',
   username: ENV_ADMIN_USERNAME,
-  password_hash: process.env.ADMIN_PASSWORD_HASH || computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT),
+  password_hash: process.env.ADMIN_PASSWORD_HASH || computeHash(ENV_ADMIN_PASSWORD, DEFAULT_INITIAL_SALT, 100000),
   salt: DEFAULT_INITIAL_SALT,
   session_secret: DEFAULT_INITIAL_SECRET,
   role: 'super_admin',
@@ -82,9 +113,14 @@ export function validateRequestOrigin(req: NextApiRequest): boolean {
   const host = req.headers['host'];
   const origin = req.headers['origin'];
   const referer = req.headers['referer'];
+  const method = (req.method || 'GET').toUpperCase();
+  const isStateChanging = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
 
-  if (!origin && !referer) {
-    return true; // Allow direct or non-browser API client
+  // In production, reject state-changing requests that have NO origin and NO referer (blind CSRF prevention)
+  if (process.env.NODE_ENV === 'production' && isStateChanging) {
+    if (!origin && !referer) {
+      return false;
+    }
   }
 
   if (origin) {
@@ -105,7 +141,7 @@ export function validateRequestOrigin(req: NextApiRequest): boolean {
     }
   }
 
-  return false;
+  return !isStateChanging || process.env.NODE_ENV !== 'production';
 }
 
 // HttpOnly, Secure, SameSite=Strict Cookie Management
@@ -253,40 +289,34 @@ export async function authenticateAdmin(
   const cleanUser = (usernameInput || '').trim().toLowerCase();
   const cleanPass = passwordInput || '';
 
-  // Constant-time string comparison to prevent side-channel timing attacks
-  const safeCompare = (a: string, b: string): boolean => {
-    if (typeof a !== 'string' || typeof b !== 'string') return false;
-    const bufA = Buffer.from(a);
-    const bufB = Buffer.from(b);
-    if (bufA.length !== bufB.length) return false;
-    return crypto.timingSafeEqual(bufA, bufB);
-  };
-
   // 1. Username Match
   const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser) || 
                       safeCompare(cleanUser, ENV_ADMIN_USERNAME);
 
-  // 2. Check if incoming password matches the active record (either hash or plain-text if manually updated in DB)
-  const incomingHash = computeHash(cleanPass, record.salt || DEFAULT_INITIAL_SALT);
+  // 2. Check if incoming password matches active record (100k iterations, 10k legacy, or plain-text)
+  const passwordCheck = verifyPassword(cleanPass, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
   const isPlainTextDBMatch = safeCompare(cleanPass, record.password_hash);
-  const isHashMatch = safeCompare(incomingHash, record.password_hash);
-  let isPassMatch = isHashMatch || isPlainTextDBMatch;
+  let isPassMatch = passwordCheck.match;
 
   // 3. If a custom ADMIN_PASSWORD environment variable is set in Vercel, verify against it
   if (!isPassMatch && process.env.ADMIN_PASSWORD) {
-    const envHash = computeHash(process.env.ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT);
-    if (safeCompare(cleanPass, process.env.ADMIN_PASSWORD) || safeCompare(incomingHash, envHash)) {
+    if (safeCompare(cleanPass, process.env.ADMIN_PASSWORD)) {
       isPassMatch = true;
+    } else {
+      const envCheck = verifyPassword(cleanPass, record.salt || DEFAULT_INITIAL_SALT, computeHash(process.env.ADMIN_PASSWORD, record.salt || DEFAULT_INITIAL_SALT, 100000));
+      if (envCheck.match) {
+        isPassMatch = true;
+      }
     }
   }
 
   // 4. Default fallback: ONLY allow saqib242 if NO password change has EVER taken place
-  // (i.e. record still has the pristine initial default hash AND no env password override)
-  const defaultInitialHash = computeHash('saqib242', DEFAULT_INITIAL_SALT);
-  const isPristineDefaultRecord = safeCompare(record.password_hash, defaultInitialHash) && !process.env.ADMIN_PASSWORD;
+  const default10k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 10000);
+  const default100k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 100000);
+  const isPristineDefaultRecord = (safeCompare(record.password_hash, default10k) || safeCompare(record.password_hash, default100k)) && !process.env.ADMIN_PASSWORD;
 
   if (!isPassMatch && isPristineDefaultRecord) {
-    if (safeCompare(cleanPass, 'saqib242') || safeCompare(incomingHash, defaultInitialHash)) {
+    if (safeCompare(cleanPass, 'saqib242')) {
       isPassMatch = true;
     }
   }
@@ -307,11 +337,11 @@ export async function authenticateAdmin(
           failed_attempts: 0
         };
 
-        // If user entered plain text in Supabase, auto-upgrade it to a salted PBKDF2 hash!
-        if (isPlainTextDBMatch) {
+        // If legacy 10k hash or plain text was detected, auto-upgrade to 100k salted hash!
+        if (passwordCheck.needsUpgrade || isPlainTextDBMatch) {
           const freshSalt = crypto.randomBytes(16).toString('hex');
           updatePayload.salt = freshSalt;
-          updatePayload.password_hash = computeHash(cleanPass, freshSalt);
+          updatePayload.password_hash = computeHash(cleanPass, freshSalt, 100000);
         }
 
         await clientToUse
@@ -374,28 +404,22 @@ export async function updateAdminCredentials(
 
   const record = await getAdminRecord();
 
-  const safeCompare = (a: string, b: string): boolean => {
-    if (typeof a !== 'string' || typeof b !== 'string') return false;
-    const bufA = Buffer.from(a);
-    const bufB = Buffer.from(b);
-    if (bufA.length !== bufB.length) return false;
-    return crypto.timingSafeEqual(bufA, bufB);
-  };
-
   // Verify current password strictly using timing-safe comparison
-  const currentHash = computeHash(currentPassword, record.salt || DEFAULT_INITIAL_SALT);
-  const isCurrentValid = safeCompare(currentHash, record.password_hash) ||
-                         safeCompare(currentPassword, record.password_hash) ||
+  const checkCurrent = verifyPassword(currentPassword, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
+  const default10k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 10000);
+  const default100k = computeHash('saqib242', DEFAULT_INITIAL_SALT, 100000);
+
+  const isCurrentValid = checkCurrent.match ||
                          ((record.username.toLowerCase() === 'saqib' || record.username.toLowerCase() === ENV_ADMIN_USERNAME) && 
-                          (safeCompare(currentPassword, ENV_ADMIN_PASSWORD) || safeCompare(currentPassword, 'saqib242') || safeCompare(currentHash, computeHash('saqib242', DEFAULT_INITIAL_SALT))));
+                          (safeCompare(currentPassword, ENV_ADMIN_PASSWORD) || safeCompare(currentPassword, 'saqib242') || safeCompare(record.password_hash, default10k) || safeCompare(record.password_hash, default100k)));
 
   if (!isCurrentValid) {
     return { success: false, message: 'Current password verification failed. Unauthorized change.' };
   }
 
-  // Generate fresh cryptographic salt & hash for the new password
+  // Generate fresh cryptographic salt & hash for the new password (100k iterations)
   const newSalt = crypto.randomBytes(16).toString('hex');
-  const newHash = computeHash(newPassword, newSalt);
+  const newHash = computeHash(newPassword, newSalt, 100000);
   const newSecret = crypto.randomBytes(32).toString('hex');
   const sanitizedUsername = newUsername.trim();
 
@@ -493,9 +517,17 @@ ON CONFLICT (id) DO UPDATE SET
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
 
--- Allow full access for backend API operations
+-- 🛡️ SECURITY SHIELD: Completely deny all public anonymous access!
+-- Supabase Service Role Key automatically bypasses RLS safely on the server.
 DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
-CREATE POLICY "Public backend auth access" ON public.admin_auth FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Public admin_auth access" ON public.admin_auth;
+DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
+CREATE POLICY "Deny anonymous access to admin_auth" 
+ON public.admin_auth 
+FOR ALL 
+TO anon 
+USING (false) 
+WITH CHECK (false);
 
 -- Auto-update updated_at timestamp trigger
 CREATE OR REPLACE FUNCTION update_admin_auth_timestamp()

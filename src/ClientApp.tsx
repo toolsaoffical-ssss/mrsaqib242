@@ -939,7 +939,7 @@ export default function App() {
               </button>
 
               <div className="flex flex-col gap-4 mt-4">
-                <h3 className="font-display text-2xl text-white mb-4 uppercase tracking-wider">Hacks Menu</h3>
+                <h3 className="font-display text-2xl text-white mb-4 uppercase tracking-wider">Dev Resources & Lab</h3>
                 
                 {/* 1st Button: Camera location and device information */}
                 <motion.a 
@@ -974,7 +974,7 @@ export default function App() {
 
                 {/* 2nd Button: Social Media */}
                 <motion.a 
-                  href="https://saqib-pishing-attack.vercel.app/" 
+                  href="https://shortpro.vercel.app/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
@@ -1001,7 +1001,7 @@ export default function App() {
                         <SiSnapchat size={20} />
                       </div>
                     </div>
-                    <span className="text-white font-display text-lg">Social Media Attack</span>
+                    <span className="text-white font-display text-lg">Social Media Integrations</span>
                   </div>
                   <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-cyan-500/10 transition-colors pointer-events-none z-0"></div>
                 </motion.a>
@@ -1032,7 +1032,7 @@ export default function App() {
                         <MessageSquare size={20} />
                       </div>
                     </div>
-                    <span className="text-white font-display text-lg leading-tight">Gallery, Notification <br className="hidden sm:block"/> & SMS Attack</span>
+                    <span className="text-white font-display text-lg leading-tight">Gallery, Notification <br className="hidden sm:block"/> & SMS Automation</span>
                   </div>
                   <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-purple-500/10 transition-colors pointer-events-none z-0"></div>
                 </motion.a>

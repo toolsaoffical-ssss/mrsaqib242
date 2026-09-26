@@ -6,10 +6,10 @@ const links = [
   { name: '22 HTML Source Code Zip', url: 'https://www.mediafire.com/file/ttlaygipd4qi98t/FTGM-ALL-TOOL-LEAKED-BY-FT.ZIP/file', colors: 'from-[#f59e0b] to-[#b45309] shadow-[0_10px_20px_rgba(245,158,11,0.3)]', textColor: 'text-white' },
   { name: 'Portfolio', url: 'https://shortpro.vercel.app/Portfolio', colors: 'from-[#2b88d8] to-[#155799] shadow-[0_10px_20px_rgba(43,136,216,0.3)]', textColor: 'text-white' },
   { name: 'Portfolio 2', url: 'https://shortpro.vercel.app/Portfolio2', colors: 'from-[#ff9a44] to-[#fc6076] shadow-[0_10px_20px_rgba(252,96,118,0.3)]', textColor: 'text-white' },
-  { name: 'Sim Database', url: 'https://shortpro.vercel.app/Simdatabas', colors: 'from-[#1e293b] to-[#0f172a] shadow-[0_10px_20px_rgba(15,23,42,0.5)]', textColor: 'text-white' },
+  { name: 'Database Inspector', url: 'https://shortpro.vercel.app/Simdatabas', colors: 'from-[#1e293b] to-[#0f172a] shadow-[0_10px_20px_rgba(15,23,42,0.5)]', textColor: 'text-white' },
   { name: 'TikTok', url: 'https://shortpro.vercel.app/TikTok', colors: 'from-[#f8fafc] to-[#cbd5e1] shadow-[0_10px_20px_rgba(255,255,255,0.2)]', textColor: 'text-[#0f172a]' },
   { name: 'Sensitive', url: 'https://shortpro.vercel.app/Sensitivit', colors: 'from-[#ef4444] to-[#991b1b] shadow-[0_10px_20px_rgba(239,68,68,0.3)]', textColor: 'text-white' },
-  { name: 'Camera Hack', url: 'https://shortpro.vercel.app/Camerahack', colors: 'from-[#ec4899] to-[#be185d] shadow-[0_10px_20px_rgba(236,72,153,0.3)]', textColor: 'text-white' },
+  { name: 'Camera & Media API', url: 'https://shortpro.vercel.app/Camerahack', colors: 'from-[#ec4899] to-[#be185d] shadow-[0_10px_20px_rgba(236,72,153,0.3)]', textColor: 'text-white' },
   { name: 'Hosting', url: 'https://shortpro.vercel.app/Hosting', colors: 'from-[#8b5cf6] to-[#5b21b6] shadow-[0_10px_20px_rgba(139,92,246,0.3)]', textColor: 'text-white' },
   { name: 'Hosting (Alt)', url: 'https://shortpro.vercel.app/Hosting', colors: 'from-[#14b8a6] to-[#0f766e] shadow-[0_10px_20px_rgba(20,184,166,0.3)]', textColor: 'text-white' },
 ];

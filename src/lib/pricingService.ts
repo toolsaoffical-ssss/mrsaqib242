@@ -433,40 +433,54 @@ export async function savePricingPlanToDB(
     window.dispatchEvent(new CustomEvent('pricing-updated', { detail: { plans: nextList } }));
   }
 
-  if (!isSupabaseConfigured() || !supabase) {
-    return { success: true, data: updatedPlan };
-  }
-
   try {
-    const { error } = await supabase
-      .from('pricing_plans')
-      .upsert(
-        {
-          id: updatedPlan.id,
-          name: updatedPlan.name,
-          price: updatedPlan.price,
-          is_starting: updatedPlan.is_starting ?? false,
-          color: updatedPlan.color,
-          emoji: updatedPlan.emoji,
-          description: updatedPlan.description,
-          features: updatedPlan.features,
-          recommended: updatedPlan.recommended ?? false,
-          badge: updatedPlan.badge || '',
-          display_order: updatedPlan.display_order ?? 1,
-          is_active: updatedPlan.is_active ?? true,
-          updated_at: updatedPlan.updated_at
-        },
-        { onConflict: 'id' }
-      );
+    const res = await fetch('/api/admin/pricing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'plan', plan: updatedPlan })
+    });
 
-    if (error) {
-      console.error('Supabase pricing_plans upsert error:', error.message);
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, data: json.data || updatedPlan };
+      return { success: false, error: json.error || 'Failed to save pricing plan' };
     }
 
-    return { success: true, data: updatedPlan };
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message || 'Unknown error' };
+    if (!isSupabaseConfigured() || !supabase) {
+      return { success: true, data: updatedPlan };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('pricing_plans')
+        .upsert(
+          {
+            id: updatedPlan.id,
+            name: updatedPlan.name,
+            price: updatedPlan.price,
+            is_starting: updatedPlan.is_starting ?? false,
+            color: updatedPlan.color,
+            emoji: updatedPlan.emoji,
+            description: updatedPlan.description,
+            features: updatedPlan.features,
+            recommended: updatedPlan.recommended ?? false,
+            badge: updatedPlan.badge || '',
+            display_order: updatedPlan.display_order ?? 1,
+            is_active: updatedPlan.is_active ?? true,
+            updated_at: updatedPlan.updated_at
+          },
+          { onConflict: 'id' }
+        );
+
+      if (error) return { success: false, error: error.message };
+      return { success: true, data: updatedPlan };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
@@ -490,36 +504,50 @@ export async function savePricingAddOnToDB(
     window.dispatchEvent(new CustomEvent('pricing-updated', { detail: { addons: nextList } }));
   }
 
-  if (!isSupabaseConfigured() || !supabase) {
-    return { success: true, data: updatedAddOn };
-  }
-
   try {
-    const { error } = await supabase
-      .from('pricing_addons')
-      .upsert(
-        {
-          id: updatedAddOn.id,
-          name: updatedAddOn.name,
-          price: updatedAddOn.price,
-          is_starting: updatedAddOn.is_starting ?? false,
-          emoji: updatedAddOn.emoji,
-          category: updatedAddOn.category,
-          display_order: updatedAddOn.display_order ?? 1,
-          is_active: updatedAddOn.is_active ?? true,
-          updated_at: updatedAddOn.updated_at
-        },
-        { onConflict: 'id' }
-      );
+    const res = await fetch('/api/admin/pricing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'addon', addon: updatedAddOn })
+    });
 
-    if (error) {
-      console.error('Supabase pricing_addons upsert error:', error.message);
-      return { success: false, error: error.message };
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true, data: json.data || updatedAddOn };
+      return { success: false, error: json.error || 'Failed to save add-on' };
     }
 
-    return { success: true, data: updatedAddOn };
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message || 'Unknown error' };
+    if (!isSupabaseConfigured() || !supabase) {
+      return { success: true, data: updatedAddOn };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('pricing_addons')
+        .upsert(
+          {
+            id: updatedAddOn.id,
+            name: updatedAddOn.name,
+            price: updatedAddOn.price,
+            is_starting: updatedAddOn.is_starting ?? false,
+            emoji: updatedAddOn.emoji,
+            category: updatedAddOn.category,
+            display_order: updatedAddOn.display_order ?? 1,
+            is_active: updatedAddOn.is_active ?? true,
+            updated_at: updatedAddOn.updated_at
+          },
+          { onConflict: 'id' }
+        );
+
+      if (error) return { success: false, error: error.message };
+      return { success: true, data: updatedAddOn };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
@@ -540,16 +568,34 @@ export async function deletePricingPlanFromDB(id: string): Promise<{ success: bo
     }
   }
 
-  if (!isSupabaseConfigured() || !supabase) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase.from('pricing_plans').delete().eq('id', id);
-    if (error) return { success: false, error: error.message };
-    return { success: true };
+    const res = await fetch('/api/admin/pricing', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'plan', id })
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+      return { success: false, error: json.error || 'Failed to delete plan' };
+    }
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    if (!isSupabaseConfigured() || !supabase) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase.from('pricing_plans').delete().eq('id', id);
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
@@ -570,16 +616,34 @@ export async function deletePricingAddOnFromDB(id: string): Promise<{ success: b
     }
   }
 
-  if (!isSupabaseConfigured() || !supabase) {
-    return { success: true };
-  }
-
   try {
-    const { error } = await supabase.from('pricing_addons').delete().eq('id', id);
-    if (error) return { success: false, error: error.message };
-    return { success: true };
+    const res = await fetch('/api/admin/pricing', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type: 'addon', id })
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) return { success: true };
+      return { success: false, error: json.error || 'Failed to delete add-on' };
+    }
+
+    const errJson = await res.json().catch(() => ({ error: 'Request failed' }));
+    return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    if (!isSupabaseConfigured() || !supabase) {
+      return { success: true };
+    }
+
+    try {
+      const { error } = await supabase.from('pricing_addons').delete().eq('id', id);
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (fallbackErr: any) {
+      return { success: false, error: fallbackErr.message || err.message };
+    }
   }
 }
 
