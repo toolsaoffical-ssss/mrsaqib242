@@ -36,7 +36,6 @@ import {
 import { SiInstagram, SiTiktok, SiFacebook, SiSnapchat, SiWhatsapp } from 'react-icons/si';
 import dynamic from 'next/dynamic';
 import { _0xGlobal as _0xData, _0xGI, useSystemEnforcer, _0xVID } from './core/sys';
-import { AnalyticsTracker } from './components/AnalyticsTracker';
 import { fetchGalleryFromDB } from './lib/galleryService';
 
 
@@ -373,7 +372,6 @@ export default function App() {
       <>
         <WelcomeOverlay />
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
-          <AnalyticsTracker />
           <AllProjectsPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
         </div>
@@ -386,7 +384,6 @@ export default function App() {
       <>
         <WelcomeOverlay />
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
-          <AnalyticsTracker />
           <WebsitePlansPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
         </div>
@@ -399,7 +396,6 @@ export default function App() {
       <>
         <WelcomeOverlay />
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
-          <AnalyticsTracker />
           <MySkillsPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
         </div>
@@ -412,7 +408,6 @@ export default function App() {
       <>
         <WelcomeOverlay />
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
-          <AnalyticsTracker />
           <ContactTeamPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
         </div>
@@ -423,7 +418,6 @@ export default function App() {
   return (
     <div className="min-h-screen selection:bg-accent selection:text-white pb-24">
       <WelcomeOverlay />
-      <AnalyticsTracker />
       <MobileBottomNav currentHash={currentHash} />
       
       <AnimatePresence mode="wait">

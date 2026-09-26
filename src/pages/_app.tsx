@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import Script from 'next/script';
 import { useEffect } from 'react';
+import { AnalyticsTracker } from '../components/AnalyticsTracker';
 import '../index.css';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -164,6 +165,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         `}
       </Script>
 
+      <AnalyticsTracker />
       <Component {...pageProps} />
     </>
   );

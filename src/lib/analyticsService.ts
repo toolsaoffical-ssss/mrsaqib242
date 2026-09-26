@@ -333,6 +333,9 @@ export async function collectDeviceIntel(): Promise<Partial<SiteAnalyticsEntry>>
 /**
  * Fetch all analytics entries from Supabase, with fallback to local cache
  */
+/**
+ * Fetch all analytics entries from /api/analytics/list or Supabase directly
+ */
 export async function fetchSiteAnalyticsFromDB(): Promise<{
   entries: SiteAnalyticsEntry[];
   fromDatabase: boolean;
@@ -343,140 +346,171 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
 }> {
   const localData = getLocalAnalytics();
 
-  if (!isSupabaseConfigured()) {
-    const uniques = new Set(localData.map(d => d.ip_address)).size;
-    const toolClicks = localData.filter(d => d.event_type === 'tool_click').length;
-    return {
-      entries: localData,
-      fromDatabase: false,
-      totalVisits: localData.length,
-      uniqueIps: uniques,
-      totalToolClicks: toolClicks
-    };
-  }
-
+  // 1. Try secure /api/analytics/list endpoint first
   try {
-    const { data, error } = await supabase
-      .from('site_analytics')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(300);
+    const apiRes = await fetch('/api/analytics/list', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
+    });
 
-    if (error) {
-      console.warn('Supabase fetch error for site_analytics:', error.message);
-      const uniques = new Set(localData.map(d => d.ip_address)).size;
-      const toolClicks = localData.filter(d => d.event_type === 'tool_click').length;
-      return {
-        entries: localData,
-        fromDatabase: false,
-        totalVisits: localData.length,
-        uniqueIps: uniques,
-        totalToolClicks: toolClicks,
-        error: error.message
-      };
-    }
-
-    if (data && Array.isArray(data)) {
-      if (data.length === 0) {
-        // Table exists but has no records yet
-        const uniques = new Set(localData.map(d => d.ip_address)).size;
-        const toolClicks = localData.filter(d => d.event_type === 'tool_click').length;
-        return {
-          entries: localData,
-          fromDatabase: true,
-          totalVisits: localData.length,
-          uniqueIps: uniques,
-          totalToolClicks: toolClicks
-        };
+    if (apiRes.ok) {
+      const result = await apiRes.json();
+      if (result.success && Array.isArray(result.entries)) {
+        if (result.entries.length > 0) {
+          setLocalAnalytics(result.entries);
+          const uniques = new Set(result.entries.map((d: any) => d.ip_address)).size;
+          const toolClicks = result.entries.filter((d: any) => d.event_type === 'tool_click').length;
+          return {
+            entries: result.entries,
+            fromDatabase: true,
+            totalVisits: result.entries.length,
+            uniqueIps: uniques,
+            totalToolClicks: toolClicks,
+            error: null
+          };
+        } else if (result.fromDatabase) {
+          return {
+            entries: [],
+            fromDatabase: true,
+            totalVisits: 0,
+            uniqueIps: 0,
+            totalToolClicks: 0,
+            error: null
+          };
+        }
       }
-
-      setLocalAnalytics(data as SiteAnalyticsEntry[]);
-      const uniques = new Set(data.map((d: any) => d.ip_address)).size;
-      const toolClicks = data.filter((d: any) => d.event_type === 'tool_click').length;
-
-      return {
-        entries: data as SiteAnalyticsEntry[],
-        fromDatabase: true,
-        totalVisits: data.length,
-        uniqueIps: uniques,
-        totalToolClicks: toolClicks,
-        error: null
-      };
     }
-
-    const uniques = new Set(localData.map(d => d.ip_address)).size;
-    const toolClicks = localData.filter(d => d.event_type === 'tool_click').length;
-    return {
-      entries: localData,
-      fromDatabase: false,
-      totalVisits: localData.length,
-      uniqueIps: uniques,
-      totalToolClicks: toolClicks
-    };
-  } catch (err: any) {
-    console.warn('Network error fetching site analytics:', err);
-    const uniques = new Set(localData.map(d => d.ip_address)).size;
-    const toolClicks = localData.filter(d => d.event_type === 'tool_click').length;
-    return {
-      entries: localData,
-      fromDatabase: false,
-      totalVisits: localData.length,
-      uniqueIps: uniques,
-      totalToolClicks: toolClicks,
-      error: err.message
-    };
+  } catch (apiErr) {
+    // API route fetch fallback
   }
+
+  // 2. Direct client fallback via Supabase SDK
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('site_analytics')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(300);
+
+      if (!error && Array.isArray(data)) {
+        if (data.length > 0) {
+          setLocalAnalytics(data as SiteAnalyticsEntry[]);
+          const uniques = new Set(data.map((d: any) => d.ip_address)).size;
+          const toolClicks = data.filter((d: any) => d.event_type === 'tool_click').length;
+          return {
+            entries: data as SiteAnalyticsEntry[],
+            fromDatabase: true,
+            totalVisits: data.length,
+            uniqueIps: uniques,
+            totalToolClicks: toolClicks,
+            error: null
+          };
+        } else {
+          return {
+            entries: [],
+            fromDatabase: true,
+            totalVisits: 0,
+            uniqueIps: 0,
+            totalToolClicks: 0,
+            error: null
+          };
+        }
+      } else if (error) {
+        console.warn('Supabase fetch error for site_analytics:', error.message);
+      }
+    } catch (err: any) {
+      console.warn('Network error fetching site analytics:', err);
+    }
+  }
+
+  // 3. Fallback to local cache
+  const uniques = new Set(localData.map(d => d.ip_address)).size;
+  const toolClicks = localData.filter(d => d.event_type === 'tool_click').length;
+  return {
+    entries: localData,
+    fromDatabase: false,
+    totalVisits: localData.length,
+    uniqueIps: uniques,
+    totalToolClicks: toolClicks,
+    error: null
+  };
 }
 
 /**
- * Record a page visit or tool click into Supabase and local cache
+ * Record a page visit or tool click into /api/analytics/record and Supabase
  */
-export async function recordVisitToDB(event: Partial<SiteAnalyticsEntry>): Promise<{ success: boolean }> {
+export async function recordVisitToDB(event: Partial<SiteAnalyticsEntry>): Promise<{ success: boolean; entry?: SiteAnalyticsEntry }> {
   try {
     const intel = await collectDeviceIntel();
-    const entry: SiteAnalyticsEntry = {
-      id: `vis_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      ip_address: event.ip_address || intel.ip_address || '182.180.142.65',
-      city: event.city || intel.city || 'Faisalabad',
-      country: event.country || intel.country || 'Pakistan',
-      country_code: event.country_code || intel.country_code || 'PK',
-      region: event.region || intel.region || 'Punjab',
-      referrer: event.referrer || intel.referrer || 'Direct',
-      path: event.path || intel.path || '/',
-      event_type: event.event_type || 'page_view',
-      tool_id: event.tool_id || undefined,
-      tool_name: event.tool_name || undefined,
-      tool_category: event.tool_category || undefined,
-      browser: event.browser || intel.browser || 'Chrome',
-      os: event.os || intel.os || 'WINDOWS',
-      device_type: event.device_type || intel.device_type || 'desktop',
-      screen_resolution: event.screen_resolution || intel.screen_resolution || '1920x1080',
-      language: event.language || intel.language || 'en',
-      timezone: event.timezone || intel.timezone || 'Asia/Karachi',
-      battery_level: event.battery_level !== undefined ? event.battery_level : intel.battery_level,
-      is_charging: event.is_charging !== undefined ? event.is_charging : intel.is_charging,
-      network_type: event.network_type || intel.network_type || '4g',
-      hardware_concurrency: event.hardware_concurrency || intel.hardware_concurrency || 8,
-      device_memory: event.device_memory || intel.device_memory || 8,
-      webgl_renderer: event.webgl_renderer || intel.webgl_renderer || 'GPU Render Engine',
-      created_at: new Date().toISOString()
+    const payload = {
+      ...intel,
+      ...event,
+      path: event.path || (typeof window !== 'undefined' ? window.location.pathname + window.location.hash : '/')
+    };
+
+    // 1. Send to first-party API endpoint (captures real Vercel edge IP and Geolocation)
+    let serverRecordedEntry: SiteAnalyticsEntry | null = null;
+    try {
+      const res = await fetch('/api/analytics/record', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.entry) {
+          serverRecordedEntry = data.entry;
+        }
+      }
+    } catch (apiErr) {
+      // Fallback
+    }
+
+    const finalEntry: SiteAnalyticsEntry = serverRecordedEntry || {
+      id: payload.id || `vis_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      ip_address: payload.ip_address || '182.180.142.65',
+      city: payload.city || 'Faisalabad',
+      country: payload.country || 'Pakistan',
+      country_code: payload.country_code || 'PK',
+      region: payload.region || 'Punjab',
+      referrer: payload.referrer || 'Direct',
+      path: payload.path || '/',
+      event_type: payload.event_type || 'page_view',
+      tool_id: payload.tool_id || undefined,
+      tool_name: payload.tool_name || undefined,
+      tool_category: payload.tool_category || undefined,
+      browser: payload.browser || 'Chrome',
+      os: payload.os || 'WINDOWS',
+      device_type: payload.device_type || 'desktop',
+      screen_resolution: payload.screen_resolution || '1920x1080',
+      language: payload.language || 'en',
+      timezone: payload.timezone || 'Asia/Karachi',
+      battery_level: payload.battery_level !== undefined ? payload.battery_level : null,
+      is_charging: payload.is_charging !== undefined ? payload.is_charging : false,
+      network_type: payload.network_type || '4g',
+      hardware_concurrency: payload.hardware_concurrency || 8,
+      device_memory: payload.device_memory || 8,
+      webgl_renderer: payload.webgl_renderer || 'GPU Render Engine',
+      created_at: payload.created_at || new Date().toISOString()
     };
 
     // Save to local cache immediately
     const current = getLocalAnalytics();
-    const updated = [entry, ...current.slice(0, 199)];
+    const updated = [finalEntry, ...current.filter(e => e.id !== finalEntry.id).slice(0, 199)];
     setLocalAnalytics(updated);
 
-    // Save to Supabase if available
-    if (isSupabaseConfigured()) {
+    // If server API route was not reached, fallback to direct Supabase client
+    if (!serverRecordedEntry && isSupabaseConfigured()) {
       try {
-        await supabase.from('site_analytics').insert([entry]);
+        await supabase.from('site_analytics').insert([finalEntry]);
       } catch (e) {
-        console.warn('Could not insert into Supabase site_analytics, kept in local cache:', e);
+        console.warn('Could not insert directly into Supabase site_analytics:', e);
       }
     }
 
-    return { success: true };
+    return { success: true, entry: finalEntry };
   } catch (err) {
     console.warn('Analytics tracking error:', err);
     return { success: false };

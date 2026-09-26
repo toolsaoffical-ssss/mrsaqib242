@@ -244,12 +244,14 @@ DROP POLICY IF EXISTS "Public can record analytics" ON public.site_analytics;
 DROP POLICY IF EXISTS "Public can view analytics" ON public.site_analytics;
 DROP POLICY IF EXISTS "Public can only record analytics" ON public.site_analytics;
 CREATE POLICY "Public can record analytics" ON public.site_analytics FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Public can view analytics" ON public.site_analytics FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Public inquiries access" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can submit inquiries" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can view inquiries" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can only submit inquiries" ON public.client_inquiries;
-CREATE POLICY "Public can only submit inquiries" ON public.client_inquiries FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Public can submit inquiries" ON public.client_inquiries FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Public can view inquiries" ON public.client_inquiries FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Public projects access" ON public.projects;
 DROP POLICY IF EXISTS "Public read-only projects" ON public.projects;

@@ -23,13 +23,15 @@ import {
   Wifi,
   Copy,
   Check,
-  Eye
+  Eye,
+  Trash2
 } from 'lucide-react';
 import {
   SiteAnalyticsEntry,
   fetchSiteAnalyticsFromDB,
   getCountryFlag,
-  seedDefaultAnalyticsToDB
+  seedDefaultAnalyticsToDB,
+  setLocalAnalytics
 } from '../lib/analyticsService';
 
 interface AdminTrafficAnalyticsProps {
@@ -101,6 +103,30 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       loadData();
     }
     setLoading(false);
+  };
+
+  const handleClearLogs = async () => {
+    if (!window.confirm('Are you sure you want to clear all traffic & visitor logs?')) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/analytics/list', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action: 'clear' })
+      });
+      if (res.ok) {
+        setEntries([]);
+        setLocalAnalytics([]);
+        onNotify('All traffic and visitor logs cleared successfully!', 'success');
+      } else {
+        onNotify('Failed to clear logs from database.', 'error');
+      }
+    } catch {
+      onNotify('Error clearing logs.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleExportCSV = () => {
@@ -416,6 +442,26 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
           >
             <Download size={14} />
             <span className="hidden sm:inline">Export</span>
+          </button>
+
+          {/* Seed Sample Demo Data */}
+          <button
+            onClick={handleSeedDefaults}
+            title="Sync Sample Demo Visitors"
+            className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-zinc-300 hover:text-orange-400 transition-colors flex items-center gap-1.5 text-xs font-bold"
+          >
+            <Sparkles size={14} className="text-orange-400" />
+            <span className="hidden md:inline">Sample Data</span>
+          </button>
+
+          {/* Clear Logs */}
+          <button
+            onClick={handleClearLogs}
+            title="Clear all visitor logs"
+            className="p-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-red-400 transition-colors flex items-center gap-1.5 text-xs font-bold"
+          >
+            <Trash2 size={14} />
+            <span className="hidden md:inline">Clear</span>
           </button>
         </div>
       </div>
