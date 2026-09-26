@@ -20,7 +20,7 @@ export default function CameraShowcase() {
       {/* 1. Grayscale Background (Full Screen) */}
       <img 
         src={`${imageUrl}?tr=w-400,q-30,bl-2`} 
-        alt="Background" 
+        alt="" 
         className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 blur-[2px]"
         referrerPolicy="no-referrer"
       />
@@ -93,7 +93,7 @@ export default function CameraShowcase() {
           <div className="flex justify-between items-center w-full px-2 md:px-4">
             {/* Gallery Preview */}
             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white/80 overflow-hidden shadow-lg">
-              <img src={`${imageUrl}?tr=w-100,q-50`} className="w-full h-full object-cover" alt="gallery" referrerPolicy="no-referrer" />
+              <img src={`${imageUrl}?tr=w-100,q-50`} className="w-full h-full object-cover" alt="Gallery thumbnail" referrerPolicy="no-referrer" />
             </div>
             
             {/* Shutter Button */}

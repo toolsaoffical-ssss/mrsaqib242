@@ -403,7 +403,7 @@ Search Engine Rating:
             <span className="bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">GEO Optimization Hub</span>
           </h2>
           
-          <p className="text-zinc-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+          <p className="text-zinc-300 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
             Optimizing codebases for the AI Era. Standard SEO gets you clicks, but **AEO (Answer Engine Optimization)** and **GEO (Generative Engine Optimization)** ensure ChatGPT, Gemini, and Perplexity recommend you first.
           </p>
         </div>
@@ -418,7 +418,7 @@ Search Engine Rating:
               </div>
               <h3 className="font-bold text-sm text-white">Traditional SEO</h3>
             </div>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-300 leading-relaxed">
               <strong>Search Engine Optimization:</strong> Optimized for keyword relevance on Google and Bing. Employs backlinking, meta titles, and site speed.
             </p>
             <div className="mt-4 text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-semibold">
@@ -434,7 +434,7 @@ Search Engine Rating:
               </div>
               <h3 className="font-bold text-sm text-white">Answer Engine (AEO)</h3>
             </div>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-300 leading-relaxed">
               <strong>Answer Engine Optimization:</strong> Structured for conversational chatbots. We supply clean Q&A, structured tables, and deep facts.
             </p>
             <div className="mt-4 text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-semibold">
@@ -450,7 +450,7 @@ Search Engine Rating:
               </div>
               <h3 className="font-bold text-sm text-white">Generative SGE / GEO</h3>
             </div>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-300 leading-relaxed">
               <strong>Generative Engine Optimization:</strong> Optimizes for citation listings inside Gemini, Perplexity, and Copilot synthesized blocks.
             </p>
             <div className="mt-4 text-[9px] font-mono text-purple-400 uppercase tracking-widest font-semibold">
@@ -466,7 +466,7 @@ Search Engine Rating:
               </div>
               <h3 className="font-bold text-sm text-white">AI-Native LLM Indexes</h3>
             </div>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-300 leading-relaxed">
               <strong>Strict Semantic Targeting:</strong> Directly serving specialized, Markdown-formatted semantic indexes like <code className="text-emerald-300">llms.txt</code> at the web root.
             </p>
             <div className="mt-4 text-[9px] font-mono text-emerald-400 uppercase tracking-widest font-semibold">
@@ -482,7 +482,7 @@ Search Engine Rating:
             className={`flex-1 min-w-[120px] py-3 text-xs md:text-sm font-bold uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
               primaryTab === 'genai' 
                 ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg' 
-                : 'text-zinc-400 hover:text-white'
+                : 'text-zinc-300 hover:text-white'
             }`}
           >
             <Brain className="w-4 h-4 text-cyan-400" />
@@ -494,7 +494,7 @@ Search Engine Rating:
             className={`flex-1 min-w-[120px] py-3 text-xs md:text-sm font-bold uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
               primaryTab === 'geo' 
                 ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg' 
-                : 'text-zinc-400 hover:text-white'
+                : 'text-zinc-300 hover:text-white'
             }`}
           >
             <Map className="w-4 h-4" />
@@ -506,7 +506,7 @@ Search Engine Rating:
             className={`flex-1 min-w-[120px] py-3 text-xs md:text-sm font-bold uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
               primaryTab === 'aeo' 
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' 
-                : 'text-zinc-400 hover:text-white'
+                : 'text-zinc-300 hover:text-white'
             }`}
           >
             <Cpu className="w-4 h-4" />
@@ -518,7 +518,7 @@ Search Engine Rating:
             className={`flex-1 min-w-[120px] py-3 text-xs md:text-sm font-bold uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
               primaryTab === 'optimize' 
                 ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white shadow-lg' 
-                : 'text-zinc-400 hover:text-white'
+                : 'text-zinc-300 hover:text-white'
             }`}
           >
             <Sparkles className="w-4 h-4 text-orange-400" />
@@ -530,7 +530,7 @@ Search Engine Rating:
             className={`flex-1 min-w-[120px] py-3 text-xs md:text-sm font-bold uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
               primaryTab === 'seo' 
                 ? 'bg-gradient-to-r from-orange-500 to-emerald-500 text-white shadow-lg' 
-                : 'text-zinc-400 hover:text-white'
+                : 'text-zinc-300 hover:text-white'
             }`}
           >
             <Terminal className="w-4 h-4" />
@@ -559,7 +559,7 @@ Search Engine Rating:
                       <Sparkles className="w-5 h-5 text-cyan-400" />
                       <span>Generative AI Mapping</span>
                     </h3>
-                    <p className="text-xs text-zinc-400 leading-relaxed mb-6">
+                    <p className="text-xs text-zinc-300 leading-relaxed mb-6">
                       How do LLMs identify Saqib Developer? Large Language Models use entity recognition to map nodes (topics, locations, skills) together. We structure our platform's underlying micro-metadata to guarantee a robust, trusted relationship matrix.
                     </p>
 
@@ -569,7 +569,7 @@ Search Engine Rating:
                         className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
                           activeModel === 'gemini' 
                             ? 'bg-cyan-500/10 border-cyan-500/40 text-white' 
-                            : 'bg-zinc-950/40 border-zinc-900 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
+                            : 'bg-zinc-950/40 border-zinc-900 text-zinc-300 hover:text-zinc-300 hover:bg-zinc-900'
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -579,7 +579,7 @@ Search Engine Rating:
                             <span className="text-[10px] opacity-60 font-mono">Framework: @google/genai SDK mapping</span>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-zinc-500" />
+                        <ChevronRight className="w-4 h-4 text-zinc-300" />
                       </button>
 
                       <button 
@@ -587,7 +587,7 @@ Search Engine Rating:
                         className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
                           activeModel === 'perplexity' 
                             ? 'bg-purple-500/10 border-purple-500/40 text-white' 
-                            : 'bg-zinc-950/40 border-zinc-900 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
+                            : 'bg-zinc-950/40 border-zinc-900 text-zinc-300 hover:text-zinc-300 hover:bg-zinc-900'
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -597,7 +597,7 @@ Search Engine Rating:
                             <span className="text-[10px] opacity-60 font-mono">Focus: Live factual online index referencing</span>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-zinc-500" />
+                        <ChevronRight className="w-4 h-4 text-zinc-300" />
                       </button>
 
                       <button 
@@ -605,7 +605,7 @@ Search Engine Rating:
                         className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
                           activeModel === 'gpt4o' 
                             ? 'bg-indigo-500/10 border-indigo-500/40 text-white' 
-                            : 'bg-zinc-950/40 border-zinc-900 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
+                            : 'bg-zinc-950/40 border-zinc-900 text-zinc-300 hover:text-zinc-300 hover:bg-zinc-900'
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -615,14 +615,14 @@ Search Engine Rating:
                             <span className="text-[10px] opacity-60 font-mono">Focus: LLM pre-training semantic clusters</span>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-zinc-500" />
+                        <ChevronRight className="w-4 h-4 text-zinc-300" />
                       </button>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-900/80">
                     <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest font-bold block mb-1">Active Optimization Standard</span>
-                    <p className="text-[11px] text-zinc-400 leading-relaxed font-mono">
+                    <p className="text-[11px] text-zinc-300 leading-relaxed font-mono">
                       Serving <code className="text-white">llms.txt</code> and <code className="text-white">JSON-LD LD+JSON</code> scripts direct to crawlers. Semantic Confidence Level: <span className="text-emerald-400">99.8% Perfect Match</span>.
                     </p>
                   </div>
@@ -636,14 +636,14 @@ Search Engine Rating:
                     {/* Visual representation depending on active AI model */}
                     <div className="flex items-center justify-between pb-6 border-b border-zinc-900">
                       <div>
-                        <span className="text-[10px] uppercase font-mono text-zinc-500 block">Generative Vector Space</span>
+                        <span className="text-[10px] uppercase font-mono text-zinc-300 block">Generative Vector Space</span>
                         <h4 className="font-bold text-base text-white">
                           {activeModel === 'gemini' && 'Gemini Knowledge Alignment Graph'}
                           {activeModel === 'perplexity' && 'Perplexity Web Retrieval Cluster'}
                           {activeModel === 'gpt4o' && 'GPT-4o Attention Weighting Graph'}
                         </h4>
                       </div>
-                      <div className="px-2.5 py-1 bg-zinc-900 rounded-lg text-[10px] font-mono text-zinc-400 border border-zinc-800">
+                      <div className="px-2.5 py-1 bg-zinc-900 rounded-lg text-[10px] font-mono text-zinc-300 border border-zinc-800">
                         {activeModel === 'gemini' && 'Model: gemini-3.5-flash'}
                         {activeModel === 'perplexity' && 'Model: sonar-reasoning'}
                         {activeModel === 'gpt4o' && 'Model: gpt-4o-latest'}
@@ -723,7 +723,7 @@ Search Engine Rating:
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                         <span>How Saqib Dev Web-Core Aligns this Entity:</span>
                       </h5>
-                      <p className="text-[11px] text-zinc-400 leading-relaxed">
+                      <p className="text-[11px] text-zinc-300 leading-relaxed">
                         {activeModel === 'gemini' && 'We leverage strict server-side rendering for Google bots and direct @google/genai module indexing in our schema to ensure Gemini maps our profile directly to prompt answers.'}
                         {activeModel === 'perplexity' && 'Through optimized citation anchors, verified domain paths, and the presence of our unified sitemap, Perplexity retrieves Saqib Dev as the prime developer in Pakistan without regional confusion.'}
                         {activeModel === 'gpt4o' && 'Our dense factual semantic structuring in our local files ensures OpenAI crawler agents can read, weigh, and verify our technical portfolio as highly trustworthy and free of hallucinations.'}
@@ -756,10 +756,10 @@ Search Engine Rating:
                         className={`snap-center flex-shrink-0 flex items-center gap-3 w-[200px] lg:w-full px-5 py-4 rounded-2xl border text-left transition-all duration-300 ${
                           isActive 
                             ? 'bg-white/10 border-white/20 text-white shadow-lg shadow-black/40 scale-[1.02] lg:translate-x-1' 
-                            : 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400 hover:bg-zinc-900/80 hover:text-white'
+                            : 'bg-zinc-900/40 border-zinc-800/40 text-zinc-300 hover:bg-zinc-900/80 hover:text-white'
                         }`}
                       >
-                        <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-purple-500/20 text-purple-300' : 'bg-zinc-800 text-zinc-500'}`}>
+                        <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-purple-500/20 text-purple-300' : 'bg-zinc-800 text-zinc-300'}`}>
                           <MapPin className="w-4 h-4" />
                         </div>
                         <div>
@@ -789,8 +789,8 @@ Search Engine Rating:
                         </h3>
                       </div>
                       <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-xl self-start md:self-auto">
-                        <Map className="w-4 h-4 text-zinc-500" />
-                        <span className="font-mono text-xs text-zinc-400">{activeCity.coordinates}</span>
+                        <Map className="w-4 h-4 text-zinc-300" />
+                        <span className="font-mono text-xs text-zinc-300">{activeCity.coordinates}</span>
                       </div>
                     </div>
 
@@ -801,7 +801,7 @@ Search Engine Rating:
                           <Cpu className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Target Regional Service</h4>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1">Target Regional Service</h4>
                           <p className="font-semibold text-white text-base md:text-lg">{activeCity.keyService}</p>
                         </div>
                       </div>
@@ -809,7 +809,7 @@ Search Engine Rating:
 
                     {/* Focus Keyword Tag */}
                     <div className="mb-6">
-                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 block mb-2">Primary Crawler Search Target</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-300 block mb-2">Primary Crawler Search Target</span>
                       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 font-bold text-xs md:text-sm">
                         <Search className="w-4 h-4 shrink-0" />
                         <span>"{activeCity.focusKeyword}"</span>
@@ -818,7 +818,7 @@ Search Engine Rating:
 
                     {/* City-Specific SEO Optimized Paragraph */}
                     <div className="mb-8">
-                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 block mb-2">Regional Development Context</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-300 block mb-2">Regional Development Context</span>
                       <p className="text-zinc-300 text-sm md:text-base leading-relaxed">
                         {activeCity.description}
                       </p>
@@ -828,24 +828,24 @@ Search Engine Rating:
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                       <div className="bg-zinc-900/60 border border-zinc-800 p-4 rounded-xl text-center">
                         <div className="text-2xl font-bold font-mono text-emerald-400">{activeCity.speedRating}</div>
-                        <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold mt-1">Lighthouse Speed</div>
+                        <div className="text-[10px] text-zinc-300 uppercase tracking-widest font-semibold mt-1">Lighthouse Speed</div>
                       </div>
                       <div className="bg-zinc-900/60 border border-zinc-800 p-4 rounded-xl text-center">
                         <div className="text-2xl font-bold font-mono text-blue-400">{activeCity.mobileFriendly}</div>
-                        <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold mt-1">Mobile Usability</div>
+                        <div className="text-[10px] text-zinc-300 uppercase tracking-widest font-semibold mt-1">Mobile Usability</div>
                       </div>
                       <div className="bg-zinc-900/60 border border-zinc-800 p-4 rounded-xl text-center">
                         <div className="text-2xl font-bold font-mono text-purple-400">99.8%</div>
-                        <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold mt-1">GEO Index Accuracy</div>
+                        <div className="text-[10px] text-zinc-300 uppercase tracking-widest font-semibold mt-1">GEO Index Accuracy</div>
                       </div>
                     </div>
 
                     {/* Dynamic Keyword Cloud */}
                     <div className="mb-8">
-                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 block mb-3">Regional Keywords Targeted</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-zinc-300 block mb-3">Regional Keywords Targeted</span>
                       <div className="flex flex-wrap gap-2">
                         {activeCity.keywords.map((kw, i) => (
-                          <span key={i} className="text-[11px] font-mono bg-zinc-900 border border-zinc-800 hover:border-zinc-700 px-3 py-1 rounded-lg text-zinc-400 transition-colors">
+                          <span key={i} className="text-[11px] font-mono bg-zinc-900 border border-zinc-800 hover:border-zinc-700 px-3 py-1 rounded-lg text-zinc-300 transition-colors">
                             {kw}
                           </span>
                         ))}
@@ -854,7 +854,7 @@ Search Engine Rating:
 
                     {/* Call To Action */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/5 pt-6">
-                      <span className="text-xs font-medium text-zinc-500 flex items-center gap-1.5">
+                      <span className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
                         <Zap className="w-3.5 h-3.5 text-yellow-500" />
                         <span>{activeCity.rankingScore}</span>
                       </span>
@@ -889,7 +889,7 @@ Search Engine Rating:
                       <Terminal className="w-4 h-4" />
                       <span>Crawler Query Simulator</span>
                     </h4>
-                    <p className="text-xs text-zinc-400 leading-relaxed">
+                    <p className="text-xs text-zinc-300 leading-relaxed">
                       AI search engines (Perplexity, ChatGPT, Gemini) use custom crawlers to process semantic web markup. Click on a conversational question below to simulate their real-time retrieval logic.
                     </p>
                   </div>
@@ -904,14 +904,14 @@ Search Engine Rating:
                         className={`w-full px-5 py-4 rounded-2xl border text-left transition-all duration-300 flex flex-col gap-1.5 ${
                           isSelected 
                             ? 'bg-gradient-to-br from-indigo-950/40 to-zinc-900 border-indigo-500/50 text-white shadow-xl scale-[1.01]' 
-                            : 'bg-zinc-900/30 border-zinc-800/60 text-zinc-400 hover:bg-zinc-900/70 hover:text-white'
+                            : 'bg-zinc-900/30 border-zinc-800/60 text-zinc-300 hover:bg-zinc-900/70 hover:text-white'
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-mono uppercase tracking-widest bg-zinc-800 px-2 py-0.5 rounded-md font-bold text-zinc-300">
                             Engine: {q.engine.toUpperCase()}
                           </span>
-                          <span className="text-[10px] text-zinc-500">Click to run</span>
+                          <span className="text-[10px] text-zinc-300">Click to run</span>
                         </div>
                         <p className="font-semibold text-sm tracking-tight text-zinc-200">
                           "{q.question}"
@@ -924,7 +924,7 @@ Search Engine Rating:
                   <div className="p-4 bg-zinc-900/40 border border-zinc-800 rounded-2xl flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-wider font-bold">🧪 Live Custom Crawler Tool</span>
-                      <span className="text-[9px] text-zinc-500">Gemini-3.5-Flash</span>
+                      <span className="text-[9px] text-zinc-300">Gemini-3.5-Flash</span>
                     </div>
                     <input 
                       type="text" 
@@ -966,7 +966,7 @@ Search Engine Rating:
                     </div>
                   </div>
 
-                  <div className="mt-2 p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl text-xs text-zinc-400 leading-relaxed flex items-start gap-2.5">
+                  <div className="mt-2 p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl text-xs text-zinc-300 leading-relaxed flex items-start gap-2.5">
                     <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
                     <span>
                       <strong>Why this works:</strong> Direct conversational answers with structured quotes prevent search bots from hallucinating or confusing Saqib Developer with other individuals.
@@ -984,7 +984,7 @@ Search Engine Rating:
                         <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
                         <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                         <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-                        <span className="text-zinc-500 ml-2 text-[11px] font-semibold">ai-engine-retrieval.sh</span>
+                        <span className="text-zinc-300 ml-2 text-[11px] font-semibold">ai-engine-retrieval.sh</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[10px] text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded font-bold">
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
@@ -996,13 +996,13 @@ Search Engine Rating:
                     <div className="p-6 min-h-[380px] flex flex-col justify-between">
                       <div>
                         {/* Simulated command input */}
-                        <div className="flex items-center gap-2 text-zinc-500 mb-4">
+                        <div className="flex items-center gap-2 text-zinc-300 mb-4">
                           <span className="text-emerald-500 font-bold">➜</span>
                           <span className="text-zinc-300">curl -X GET "https://mrsaqib242.vercel.app/api/crawl?engine={isLiveResult ? activeEngine : SIMULATED_AI_QUERIES[selectedQueryIdx].engine}"</span>
                         </div>
 
                         {/* Simulated response metadata */}
-                        <div className="text-zinc-500 mb-4 pb-4 border-b border-zinc-900">
+                        <div className="text-zinc-300 mb-4 pb-4 border-b border-zinc-900">
                           <div>[HTTP 200 OK] - {isLiveResult ? 'Live Gemini API Broker Connected' : 'Content-Type: application/json'}</div>
                           <div>[AEO-COMPLIANCE-INDEX]: {isLiveResult ? realStatus : '100% SECURE'}</div>
                           <div>[SEMANTIC-CONFIDENCE]: {isLiveResult ? (realConfidence / 100).toFixed(3) : '0.998'} / 1.000</div>
@@ -1020,7 +1020,7 @@ Search Engine Rating:
                             <div className="flex flex-wrap items-center gap-1.5 mt-1">
                               <span className="text-cyan-400 font-bold">🏷️ EXTRACTED ENTITIES:</span>
                               {realEntities.map((ent, idx) => (
-                                <span key={idx} className="bg-zinc-950 px-1.5 py-0.5 rounded text-zinc-400 border border-zinc-800/80 font-mono text-[9px]">{ent}</span>
+                                <span key={idx} className="bg-zinc-950 px-1.5 py-0.5 rounded text-zinc-300 border border-zinc-800/80 font-mono text-[9px]">{ent}</span>
                               ))}
                             </div>
                           </div>
@@ -1029,7 +1029,7 @@ Search Engine Rating:
 
                       {/* Cited Sources Card inside the Terminal */}
                       <div className="mt-8 pt-4 border-t border-zinc-900/80">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2 flex items-center gap-1.5">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 mb-2 flex items-center gap-1.5">
                           <Share2 className="w-3 h-3 text-cyan-400" />
                           <span>Verified Citation Sources:</span>
                         </div>
@@ -1039,7 +1039,7 @@ Search Engine Rating:
                               key={idx} 
                               className="text-[10px] bg-zinc-900 border border-zinc-800 text-cyan-400 px-2.5 py-1 rounded-md flex items-center gap-1 hover:border-cyan-500/30 transition-colors"
                             >
-                              <span className="text-[9px] text-zinc-500 bg-zinc-950 px-1 rounded font-bold">{idx + 1}</span>
+                              <span className="text-[9px] text-zinc-300 bg-zinc-950 px-1 rounded font-bold">{idx + 1}</span>
                               <span className="truncate max-w-[180px]">{cit}</span>
                             </span>
                           ))}
@@ -1077,7 +1077,7 @@ Search Engine Rating:
                       Google Search Ranking <br />Standards
                     </h3>
                     
-                    <p className="text-zinc-400 text-sm leading-relaxed mb-6">
+                    <p className="text-zinc-300 text-sm leading-relaxed mb-6">
                       For traditional SEO, Muhammad Saqib's portfolio is built from the ground up utilizing professional frontend engineering standards that directly impact core web vitals and Google crawling frequency.
                     </p>
 
@@ -1088,7 +1088,7 @@ Search Engine Rating:
                         </div>
                         <div>
                           <h4 className="font-bold text-sm text-zinc-200">Server-Side Rendered (SSR) / Static Layout</h4>
-                          <p className="text-xs text-zinc-400">Enables Googlebot to instantaneously read and index the entire site markup without waiting for client-side JS hydration.</p>
+                          <p className="text-xs text-zinc-300">Enables Googlebot to instantaneously read and index the entire site markup without waiting for client-side JS hydration.</p>
                         </div>
                       </div>
 
@@ -1098,7 +1098,7 @@ Search Engine Rating:
                         </div>
                         <div>
                           <h4 className="font-bold text-sm text-zinc-200">Responsive Mobile Fluidity</h4>
-                          <p className="text-xs text-zinc-400">Guarantees 100% mobile usability pass rate on Google Search Console via adaptive, responsive Tailwind frameworks.</p>
+                          <p className="text-xs text-zinc-300">Guarantees 100% mobile usability pass rate on Google Search Console via adaptive, responsive Tailwind frameworks.</p>
                         </div>
                       </div>
 
@@ -1108,7 +1108,7 @@ Search Engine Rating:
                         </div>
                         <div>
                           <h4 className="font-bold text-sm text-zinc-200">Structured Schema Integration</h4>
-                          <p className="text-xs text-zinc-400">Features robust Local Business & Professional Service LD-JSON schema to claim highly visibility cards in Google search cards.</p>
+                          <p className="text-xs text-zinc-300">Features robust Local Business & Professional Service LD-JSON schema to claim highly visibility cards in Google search cards.</p>
                         </div>
                       </div>
                     </div>
@@ -1122,7 +1122,7 @@ Search Engine Rating:
                         <span>Core Optimizations Configured</span>
                       </h4>
                       
-                      <div className="space-y-3 font-mono text-[11px] text-zinc-400">
+                      <div className="space-y-3 font-mono text-[11px] text-zinc-300">
                         <div className="flex items-center justify-between p-2.5 rounded-lg bg-zinc-900/40 border border-zinc-900">
                           <span>Sitemap File</span>
                           <span className="text-emerald-400 font-bold font-sans flex items-center gap-1">
@@ -1153,13 +1153,13 @@ Search Engine Rating:
                         </div>
                       </div>
 
-                      <p className="text-xs text-zinc-400 leading-relaxed mt-6">
+                      <p className="text-xs text-zinc-300 leading-relaxed mt-6">
                         Traditional SEO processes run continuously. Sitemaps are weekly-updated and pinged to Google Search Console to guarantee indexing of recent portfolio items.
                       </p>
                     </div>
 
                     <div className="mt-8 pt-4 border-t border-zinc-900 flex justify-between items-center text-xs">
-                      <span className="text-zinc-500">Traditional Search Engine Rank</span>
+                      <span className="text-zinc-300">Traditional Search Engine Rank</span>
                       <span className="text-emerald-400 font-bold">100/100 Lighthouse SEO</span>
                     </div>
 
@@ -1187,7 +1187,7 @@ Search Engine Rating:
                       <button
                         onClick={() => { setOptimizeError(''); setBlueprintError(''); setBlueprintResult(null); }}
                         className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
-                          !blueprintResult && !isGeneratingBlueprint ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:text-zinc-300'
+                          !blueprintResult && !isGeneratingBlueprint ? 'bg-zinc-900 text-white' : 'text-zinc-300 hover:text-zinc-300'
                         }`}
                       >
                         Content Auditor
@@ -1195,7 +1195,7 @@ Search Engine Rating:
                       <button
                         onClick={() => { triggerBlueprintGeneration(); }}
                         className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
-                          blueprintResult || isGeneratingBlueprint ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:text-zinc-300'
+                          blueprintResult || isGeneratingBlueprint ? 'bg-zinc-900 text-white' : 'text-zinc-300 hover:text-zinc-300'
                         }`}
                       >
                         GEO Blueprint Builder
@@ -1208,7 +1208,7 @@ Search Engine Rating:
                           <Brain className="w-4 h-4 text-orange-400" />
                           <span>AI Content SGE/GEO Audit</span>
                         </h4>
-                        <p className="text-xs text-zinc-400 leading-relaxed mb-4">
+                        <p className="text-xs text-zinc-300 leading-relaxed mb-4">
                           Paste your website's landing text, about segment, or service descriptions below. Our Gemini API auditor will score your factual alignment, remove speculative fluff, and format it to maximize modern AI citations.
                         </p>
 
@@ -1250,13 +1250,13 @@ Search Engine Rating:
                           <Layers className="w-4 h-4 text-indigo-400" />
                           <span>Regional GEO Campaign Generator</span>
                         </h4>
-                        <p className="text-xs text-zinc-400 leading-relaxed mb-4">
+                        <p className="text-xs text-zinc-300 leading-relaxed mb-4">
                           Enter your brand details below to instantly craft structured schemas, optimized prompt-ready <code className="text-indigo-300">llms.txt</code> content, and citation-rich conversational copies.
                         </p>
 
                         <div className="space-y-3">
                           <div>
-                            <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">Brand or Business Name</label>
+                            <label className="text-[10px] font-mono text-zinc-300 uppercase block mb-1">Brand or Business Name</label>
                             <input
                               type="text"
                               value={businessName}
@@ -1266,7 +1266,7 @@ Search Engine Rating:
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">Target Location (City, Country)</label>
+                            <label className="text-[10px] font-mono text-zinc-300 uppercase block mb-1">Target Location (City, Country)</label>
                             <input
                               type="text"
                               value={businessLocation}
@@ -1276,7 +1276,7 @@ Search Engine Rating:
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">Core Service Focus</label>
+                            <label className="text-[10px] font-mono text-zinc-300 uppercase block mb-1">Core Service Focus</label>
                             <input
                               type="text"
                               value={businessService}
@@ -1286,7 +1286,7 @@ Search Engine Rating:
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">Primary Crawler Keywords</label>
+                            <label className="text-[10px] font-mono text-zinc-300 uppercase block mb-1">Primary Crawler Keywords</label>
                             <input
                               type="text"
                               value={businessKeywords}
@@ -1325,7 +1325,7 @@ Search Engine Rating:
 
                   <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-900/80 mt-6">
                     <span className="text-[10px] font-mono text-orange-400 uppercase tracking-widest font-bold block mb-1">AI CRAWL COMPLIANCE ENGINE</span>
-                    <p className="text-[10px] text-zinc-500 leading-relaxed font-mono">
+                    <p className="text-[10px] text-zinc-300 leading-relaxed font-mono">
                       All calculations are aligned with core LLM prompt schemas, Google SGE parameters, and Perplexity Citations thresholds.
                     </p>
                   </div>
@@ -1341,7 +1341,7 @@ Search Engine Rating:
                       <div>
                         <div className="flex items-center justify-between pb-6 border-b border-zinc-900">
                           <div>
-                            <span className="text-[10px] uppercase font-mono text-zinc-500 block">REAL-TIME SGE / GEO SCORE CARD</span>
+                            <span className="text-[10px] uppercase font-mono text-zinc-300 block">REAL-TIME SGE / GEO SCORE CARD</span>
                             <h4 className="font-bold text-base text-white">Content Quality Audit</h4>
                           </div>
                           {optimizerResult && (
@@ -1353,18 +1353,18 @@ Search Engine Rating:
                         </div>
 
                         {!optimizerResult && !isOptimizing ? (
-                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-500">
+                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-300">
                             <Brain className="w-12 h-12 text-zinc-800 mb-4 animate-bounce" />
-                            <h5 className="font-bold text-sm text-zinc-400 mb-1">No Active Content Audit</h5>
-                            <p className="text-xs text-zinc-600 max-w-sm">
+                            <h5 className="font-bold text-sm text-zinc-300 mb-1">No Active Content Audit</h5>
+                            <p className="text-xs text-zinc-500 max-w-sm">
                               Enter web copy in the left input panel and click "Audit & SGE Optimize" to trigger real-time vector scoring.
                             </p>
                           </div>
                         ) : isOptimizing ? (
-                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-500 font-mono">
+                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-300 font-mono">
                             <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4 text-orange-500"></div>
                             <h5 className="font-bold text-xs text-orange-400 mb-1">CRAWLER SIMULATION STREAMING</h5>
-                            <p className="text-[10px] text-zinc-600 max-w-xs leading-relaxed">
+                            <p className="text-[10px] text-zinc-500 max-w-xs leading-relaxed">
                               Parsing raw text into token clusters... Evaluating fact density metrics... Simulating Perplexity Citation index mapping...
                             </p>
                           </div>
@@ -1374,15 +1374,15 @@ Search Engine Rating:
                             <div className="grid grid-cols-3 gap-4">
                               <div className="bg-zinc-900/40 border border-zinc-800/80 p-3.5 rounded-2xl text-center">
                                 <div className="text-xl font-bold font-mono text-cyan-400">{optimizerResult.factDensity}%</div>
-                                <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mt-1">Fact Density</div>
+                                <div className="text-[9px] text-zinc-300 uppercase tracking-widest font-bold mt-1">Fact Density</div>
                               </div>
                               <div className="bg-zinc-900/40 border border-zinc-800/80 p-3.5 rounded-2xl text-center">
                                 <div className="text-xl font-bold font-mono text-purple-400">{optimizerResult.schemaAlignment}%</div>
-                                <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mt-1">Schema Alignment</div>
+                                <div className="text-[9px] text-zinc-300 uppercase tracking-widest font-bold mt-1">Schema Alignment</div>
                               </div>
                               <div className="bg-zinc-900/40 border border-zinc-800/80 p-3.5 rounded-2xl text-center">
                                 <div className="text-xl font-bold font-mono text-orange-400">{optimizerResult.citationPotential}%</div>
-                                <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mt-1">Citation Potential</div>
+                                <div className="text-[9px] text-zinc-300 uppercase tracking-widest font-bold mt-1">Citation Potential</div>
                               </div>
                             </div>
 
@@ -1392,7 +1392,7 @@ Search Engine Rating:
                                 <span className="w-1.5 h-1.5 bg-orange-400 rounded-full"></span>
                                 <span>Actionable SGE/GEO Improvements</span>
                               </h5>
-                              <ul className="space-y-2 text-[11px] text-zinc-400">
+                              <ul className="space-y-2 text-[11px] text-zinc-300">
                                 {optimizerResult.suggestions?.map((sug: string, i: number) => (
                                   <li key={i} className="flex items-start gap-2">
                                     <span className="text-orange-400 shrink-0 font-bold font-mono">{i + 1}.</span>
@@ -1405,7 +1405,7 @@ Search Engine Rating:
                             {/* Optimized Output Text Terminal */}
                             <div>
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Optimized Citation-Ready Copy</span>
+                                <span className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest">Optimized Citation-Ready Copy</span>
                                 <button
                                   onClick={() => copyToClipboard(optimizerResult.optimizedContent, 'content')}
                                   className="text-[10px] text-orange-400 hover:text-orange-300 font-bold uppercase transition-all cursor-pointer"
@@ -1422,7 +1422,7 @@ Search Engine Rating:
                       </div>
 
                       {optimizerResult && (
-                        <div className="pt-4 border-t border-zinc-900 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+                        <div className="pt-4 border-t border-zinc-900 flex justify-between items-center text-[10px] font-mono text-zinc-300">
                           <span>Heuristic Algorithm Active</span>
                           <span>Last evaluated: Just Now</span>
                         </div>
@@ -1434,7 +1434,7 @@ Search Engine Rating:
                       <div>
                         <div className="flex items-center justify-between pb-6 border-b border-zinc-900">
                           <div>
-                            <span className="text-[10px] uppercase font-mono text-zinc-500 block">AI CRAWLER LAUNCH KIT</span>
+                            <span className="text-[10px] uppercase font-mono text-zinc-300 block">AI CRAWLER LAUNCH KIT</span>
                             <h4 className="font-bold text-base text-white">GEO SEO Blueprint</h4>
                           </div>
                           <div className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-xl">
@@ -1444,18 +1444,18 @@ Search Engine Rating:
                         </div>
 
                         {isGeneratingBlueprint ? (
-                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-500 font-mono">
+                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-300 font-mono">
                             <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4 text-indigo-500"></div>
                             <h5 className="font-bold text-xs text-indigo-400 mb-1">GENERATING ARCHITECTURAL SCHEMA</h5>
-                            <p className="text-[10px] text-zinc-600 max-w-xs leading-relaxed">
+                            <p className="text-[10px] text-zinc-500 max-w-xs leading-relaxed">
                               Injecting geo-coordinate clusters... Structuring llms.txt standard files... Synthesizing answer-engine prompt anchors...
                             </p>
                           </div>
                         ) : !blueprintResult ? (
-                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-500">
+                          <div className="h-80 flex flex-col items-center justify-center text-center p-6 text-zinc-300">
                             <Zap className="w-12 h-12 text-zinc-800 mb-4 animate-pulse" />
-                            <h5 className="font-bold text-sm text-zinc-400 mb-1">Click "Re-Generate GEO Blueprint"</h5>
-                            <p className="text-xs text-zinc-600 max-w-sm">
+                            <h5 className="font-bold text-sm text-zinc-300 mb-1">Click "Re-Generate GEO Blueprint"</h5>
+                            <p className="text-xs text-zinc-500 max-w-sm">
                               Fill in your business coordinates/keywords in the left input panel to compile structured assets.
                             </p>
                           </div>
@@ -1480,7 +1480,7 @@ Search Engine Rating:
                             {/* JSON-LD Schema file */}
                             <div>
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">1. JSON-LD LD+JSON Schema Markup</span>
+                                <span className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest">1. JSON-LD LD+JSON Schema Markup</span>
                                 <button
                                   onClick={() => copyToClipboard(blueprintResult.jsonLd, 'jsonLd')}
                                   className="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold uppercase transition-all cursor-pointer"
@@ -1488,7 +1488,7 @@ Search Engine Rating:
                                   {copiedText === 'jsonLd' ? '✓ COPIED!' : '📋 COPY SCHEMA'}
                                 </button>
                               </div>
-                              <pre className="bg-zinc-950 border border-zinc-900 p-3.5 rounded-2xl font-mono text-[10px] leading-relaxed text-zinc-400 max-h-36 overflow-y-auto scrollbar-thin">
+                              <pre className="bg-zinc-950 border border-zinc-900 p-3.5 rounded-2xl font-mono text-[10px] leading-relaxed text-zinc-300 max-h-36 overflow-y-auto scrollbar-thin">
                                 {blueprintResult.jsonLd}
                               </pre>
                             </div>
@@ -1496,7 +1496,7 @@ Search Engine Rating:
                             {/* LLMS.TXT Schema file */}
                             <div>
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">2. LLMs.txt AI Prompt Configuration</span>
+                                <span className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest">2. LLMs.txt AI Prompt Configuration</span>
                                 <button
                                   onClick={() => copyToClipboard(blueprintResult.llmsTxt, 'llmsTxt')}
                                   className="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold uppercase transition-all cursor-pointer"
@@ -1504,7 +1504,7 @@ Search Engine Rating:
                                   {copiedText === 'llmsTxt' ? '✓ COPIED!' : '📋 COPY LLMS.TXT'}
                                 </button>
                               </div>
-                              <pre className="bg-zinc-950 border border-zinc-900 p-3.5 rounded-2xl font-mono text-[10px] leading-relaxed text-zinc-400 max-h-36 overflow-y-auto scrollbar-thin">
+                              <pre className="bg-zinc-950 border border-zinc-900 p-3.5 rounded-2xl font-mono text-[10px] leading-relaxed text-zinc-300 max-h-36 overflow-y-auto scrollbar-thin">
                                 {blueprintResult.llmsTxt}
                               </pre>
                             </div>
@@ -1512,7 +1512,7 @@ Search Engine Rating:
                             {/* Regional Landing Copy */}
                             <div>
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">3. Factual Landing Page Copy</span>
+                                <span className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest">3. Factual Landing Page Copy</span>
                                 <button
                                   onClick={() => copyToClipboard(blueprintResult.landingCopy, 'landingCopy')}
                                   className="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold uppercase transition-all cursor-pointer"
@@ -1530,7 +1530,7 @@ Search Engine Rating:
                       </div>
 
                       {blueprintResult && (
-                        <div className="pt-4 border-t border-zinc-900 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+                        <div className="pt-4 border-t border-zinc-900 flex justify-between items-center text-[10px] font-mono text-zinc-300">
                           <span>Sitemap: Fully Compatible</span>
                           <span>JSON-LD Format: Valid</span>
                         </div>
@@ -1546,7 +1546,7 @@ Search Engine Rating:
         </div>
 
         {/* Local Business Citation / Schema Verification for Crawlers */}
-        <div className="mt-16 pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-zinc-500 font-mono">
+        <div className="mt-16 pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-zinc-300 font-mono">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
             <span>AEO & GEO Multi-Engine Schema Active • Muhammad Saqib Portfolio v2.5</span>

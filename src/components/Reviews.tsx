@@ -144,7 +144,7 @@ export default function Reviews() {
                     >
                       <Star 
                         size={28} 
-                        className={`${rating >= star ? 'fill-yellow-500 text-yellow-500' : 'fill-transparent text-zinc-600'} transition-colors`} 
+                        className={`${rating >= star ? 'fill-yellow-500 text-yellow-500' : 'fill-transparent text-zinc-500'} transition-colors`} 
                       />
                     </button>
                   ))}
@@ -198,7 +198,7 @@ export default function Reviews() {
                     </div>
                     <div>
                       <h4 className="text-white font-bold">{review.name}</h4>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-zinc-400">
                         {new Date(review.date).toLocaleDateString(undefined, { 
                           year: 'numeric', month: 'short', day: 'numeric' 
                         })}
@@ -222,7 +222,7 @@ export default function Reviews() {
             ))}
           </AnimatePresence>
           {reviews.length === 0 && (
-            <div className="text-center py-20 text-zinc-500">
+            <div className="text-center py-20 text-zinc-400">
               No reviews yet. Be the first to share your thoughts!
             </div>
           )}

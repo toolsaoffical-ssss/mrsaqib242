@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Script from 'next/script';
 import { useRouter } from 'next/router';
 import { Inter, Plus_Jakarta_Sans, Alex_Brush, Bodoni_Moda } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { AnalyticsTracker } from '../components/AnalyticsTracker';
 import '../index.css';
 
@@ -138,17 +139,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
 
-      <Script 
-        src="https://www.googletagmanager.com/gtag/js?id=G-F768LWQ7CB" 
-        strategy="lazyOnload" 
-      />
-      <Script 
-        src="/ga.js" 
-        strategy="lazyOnload" 
-      />
+      <GoogleAnalytics gaId="G-F768LWQ7CB" />
 
       <AnalyticsTracker />
       <Component {...pageProps} />
     </div>
   );
 }
+

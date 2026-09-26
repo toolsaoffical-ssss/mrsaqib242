@@ -59,6 +59,7 @@ export default function Footer() {
             <motion.a
               key={social.name}
               href={social.href}
+              aria-label={social.name}
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 30 }}

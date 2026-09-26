@@ -182,6 +182,13 @@ export default function App() {
   const [currentHash, setCurrentHash] = useState('');
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [skipAnimation, setSkipAnimation] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('has_shown_welcome_overlay')) {
+      setSkipAnimation(true);
+    }
+  }, []);
 
   // Dynamic gallery sync from Supabase
   useEffect(() => {
@@ -450,6 +457,7 @@ export default function App() {
             <a href="#contact-team" className="hover:text-white transition-colors">Contact</a>
           </div>
           <button 
+            aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
             className="md:hidden text-white mt-1"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -513,13 +521,13 @@ export default function App() {
 
         {/* Foreground Sharp Image */}
         <motion.div 
-          initial={{ opacity: 0, y: 50 }}
+          initial={skipAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 3.0 }}
+          transition={{ duration: 1, ease: "easeOut", delay: skipAnimation ? 0 : 3.0 }}
           className="absolute z-20 bottom-0 w-full flex justify-center items-end h-[75%] md:h-[85%]"
         >
           <img 
-            src="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80" 
+            src="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto" 
             alt="Muhammad Saqib (MrSaqib) - Top Website Designer and SEO Expert in Pakistan" 
             className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
             referrerPolicy="no-referrer"
@@ -532,9 +540,9 @@ export default function App() {
           
           {/* Top Left: Bullet Points */}
           <motion.div 
-            initial={{ opacity: 0, x: -30 }}
+            initial={skipAnimation ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 3.5 }}
+            transition={{ delay: skipAnimation ? 0.2 : 3.5 }}
             className="pointer-events-auto absolute top-[15%] md:top-[15%] left-6 md:left-12 max-w-[220px] md:max-w-xs text-[#1a1a1a]"
           >
             <ul className="space-y-1.5 md:space-y-2 text-[9px] md:text-xs font-bold tracking-widest uppercase">
@@ -547,9 +555,9 @@ export default function App() {
 
           {/* Middle Right: Name */}
           <motion.div 
-            initial={{ opacity: 0, x: 30 }}
+            initial={skipAnimation ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 3.7 }}
+            transition={{ delay: skipAnimation ? 0.3 : 3.7 }}
             className="pointer-events-auto absolute right-6 md:right-12 top-[42%] md:top-[45%] text-right text-[#1a1a1a]"
           >
             <p className="font-bold tracking-widest uppercase text-[10px] md:text-sm whitespace-nowrap">by {_0xData._n}</p>
@@ -557,9 +565,9 @@ export default function App() {
           
           {/* Subtitle text below the subject's face */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={skipAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.8 }}
+            transition={{ delay: skipAnimation ? 0.4 : 3.8 }}
             className="pointer-events-auto absolute w-full text-center top-[58%] md:top-[65%] text-white drop-shadow-md px-4"
           >
             <p className="font-bold tracking-widest uppercase text-[12px] md:text-xl leading-snug">
@@ -745,7 +753,7 @@ export default function App() {
                 }}
               >
                 <img 
-                  src="https://ik.imagekit.io/shaban/SHABAN-1768575245369_aFwAR5G1A.jpg" 
+                  src="https://ik.imagekit.io/shaban/SHABAN-1768575245369_aFwAR5G1A.jpg?tr=f-auto" 
                   alt="Graphic Design Showcase"
                   className="absolute max-w-none object-cover"
                   style={{
@@ -932,6 +940,7 @@ export default function App() {
               onClick={(e) => e.stopPropagation()}
             >
               <button 
+                aria-label="Close Resources Modal"
                 className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors p-2"
                 onClick={() => setIsHacksModalOpen(false)}
               >
@@ -1099,6 +1108,7 @@ export default function App() {
             onClick={() => setSelectedImage(null)}
           >
             <button 
+              aria-label="Close Image"
               className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white text-white hover:text-black rounded-full flex items-center justify-center transition-colors z-50"
               onClick={() => setSelectedImage(null)}
             >
