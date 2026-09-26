@@ -425,6 +425,5 @@ export default function AdminSecurityManager({
           </div>
         </div>
       </div>
-    </div>
   );
 }
