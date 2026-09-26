@@ -407,3 +407,29 @@ REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FR
 -- Grant execution strictly to trusted backend role (Service Role Key)
 GRANT EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) TO service_role;
 
+-- =========================================================================
+-- ⚡ AUTOMATIC TIMESTAMP TRIGGER FOR ADMIN AUTH
+-- =========================================================================
+CREATE OR REPLACE FUNCTION update_admin_auth_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_update_admin_auth ON public.admin_auth;
+CREATE TRIGGER trg_update_admin_auth
+BEFORE UPDATE ON public.admin_auth
+FOR EACH ROW
+EXECUTE FUNCTION update_admin_auth_timestamp();
+
+-- =========================================================================
+-- ⚡ PERFORMANCE INDEXES
+-- =========================================================================
+CREATE INDEX IF NOT EXISTS idx_site_analytics_created ON public.site_analytics(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_client_inquiries_created ON public.client_inquiries(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_tools_display_order ON public.tools(display_order ASC);
+CREATE INDEX IF NOT EXISTS idx_projects_display_order ON public.projects(display_order ASC);
+
+
