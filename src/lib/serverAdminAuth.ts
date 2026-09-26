@@ -212,10 +212,24 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
         };
       }
 
-      // Fallback: If RPC is not created yet, execute direct database upsert
+      // Fallback handling if RPC is unavailable
       if (rpcError) {
-        console.warn('[SECURITY] record_failed_login_attempt RPC unavailable, using fallback:', rpcError.message);
+        console.warn('[SECURITY] record_failed_login_attempt RPC error:', rpcError.message);
         
+        // In PRODUCTION: Strictly reject non-atomic fallback to eliminate race condition vulnerabilities!
+        if (isProd) {
+          console.error('[SECURITY ALERT] Atomic database rate-limiting function unavailable in production. Restricting login to defend against race condition attacks.');
+          memRecord.lockedUntil = now + LOCK_DURATION_MS;
+          rateLimitMap.set(clientIp, memRecord);
+          return {
+            locked: true,
+            remainingLockSeconds: Math.ceil(LOCK_DURATION_MS / 1000),
+            attemptsLeft: 0,
+            restrictiveError: true
+          };
+        }
+
+        // Development mode ONLY non-atomic fallback:
         const { data: existing } = await clientToUse
           .from('admin_rate_limits')
           .select('failed_attempts, locked_until')
@@ -375,26 +389,18 @@ export function clearAdminSessionCookie(res: NextApiResponse): void {
   );
 }
 
-// Extract session token from cookie, Authorization header, or body
+/**
+ * Extract session token EXCLUSIVELY from the HttpOnly cookie.
+ * Highly restrictive security policy: Authorization headers and request bodies are completely rejected.
+ * Guarantees authentication is strictly bound to HttpOnly, SameSite=Strict cookies to eliminate token injection and XSS theft.
+ */
 export function extractSessionToken(req: NextApiRequest): string | null {
-  // 1. From HttpOnly Cookie (most secure)
   const cookieHeader = req.headers.cookie;
-  if (cookieHeader) {
-    const match = cookieHeader.match(/ms_admin_token=([^;]+)/);
-    if (match && match[1]) {
-      return match[1].trim();
-    }
-  }
+  if (!cookieHeader) return null;
 
-  // 2. From Authorization Bearer header
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.substring(7).trim();
-  }
-
-  // 3. From request body
-  if (req.body && typeof req.body.token === 'string') {
-    return req.body.token.trim();
+  const match = cookieHeader.match(/ms_admin_token=([^;]+)/);
+  if (match && match[1]) {
+    return match[1].trim();
   }
 
   return null;
