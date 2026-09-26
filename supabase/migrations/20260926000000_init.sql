@@ -332,3 +332,70 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.tool_settings (id, page_title, page_subtitle)
 VALUES ('default', 'Explore All Tools & Utilities', 'Instant access to AI predictors, developer portals, free coding repos, modded APKs, and custom web utilities.')
 ON CONFLICT (id) DO NOTHING;
+
+-- =========================================================================
+-- 🛡️ ATOMIC RATE LIMIT FUNCTION (Prevents race conditions in concurrent requests)
+-- =========================================================================
+CREATE OR REPLACE FUNCTION public.record_failed_login_attempt(
+    p_ip TEXT,
+    p_max_attempts INT DEFAULT 5,
+    p_lock_duration_seconds INT DEFAULT 60
+)
+RETURNS TABLE (
+    locked BOOLEAN,
+    remaining_lock_seconds INT,
+    attempts_left INT
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_now TIMESTAMPTZ := NOW();
+    v_locked_until TIMESTAMPTZ;
+    v_failed_attempts INT;
+    v_rem_sec INT := 0;
+BEGIN
+    INSERT INTO public.admin_rate_limits (
+        ip,
+        failed_attempts,
+        locked_until,
+        last_attempt_at,
+        created_at,
+        updated_at
+    )
+    VALUES (
+        p_ip,
+        1,
+        NULL,
+        v_now,
+        v_now,
+        v_now
+    )
+    ON CONFLICT (ip) DO UPDATE SET
+        failed_attempts = CASE
+            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until > v_now THEN admin_rate_limits.failed_attempts + 1
+            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until <= v_now THEN 1
+            ELSE admin_rate_limits.failed_attempts + 1
+        END,
+        locked_until = CASE
+            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until > v_now THEN admin_rate_limits.locked_until
+            WHEN (CASE 
+                    WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until <= v_now THEN 1 
+                    ELSE admin_rate_limits.failed_attempts + 1 
+                  END) >= p_max_attempts THEN v_now + (p_lock_duration_seconds || ' seconds')::INTERVAL
+            ELSE NULL
+        END,
+        last_attempt_at = v_now,
+        updated_at = v_now
+    RETURNING admin_rate_limits.failed_attempts, admin_rate_limits.locked_until
+    INTO v_failed_attempts, v_locked_until;
+
+    IF v_locked_until IS NOT NULL AND v_locked_until > v_now THEN
+        v_rem_sec := CEIL(EXTRACT(EPOCH FROM (v_locked_until - v_now)));
+        RETURN QUERY SELECT TRUE, v_rem_sec, 0;
+    ELSE
+        RETURN QUERY SELECT FALSE, 0, GREATEST(0, p_max_attempts - v_failed_attempts);
+    END IF;
+END;
+$$;
+

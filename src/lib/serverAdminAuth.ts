@@ -72,7 +72,7 @@ let memoryAdminState: AdminCredentialRecord = {
 };
 
 // =========================================================================
-// 🛡️ RATE LIMITER: SHARED DATABASE-BACKED SHIELD (CROSS-INSTANCE VERCEL SUPPORT)
+// 🛡️ RATE LIMITER: ATOMIC DATABASE OPERATION & RESTRICTIVE FAIL-CLOSED PROTECTION
 // =========================================================================
 const rateLimitMap = new Map<string, { failedAttempts: number; lockedUntil: number }>();
 const MAX_ATTEMPTS = 5;
@@ -81,12 +81,25 @@ const LOCK_DURATION_MS = 60 * 1000; // 60 seconds lockout
 /**
  * Checks whether an IP address is currently locked out.
  * Synchronizes across multiple Vercel serverless containers via Supabase shared table `admin_rate_limits`.
+ * RESTRICTIVE PROTECTION: On database connection failure in production, does not fail-open.
  */
-export async function checkRateLimit(clientIp: string): Promise<{ allowed: boolean; remainingLockSeconds?: number }> {
+export async function checkRateLimit(clientIp: string): Promise<{ 
+  allowed: boolean; 
+  remainingLockSeconds?: number;
+  restrictiveBlock?: boolean;
+}> {
   const now = Date.now();
+  const isProd = process.env.NODE_ENV === 'production';
   const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
 
-  // 1. Check Shared Database Table (cross-instance Vercel synchronization)
+  // 1. Fast-path check on local memory shield
+  const memRecord = rateLimitMap.get(clientIp);
+  if (memRecord && memRecord.lockedUntil > now) {
+    const remainingSec = Math.ceil((memRecord.lockedUntil - now) / 1000);
+    return { allowed: false, remainingLockSeconds: remainingSec };
+  }
+
+  // 2. Check Shared Database Table (cross-instance Vercel synchronization)
   if (clientToUse) {
     try {
       const { data, error } = await clientToUse
@@ -95,28 +108,45 @@ export async function checkRateLimit(clientIp: string): Promise<{ allowed: boole
         .eq('ip', clientIp)
         .maybeSingle();
 
-      if (!error && data && data.locked_until) {
+      if (error) {
+        console.error('[SECURITY ERROR] Rate limit check query failed on database:', error.message);
+        // Restrictive Protection: On database error in production, do not fail-open!
+        if (isProd) {
+          return {
+            allowed: false,
+            remainingLockSeconds: 60,
+            restrictiveBlock: true
+          };
+        }
+      } else if (data && data.locked_until) {
         const lockTime = new Date(data.locked_until).getTime();
         if (lockTime > now) {
           const remainingSec = Math.ceil((lockTime - now) / 1000);
+          rateLimitMap.set(clientIp, { failedAttempts: data.failed_attempts || MAX_ATTEMPTS, lockedUntil: lockTime });
           return { allowed: false, remainingLockSeconds: remainingSec };
         }
       }
-    } catch (err) {
-      console.warn('[SECURITY] Could not check shared DB rate limit, using memory shield:', err);
+    } catch (err: any) {
+      console.error('[SECURITY ERROR] Database connection error during rate limit check:', err?.message || err);
+      // Restrictive Protection: In production, database failure restricts access
+      if (isProd) {
+        return {
+          allowed: false,
+          remainingLockSeconds: 60,
+          restrictiveBlock: true
+        };
+      }
     }
+  } else if (isProd) {
+    return {
+      allowed: false,
+      remainingLockSeconds: 60,
+      restrictiveBlock: true
+    };
   }
 
-  // 2. Local in-memory check (fast-path fallback)
-  const record = rateLimitMap.get(clientIp);
-  if (!record) return { allowed: true };
-
-  if (record.lockedUntil > now) {
-    const remainingSec = Math.ceil((record.lockedUntil - now) / 1000);
-    return { allowed: false, remainingLockSeconds: remainingSec };
-  }
-
-  if (record.lockedUntil > 0 && record.lockedUntil <= now) {
+  // If memory had an expired lock, clean it up
+  if (memRecord && memRecord.lockedUntil > 0 && memRecord.lockedUntil <= now) {
     rateLimitMap.delete(clientIp);
   }
 
@@ -125,13 +155,21 @@ export async function checkRateLimit(clientIp: string): Promise<{ allowed: boole
 
 /**
  * Registers a failed login attempt for a client IP.
- * Persists the attempt count and lockout status to Supabase so all Vercel instances share the state.
+ * Uses an ATOMIC database operation (PostgreSQL stored function or atomic upsert)
+ * to prevent race conditions during simultaneous concurrent requests.
+ * RESTRICTIVE PROTECTION: On database failure, locks access rather than failing open.
  */
-export async function registerFailedAttempt(clientIp: string): Promise<{ locked: boolean; remainingLockSeconds?: number; attemptsLeft: number }> {
+export async function registerFailedAttempt(clientIp: string): Promise<{ 
+  locked: boolean; 
+  remainingLockSeconds?: number; 
+  attemptsLeft: number;
+  restrictiveError?: boolean;
+}> {
   const now = Date.now();
+  const isProd = process.env.NODE_ENV === 'production';
   const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
 
-  // 1. In-memory update for fast local tracking
+  // 1. In-memory update for fast local tracking (Node event loop ensures local atomicity)
   const memRecord = rateLimitMap.get(clientIp) || { failedAttempts: 0, lockedUntil: 0 };
   if (memRecord.lockedUntil > 0 && memRecord.lockedUntil <= now) {
     memRecord.failedAttempts = 0;
@@ -144,39 +182,69 @@ export async function registerFailedAttempt(clientIp: string): Promise<{ locked:
   }
   rateLimitMap.set(clientIp, memRecord);
 
-  // 2. Shared database persistence (synchronizes across all Vercel serverless containers)
+  // 2. ATOMIC DATABASE OPERATION (Cross-instance Vercel synchronization)
   if (clientToUse) {
     try {
-      const { data: existing, error: selectErr } = await clientToUse
-        .from('admin_rate_limits')
-        .select('failed_attempts, locked_until')
-        .eq('ip', clientIp)
-        .maybeSingle();
+      // Execute atomic PostgreSQL RPC function (handles row-level lock and concurrency)
+      const { data: rpcData, error: rpcError } = await clientToUse.rpc('record_failed_login_attempt', {
+        p_ip: clientIp,
+        p_max_attempts: MAX_ATTEMPTS,
+        p_lock_duration_seconds: Math.ceil(LOCK_DURATION_MS / 1000)
+      });
 
-      let dbAttempts = 1;
-      if (!selectErr && existing) {
-        const existingLockTime = existing.locked_until ? new Date(existing.locked_until).getTime() : 0;
-        if (existingLockTime > 0 && existingLockTime <= now) {
-          dbAttempts = 1; // Previous lock expired
-        } else {
-          dbAttempts = (existing.failed_attempts || 0) + 1;
+      if (!rpcError && Array.isArray(rpcData) && rpcData.length > 0) {
+        const result = rpcData[0];
+        const isLocked = Boolean(result.locked);
+        const remSec = Number(result.remaining_lock_seconds) || (isLocked ? 60 : 0);
+        const left = Number(result.attempts_left) || 0;
+
+        // Keep local memory shield in sync with database atomic state
+        if (isLocked) {
+          memRecord.lockedUntil = now + remSec * 1000;
+          memRecord.failedAttempts = MAX_ATTEMPTS;
+          rateLimitMap.set(clientIp, memRecord);
         }
+
+        return {
+          locked: isLocked,
+          remainingLockSeconds: remSec,
+          attemptsLeft: left
+        };
       }
 
-      const isLocked = dbAttempts >= MAX_ATTEMPTS;
-      const lockedUntilIso = isLocked ? new Date(now + LOCK_DURATION_MS).toISOString() : null;
+      // Fallback: If RPC is not created yet, execute direct database upsert
+      if (rpcError) {
+        console.warn('[SECURITY] record_failed_login_attempt RPC unavailable, using fallback:', rpcError.message);
+        
+        const { data: existing } = await clientToUse
+          .from('admin_rate_limits')
+          .select('failed_attempts, locked_until')
+          .eq('ip', clientIp)
+          .maybeSingle();
 
-      const { error: upsertErr } = await clientToUse
-        .from('admin_rate_limits')
-        .upsert({
-          ip: clientIp,
-          failed_attempts: dbAttempts,
-          locked_until: lockedUntilIso,
-          last_attempt_at: new Date(now).toISOString(),
-          updated_at: new Date(now).toISOString()
-        });
+        let dbAttempts = 1;
+        if (existing) {
+          const existingLockTime = existing.locked_until ? new Date(existing.locked_until).getTime() : 0;
+          if (existingLockTime > 0 && existingLockTime <= now) {
+            dbAttempts = 1;
+          } else {
+            dbAttempts = (existing.failed_attempts || 0) + 1;
+          }
+        }
 
-      if (!upsertErr) {
+        const isLocked = dbAttempts >= MAX_ATTEMPTS;
+        const lockedUntilIso = isLocked ? new Date(now + LOCK_DURATION_MS).toISOString() : null;
+
+        await clientToUse
+          .from('admin_rate_limits')
+          .upsert({
+            ip: clientIp,
+            failed_attempts: dbAttempts,
+            locked_until: lockedUntilIso,
+            last_attempt_at: new Date(now).toISOString(),
+            updated_at: new Date(now).toISOString()
+          });
+
         if (isLocked) {
           return {
             locked: true,
@@ -184,17 +252,39 @@ export async function registerFailedAttempt(clientIp: string): Promise<{ locked:
             attemptsLeft: 0
           };
         }
+
         return {
           locked: false,
           attemptsLeft: Math.max(0, MAX_ATTEMPTS - dbAttempts)
         };
       }
-    } catch (err) {
-      console.warn('[SECURITY] Could not record failed attempt in database, used in-memory shield:', err);
+    } catch (err: any) {
+      console.error('[SECURITY ERROR] Failed to record attempt in database:', err?.message || err);
+      // RESTRICTIVE PROTECTION: On database error in production, do NOT fail-open!
+      if (isProd) {
+        memRecord.lockedUntil = now + LOCK_DURATION_MS;
+        rateLimitMap.set(clientIp, memRecord);
+        return {
+          locked: true,
+          remainingLockSeconds: Math.ceil(LOCK_DURATION_MS / 1000),
+          attemptsLeft: 0,
+          restrictiveError: true
+        };
+      }
     }
+  } else if (isProd) {
+    // Missing database client in production -> restrictive protection
+    memRecord.lockedUntil = now + LOCK_DURATION_MS;
+    rateLimitMap.set(clientIp, memRecord);
+    return {
+      locked: true,
+      remainingLockSeconds: Math.ceil(LOCK_DURATION_MS / 1000),
+      attemptsLeft: 0,
+      restrictiveError: true
+    };
   }
 
-  // Memory fallback return
+  // Memory fallback return for non-production
   const isMemLocked = memRecord.failedAttempts >= MAX_ATTEMPTS;
   return {
     locked: isMemLocked,
@@ -430,9 +520,10 @@ export async function verifyAdminSessionToken(token: string): Promise<{ valid: b
 
 /**
  * Authenticate Admin:
- * 1. Checks shared database-backed rate limit (protects across Vercel instances)
+ * 1. Checks shared database-backed rate limit with restrictive fail-closed protection
  * 2. Fetches credentials from database (strictly disables memory fallback in production)
  * 3. Compares username and PBKDF2 cryptographic password hash (plaintext rejected)
+ * 4. Token is generated and set ONLY in HttpOnly cookie, never exposed in JSON response!
  */
 export async function authenticateAdmin(
   usernameInput: string,
@@ -447,9 +538,17 @@ export async function authenticateAdmin(
   remainingLockSeconds?: number;
   attemptsLeft?: number;
 }> {
-  // 1. IP & Rate Limiting Check (Shared Database-backed across all Vercel instances)
+  // 1. IP & Rate Limiting Check (Atomic & Restrictive Protection across Vercel instances)
   const rateLimit = await checkRateLimit(clientIp);
   if (!rateLimit.allowed) {
+    if (rateLimit.restrictiveBlock) {
+      return {
+        success: false,
+        locked: true,
+        remainingLockSeconds: rateLimit.remainingLockSeconds,
+        message: 'Security Alert: Database rate-limiting service unavailable. Restrictive protection active: login requests are temporarily restricted for defense against brute-force attacks.'
+      };
+    }
     return {
       success: false,
       locked: true,
@@ -527,14 +626,16 @@ export async function authenticateAdmin(
     };
   }
 
-  // Failed login attempt: Register in shared database across Vercel instances
+  // Failed login attempt: Register atomically in shared database across Vercel instances
   const failResult = await registerFailedAttempt(clientIp);
   if (failResult.locked) {
     return {
       success: false,
       locked: true,
       remainingLockSeconds: failResult.remainingLockSeconds,
-      message: `Security Lockout Triggered: 5 failed attempts reached. System locked for ${failResult.remainingLockSeconds} seconds.`
+      message: failResult.restrictiveError
+        ? 'Security Alert: Database unavailable. Restrictive protection locked login attempts.'
+        : `Security Lockout Triggered: 5 failed attempts reached. System locked for ${failResult.remainingLockSeconds} seconds.`
     };
   }
 
@@ -746,4 +847,70 @@ CREATE TRIGGER trg_update_admin_auth
 BEFORE UPDATE ON public.admin_auth
 FOR EACH ROW
 EXECUTE FUNCTION update_admin_auth_timestamp();
+
+-- =========================================================================
+-- 🛡️ ATOMIC RATE LIMIT FUNCTION (Prevents race conditions in concurrent requests)
+-- =========================================================================
+CREATE OR REPLACE FUNCTION public.record_failed_login_attempt(
+    p_ip TEXT,
+    p_max_attempts INT DEFAULT 5,
+    p_lock_duration_seconds INT DEFAULT 60
+)
+RETURNS TABLE (
+    locked BOOLEAN,
+    remaining_lock_seconds INT,
+    attempts_left INT
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_now TIMESTAMPTZ := NOW();
+    v_locked_until TIMESTAMPTZ;
+    v_failed_attempts INT;
+    v_rem_sec INT := 0;
+BEGIN
+    INSERT INTO public.admin_rate_limits (
+        ip,
+        failed_attempts,
+        locked_until,
+        last_attempt_at,
+        created_at,
+        updated_at
+    )
+    VALUES (
+        p_ip,
+        1,
+        NULL,
+        v_now,
+        v_now,
+        v_now
+    )
+    ON CONFLICT (ip) DO UPDATE SET
+        failed_attempts = CASE
+            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until > v_now THEN admin_rate_limits.failed_attempts + 1
+            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until <= v_now THEN 1
+            ELSE admin_rate_limits.failed_attempts + 1
+        END,
+        locked_until = CASE
+            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until > v_now THEN admin_rate_limits.locked_until
+            WHEN (CASE 
+                    WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until <= v_now THEN 1 
+                    ELSE admin_rate_limits.failed_attempts + 1 
+                  END) >= p_max_attempts THEN v_now + (p_lock_duration_seconds || ' seconds')::INTERVAL
+            ELSE NULL
+        END,
+        last_attempt_at = v_now,
+        updated_at = v_now
+    RETURNING admin_rate_limits.failed_attempts, admin_rate_limits.locked_until
+    INTO v_failed_attempts, v_locked_until;
+
+    IF v_locked_until IS NOT NULL AND v_locked_until > v_now THEN
+        v_rem_sec := CEIL(EXTRACT(EPOCH FROM (v_locked_until - v_now)));
+        RETURN QUERY SELECT TRUE, v_rem_sec, 0;
+    ELSE
+        RETURN QUERY SELECT FALSE, 0, GREATEST(0, p_max_attempts - v_failed_attempts);
+    END IF;
+END;
+$$;
 `;

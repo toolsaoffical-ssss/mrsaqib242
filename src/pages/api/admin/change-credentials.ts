@@ -53,12 +53,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       setAdminSessionCookie(res, result.newToken);
     }
 
-    // Success response: Never returns passwords or hashes! Only boolean and clean status.
+    // Success response: Never returns tokens, passwords or hashes! Only boolean and clean status.
     return res.status(200).json({
       success: true,
       message: result.message,
-      newUsername: result.newUsername,
-      newToken: result.newToken
+      newUsername: result.newUsername
     });
   } catch (err: any) {
     console.error('Error changing admin credentials:', err);

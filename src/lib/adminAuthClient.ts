@@ -1,10 +1,10 @@
 // Client-side helper for Admin Authentication & Credential Management
-// Guarantees passwords NEVER leak to frontend or persist insecurely in browser
+// Guarantees tokens & passwords NEVER leak to frontend JavaScript or persist insecurely in browser storage.
+// Authentication is handled EXCLUSIVELY via HttpOnly, Secure, SameSite=Strict cookies.
 
 export interface AdminAuthResponse {
   success: boolean;
   message: string;
-  token?: string;
   username?: string;
   locked?: boolean;
   remainingLockSeconds?: number;
@@ -20,9 +20,13 @@ export interface ChangeCredentialsResponse {
   success: boolean;
   message: string;
   newUsername?: string;
-  newToken?: string;
 }
 
+/**
+ * Log in admin.
+ * The session token is stored exclusively by the browser as an HttpOnly cookie.
+ * No token is ever returned in JSON or stored in JavaScript storage.
+ */
 export async function loginAdmin(username: string, password: string): Promise<AdminAuthResponse> {
   try {
     const res = await fetch('/api/admin/login', {
@@ -32,11 +36,12 @@ export async function loginAdmin(username: string, password: string): Promise<Ad
       body: JSON.stringify({ username, password })
     });
     const data = await res.json();
-    if (data.success && data.token) {
-      sessionStorage.setItem('ms_admin_token', data.token);
-      sessionStorage.setItem('ms_admin_auth', 'true');
-      if (data.username) {
-        sessionStorage.setItem('ms_admin_user', data.username);
+    if (data.success) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('ms_admin_auth', 'true');
+        if (data.username) {
+          sessionStorage.setItem('ms_admin_user', data.username);
+        }
       }
     }
     return data;
@@ -48,29 +53,22 @@ export async function loginAdmin(username: string, password: string): Promise<Ad
   }
 }
 
+/**
+ * Verify admin session.
+ * Relies entirely on the browser sending the HttpOnly cookie with credentials: 'include'.
+ */
 export async function verifyAdminSession(): Promise<VerifySessionResponse> {
   try {
-    const token = typeof window !== 'undefined' ? sessionStorage.getItem('ms_admin_token') : null;
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    // credentials: 'include' ensures HttpOnly cookie ms_admin_token is sent to the server
     const res = await fetch('/api/admin/verify', {
       method: 'POST',
-      headers,
-      credentials: 'include',
-      body: JSON.stringify({ token: token || undefined })
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
     });
 
     if (!res.ok) {
       if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('ms_admin_token');
         sessionStorage.removeItem('ms_admin_auth');
+        sessionStorage.removeItem('ms_admin_user');
       }
       return { authenticated: false };
     }
@@ -86,8 +84,8 @@ export async function verifyAdminSession(): Promise<VerifySessionResponse> {
       return { authenticated: true, username: data.username };
     } else {
       if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('ms_admin_token');
         sessionStorage.removeItem('ms_admin_auth');
+        sessionStorage.removeItem('ms_admin_user');
       }
       return { authenticated: false };
     }
@@ -96,24 +94,19 @@ export async function verifyAdminSession(): Promise<VerifySessionResponse> {
   }
 }
 
+/**
+ * Update administrative credentials.
+ * Authorizes exclusively via the existing HttpOnly cookie.
+ */
 export async function changeAdminCredentials(
   currentPassword: string,
   newUsername: string,
   newPassword: string
 ): Promise<ChangeCredentialsResponse> {
   try {
-    const token = typeof window !== 'undefined' ? sessionStorage.getItem('ms_admin_token') : '';
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const res = await fetch('/api/admin/change-credentials', {
       method: 'POST',
-      headers,
+      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
         currentPassword,
@@ -124,9 +117,8 @@ export async function changeAdminCredentials(
 
     const data = await res.json();
 
-    if (data.success && data.newToken) {
-      sessionStorage.setItem('ms_admin_token', data.newToken);
-      if (data.newUsername) {
+    if (data.success && data.newUsername) {
+      if (typeof window !== 'undefined') {
         sessionStorage.setItem('ms_admin_user', data.newUsername);
       }
     }
@@ -140,6 +132,10 @@ export async function changeAdminCredentials(
   }
 }
 
+/**
+ * Logout admin.
+ * Clears client state and calls backend to expire the HttpOnly cookie.
+ */
 export function logoutAdmin(): void {
   if (typeof window !== 'undefined') {
     sessionStorage.removeItem('ms_admin_token');

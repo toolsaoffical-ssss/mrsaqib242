@@ -30,12 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const result = await authenticateAdmin(username || '', password || '', clientIp);
 
     if (result.success && result.token) {
-      // Layer 2 Security: Set HttpOnly, Secure, SameSite=Strict Cookie
+      // Set HttpOnly, Secure, SameSite=Strict Cookie (Token never exposed to JavaScript)
       setAdminSessionCookie(res, result.token);
 
       return res.status(200).json({
         success: true,
-        token: result.token,
         username: result.username,
         message: result.message
       });
