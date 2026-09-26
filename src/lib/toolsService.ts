@@ -843,10 +843,6 @@ export async function deleteToolItemFromDB(
     }
   }
 }
-    const msg = err instanceof Error ? err.message : String(err);
-    return { success: false, error: msg };
-  }
-}
 
 /**
  * Reset tools and categories to initial default state
