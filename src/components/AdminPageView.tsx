@@ -17,6 +17,8 @@ import { loginAdmin, verifyAdminSession, logoutAdmin } from '../lib/adminAuthCli
 import MirageLockScreen from './MirageLockScreen';
 import JarvisLoader from './JarvisLoader';
 
+import { useRouter } from 'next/router';
+
 const AdminAuthenticatedDashboard = dynamic(
   () => import('./AdminAuthenticatedDashboard'),
   {
@@ -34,6 +36,7 @@ const AdminAuthenticatedDashboard = dynamic(
 );
 
 export default function AdminPageView() {
+  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isCheckingSession, setIsCheckingSession] = useState<boolean>(true);
   const [adminUsername, setAdminUsername] = useState<string>('');
@@ -104,11 +107,16 @@ export default function AdminPageView() {
       } else {
         if (res.locked) {
           setLockedRemaining(res.remainingLockSeconds || 900);
+          router.push('/yourareadmin?reason=brute_force_lockout');
+          return;
         }
         if (res.attemptsLeft !== undefined) {
           setAttemptsRemaining(res.attemptsLeft);
         }
         setAuthError(res.message || 'Incorrect credentials. Please try again.');
+        
+        // Redirect on wrong password to shame them!
+        router.push('/yourareadmin?reason=wrong_password');
       }
     } catch {
       setAuthError('Network error during authentication. Please retry.');

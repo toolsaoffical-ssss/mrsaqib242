@@ -10,11 +10,10 @@ export default function MirageLockScreen() {
   const [timeLeft, setTimeLeft] = useState(60);
   const router = useRouter();
 
-  // Simple client-side visual timer (actual enforcement is on server)
   useEffect(() => {
     if (timeLeft <= 0) {
       logoutAdmin();
-      window.location.reload();
+      window.location.href = '/yourareadmin?reason=mirage_timeout';
       return;
     }
     const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
@@ -44,7 +43,10 @@ export default function MirageLockScreen() {
         setError(data.error || 'Verification Failed');
         if (data.error?.includes('Expired')) {
           logoutAdmin();
-          window.location.reload();
+          window.location.href = '/yourareadmin?reason=mirage_expired';
+        } else {
+          logoutAdmin();
+          window.location.href = '/yourareadmin?reason=mirage_invalid_otp';
         }
       }
     } catch (err) {
