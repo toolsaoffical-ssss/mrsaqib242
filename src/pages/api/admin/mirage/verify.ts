@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { verifyAdminSessionWithDevice } from '../../../../lib/serverAdminAuth';
 import { verifyMirageOtp, setMirageUnlockedCookie, verifyMirageState, clearMirageCookie, getMirageConfig } from '../../../../lib/mirageService';
+import { supabaseAdmin } from '../../../../lib/supabaseServer';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -25,13 +26,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ error: 'Session Expired! You failed to verify the visual matrix in 60 seconds. You have been kicked out.' });
   }
 
-  // 3. Penalty Check (20-second cooldown)
-  const penaltyCookie = req.cookies['ms_mirage_penalty'];
-  if (penaltyCookie) {
-    const penaltyEnd = parseInt(penaltyCookie, 10);
-    if (Date.now() < penaltyEnd) {
-      return res.status(429).json({ error: 'PORT LOCKED. Please wait before retrying.', lockedUntil: penaltyEnd });
-    }
+  // 3. Penalty Check (20-second cooldown) via Supabase
+  const config = await getMirageConfig();
+  if (!config) {
+    return res.status(500).json({ error: 'Mirage configuration not found.' });
+  }
+
+  const penaltyEnd = config.mirage_locked_until ? new Date(config.mirage_locked_until).getTime() : 0;
+  if (Date.now() < penaltyEnd) {
+    return res.status(429).json({ error: 'PORT LOCKED. Please wait before retrying.', lockedUntil: penaltyEnd });
   }
 
   // 4. Verify Code & Port
@@ -40,12 +43,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Matrix code and port number are required.' });
   }
 
-  // Check strike count
-  let strikes = parseInt(req.cookies['ms_mirage_strikes'] || '0', 10);
-
-  // Get config
-  const config = await getMirageConfig();
-  const truePort = config?.true_port || 8;
+  // Check strike count from DB
+  let strikes = config.mirage_strikes || 0;
+  const truePort = config.true_port || 8;
 
   let isValid = false;
   if (port === truePort) {
@@ -53,6 +53,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (isValid) {
+    await supabaseAdmin.from('admin_mirage_config').update({
+      mirage_strikes: 0,
+      mirage_locked_until: null
+    }).eq('id', 'master_mirage');
+
     const existing = res.getHeader('Set-Cookie') || [];
     const existingArray = Array.isArray(existing) ? existing : [String(existing)];
     res.setHeader('Set-Cookie', [
@@ -67,6 +72,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     if (strikes >= 3) {
       clearMirageCookie(res);
+      await supabaseAdmin.from('admin_mirage_config').update({
+        mirage_strikes: 0,
+        mirage_locked_until: null
+      }).eq('id', 'master_mirage');
+
       const existing = res.getHeader('Set-Cookie') || [];
       const existingArray = Array.isArray(existing) ? existing : [String(existing)];
       res.setHeader('Set-Cookie', [
@@ -79,15 +89,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Lock for 20 seconds
     const lockedUntil = Date.now() + 20000;
-    const isProd = process.env.NODE_ENV === 'production';
-    const secureFlag = isProd ? '; Secure' : '';
+    
+    await supabaseAdmin.from('admin_mirage_config').update({
+      mirage_strikes: strikes,
+      mirage_locked_until: new Date(lockedUntil).toISOString()
+    }).eq('id', 'master_mirage');
 
     const existing2 = res.getHeader('Set-Cookie') || [];
     const existingArray2 = Array.isArray(existing2) ? existing2 : [String(existing2)];
     res.setHeader('Set-Cookie', [
       ...existingArray2,
-      `ms_mirage_strikes=${strikes}; Path=/; HttpOnly; SameSite=Strict${secureFlag}; Max-Age=300`,
-      `ms_mirage_penalty=${lockedUntil}; Path=/; HttpOnly; SameSite=Strict${secureFlag}; Max-Age=20`
+      `ms_mirage_strikes=0; Path=/; Max-Age=0`,
+      `ms_mirage_penalty=0; Path=/; Max-Age=0`
     ]);
 
     return res.status(400).json({ error: 'Matrix mismatch. Sequence rejected.', lockedUntil });

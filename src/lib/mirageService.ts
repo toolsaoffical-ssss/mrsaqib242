@@ -13,6 +13,8 @@ export interface MirageConfig {
   generator_pin_salt: string;
   true_colors: string[];
   true_port?: number;
+  mirage_strikes?: number;
+  mirage_locked_until?: string;
 }
 
 export async function getMirageConfig(): Promise<MirageConfig | null> {
@@ -36,12 +38,12 @@ export async function getMirageConfig(): Promise<MirageConfig | null> {
 // ----------------------------------------------------------------------
 
 function generateRandomCode(): string {
-  return Math.floor(1000 + Math.random() * 9000).toString(); // 4 digits
+  return crypto.randomInt(1000, 10000).toString(); // Secure 4 digits
 }
 
 function generateRandomColors(): string[] {
   const colors = ['#ef4444', '#3b82f6', '#eab308', '#a855f7', '#ec4899', '#f97316'];
-  return Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]);
+  return Array.from({ length: 4 }, () => colors[crypto.randomInt(0, colors.length)]);
 }
 
 /**

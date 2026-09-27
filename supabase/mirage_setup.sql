@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS admin_mirage_config (
   generator_pin_hash TEXT NOT NULL,
   generator_pin_salt TEXT NOT NULL,
   true_colors JSONB NOT NULL,
+  true_port INT DEFAULT 8,
+  mirage_strikes INT DEFAULT 0,
+  mirage_locked_until TIMESTAMP WITH TIME ZONE,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now())
 );
 
