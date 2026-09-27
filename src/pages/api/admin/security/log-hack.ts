@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin, isSupabaseAdminConfigured } from '../../../../lib/supabaseServer';
 
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -11,6 +13,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { ip, userAgent, location, isp, reason } = req.body;
+  const clientIp = ip || (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
+
+  // 1. Strict Spam Rate Limit (Max 5 requests per IP per minute)
+  const now = Date.now();
+  const limitRecord = rateLimitMap.get(clientIp) || { count: 0, resetAt: now + 60000 };
+  
+  if (now > limitRecord.resetAt) {
+    limitRecord.count = 0;
+    limitRecord.resetAt = now + 60000;
+  }
+  
+  if (limitRecord.count >= 5) {
+    return res.status(429).json({ error: 'Honeypot logging rate limit exceeded.' });
+  }
+  
+  limitRecord.count++;
+  rateLimitMap.set(clientIp, limitRecord);
 
   // We use supabaseAdmin to bypass RLS since this is an internal system log
   try {

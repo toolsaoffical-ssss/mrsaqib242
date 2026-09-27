@@ -50,25 +50,23 @@ function generateRandomColors(): string[] {
  * Generates a True or Fake OTP based on the provided Master Generator PIN.
  * This function NEVER throws or reveals if the PIN was correct.
  */
-export async function generateMirageOtp(inputPin: string): Promise<{ code: string; colors: string[], isFake?: boolean }> {
+export async function generateMirageOtp(inputPin: string, sessionToken: string = 'unknown'): Promise<{ code: string; colors: string[], isFake?: boolean }> {
   const config = await getMirageConfig();
   
-  // If no config or DB is down, always return fake noise.
   if (!config) {
     return { code: generateRandomCode(), colors: generateRandomColors(), isFake: true };
   }
 
   const inputHash = crypto.pbkdf2Sync(inputPin.trim(), config.generator_pin_salt, 50000, 32, 'sha256').toString('hex');
-  
   const isMatch = crypto.timingSafeEqual(Buffer.from(inputHash), Buffer.from(config.generator_pin_hash));
-
   const generatedCode = generateRandomCode();
 
   if (isMatch) {
-    // TRUE PIN: Save to DB and return True Colors
+    const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex');
+    const payloadToHash = `${generatedCode}:${sessionHash}`;
     const otpSalt = crypto.randomBytes(16).toString('hex');
-    const otpHash = crypto.pbkdf2Sync(generatedCode, otpSalt, 50000, 32, 'sha256').toString('hex');
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes validity
+    const otpHash = crypto.pbkdf2Sync(payloadToHash, otpSalt, 50000, 32, 'sha256').toString('hex');
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
 
     await supabaseAdmin.from('admin_mirage_otps').insert({
       id: `otp_${crypto.randomBytes(8).toString('hex')}`,
@@ -80,7 +78,6 @@ export async function generateMirageOtp(inputPin: string): Promise<{ code: strin
 
     return { code: generatedCode, colors: config.true_colors, isFake: false };
   } else {
-    // FAKE PIN: Do not save, return Fake Colors
     return { code: generateRandomCode(), colors: generateRandomColors(), isFake: true };
   }
 }
@@ -89,11 +86,10 @@ export async function generateMirageOtp(inputPin: string): Promise<{ code: strin
 // Phase 2: Verification Logic (Main Login Portal)
 // ----------------------------------------------------------------------
 
-export async function verifyMirageOtp(inputCode: string): Promise<boolean> {
+export async function verifyMirageOtp(inputCode: string, sessionToken: string = 'unknown'): Promise<boolean> {
   if (!isSupabaseAdminConfigured()) return false;
   
   try {
-    // Fetch all active, unused OTPs
     const { data, error } = await supabaseAdmin
       .from('admin_mirage_otps')
       .select('*')
@@ -102,10 +98,12 @@ export async function verifyMirageOtp(inputCode: string): Promise<boolean> {
 
     if (error || !data || data.length === 0) return false;
 
+    const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex');
+    const payloadToHash = `${inputCode.trim()}:${sessionHash}`;
+
     for (const otp of data) {
-      const expectedHash = crypto.pbkdf2Sync(inputCode.trim(), otp.otp_salt, 50000, 32, 'sha256').toString('hex');
+      const expectedHash = crypto.pbkdf2Sync(payloadToHash, otp.otp_salt, 50000, 32, 'sha256').toString('hex');
       if (expectedHash === otp.otp_hash) {
-        // Mark as used!
         await supabaseAdmin.from('admin_mirage_otps').update({ is_used: true }).eq('id', otp.id);
         return true;
       }
