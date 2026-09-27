@@ -12,6 +12,7 @@ export interface MirageConfig {
   generator_pin_hash: string;
   generator_pin_salt: string;
   true_colors: string[];
+  true_port?: number;
 }
 
 export async function getMirageConfig(): Promise<MirageConfig | null> {

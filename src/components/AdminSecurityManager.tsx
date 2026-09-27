@@ -107,6 +107,7 @@ export default function AdminSecurityManager({
   // Mirage Config state
   const [miragePin, setMiragePin] = useState('');
   const [mirageColors, setMirageColors] = useState(['#10b981', '#10b981', '#10b981', '#10b981']);
+  const [mirageTruePort, setMirageTruePort] = useState(8);
   const [isSubmittingMirage, setIsSubmittingMirage] = useState(false);
   const [mirageMessage, setMirageMessage] = useState('');
   const [mirageError, setMirageError] = useState('');
@@ -122,6 +123,9 @@ export default function AdminSecurityManager({
         .then(data => {
           if (data.success && data.colors) {
             setMirageColors(data.colors);
+          }
+          if (data.success && data.truePort) {
+            setMirageTruePort(data.truePort);
           }
         })
         .catch(() => {});
@@ -408,7 +412,7 @@ export default function AdminSecurityManager({
       const res = await fetch('/api/admin/mirage/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newPin: miragePin, newColors: mirageColors })
+        body: JSON.stringify({ newPin: miragePin, newColors: mirageColors, newTruePort: mirageTruePort })
       });
       const data = await res.json();
       
@@ -1128,6 +1132,25 @@ export default function AdminSecurityManager({
                   <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
                 </div>
                 <p className="text-xs text-zinc-500 mt-1">Numbers only. Used in /mradmin2 to generate the true OTP.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                  True Port (Multi-Port Matrix)
+                </label>
+                <select
+                  value={mirageTruePort}
+                  onChange={e => setMirageTruePort(parseInt(e.target.value, 10))}
+                  disabled={isRestricted}
+                  className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono text-white focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50"
+                >
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map(port => (
+                    <option key={port} value={port}>
+                      Port {String(port).padStart(2, '0')}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-zinc-500 mt-1">The only valid port out of 12 for the True OTP injection.</p>
               </div>
 
               <div className="space-y-4">

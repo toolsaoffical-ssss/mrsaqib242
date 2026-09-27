@@ -16,12 +16,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'GET') {
-    const { data } = await supabaseAdmin.from('admin_mirage_config').select('true_colors').eq('id', 'master_mirage').maybeSingle();
-    return res.status(200).json({ success: true, colors: data?.true_colors || ['#10b981', '#10b981', '#10b981', '#10b981'] });
+    const { data } = await supabaseAdmin.from('admin_mirage_config').select('true_colors, true_port').eq('id', 'master_mirage').maybeSingle();
+    return res.status(200).json({ 
+      success: true, 
+      colors: data?.true_colors || ['#10b981', '#10b981', '#10b981', '#10b981'],
+      truePort: data?.true_port || 8
+    });
   }
 
   if (req.method === 'POST') {
-    const { newPin, newColors } = req.body;
+    const { newPin, newColors, newTruePort } = req.body;
     
     if (!newPin || !newColors || !Array.isArray(newColors) || newColors.length !== 4) {
       return res.status(400).json({ error: 'Invalid configuration payload' });
@@ -29,12 +33,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.pbkdf2Sync(newPin.trim(), salt, 50000, 32, 'sha256').toString('hex');
+    const portToSave = newTruePort ? parseInt(newTruePort, 10) : 8;
 
     const { error } = await supabaseAdmin.from('admin_mirage_config').upsert({
       id: 'master_mirage',
       generator_pin_hash: hash,
       generator_pin_salt: salt,
       true_colors: newColors,
+      true_port: portToSave,
       updated_at: new Date().toISOString()
     });
 
