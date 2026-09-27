@@ -49,8 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let isValid = false;
   if (port === truePort) {
-    const sessionToken = req.cookies['ms_admin_token'];
-    isValid = await verifyMirageOtp(code, sessionToken);
+    isValid = await verifyMirageOtp(code);
   }
 
   if (isValid) {

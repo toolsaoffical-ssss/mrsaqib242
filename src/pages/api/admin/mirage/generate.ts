@@ -28,8 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
 
   try {
-    const sessionToken = req.cookies['ms_admin_token'];
-    const result = await generateMirageOtp(pin, sessionToken);
+    const result = await generateMirageOtp(pin);
     
     // 2. Register failure if the PIN was wrong (fake)
     if (result.isFake) {
