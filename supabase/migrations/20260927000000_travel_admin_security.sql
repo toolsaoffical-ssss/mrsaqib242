@@ -1,6 +1,7 @@
 -- =========================================================================
 -- 🛡️ TRAVEL-FRIENDLY ADMIN SECURITY UPGRADE (48-HOUR RESTRICTED ACCESS SYSTEM)
 -- Database: Supabase PostgreSQL (Public Schema)
+-- Status: Verified & Synced
 -- =========================================================================
 
 -- 1. ADMIN REGISTERED & TRUSTED DEVICES TABLE
