@@ -1,0 +1,187 @@
+import crypto from 'crypto';
+import { supabaseAdmin, isSupabaseAdminConfigured } from './supabaseServer';
+import { NextApiRequest, NextApiResponse } from 'next';
+
+const MIRAGE_ID = 'master_mirage';
+
+// ----------------------------------------------------------------------
+// Configuration & Defaults
+// ----------------------------------------------------------------------
+
+export interface MirageConfig {
+  generator_pin_hash: string;
+  generator_pin_salt: string;
+  true_colors: string[];
+}
+
+export async function getMirageConfig(): Promise<MirageConfig | null> {
+  if (!isSupabaseAdminConfigured()) return null;
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('admin_mirage_config')
+      .select('*')
+      .eq('id', MIRAGE_ID)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return data as MirageConfig;
+  } catch {
+    return null;
+  }
+}
+
+// ----------------------------------------------------------------------
+// Phase 1: Generator Logic (/mradmin2)
+// ----------------------------------------------------------------------
+
+function generateRandomCode(): string {
+  return Math.floor(1000 + Math.random() * 9000).toString(); // 4 digits
+}
+
+function generateRandomColors(): string[] {
+  const colors = ['#ef4444', '#3b82f6', '#eab308', '#a855f7', '#ec4899', '#f97316'];
+  return Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]);
+}
+
+/**
+ * Generates a True or Fake OTP based on the provided Master Generator PIN.
+ * This function NEVER throws or reveals if the PIN was correct.
+ */
+export async function generateMirageOtp(inputPin: string): Promise<{ code: string; colors: string[] }> {
+  const config = await getMirageConfig();
+  
+  // If no config or DB is down, always return fake noise.
+  if (!config) {
+    return { code: generateRandomCode(), colors: generateRandomColors() };
+  }
+
+  const inputHash = crypto.pbkdf2Sync(inputPin.trim(), config.generator_pin_salt, 50000, 32, 'sha256').toString('hex');
+  
+  const isMatch = crypto.timingSafeEqual(Buffer.from(inputHash), Buffer.from(config.generator_pin_hash));
+
+  const generatedCode = generateRandomCode();
+
+  if (isMatch) {
+    // TRUE PIN: Save to DB and return True Colors
+    const otpSalt = crypto.randomBytes(16).toString('hex');
+    const otpHash = crypto.pbkdf2Sync(generatedCode, otpSalt, 50000, 32, 'sha256').toString('hex');
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes validity
+
+    await supabaseAdmin.from('admin_mirage_otps').insert({
+      id: `otp_${crypto.randomBytes(8).toString('hex')}`,
+      otp_hash: otpHash,
+      otp_salt: otpSalt,
+      expires_at: expiresAt,
+      is_used: false
+    });
+
+    return { code: generatedCode, colors: config.true_colors };
+  } else {
+    // FAKE PIN: Do not save, return Fake Colors
+    return { code: generateRandomCode(), colors: generateRandomColors() };
+  }
+}
+
+// ----------------------------------------------------------------------
+// Phase 2: Verification Logic (Main Login Portal)
+// ----------------------------------------------------------------------
+
+export async function verifyMirageOtp(inputCode: string): Promise<boolean> {
+  if (!isSupabaseAdminConfigured()) return false;
+  
+  try {
+    // Fetch all active, unused OTPs
+    const { data, error } = await supabaseAdmin
+      .from('admin_mirage_otps')
+      .select('*')
+      .eq('is_used', false)
+      .gt('expires_at', new Date().toISOString());
+
+    if (error || !data || data.length === 0) return false;
+
+    for (const otp of data) {
+      const expectedHash = crypto.pbkdf2Sync(inputCode.trim(), otp.otp_salt, 50000, 32, 'sha256').toString('hex');
+      if (expectedHash === otp.otp_hash) {
+        // Mark as used!
+        await supabaseAdmin.from('admin_mirage_otps').update({ is_used: true }).eq('id', otp.id);
+        return true;
+      }
+    }
+  } catch (err) {
+    console.error('Mirage Verification Error:', err);
+  }
+  return false;
+}
+
+// ----------------------------------------------------------------------
+// Session & Token Management (The 60-Second Lock)
+// ----------------------------------------------------------------------
+
+const MIRAGE_SECRET = process.env.ADMIN_SESSION_SECRET || 'fallback_mirage_secret_secure_string';
+
+export function setMirageChallengeCookie(res: NextApiResponse) {
+  // Sets the timer start timestamp
+  const startTimestamp = Date.now();
+  const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`challenge:${startTimestamp}`).digest('hex');
+  const token = `challenge.${startTimestamp}.${signature}`;
+
+  res.setHeader('Set-Cookie', [
+    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=120`, // 120s max cookie life
+  ]);
+}
+
+export function setMirageUnlockedCookie(res: NextApiResponse) {
+  const timestamp = Date.now();
+  const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`unlocked:${timestamp}`).digest('hex');
+  const token = `unlocked.${timestamp}.${signature}`;
+
+  // Preserve existing cookies (like ms_admin_token)
+  const existing = res.getHeader('Set-Cookie') || [];
+  const existingArray = Array.isArray(existing) ? existing : [String(existing)];
+  
+  res.setHeader('Set-Cookie', [
+    ...existingArray,
+    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}` // 7 days unlocked
+  ]);
+}
+
+export function clearMirageCookie(res: NextApiResponse) {
+  const existing = res.getHeader('Set-Cookie') || [];
+  const existingArray = Array.isArray(existing) ? existing : [String(existing)];
+  res.setHeader('Set-Cookie', [
+    ...existingArray,
+    'ms_mirage_state=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0'
+  ]);
+}
+
+export function verifyMirageState(req: NextApiRequest): { isUnlocked: boolean; challengeStartedAt?: number; isExpired: boolean } {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return { isUnlocked: false, isExpired: true };
+
+  const match = cookieHeader.match(/ms_mirage_state=([^;]+)/);
+  if (!match || !match[1]) return { isUnlocked: false, isExpired: true };
+
+  const token = match[1];
+  const parts = token.split('.');
+  if (parts.length !== 3) return { isUnlocked: false, isExpired: true };
+
+  const [state, timestampStr, signature] = parts;
+  const timestamp = parseInt(timestampStr, 10);
+  
+  const expectedSig = crypto.createHmac('sha256', MIRAGE_SECRET).update(`${state}:${timestamp}`).digest('hex');
+  if (expectedSig !== signature) return { isUnlocked: false, isExpired: true };
+
+  if (state === 'unlocked') {
+    return { isUnlocked: true, isExpired: false };
+  }
+
+  if (state === 'challenge') {
+    const elapsed = Date.now() - timestamp;
+    if (elapsed > 60000) { // 60 seconds strict!
+      return { isUnlocked: false, challengeStartedAt: timestamp, isExpired: true };
+    }
+    return { isUnlocked: false, challengeStartedAt: timestamp, isExpired: false };
+  }
+
+  return { isUnlocked: false, isExpired: true };
+}

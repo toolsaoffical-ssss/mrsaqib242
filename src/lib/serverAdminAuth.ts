@@ -593,16 +593,26 @@ export async function verifyAdminSessionWithDevice(
 }
 
 /**
- * Server-Side Gatekeeper: Asserts that an administrator is NOT in restricted mode.
- * Denies sensitive administrative actions (credentials, deletions, sensitive DB mutations).
+ * Server-Side Gatekeeper: Asserts that an administrator is NOT in restricted mode AND Mirage is unlocked.
+ * Denies sensitive administrative actions.
  */
 export function assertUnrestrictedAdmin(
   auth: AdminSessionVerification,
-  res: NextApiResponse
+  res: NextApiResponse,
+  req?: NextApiRequest
 ): boolean {
   if (!auth.valid) {
     res.status(401).json({ error: 'Unauthorized: Valid admin session required.' });
     return false;
+  }
+  
+  if (req) {
+    const { verifyMirageState } = require('./mirageService');
+    const mirage = verifyMirageState(req);
+    if (!mirage.isUnlocked) {
+      res.status(403).json({ error: 'Mirage Challenge Active: Session is locked. Please complete Visual PIN verification.' });
+      return false;
+    }
   }
 
   if (auth.isRestricted) {
@@ -692,6 +702,9 @@ export async function authenticateAdmin(
     let remRestSec = 0;
 
     if (req && res) {
+      const { setMirageChallengeCookie } = require('./mirageService');
+      setMirageChallengeCookie(res);
+      
       const devResult = await registerOrUpdateDeviceLogin(req, clientIp);
 
       if (devResult.isBlocked) {

@@ -23,6 +23,7 @@ export interface VerifySessionResponse {
   remaining_restriction_seconds?: number;
   blocked?: boolean;
   message?: string;
+  mirage_locked?: boolean;
 }
 
 export interface ChangeCredentialsResponse {
@@ -80,6 +81,19 @@ export interface SecurityOverviewResponse {
   active_device: SecurityDeviceItem | null;
   recovery_codes_count: number;
   error?: string;
+}
+
+export interface AdminAuthResponse {
+  success: boolean;
+  message: string;
+  username?: string;
+  locked?: boolean;
+  remainingLockSeconds?: number;
+  attemptsLeft?: number;
+  is_restricted?: boolean;
+  device_id?: string;
+  remaining_restriction_seconds?: number;
+  mirage_locked?: boolean;
 }
 
 /**
@@ -154,7 +168,8 @@ export async function verifyAdminSession(): Promise<VerifySessionResponse> {
         is_restricted: Boolean(data.is_restricted),
         device_id: data.device_id,
         device_status: data.device_status,
-        remaining_restriction_seconds: data.remaining_restriction_seconds || 0
+        remaining_restriction_seconds: data.remaining_restriction_seconds || 0,
+        mirage_locked: Boolean(data.mirage_locked)
       };
     } else {
       if (typeof window !== 'undefined') {

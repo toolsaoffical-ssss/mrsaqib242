@@ -14,6 +14,7 @@ import {
   ArrowLeft 
 } from 'lucide-react';
 import { loginAdmin, verifyAdminSession, logoutAdmin } from '../lib/adminAuthClient';
+import MirageLockScreen from './MirageLockScreen';
 
 const AdminAuthenticatedDashboard = dynamic(
   () => import('./AdminAuthenticatedDashboard'),
@@ -42,6 +43,7 @@ export default function AdminPageView() {
   const [isCheckingSession, setIsCheckingSession] = useState<boolean>(true);
   const [adminUsername, setAdminUsername] = useState<string>('');
   const [isRestricted, setIsRestricted] = useState<boolean>(false);
+  const [isMirageLocked, setIsMirageLocked] = useState<boolean>(false);
   const [deviceId, setDeviceId] = useState<string>('');
   const [deviceStatus, setDeviceStatus] = useState<string>('pending_48h');
   const [remainingRestrictionSeconds, setRemainingRestrictionSeconds] = useState<number>(0);
@@ -64,6 +66,7 @@ export default function AdminPageView() {
           setIsAuthenticated(true);
           if (result.username) setAdminUsername(result.username);
           setIsRestricted(Boolean(result.is_restricted));
+          setIsMirageLocked(Boolean(result.mirage_locked));
           if (result.device_id) setDeviceId(result.device_id);
           if (result.device_status) setDeviceStatus(result.device_status);
           if (result.remaining_restriction_seconds !== undefined) {
@@ -71,6 +74,7 @@ export default function AdminPageView() {
           }
         } else {
           setIsAuthenticated(false);
+          setIsMirageLocked(false);
           if (result.blocked) {
             setAuthError(result.message || 'This device has been permanently blocked by an administrator.');
           }
@@ -92,6 +96,7 @@ export default function AdminPageView() {
       const res = await loginAdmin(loginUsername.trim(), loginPassword);
       if (res.success) {
         setIsAuthenticated(true);
+        setIsMirageLocked(true); // Always locked immediately after login
         if (res.username) setAdminUsername(res.username);
         setIsRestricted(Boolean(res.is_restricted));
         if (res.device_id) setDeviceId(res.device_id);
@@ -276,18 +281,21 @@ export default function AdminPageView() {
 
   // 3. Authenticated: Render dashboard with restriction status
   return (
-    <AdminAuthenticatedDashboard
-      adminUsername={adminUsername}
-      isRestricted={isRestricted}
-      remainingRestrictionSeconds={remainingRestrictionSeconds}
-      deviceId={deviceId}
-      deviceStatus={deviceStatus}
-      onLogout={handleLogout}
-      onDeviceApproved={() => {
-        setIsRestricted(false);
-        setDeviceStatus('trusted');
-        setRemainingRestrictionSeconds(0);
-      }}
-    />
+    <>
+      <AdminAuthenticatedDashboard
+        adminUsername={adminUsername}
+        isRestricted={isRestricted}
+        remainingRestrictionSeconds={remainingRestrictionSeconds}
+        deviceId={deviceId}
+        deviceStatus={deviceStatus}
+        onLogout={handleLogout}
+        onDeviceApproved={() => {
+          setIsRestricted(false);
+          setDeviceStatus('trusted');
+          setRemainingRestrictionSeconds(0);
+        }}
+      />
+      {isMirageLocked && <MirageLockScreen />}
+    </>
   );
 }

@@ -18,13 +18,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const result = await verifyAdminSessionWithDevice(req);
 
     if (result.valid) {
+      const { verifyMirageState } = require('../../../lib/mirageService');
+      const mirage = verifyMirageState(req);
+
       return res.status(200).json({ 
         authenticated: true, 
         username: result.username,
         is_restricted: result.isRestricted,
         device_id: result.deviceId,
         device_status: result.deviceStatus,
-        remaining_restriction_seconds: result.remainingRestrictionSeconds || 0
+        remaining_restriction_seconds: result.remainingRestrictionSeconds || 0,
+        mirage_locked: !mirage.isUnlocked
       });
     }
 
