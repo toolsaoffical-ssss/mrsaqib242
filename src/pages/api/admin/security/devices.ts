@@ -191,7 +191,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // 5. Generate Emergency Travel Recovery Codes
       // Restricted sessions cannot generate recovery codes (requires unrestricted session)
       if (action === 'generate_recovery_codes') {
-        if (!assertUnrestrictedAdmin(auth, res)) return;
+        if (!assertUnrestrictedAdmin(auth, res, req)) return;
 
         const codes = await generateEmergencyRecoveryCodes();
         return res.status(200).json({

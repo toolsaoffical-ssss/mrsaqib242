@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // 🛡️ 48-Hour Travel Security Gatekeeper:
   // Restricted sessions on unrecognized devices CANNOT modify administrative username or password!
-  if (!assertUnrestrictedAdmin(auth, res)) {
+  if (!assertUnrestrictedAdmin(auth, res, req)) {
     return;
   }
 

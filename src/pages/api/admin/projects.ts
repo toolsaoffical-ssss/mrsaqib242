@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // 🛡️ 48-Hour Travel Security Gatekeeper for State Modifications:
-    if (!assertUnrestrictedAdmin(auth, res)) return;
+    if (!assertUnrestrictedAdmin(auth, res, req)) return;
 
     // POST: Create project OR seed projects
     if (req.method === 'POST') {
