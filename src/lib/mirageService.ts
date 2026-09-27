@@ -50,12 +50,12 @@ function generateRandomColors(): string[] {
  * Generates a True or Fake OTP based on the provided Master Generator PIN.
  * This function NEVER throws or reveals if the PIN was correct.
  */
-export async function generateMirageOtp(inputPin: string): Promise<{ code: string; colors: string[] }> {
+export async function generateMirageOtp(inputPin: string): Promise<{ code: string; colors: string[], isFake?: boolean }> {
   const config = await getMirageConfig();
   
   // If no config or DB is down, always return fake noise.
   if (!config) {
-    return { code: generateRandomCode(), colors: generateRandomColors() };
+    return { code: generateRandomCode(), colors: generateRandomColors(), isFake: true };
   }
 
   const inputHash = crypto.pbkdf2Sync(inputPin.trim(), config.generator_pin_salt, 50000, 32, 'sha256').toString('hex');
@@ -78,10 +78,10 @@ export async function generateMirageOtp(inputPin: string): Promise<{ code: strin
       is_used: false
     });
 
-    return { code: generatedCode, colors: config.true_colors };
+    return { code: generatedCode, colors: config.true_colors, isFake: false };
   } else {
     // FAKE PIN: Do not save, return Fake Colors
-    return { code: generateRandomCode(), colors: generateRandomColors() };
+    return { code: generateRandomCode(), colors: generateRandomColors(), isFake: true };
   }
 }
 
