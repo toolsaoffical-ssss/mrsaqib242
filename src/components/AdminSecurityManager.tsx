@@ -53,7 +53,7 @@ interface AdminSecurityManagerProps {
   onDeviceApproved?: () => void;
 }
 
-type SecuritySubTab = 'overview' | 'devices' | 'alerts' | 'recovery' | 'credentials';
+type SecuritySubTab = 'overview' | 'devices' | 'alerts' | 'recovery' | 'credentials' | 'mirage';
 
 export default function AdminSecurityManager({
   currentUsername,
@@ -98,6 +98,26 @@ export default function AdminSecurityManager({
   const [isSubmittingCreds, setIsSubmittingCreds] = useState(false);
   const [credsError, setCredsError] = useState('');
   const [credsSuccess, setCredsSuccess] = useState('');
+
+  // Mirage Config state
+  const [miragePin, setMiragePin] = useState('');
+  const [mirageColors, setMirageColors] = useState(['#10b981', '#10b981', '#10b981', '#10b981']);
+  const [isSubmittingMirage, setIsSubmittingMirage] = useState(false);
+  const [mirageMessage, setMirageMessage] = useState('');
+  const [mirageError, setMirageError] = useState('');
+  
+  useEffect(() => {
+    if (subTab === 'mirage') {
+      fetch('/api/admin/mirage/config')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.colors) {
+            setMirageColors(data.colors);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [subTab]);
 
   // Load Security Overview
   const loadSecurity = async () => {
@@ -359,6 +379,38 @@ export default function AdminSecurityManager({
     }
   };
 
+  const handleUpdateMirage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!miragePin || miragePin.length < 4) {
+      setMirageError('Master PIN must be at least 4 digits long.');
+      return;
+    }
+    setMirageError('');
+    setMirageMessage('');
+    setIsSubmittingMirage(true);
+
+    try {
+      const res = await fetch('/api/admin/mirage/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPin: miragePin, newColors: mirageColors })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        setMirageMessage(data.message || 'Mirage Configuration Updated!');
+        setMiragePin('');
+        showToast('Mirage visual matrix configuration updated successfully!', 'success');
+      } else {
+        setMirageError(data.error || 'Failed to update configuration.');
+      }
+    } catch {
+      setMirageError('Network error while updating configuration.');
+    } finally {
+      setIsSubmittingMirage(false);
+    }
+  };
+
   const activeDevice = securityData?.active_device;
   const currentIp = securityData?.current_client_ip || '127.0.0.1';
 
@@ -423,7 +475,8 @@ export default function AdminSecurityManager({
             { id: 'devices' as SecuritySubTab, label: `Registered Devices (${securityData?.devices.length || 0})`, icon: Laptop },
             { id: 'alerts' as SecuritySubTab, label: `Security Alerts (${securityData?.alerts.length || 0})`, icon: AlertTriangle },
             { id: 'recovery' as SecuritySubTab, label: 'Travel Recovery & Keys', icon: KeyRound },
-            { id: 'credentials' as SecuritySubTab, label: 'Admin Credentials', icon: Lock }
+            { id: 'credentials' as SecuritySubTab, label: 'Admin Credentials', icon: Lock },
+            { id: 'mirage' as SecuritySubTab, label: 'Zero-Knowledge Matrix', icon: EyeOff }
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = subTab === tab.id;
@@ -998,6 +1051,112 @@ export default function AdminSecurityManager({
                   <>
                     <Lock size={16} />
                     <span>Update Admin Credentials</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------------- */}
+      {/* SUB-TAB 6: MIRAGE VISUAL MATRIX HONEYPOT CONFIGURATION              */}
+      {/* ------------------------------------------------------------------- */}
+      {subTab === 'mirage' && (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-[#13141a] border border-white/5 rounded-2xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
+              <EyeOff size={120} />
+            </div>
+            
+            <div className="flex items-start gap-4 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+                <EyeOff size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-black tracking-tight text-white uppercase">Mirage Matrix Configuration</h3>
+                <p className="text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
+                  Configure the Zero-Knowledge Visual Honeypot system. Set the secret PIN for the generator portal and define the specific "True Colors" that indicate a valid OTP generation.
+                </p>
+              </div>
+            </div>
+
+            {mirageMessage && (
+              <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-start gap-3">
+                <CheckCircle2 size={18} className="text-emerald-400 mt-0.5 shrink-0" />
+                <p className="text-sm text-emerald-300">{mirageMessage}</p>
+              </div>
+            )}
+
+            {mirageError && (
+              <div className="mb-6 bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-start gap-3">
+                <AlertTriangle size={18} className="text-rose-400 mt-0.5 shrink-0" />
+                <p className="text-sm text-rose-300">{mirageError}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleUpdateMirage} className="space-y-6 max-w-lg relative z-10">
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                  Master Generator PIN
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={miragePin}
+                    onChange={e => setMiragePin(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="e.g. 242242"
+                    disabled={isRestricted}
+                    className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500 transition-colors pl-10 disabled:opacity-50"
+                  />
+                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                </div>
+                <p className="text-xs text-zinc-500 mt-1">Numbers only. Used in /mradmin2 to generate the true OTP.</p>
+              </div>
+
+              <div className="space-y-4">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                  True Colors Matrix (4 Digits)
+                </label>
+                <div className="grid grid-cols-4 gap-4">
+                  {mirageColors.map((color, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="text-center text-[10px] text-zinc-500 font-bold uppercase">D{index + 1}</div>
+                      <div 
+                        className="w-full aspect-square rounded-lg border-2 border-white/10 cursor-pointer overflow-hidden relative"
+                        style={{ backgroundColor: color }}
+                      >
+                        <input
+                          type="color"
+                          value={color}
+                          disabled={isRestricted}
+                          onChange={e => {
+                            const newColors = [...mirageColors];
+                            newColors[index] = e.target.value;
+                            setMirageColors(newColors);
+                          }}
+                          className="absolute inset-[-10px] w-[150%] h-[150%] opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmittingMirage || isRestricted}
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(6,182,212,0.3)] transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isSubmittingMirage ? (
+                  <>
+                    <RefreshCw size={16} className="animate-spin" />
+                    <span>Updating Matrix...</span>
+                  </>
+                ) : (
+                  <>
+                    <Shield size={16} />
+                    <span>Save Mirage Configuration</span>
                   </>
                 )}
               </button>
