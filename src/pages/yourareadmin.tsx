@@ -18,40 +18,64 @@ export default function ShamePage() {
   const { reason } = router.query;
 
   useEffect(() => {
-    const trackHacker = async () => {
-      try {
-        // Fetch IP and location info
-        const ipRes = await fetch('https://ipwho.is/');
-        const ipData = await ipRes.json();
-        
-        const hackerInfo = {
-          ip: ipData.ip || 'Unknown IP',
-          city: ipData.city || 'Unknown City',
-          country: ipData.country || 'Unknown Country',
-          isp: ipData.connection?.isp || 'Unknown ISP',
-          userAgent: window.navigator.userAgent
-        };
-        
-        setData(hackerInfo);
+    // Only run once
+    if (logged) return;
 
-        // Send to our backend to log in Supabase
-        if (!logged) {
-          await fetch('/api/admin/security/log-hack', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ip: hackerInfo.ip,
-              userAgent: hackerInfo.userAgent,
-              location: `${hackerInfo.city}, ${hackerInfo.country}`,
-              isp: hackerInfo.isp,
-              reason: reason || 'Unauthorized Intrusion Attempt'
-            })
-          });
-          setLogged(true);
+    const trackHacker = async () => {
+      let ip = 'Unknown IP';
+      let city = 'Unknown City';
+      let country = 'Unknown Country';
+      let isp = 'Unknown ISP';
+
+      try {
+        // Primary IP API
+        const ipRes = await fetch('https://ipapi.co/json/');
+        const ipData = await ipRes.json();
+        if (ipData.ip) {
+          ip = ipData.ip;
+          city = ipData.city || city;
+          country = ipData.country_name || country;
+          isp = ipData.org || isp;
         }
       } catch (err) {
-        console.error('Failed to trace intrusion source.');
+        // Fallback API if adblocker blocks ipapi.co
+        try {
+          const fallbackRes = await fetch('https://api.ipify.org?format=json');
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData.ip) ip = fallbackData.ip;
+        } catch (fallbackErr) {
+          console.error('Failed to trace IP');
+        }
       }
+
+      const hackerInfo = {
+        ip,
+        city,
+        country,
+        isp,
+        userAgent: window.navigator.userAgent || 'Unknown Device'
+      };
+      
+      setData(hackerInfo);
+
+      // Send to our backend to log in Supabase
+      try {
+        await fetch('/api/admin/security/log-hack', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ip: hackerInfo.ip,
+            userAgent: hackerInfo.userAgent,
+            location: `${hackerInfo.city}, ${hackerInfo.country}`,
+            isp: hackerInfo.isp,
+            reason: reason || 'Unauthorized Intrusion Attempt'
+          })
+        });
+      } catch (logErr) {
+        console.error('Failed to save log to database');
+      }
+
+      setLogged(true);
     };
 
     trackHacker();
