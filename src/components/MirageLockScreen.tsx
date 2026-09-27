@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ShieldAlert, Timer, Fingerprint } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { logoutAdmin } from '../lib/adminAuthClient';
 
 export default function MirageLockScreen() {
   const [code, setCode] = useState('');
@@ -12,7 +13,8 @@ export default function MirageLockScreen() {
   // Simple client-side visual timer (actual enforcement is on server)
   useEffect(() => {
     if (timeLeft <= 0) {
-      router.push('/api/admin/logout'); // Kick them out
+      logoutAdmin();
+      window.location.reload();
       return;
     }
     const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
@@ -30,6 +32,7 @@ export default function MirageLockScreen() {
       const res = await fetch('/api/admin/mirage/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ code })
       });
       const data = await res.json();
@@ -40,7 +43,8 @@ export default function MirageLockScreen() {
       } else {
         setError(data.error || 'Verification Failed');
         if (data.error?.includes('Expired')) {
-          router.push('/api/admin/logout');
+          logoutAdmin();
+          window.location.reload();
         }
       }
     } catch (err) {

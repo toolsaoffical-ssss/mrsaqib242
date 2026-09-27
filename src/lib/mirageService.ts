@@ -125,7 +125,11 @@ export function setMirageChallengeCookie(res: NextApiResponse) {
   const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`challenge:${startTimestamp}`).digest('hex');
   const token = `challenge.${startTimestamp}.${signature}`;
 
+  const existing = res.getHeader('Set-Cookie') || [];
+  const existingArray = Array.isArray(existing) ? existing : [String(existing)];
+
   res.setHeader('Set-Cookie', [
+    ...existingArray,
     `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=120`, // 120s max cookie life
   ]);
 }
