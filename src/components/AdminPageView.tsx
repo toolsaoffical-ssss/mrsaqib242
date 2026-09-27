@@ -173,7 +173,7 @@ export default function AdminPageView() {
               Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">Admin Console</span>
             </h1>
             <p className="text-xs text-zinc-400">
-              Travel-Friendly Zero-Trust Protected: Unrecognized devices receive a 48-Hour Restricted Session with persistent security alerts.
+              Authorized Personnel Only. Strictly monitored and recorded.
             </p>
           </div>
 
@@ -267,7 +267,7 @@ export default function AdminPageView() {
 
             <div className="text-center pt-2">
               <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
-                Protected by SHA-256 PBKDF2 &amp; Travel Device Shield
+                Secured via End-to-End Encrypted Authentication
               </span>
             </div>
           </form>
