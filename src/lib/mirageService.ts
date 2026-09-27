@@ -120,17 +120,18 @@ export async function verifyMirageOtp(inputCode: string): Promise<boolean> {
 const MIRAGE_SECRET = process.env.ADMIN_SESSION_SECRET || 'fallback_mirage_secret_secure_string';
 
 export function setMirageChallengeCookie(res: NextApiResponse) {
-  // Sets the timer start timestamp
   const startTimestamp = Date.now();
   const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`challenge:${startTimestamp}`).digest('hex');
   const token = `challenge.${startTimestamp}.${signature}`;
+  const isProd = process.env.NODE_ENV === 'production';
+  const secureFlag = isProd ? '; Secure' : '';
 
   const existing = res.getHeader('Set-Cookie') || [];
   const existingArray = Array.isArray(existing) ? existing : [String(existing)];
 
   res.setHeader('Set-Cookie', [
     ...existingArray,
-    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=120`, // 120s max cookie life
+    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict${secureFlag}; Max-Age=120`
   ]);
 }
 
@@ -138,23 +139,26 @@ export function setMirageUnlockedCookie(res: NextApiResponse) {
   const timestamp = Date.now();
   const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`unlocked:${timestamp}`).digest('hex');
   const token = `unlocked.${timestamp}.${signature}`;
+  const isProd = process.env.NODE_ENV === 'production';
+  const secureFlag = isProd ? '; Secure' : '';
 
-  // Preserve existing cookies (like ms_admin_token)
   const existing = res.getHeader('Set-Cookie') || [];
   const existingArray = Array.isArray(existing) ? existing : [String(existing)];
   
   res.setHeader('Set-Cookie', [
     ...existingArray,
-    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}` // 7 days unlocked
+    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict${secureFlag}; Max-Age=${7 * 24 * 60 * 60}`
   ]);
 }
 
 export function clearMirageCookie(res: NextApiResponse) {
+  const isProd = process.env.NODE_ENV === 'production';
+  const secureFlag = isProd ? '; Secure' : '';
   const existing = res.getHeader('Set-Cookie') || [];
   const existingArray = Array.isArray(existing) ? existing : [String(existing)];
   res.setHeader('Set-Cookie', [
     ...existingArray,
-    'ms_mirage_state=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0'
+    `ms_mirage_state=; Path=/; HttpOnly; SameSite=Strict${secureFlag}; Max-Age=0`
   ]);
 }
 
