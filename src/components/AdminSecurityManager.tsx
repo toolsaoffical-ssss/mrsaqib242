@@ -60,6 +60,13 @@ interface AdminSecurityManagerProps {
 
 type SecuritySubTab = 'overview' | 'devices' | 'alerts' | 'recovery' | 'credentials' | 'mirage' | 'hacklogs' | 'banned';
 
+export interface BannedIpItem {
+  ip_address: string;
+  banned_until: string;
+  reason: string;
+  created_at: string;
+}
+
 export default function AdminSecurityManager({
   currentUsername,
   isRestricted: initialRestricted = false,
@@ -71,6 +78,9 @@ export default function AdminSecurityManager({
   onDeviceApproved
 }: AdminSecurityManagerProps) {
   const [subTab, setSubTab] = useState<SecuritySubTab>('overview');
+
+  const [bannedIps, setBannedIps] = useState<BannedIpItem[]>([]);
+  const [isLoadingBanned, setIsLoadingBanned] = useState<boolean>(false);
 
   // Security overview state
   const [securityData, setSecurityData] = useState<SecurityOverviewResponse | null>(null);
@@ -135,6 +145,19 @@ export default function AdminSecurityManager({
         setHackLogs(logs);
         setIsLoadingHackLogs(false);
       });
+    } else if (subTab === 'banned') {
+      setIsLoadingBanned(true);
+      fetch('/api/admin/security/banned-ips')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.banned_ips) {
+            setBannedIps(data.banned_ips);
+          }
+          setIsLoadingBanned(false);
+        })
+        .catch(() => {
+          setIsLoadingBanned(false);
+        });
     }
   }, [subTab]);
 
@@ -256,6 +279,30 @@ export default function AdminSecurityManager({
       }
     } catch {
       showToast('Error blocking device', 'error');
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleUnbanIp = async (ip: string) => {
+    if (!window.confirm(`Are you sure you want to unban IP: ${ip}?`)) return;
+
+    setActionLoadingId(`unban_${ip}`);
+    try {
+      const res = await fetch('/api/admin/security/banned-ips', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ip })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`IP ${ip} has been unbanned`, 'success');
+        setBannedIps(prev => prev.filter(b => b.ip_address !== ip));
+      } else {
+        showToast(data.error || 'Failed to unban IP', 'error');
+      }
+    } catch {
+      showToast('Network error while unbanning IP', 'error');
     } finally {
       setActionLoadingId(null);
     }
@@ -1317,13 +1364,57 @@ export default function AdminSecurityManager({
               </div>
             </div>
             
-            <div className="bg-black/50 border border-white/5 rounded-xl p-8 text-center">
-              <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">Use Supabase SQL to manage banned IPs</p>
-              <div className="mt-4 inline-block text-left bg-black border border-white/10 p-4 rounded-lg font-mono text-xs text-zinc-400">
-                SELECT * FROM admin_banned_ips;<br/>
-                DELETE FROM admin_banned_ips WHERE ip_address = '...';
+            {isLoadingBanned ? (
+              <div className="flex justify-center py-8">
+                <RefreshCw size={24} className="animate-spin text-rose-500" />
               </div>
-            </div>
+            ) : bannedIps.length === 0 ? (
+              <div className="bg-black/50 border border-white/5 rounded-xl p-8 text-center">
+                <ShieldAlert size={32} className="mx-auto text-zinc-600 mb-3" />
+                <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">No IP addresses are currently blocked</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {bannedIps.map((ban) => (
+                  <div key={ban.ip_address} className="bg-black/60 border border-rose-900/40 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden group hover:border-rose-500/50 transition-colors">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-600" />
+                    
+                    <div className="flex-1 min-w-0 pl-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-rose-400 font-black text-sm uppercase flex items-center gap-1.5">
+                          <Globe size={14} />
+                          {ban.ip_address}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                          Expires: {new Date(ban.banned_until).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="text-xs text-zinc-400">
+                        {ban.reason}
+                      </div>
+                      <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider mt-1">
+                        Blocked at: {new Date(ban.created_at).toLocaleString()}
+                      </div>
+                    </div>
+
+                    <div className="shrink-0">
+                      <button
+                        onClick={() => handleUnbanIp(ban.ip_address)}
+                        disabled={actionLoadingId === `unban_${ban.ip_address}`}
+                        className="px-4 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 text-xs font-bold transition-colors flex items-center gap-2 disabled:opacity-50"
+                      >
+                        {actionLoadingId === `unban_${ban.ip_address}` ? (
+                          <RefreshCw size={14} className="animate-spin" />
+                        ) : (
+                          <Unlock size={14} />
+                        )}
+                        UNBAN NOW
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
