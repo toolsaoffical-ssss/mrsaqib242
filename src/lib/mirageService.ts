@@ -138,9 +138,11 @@ export function setMirageChallengeCookie(res: NextApiResponse) {
   ]);
 }
 
-export function setMirageUnlockedCookie(res: NextApiResponse) {
+export function setMirageUnlockedCookie(req: NextApiRequest, res: NextApiResponse) {
+  const sessionToken = req.cookies['ms_admin_session'] || 'unknown';
+  const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex');
   const timestamp = Date.now();
-  const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`unlocked:${timestamp}`).digest('hex');
+  const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`unlocked:${timestamp}:${sessionHash}`).digest('hex');
   const token = `unlocked.${timestamp}.${signature}`;
   const isProd = process.env.NODE_ENV === 'production';
   const secureFlag = isProd ? '; Secure' : '';
@@ -179,7 +181,16 @@ export function verifyMirageState(req: NextApiRequest): { isUnlocked: boolean; c
   const [state, timestampStr, signature] = parts;
   const timestamp = parseInt(timestampStr, 10);
   
-  const expectedSig = crypto.createHmac('sha256', MIRAGE_SECRET).update(`${state}:${timestamp}`).digest('hex');
+  const sessionToken = req.cookies['ms_admin_session'] || 'unknown';
+  const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex');
+
+  let expectedSig = '';
+  if (state === 'unlocked') {
+    expectedSig = crypto.createHmac('sha256', MIRAGE_SECRET).update(`unlocked:${timestamp}:${sessionHash}`).digest('hex');
+  } else {
+    expectedSig = crypto.createHmac('sha256', MIRAGE_SECRET).update(`challenge:${timestamp}`).digest('hex');
+  }
+
   if (expectedSig !== signature) return { isUnlocked: false, isExpired: true };
 
   if (state === 'unlocked') {

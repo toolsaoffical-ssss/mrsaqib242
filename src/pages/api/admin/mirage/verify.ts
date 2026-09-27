@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `ms_mirage_strikes=0; Path=/; Max-Age=0`,
       `ms_mirage_penalty=0; Path=/; Max-Age=0`
     ]);
-    setMirageUnlockedCookie(res);
+    setMirageUnlockedCookie(req, res);
     return res.status(200).json({ success: true, message: 'Visual verification successful.' });
   } else {
     strikes += 1;
