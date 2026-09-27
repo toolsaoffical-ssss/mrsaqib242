@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import { ShieldAlert, MapPin, Globe, Cpu, AlertOctagon, Terminal } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
+import { supabaseAdmin, isSupabaseAdminConfigured } from '../lib/supabaseServer';
 
 interface HackerData {
   ip: string;
@@ -11,76 +12,11 @@ interface HackerData {
   userAgent: string;
 }
 
-export default function ShamePage() {
-  const [data, setData] = useState<HackerData | null>(null);
-  const [logged, setLogged] = useState(false);
-  const router = useRouter();
-  const { reason } = router.query;
+interface ShamePageProps {
+  data: HackerData;
+}
 
-  useEffect(() => {
-    // Only run once
-    if (logged) return;
-
-    const trackHacker = async () => {
-      let ip = 'Unknown IP';
-      let city = 'Unknown City';
-      let country = 'Unknown Country';
-      let isp = 'Unknown ISP';
-
-      try {
-        // Primary IP API
-        const ipRes = await fetch('https://ipapi.co/json/');
-        const ipData = await ipRes.json();
-        if (ipData.ip) {
-          ip = ipData.ip;
-          city = ipData.city || city;
-          country = ipData.country_name || country;
-          isp = ipData.org || isp;
-        }
-      } catch (err) {
-        // Fallback API if adblocker blocks ipapi.co
-        try {
-          const fallbackRes = await fetch('https://api.ipify.org?format=json');
-          const fallbackData = await fallbackRes.json();
-          if (fallbackData.ip) ip = fallbackData.ip;
-        } catch (fallbackErr) {
-          console.error('Failed to trace IP');
-        }
-      }
-
-      const hackerInfo = {
-        ip,
-        city,
-        country,
-        isp,
-        userAgent: window.navigator.userAgent || 'Unknown Device'
-      };
-      
-      setData(hackerInfo);
-
-      // Send to our backend to log in Supabase
-      try {
-        await fetch('/api/admin/security/log-hack', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ip: hackerInfo.ip,
-            userAgent: hackerInfo.userAgent,
-            location: `${hackerInfo.city}, ${hackerInfo.country}`,
-            isp: hackerInfo.isp,
-            reason: reason || 'Unauthorized Intrusion Attempt'
-          })
-        });
-      } catch (logErr) {
-        console.error('Failed to save log to database');
-      }
-
-      setLogged(true);
-    };
-
-    trackHacker();
-  }, [reason, logged]);
-
+export default function ShamePage({ data }: ShamePageProps) {
   return (
     <div className="min-h-screen bg-black text-rose-500 font-mono flex flex-col items-center justify-center p-4 relative overflow-hidden selection:bg-rose-900 selection:text-white">
       <Head>
@@ -112,7 +48,7 @@ export default function ShamePage() {
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-rose-400 mb-2 border-b border-rose-900/50 pb-2">
             <Terminal size={18} />
-            <span className="font-bold uppercase tracking-widest text-sm">Intrusion Source Traced</span>
+            <span className="font-bold uppercase tracking-widest text-sm">Intrusion Source Traced (Server-Side)</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -120,7 +56,7 @@ export default function ShamePage() {
               <Globe className="text-rose-700 shrink-0 mt-0.5" size={16} />
               <div>
                 <p className="text-[10px] text-rose-700 font-bold uppercase tracking-wider mb-1">IP Address</p>
-                <p className="text-sm text-rose-400 font-bold">{data?.ip || 'Tracing...'}</p>
+                <p className="text-sm text-rose-400 font-bold">{data.ip}</p>
               </div>
             </div>
 
@@ -128,7 +64,7 @@ export default function ShamePage() {
               <MapPin className="text-rose-700 shrink-0 mt-0.5" size={16} />
               <div>
                 <p className="text-[10px] text-rose-700 font-bold uppercase tracking-wider mb-1">Location</p>
-                <p className="text-sm text-rose-400 font-bold">{data ? `${data.city}, ${data.country}` : 'Tracing...'}</p>
+                <p className="text-sm text-rose-400 font-bold">{data.city}, {data.country}</p>
               </div>
             </div>
 
@@ -136,7 +72,7 @@ export default function ShamePage() {
               <ShieldAlert className="text-rose-700 shrink-0 mt-0.5" size={16} />
               <div>
                 <p className="text-[10px] text-rose-700 font-bold uppercase tracking-wider mb-1">ISP / Network</p>
-                <p className="text-sm text-rose-400 font-bold">{data?.isp || 'Tracing...'}</p>
+                <p className="text-sm text-rose-400 font-bold">{data.isp}</p>
               </div>
             </div>
 
@@ -144,8 +80,8 @@ export default function ShamePage() {
               <Cpu className="text-rose-700 shrink-0 mt-0.5" size={16} />
               <div>
                 <p className="text-[10px] text-rose-700 font-bold uppercase tracking-wider mb-1">Device Fingerprint</p>
-                <p className="text-[10px] text-rose-500 truncate max-w-[200px]" title={data?.userAgent}>
-                  {data?.userAgent || 'Extracting...'}
+                <p className="text-[10px] text-rose-500 truncate max-w-[200px]" title={data.userAgent}>
+                  {data.userAgent}
                 </p>
               </div>
             </div>
@@ -162,3 +98,58 @@ export default function ShamePage() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+  // 1. Extract IP securely from Vercel headers (Cannot be blocked by AdBlock)
+  const forwarded = req.headers['x-forwarded-for'];
+  const ip = typeof forwarded === 'string' ? forwarded.split(',')[0] : req.socket.remoteAddress || 'Unknown IP';
+  const userAgent = req.headers['user-agent'] || 'Unknown Device';
+  const reason = query.reason?.toString() || 'Unauthorized Intrusion Attempt';
+
+  let city = 'Unknown City';
+  let country = 'Unknown Country';
+  let isp = 'Unknown ISP';
+
+  // 2. Fetch Geo data server-side (AdBlock cannot stop server-to-server requests)
+  if (ip && ip !== '::1' && ip !== '127.0.0.1' && ip !== 'Unknown IP') {
+    try {
+      const geoRes = await fetch(`https://ipwho.is/${ip}`);
+      const geoData = await geoRes.json();
+      if (geoData.success) {
+        city = geoData.city || city;
+        country = geoData.country || country;
+        isp = geoData.connection?.isp || isp;
+      }
+    } catch (e) {
+      // Ignore geo fetch error
+    }
+  }
+
+  // 3. Log to Supabase immediately on server
+  if (isSupabaseAdminConfigured()) {
+    try {
+      await supabaseAdmin.from('admin_hack_attempts').insert({
+        ip_address: ip,
+        user_agent: userAgent,
+        location: `${city}, ${country}`,
+        isp: isp,
+        attempt_type: reason
+      });
+    } catch (e) {
+      console.error('Failed to log hack attempt to Supabase', e);
+    }
+  }
+
+  // 4. Send exactly what is needed to the UI
+  return {
+    props: {
+      data: {
+        ip,
+        city,
+        country,
+        isp,
+        userAgent
+      }
+    }
+  };
+};
