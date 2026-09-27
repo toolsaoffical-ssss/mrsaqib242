@@ -13,7 +13,7 @@ export default function FakeAdminPortal() {
     console.log('%c Bhai, tumhari GF is liye chhor gayi kyunki tum dusron ka HTML inspect karte rehte ho! 😂', 'color: #ef4444; font-size: 14px; font-weight: bold;');
     console.log('%c Beta, lagta hai tumhari shadi kabhi nahi hogi... sari zindagi F12 daba kar code hi dhoondte rahoge! 👰🚫', 'color: #eab308; font-size: 14px; font-weight: bold;');
     console.log('%c Aray tum single hi rahogay! Hacker banne aaye thay, yahan sirf tumhare jazbaat ke sath khela gaya hai! 💔🤣', 'color: #a855f7; font-size: 14px; font-weight: bold;');
-    console.log('%c Jao ja kar moo dho kar aao, yeh admin panel nahi, honeypot hai! 🍯🐝', 'color: #10b981; font-size: 14px; font-weight: bold;');
+    console.log('%c Chalo shabash, ab apna time zaya mat karo aur chup chap form mein password daal kar kismat aazmao! 🎲', 'color: #10b981; font-size: 14px; font-weight: bold;');
   }, []);
 
   return (
