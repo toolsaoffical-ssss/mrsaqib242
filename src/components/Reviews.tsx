@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Star, MessageSquare, Send, User, PenTool } from 'lucide-react';
 
 interface Review {
@@ -121,8 +121,9 @@ export default function Reviews() {
             
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Your Name</label>
+                <label htmlFor="review-name" className="block text-sm font-medium text-zinc-300 mb-2">Your Name</label>
                 <input 
+                  id="review-name"
                   type="text" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -133,14 +134,15 @@ export default function Reviews() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Rating</label>
-                <div className="flex gap-2">
+                <span className="block text-sm font-medium text-zinc-300 mb-2">Rating</span>
+                <div className="flex gap-2" role="group" aria-label="Rating selector">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
+                      aria-label={`Rate ${star} out of 5 stars`}
                       onClick={() => setRating(star)}
-                      className="p-1 focus:outline-none transition-transform hover:scale-110"
+                      className="p-1 focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded-lg transition-transform hover:scale-110"
                     >
                       <Star 
                         size={28} 
@@ -152,8 +154,9 @@ export default function Reviews() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Your Review</label>
+                <label htmlFor="review-text" className="block text-sm font-medium text-zinc-300 mb-2">Your Review</label>
                 <textarea 
+                  id="review-text"
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Tell us about your experience..."

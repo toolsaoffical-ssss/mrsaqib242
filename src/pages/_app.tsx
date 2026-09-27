@@ -27,6 +27,7 @@ const alexBrush = Alex_Brush({
 });
 
 const bodoniModa = Bodoni_Moda({
+  weight: ['400', '700'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-serif',
@@ -98,6 +99,16 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         
         {/* Canonical URL */}
         <link key="canonical" rel="canonical" href={canonicalUrl} />
+
+        {/* High-Priority LCP Hero Image Preload */}
+        <link 
+          rel="preload" 
+          as="image" 
+          href="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto" 
+          imageSrcSet="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-400,q-80,f-auto 400w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto 800w" 
+          imageSizes="(max-width: 640px) 90vw, 800px" 
+          fetchPriority="high" 
+        />
 
         {/* AI & LLM Discovery Link */}
         <link rel="alternate" type="text/markdown" href="https://mrsaqib242.vercel.app/llms.txt" title="LLM Summary Index" />

@@ -6,15 +6,16 @@ export default function WelcomeOverlay() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const shown = sessionStorage.getItem('has_shown_welcome_overlay');
-      if (shown) {
+      if (shown || isReducedMotion) {
         setShow(false);
       } else {
         setShow(true);
         sessionStorage.setItem('has_shown_welcome_overlay', 'true');
         const timer = setTimeout(() => {
           setShow(false);
-        }, 3000); // 3000ms to allow all letter delays and branding animations to complete beautifully
+        }, 1200);
         return () => clearTimeout(timer);
       }
     }
@@ -37,10 +38,10 @@ export default function WelcomeOverlay() {
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
               className="flex items-center gap-4 md:gap-6"
             >
-              <h1 className="text-zinc-900 tracking-[0.4em] font-serif uppercase" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+              <div className="text-zinc-900 tracking-[0.4em] font-serif uppercase" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
                 <span className="text-sm md:text-xl font-medium tracking-[0.5em]">Saqib</span>
                 <span className="text-sm md:text-xl font-medium tracking-[0.5em] mt-4">Visual</span>
-              </h1>
+              </div>
               <div className="w-[1px] h-32 md:h-48 bg-zinc-400"></div>
             </motion.div>
 

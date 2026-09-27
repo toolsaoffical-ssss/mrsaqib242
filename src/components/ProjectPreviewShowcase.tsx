@@ -41,7 +41,7 @@ function PreviewCard({ project, idx }: { project: any, idx: number, key?: any })
               <Lock className="w-12 h-12 text-white" />
             </div>
             <h4 className="text-xl font-bold mb-2">Security Restricted</h4>
-            <p className="text-xs text-gray-400 mb-6 px-4">Hosting provider forbids direct embedding for security. Click anywhere on card to open.</p>
+            <p className="text-xs text-zinc-300 mb-6 px-4">Hosting provider forbids direct embedding for security. Click anywhere on card to open.</p>
           </div>
         ) : inView ? (
           <>
@@ -49,7 +49,7 @@ function PreviewCard({ project, idx }: { project: any, idx: number, key?: any })
             <iframe 
               src={project.url} 
               className="preview-iframe"
-              title={project.name}
+              title={`${project.name} live preview`}
               loading="lazy"
             ></iframe>
           </>
@@ -58,7 +58,7 @@ function PreviewCard({ project, idx }: { project: any, idx: number, key?: any })
       
       <div className="project-info relative z-20">
         <div>
-          <span className="text-[9px] uppercase font-black text-blue-600 tracking-tighter">{project.tags[0]}</span>
+          <span className="text-[9px] uppercase font-black text-blue-700 tracking-tighter">{project.tags[0]}</span>
           <h3 className="text-lg md:text-xl font-black leading-none text-zinc-900">{project.name}</h3>
         </div>
         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-100 border-2 border-zinc-200 group-hover:bg-black group-hover:border-black group-hover:text-white transition-colors duration-300">

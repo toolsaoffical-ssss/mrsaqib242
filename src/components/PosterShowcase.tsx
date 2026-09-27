@@ -15,9 +15,12 @@ export default function PosterShowcase() {
       >
         <img
           src={`${imageUrl}?tr=w-200,q-30,bl-5`}
-          alt="Background"
+          alt=""
+          role="presentation"
           className="w-[200%] md:w-[100%] max-w-5xl h-auto object-cover transform -translate-y-10 md:-translate-y-20 blur-[3px]"
           referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
         />
       </motion.div>
 
@@ -42,9 +45,11 @@ export default function PosterShowcase() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           src={`${imageUrl}?tr=w-600,q-80`}
-          alt="Saqib"
+          alt="Muhammad Saqib artistic poster showcase"
           className="relative z-20 w-[110%] md:w-[100%] max-w-none h-auto object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.4)] transform translate-y-16 md:translate-y-24"
           referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
         />
 
         {/* Top Left Text (Saqib) */}

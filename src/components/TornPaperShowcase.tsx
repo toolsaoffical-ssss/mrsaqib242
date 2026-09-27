@@ -31,9 +31,11 @@ export default function TornPaperShowcase() {
       <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
         <img 
           src={topImage} 
-          alt="Saqib Portrait" 
+          alt="Muhammad Saqib monochrome artistic portrait" 
           className="w-full h-full object-cover grayscale contrast-125 brightness-75 object-top"
           referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-black/20"></div>
         
@@ -62,9 +64,11 @@ export default function TornPaperShowcase() {
         <div className="absolute inset-0 py-4 md:py-6 overflow-hidden">
           <img 
             src={middleImage} 
-            alt="Saqib Color Portrait" 
+            alt="Muhammad Saqib creative torn paper color portrait" 
             className="w-full h-full object-cover object-center"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
           />
           
           {/* Inner White Torn Edges (Cutting into the image to make the image look torn) */}
@@ -82,9 +86,11 @@ export default function TornPaperShowcase() {
       <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
         <img 
           src={bottomImage} 
-          alt="Saqib Portrait Bottom" 
+          alt="Muhammad Saqib artistic portrait photography" 
           className="w-full h-full object-cover grayscale contrast-125 brightness-50 object-center"
           referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
         />
         
         <motion.div 

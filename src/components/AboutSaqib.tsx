@@ -43,7 +43,7 @@ export default function AboutSaqib() {
             className="absolute bottom-0 right-1/4 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl -z-10"
           />
 
-          <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-8 relative inline-block">
+          <h2 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-8 relative inline-block">
             {/* Glowing background for text */}
             <span className="absolute -inset-4 blur-2xl opacity-40 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 animate-pulse"></span>
             
@@ -53,7 +53,7 @@ export default function AboutSaqib() {
             <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 ml-3 md:ml-6 drop-shadow-[0_0_15px_rgba(192,132,252,0.5)]">
               {_0xData._s}242?
             </span>
-          </h1>
+          </h2>
           
           <p className="text-lg sm:text-xl md:text-2xl text-zinc-400 font-medium leading-relaxed px-4 max-w-4xl mx-auto">
             <span className="text-white font-bold relative inline-block group">
@@ -88,7 +88,7 @@ export default function AboutSaqib() {
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                 <User size={24} />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white">About {_0xData._n} (Saqib Dev)</h2>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white">About {_0xData._n} (Saqib Dev)</h3>
             </div>
             <p className="text-zinc-400 text-base sm:text-lg leading-relaxed mb-6">
               Muhammad Saqib, also known as <strong className="text-white">Saqib242</strong>, <strong className="text-white">Saqib Dev</strong>, <strong className="text-white">Saqib Developer</strong>, and the brand behind <strong className="text-white">Saqib Visuals</strong>, is a young and talented creator who focuses on building modern websites, designing eye-catching visuals, and creating engaging digital content.
@@ -118,7 +118,7 @@ export default function AboutSaqib() {
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                 <Briefcase size={24} />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white">What Does Saqib242 Do?</h2>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white">What Does Saqib242 Do?</h3>
             </div>
             <p className="text-zinc-400 text-base sm:text-lg leading-relaxed mb-6">
               Saqib242 works on a variety of digital projects, including:
@@ -148,7 +148,7 @@ export default function AboutSaqib() {
                 <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white">
                   <Globe size={24} />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">Online Presence</h2>
+                <h3 className="text-xl sm:text-2xl font-bold text-white">Online Presence</h3>
               </div>
               <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-6">
                 Saqib242 is active across different platforms where he shares his work, ideas, and creative projects. His official portfolio website showcases his latest work, skills, and contact details.
@@ -170,7 +170,7 @@ export default function AboutSaqib() {
                 <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white">
                   <Target size={24} />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">Mission & Vision</h2>
+                <h3 className="text-xl sm:text-2xl font-bold text-white">Mission & Vision</h3>
               </div>
               <p className="text-zinc-400 text-sm sm:text-base leading-relaxed">
                 Saqib242 aims to become a top-level creative developer and build a strong digital identity that stands out globally. His mission is to help individuals and brands grow online through creative design and smart development.
@@ -190,7 +190,7 @@ export default function AboutSaqib() {
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-cyan-500/10 pointer-events-none"></div>
 
             <div className="mb-10 border-b border-white/10 pb-10 relative z-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">📩 Contact</h2>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">📩 Contact</h3>
               <p className="text-zinc-400 text-base sm:text-lg mb-6 sm:mb-8">
                 If you want to work with Saqib242 or learn more about his projects, feel free to reach out:
               </p>

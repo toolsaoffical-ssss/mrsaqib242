@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 
 const faqs = [
@@ -47,7 +47,7 @@ export default function FAQ() {
       {/* Inject FAQ Schema for AI Crawler / SGE optimization */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }}
       />
       
       <div className="text-center mb-16">
@@ -80,8 +80,11 @@ export default function FAQ() {
             className={`border ${openIndex === index ? 'border-cyan-500/50 bg-zinc-900/60' : 'border-zinc-800 bg-zinc-900/30'} rounded-2xl overflow-hidden transition-colors duration-300 backdrop-blur-sm`}
           >
             <button
+              id={`faq-btn-${index}`}
+              aria-expanded={openIndex === index}
+              aria-controls={`faq-answer-${index}`}
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
-              className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+              className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-2xl"
             >
               <span className={`font-bold text-lg ${openIndex === index ? 'text-white' : 'text-zinc-300'}`}>
                 {faq.question}
@@ -93,12 +96,15 @@ export default function FAQ() {
             <AnimatePresence>
               {openIndex === index && (
                 <motion.div
+                  id={`faq-answer-${index}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${index}`}
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <p className="px-6 pb-6 text-zinc-400 leading-relaxed border-t border-zinc-800/50 pt-4 mt-2">
+                  <p className="px-6 pb-6 text-zinc-300 leading-relaxed border-t border-zinc-800/50 pt-4 mt-2">
                     {faq.answer}
                   </p>
                 </motion.div>

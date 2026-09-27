@@ -86,7 +86,7 @@ export default function Footer() {
         })}
       </div>
 
-      <div className="mt-24 text-zinc-600 text-xs md:text-sm font-bold tracking-[0.2em] uppercase relative z-10 flex flex-wrap items-center justify-center gap-2">
+      <div className="mt-24 text-zinc-400 text-xs md:text-sm font-bold tracking-[0.2em] uppercase relative z-10 flex flex-wrap items-center justify-center gap-2">
         <span>© {new Date().getFullYear()} {profile.brand_name || 'Saqib Visuals'}. All rights reserved.</span>
       </div>
     </footer>

@@ -21,8 +21,11 @@ export default function CameraShowcase() {
       <img 
         src={`${imageUrl}?tr=w-400,q-30,bl-2`} 
         alt="" 
+        role="presentation"
         className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 blur-[2px]"
         referrerPolicy="no-referrer"
+        loading="lazy"
+        decoding="async"
       />
 
       {/* 2. Full Color Foreground (Clipped to Frame) */}
@@ -31,12 +34,14 @@ export default function CameraShowcase() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
         src={`${imageUrl}?tr=w-800,q-80`} 
-        alt="Focus" 
+        alt="Visual focus portrait - Muhammad Saqib photography" 
         className="absolute inset-0 w-full h-full object-cover z-10"
         style={{
           clipPath: 'inset(12vh max(8vw, calc(50vw - 200px)) 18vh max(8vw, calc(50vw - 200px)) round 24px)'
         }}
         referrerPolicy="no-referrer"
+        loading="lazy"
+        decoding="async"
       />
 
       {/* 3. Camera UI Frame (Matches Clip Path exactly) */}

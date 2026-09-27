@@ -29,14 +29,21 @@ export default function WeatherShowcase() {
 
           {/* Image */}
           <div className="absolute top-0 left-0 right-0 bottom-[80px]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 80px), 50% 100%, 0 calc(100% - 80px))' }}>
-            <img src={imageUrl} alt="Saqib" className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" />
+            <img 
+              src={imageUrl} 
+              alt="Muhammad Saqib creative weather design showcase" 
+              className="w-full h-full object-cover object-top" 
+              referrerPolicy="no-referrer" 
+              loading="lazy"
+              decoding="async"
+            />
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/20"></div>
           </div>
 
           {/* Text Overlay on Image */}
-          <div className="absolute top-12 left-0 w-full flex flex-col items-center z-10 drop-shadow-xl">
-            <h1 className="text-7xl font-black text-[#FFB300] tracking-wider mb-0" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>04:59</h1>
-            <h2 className="text-3xl font-black text-white tracking-[0.15em] uppercase mb-1" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>Sábado</h2>
+          <div className="absolute top-12 left-0 w-full flex flex-col items-center z-10 drop-shadow-xl select-none" aria-hidden="true">
+            <div className="text-7xl font-black text-[#FFB300] tracking-wider mb-0" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>04:59</div>
+            <div className="text-3xl font-black text-white tracking-[0.15em] uppercase mb-1" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>Sábado</div>
             <p className="text-xs font-bold text-white tracking-[0.3em]" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>0 8 &nbsp; j u n i o &nbsp; 2 0 1 9</p>
           </div>
         </div>

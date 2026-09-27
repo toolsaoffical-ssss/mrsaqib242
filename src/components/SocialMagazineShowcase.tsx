@@ -13,16 +13,18 @@ export default function SocialMagazineShowcase() {
       <div className="absolute inset-0 z-0">
         <img 
           src={`${imageUrl}?tr=w-100,q-20,bl-10`} 
-          alt="Background Blur" 
+          alt="Visual design background preview" 
           className="w-full h-full object-cover blur-2xl opacity-40 scale-110"
           referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-white/50 mix-blend-overlay"></div>
       </div>
 
       {/* Huge Background Typography */}
-      <div className="absolute inset-0 z-0 flex flex-col justify-between py-10 pointer-events-none overflow-hidden">
-        <motion.h1 
+      <div className="absolute inset-0 z-0 flex flex-col justify-between py-10 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+        <motion.div 
           initial={{ x: -100, opacity: 0 }}
           whileInView={{ x: 0, opacity: 0.9 }}
           transition={{ duration: 1 }}
@@ -30,8 +32,8 @@ export default function SocialMagazineShowcase() {
           style={{ color: redColor }}
         >
           SAQIB
-        </motion.h1>
-        <motion.h1 
+        </motion.div>
+        <motion.div 
           initial={{ x: 100, opacity: 0 }}
           whileInView={{ x: 0, opacity: 0.9 }}
           transition={{ duration: 1 }}
@@ -39,7 +41,7 @@ export default function SocialMagazineShowcase() {
           style={{ color: redColor }}
         >
           VISUALS
-        </motion.h1>
+        </motion.div>
       </div>
 
       {/* Main Card */}

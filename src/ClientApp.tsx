@@ -124,38 +124,38 @@ const MobileBottomNav = ({ currentHash }: { currentHash: string }) => {
       <div 
         className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-full p-1.5 flex items-center justify-between shadow-[0_15px_40px_rgba(0,0,0,0.12)] relative pointer-events-auto"
       >
-        <a href="#" className="relative group w-1/5 flex justify-center items-center">
-          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isHome ? 'text-zinc-800' : 'text-zinc-400 hover:text-zinc-600'}`}>
+        <a href="#" aria-label="Navigate to Home section" className="relative group w-1/5 flex justify-center items-center">
+          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isHome ? 'text-zinc-800' : 'text-zinc-500 hover:text-zinc-700'}`}>
              <Home size={18} className={isHome ? 'drop-shadow-sm' : ''} />
              <span className={`text-[8px] font-bold ${isHome ? 'opacity-100' : 'opacity-70'}`}>Home</span>
           </div>
           {isHome && <motion.div layoutId="nav-pill" className="absolute inset-0.5 bg-zinc-100/80 rounded-2xl z-0" />}
         </a>
 
-        <a href="#all-projects" className="relative group w-1/5 flex justify-center items-center">
-          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isProjects ? 'text-zinc-800' : 'text-zinc-400 hover:text-zinc-600'}`}>
+        <a href="#all-projects" aria-label="View All Projects" className="relative group w-1/5 flex justify-center items-center">
+          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isProjects ? 'text-zinc-800' : 'text-zinc-500 hover:text-zinc-700'}`}>
             <Briefcase size={18} className={isProjects ? 'drop-shadow-sm' : ''} />
             <span className={`text-[8px] font-bold ${isProjects ? 'opacity-100' : 'opacity-70'}`}>Projects</span>
           </div>
           {isProjects && <motion.div layoutId="nav-pill" className="absolute inset-0.5 bg-zinc-100/80 rounded-2xl z-0" />}
         </a>
 
-        <a href="#skills-page" className="relative group w-1/5 flex justify-center items-center">
+        <a href="#skills-page" aria-label="View Skills and Tech Stack" className="relative group w-1/5 flex justify-center items-center">
           <div className={`h-12 w-12 rounded-full transition-all duration-300 relative z-10 -mt-6 flex items-center justify-center border-[3px] border-[#F0F2F5] shadow-[0_8px_20px_rgba(0,0,0,0.2)] ${isSkills ? 'bg-zinc-800 text-white scale-110' : 'bg-zinc-700 text-white hover:scale-105'}`}>
             <Code2 size={20} />
           </div>
         </a>
 
-        <a href="#website-plans" className="relative group w-1/5 flex justify-center items-center">
-          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isPlans ? 'text-zinc-800' : 'text-zinc-400 hover:text-zinc-600'}`}>
+        <a href="#website-plans" aria-label="View Website Plans and Pricing" className="relative group w-1/5 flex justify-center items-center">
+          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isPlans ? 'text-zinc-800' : 'text-zinc-500 hover:text-zinc-700'}`}>
             <CreditCard size={18} className={isPlans ? 'drop-shadow-sm' : ''} />
             <span className={`text-[8px] font-bold ${isPlans ? 'opacity-100' : 'opacity-70'}`}>Plans</span>
           </div>
           {isPlans && <motion.div layoutId="nav-pill" className="absolute inset-0.5 bg-zinc-100/80 rounded-2xl z-0" />}
         </a>
 
-        <a href="#contact-team" className="relative group w-1/5 flex justify-center items-center">
-          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isContact ? 'text-zinc-800' : 'text-zinc-400 hover:text-zinc-600'}`}>
+        <a href="#contact-team" aria-label="Contact Muhammad Saqib" className="relative group w-1/5 flex justify-center items-center">
+          <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isContact ? 'text-zinc-800' : 'text-zinc-500 hover:text-zinc-700'}`}>
             <User size={18} className={isContact ? 'drop-shadow-sm' : ''} />
             <span className={`text-[8px] font-bold ${isContact ? 'opacity-100' : 'opacity-70'}`}>Contact</span>
           </div>
@@ -267,10 +267,11 @@ export default function App() {
   const { locked } = useSystemEnforcer();
   const showProtectionMsg = locked;
 
-  // Auto-Refresh Logic: Check for new version every 60 seconds
+  // Auto-Refresh Logic: Check for new version every 60 seconds when active
   useEffect(() => {
     const checkVersion = async () => {
       try {
+        if (typeof document !== 'undefined' && document.hidden) return;
         const response = await fetch('/version.json?t=' + Date.now(), { cache: 'no-store' });
         const data = await response.json();
         if (data.version && data.version !== _0xVID) {
@@ -311,7 +312,6 @@ export default function App() {
       // Prevent Ctrl+S / Cmd+S (Save As)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
-        alert("Action restricted: Saving page content is disabled to protect intellectual property.");
       }
       // Prevent Ctrl+U / Cmd+U (View Source)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') {
@@ -501,8 +501,11 @@ export default function App() {
 
         {/* Massive Typography Layer */}
         <div className="absolute z-10 w-full top-[35%] md:top-[30%] -translate-y-1/2 text-center">
-          {/* SEO Hidden H1 - Actual Semantic H1 */}
-          <h1 className="sr-only">{_0xData._s}242 | {_0xData._m} - Top Website Designer and SEO Expert in Pakistan</h1>
+          {/* Main Authority H1 with visible hero branding */}
+          <h1 className="font-display text-[30vw] md:text-[28vw] leading-[0.75] text-white tracking-tighter select-none drop-shadow-sm scale-95">
+            <span className="sr-only">{_0xData._s}242 | {_0xData._m} - Top Website Designer and SEO Expert in Pakistan - </span>
+            <span>{_0xData._u}</span>
+          </h1>
           
           {/* AEO Disambiguation for AI Crawlers */}
           <div className="sr-only" aria-hidden="true">
@@ -513,25 +516,26 @@ export default function App() {
               </p>
             </article>
           </div>
-          
-          <div className="font-display text-[30vw] md:text-[28vw] leading-[0.75] text-white tracking-tighter select-none drop-shadow-sm scale-95" aria-hidden="true">
-            {_0xData._u}
-          </div>
         </div>
 
-        {/* Foreground Sharp Image */}
+        {/* Foreground Sharp Image (Primary LCP Element) */}
         <motion.div 
-          initial={skipAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          initial={skipAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: skipAnimation ? 0 : 3.0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: skipAnimation ? 0 : 0.05 }}
           className="absolute z-20 bottom-0 w-full flex justify-center items-end h-[75%] md:h-[85%]"
         >
           <img 
             src="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto" 
+            srcSet="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-400,q-80,f-auto 400w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-600,q-80,f-auto 600w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto 800w"
+            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 60vw, 800px"
+            width={800}
+            height={1000}
             alt="Muhammad Saqib (MrSaqib) - Top Website Designer and SEO Expert in Pakistan" 
             className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
             referrerPolicy="no-referrer"
             fetchPriority="high"
+            decoding="sync"
           />
         </motion.div>
 
