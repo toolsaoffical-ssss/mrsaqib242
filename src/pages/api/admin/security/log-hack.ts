@@ -48,6 +48,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: 'Failed to log' });
     }
 
+    // Auto-Ban Logic: Check if they hit 5 times in the last 2 hours
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const { count } = await supabaseAdmin
+      .from('admin_hack_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('ip_address', clientIp)
+      .gte('created_at', twoHoursAgo);
+
+    if (count && count >= 5) {
+      const bannedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      await supabaseAdmin.from('admin_banned_ips').upsert({
+        ip_address: clientIp,
+        banned_until: bannedUntil,
+        reason: 'Auto-Banned: 5 Shame Page hits in 2 hours'
+      });
+    }
+
     return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(500).json({ error: 'Server error' });

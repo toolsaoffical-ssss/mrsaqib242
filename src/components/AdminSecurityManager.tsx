@@ -58,7 +58,7 @@ interface AdminSecurityManagerProps {
   onDeviceApproved?: () => void;
 }
 
-type SecuritySubTab = 'overview' | 'devices' | 'alerts' | 'recovery' | 'credentials' | 'mirage' | 'hacklogs';
+type SecuritySubTab = 'overview' | 'devices' | 'alerts' | 'recovery' | 'credentials' | 'mirage' | 'hacklogs' | 'banned';
 
 export default function AdminSecurityManager({
   currentUsername,
@@ -496,7 +496,8 @@ export default function AdminSecurityManager({
             { id: 'recovery' as SecuritySubTab, label: 'Travel Recovery & Keys', icon: KeyRound },
             { id: 'credentials' as SecuritySubTab, label: 'Admin Credentials', icon: Lock },
             { id: 'mirage' as SecuritySubTab, label: 'Zero-Knowledge Matrix', icon: EyeOff },
-            { id: 'hacklogs' as SecuritySubTab, label: 'Intrusion Logs', icon: AlertTriangle }
+            { id: 'hacklogs' as SecuritySubTab, label: 'Intrusion Logs', icon: AlertTriangle },
+            { id: 'banned' as SecuritySubTab, label: 'Auto Block', icon: Ban }
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = subTab === tab.id;
@@ -1294,6 +1295,35 @@ export default function AdminSecurityManager({
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------------- */}
+      {/* SUB-TAB 8: AUTO BLOCK (BANNED IPS) */}
+      {/* ------------------------------------------------------------------- */}
+      {subTab === 'banned' && (
+        <div className="space-y-6">
+          <div className="bg-[#111217] border border-rose-900/30 rounded-3xl p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                  <Ban className="text-rose-500" size={20} />
+                  Auto-Blocked IP Addresses
+                </h3>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Users blocked for 24 hours after hitting the Honeypot 5 times.
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-black/50 border border-white/5 rounded-xl p-8 text-center">
+              <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">Use Supabase SQL to manage banned IPs</p>
+              <div className="mt-4 inline-block text-left bg-black border border-white/10 p-4 rounded-lg font-mono text-xs text-zinc-400">
+                SELECT * FROM admin_banned_ips;<br/>
+                DELETE FROM admin_banned_ips WHERE ip_address = '...';
+              </div>
+            </div>
           </div>
         </div>
       )}
