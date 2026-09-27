@@ -24,7 +24,10 @@ import {
   CheckCircle,
   Copy,
   Download,
-  AlertCircle
+  AlertCircle,
+  MapPin,
+  AlertOctagon,
+  ShieldAlert
 } from 'lucide-react';
 import { 
   changeAdminCredentials, 
@@ -38,7 +41,9 @@ import {
   generateEmergencyRecoveryCodes,
   SecurityDeviceItem,
   SecurityAlertItem,
-  SecurityOverviewResponse
+  SecurityOverviewResponse,
+  HackLogItem,
+  fetchHackLogs
 } from '../lib/adminAuthClient';
 import { getCountryFlag } from '../lib/analyticsService';
 
@@ -53,7 +58,7 @@ interface AdminSecurityManagerProps {
   onDeviceApproved?: () => void;
 }
 
-type SecuritySubTab = 'overview' | 'devices' | 'alerts' | 'recovery' | 'credentials' | 'mirage';
+type SecuritySubTab = 'overview' | 'devices' | 'alerts' | 'recovery' | 'credentials' | 'mirage' | 'hacklogs';
 
 export default function AdminSecurityManager({
   currentUsername,
@@ -105,6 +110,10 @@ export default function AdminSecurityManager({
   const [isSubmittingMirage, setIsSubmittingMirage] = useState(false);
   const [mirageMessage, setMirageMessage] = useState('');
   const [mirageError, setMirageError] = useState('');
+
+  // Hack logs state
+  const [hackLogs, setHackLogs] = useState<HackLogItem[]>([]);
+  const [isLoadingHackLogs, setIsLoadingHackLogs] = useState(false);
   
   useEffect(() => {
     if (subTab === 'mirage') {
@@ -116,6 +125,12 @@ export default function AdminSecurityManager({
           }
         })
         .catch(() => {});
+    } else if (subTab === 'hacklogs') {
+      setIsLoadingHackLogs(true);
+      fetchHackLogs().then(logs => {
+        setHackLogs(logs);
+        setIsLoadingHackLogs(false);
+      });
     }
   }, [subTab]);
 
@@ -476,7 +491,8 @@ export default function AdminSecurityManager({
             { id: 'alerts' as SecuritySubTab, label: `Security Alerts (${securityData?.alerts.length || 0})`, icon: AlertTriangle },
             { id: 'recovery' as SecuritySubTab, label: 'Travel Recovery & Keys', icon: KeyRound },
             { id: 'credentials' as SecuritySubTab, label: 'Admin Credentials', icon: Lock },
-            { id: 'mirage' as SecuritySubTab, label: 'Zero-Knowledge Matrix', icon: EyeOff }
+            { id: 'mirage' as SecuritySubTab, label: 'Zero-Knowledge Matrix', icon: EyeOff },
+            { id: 'hacklogs' as SecuritySubTab, label: 'Intrusion Logs', icon: AlertTriangle }
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = subTab === tab.id;
@@ -1161,6 +1177,100 @@ export default function AdminSecurityManager({
                 )}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------------- */}
+      {/* SUB-TAB 7: HACKER INTRUSION LOGS                                    */}
+      {/* ------------------------------------------------------------------- */}
+      {subTab === 'hacklogs' && (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-[#13141a] border border-rose-500/20 rounded-2xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
+              <AlertOctagon size={120} className="text-rose-500" />
+            </div>
+            
+            <div className="flex items-start justify-between gap-4 mb-8">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-500 shrink-0 border border-rose-500/30">
+                  <ShieldAlert size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black tracking-tight text-rose-500 uppercase">Intrusion Logs (Shame List)</h3>
+                  <p className="text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
+                    Details of hackers who attempted to breach the system. All their device and network traces have been logged.
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setIsLoadingHackLogs(true);
+                  fetchHackLogs().then(logs => {
+                    setHackLogs(logs);
+                    setIsLoadingHackLogs(false);
+                  });
+                }}
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+              >
+                <RefreshCw size={16} className={isLoadingHackLogs ? 'animate-spin' : ''} />
+              </button>
+            </div>
+
+            {isLoadingHackLogs ? (
+              <div className="flex justify-center items-center py-12 text-zinc-500 gap-3">
+                <RefreshCw size={20} className="animate-spin text-rose-500" />
+                <span className="text-sm font-bold uppercase tracking-widest">Scanning intrusion database...</span>
+              </div>
+            ) : hackLogs.length === 0 ? (
+              <div className="bg-black/50 border border-white/5 rounded-xl p-8 text-center">
+                <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">No intrusion attempts recorded</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {hackLogs.map((log) => (
+                  <div key={log.id} className="bg-black/60 border border-rose-900/40 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden group hover:border-rose-500/50 transition-colors">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-600" />
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-rose-400 font-black text-sm uppercase flex items-center gap-1.5">
+                          <Globe size={14} />
+                          {log.ip_address}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                          {log.attempt_type}
+                        </span>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                        <div className="text-xs text-zinc-400 flex items-center gap-1.5">
+                          <MapPin size={12} className="text-zinc-500" />
+                          <span className="truncate">{log.location}</span>
+                        </div>
+                        <div className="text-xs text-zinc-400 flex items-center gap-1.5">
+                          <Shield size={12} className="text-zinc-500" />
+                          <span className="truncate" title={log.isp}>{log.isp}</span>
+                        </div>
+                        <div className="text-xs text-zinc-400 flex items-center gap-1.5">
+                          <Cpu size={12} className="text-zinc-500" />
+                          <span className="truncate" title={log.user_agent}>{log.user_agent || 'Unknown Device'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-left md:text-right shrink-0">
+                      <div className="text-xs text-zinc-500 font-mono">
+                        {new Date(log.created_at).toLocaleDateString()}
+                      </div>
+                      <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider mt-0.5">
+                        {new Date(log.created_at).toLocaleTimeString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

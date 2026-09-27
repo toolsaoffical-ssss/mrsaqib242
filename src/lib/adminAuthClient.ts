@@ -420,3 +420,7 @@ export function getCachedAdminUsername(): string {
   }
   return 'saqib';
 }
+  
+export interface HackLogItem { id: string; ip_address: string; user_agent: string; location: string; isp: string; attempt_type: string; created_at: string; }  
+  
+export async function fetchHackLogs(): Promise<HackLogItem[]> { try { const res = await fetch('/api/admin/security/hack-logs', { credentials: 'include' }); const data = await res.json(); if (data.success && data.logs) return data.logs; return []; } catch (err) { return []; } } 
