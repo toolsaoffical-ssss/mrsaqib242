@@ -3,6 +3,7 @@ import {
   verifyAdminSessionWithDevice,
   validateRequestOrigin 
 } from '../../../lib/serverAdminAuth';
+import { verifyMirageState } from '../../../lib/mirageService';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -18,7 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const result = await verifyAdminSessionWithDevice(req);
 
     if (result.valid) {
-      const { verifyMirageState } = require('../../../lib/mirageService');
       const mirage = verifyMirageState(req);
 
       return res.status(200).json({ 

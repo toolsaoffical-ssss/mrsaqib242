@@ -8,6 +8,7 @@ import {
   setDeviceCookie,
   DeviceRecord
 } from './deviceSecurityService';
+import { setMirageChallengeCookie, verifyMirageState } from './mirageService';
 
 export interface AdminCredentialRecord {
   id: string;
@@ -607,7 +608,6 @@ export function assertUnrestrictedAdmin(
   }
   
   if (req) {
-    const { verifyMirageState } = require('./mirageService');
     const mirage = verifyMirageState(req);
     if (!mirage.isUnlocked) {
       res.status(403).json({ error: 'Mirage Challenge Active: Session is locked. Please complete Visual PIN verification.' });
@@ -702,7 +702,6 @@ export async function authenticateAdmin(
     let remRestSec = 0;
 
     if (req && res) {
-      const { setMirageChallengeCookie } = require('./mirageService');
       setMirageChallengeCookie(res);
       
       const devResult = await registerOrUpdateDeviceLogin(req, clientIp);
