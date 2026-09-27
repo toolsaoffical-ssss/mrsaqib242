@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { 
   updateAdminCredentials, 
-  verifyAdminSessionToken, 
-  extractSessionToken, 
+  verifyAdminSessionWithDevice, 
+  assertUnrestrictedAdmin,
   validateRequestOrigin, 
   setAdminSessionCookie 
 } from '../../../lib/serverAdminAuth';
@@ -20,16 +20,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  const token = extractSessionToken(req);
+  // Device & Session Verification
+  const auth = await verifyAdminSessionWithDevice(req);
+  if (!auth.valid) {
+    return res.status(401).json({ success: false, message: 'Session expired or invalid. Please log in again.' });
+  }
 
-  // Verify that an active admin session is making this change
-  if (token) {
-    const sessionCheck = await verifyAdminSessionToken(token);
-    if (!sessionCheck.valid) {
-      return res.status(401).json({ success: false, message: 'Session expired. Please log in again.' });
-    }
-  } else {
-    return res.status(401).json({ success: false, message: 'Authentication required to modify credentials.' });
+  // 🛡️ 48-Hour Travel Security Gatekeeper:
+  // Restricted sessions on unrecognized devices CANNOT modify administrative username or password!
+  if (!assertUnrestrictedAdmin(auth, res)) {
+    return;
   }
 
   const { currentPassword, newUsername, newPassword } = req.body || {};
@@ -38,7 +38,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const result = await updateAdminCredentials(
       currentPassword || '',
       newUsername || '',
-      newPassword || ''
+      newPassword || '',
+      auth.isRestricted
     );
 
     if (!result.success) {
@@ -53,7 +54,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       setAdminSessionCookie(res, result.newToken);
     }
 
-    // Success response: Never returns tokens, passwords or hashes! Only boolean and clean status.
     return res.status(200).json({
       success: true,
       message: result.message,

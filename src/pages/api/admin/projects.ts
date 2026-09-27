@@ -1,5 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { verifyAdminSessionToken, extractSessionToken, validateRequestOrigin } from '../../../lib/serverAdminAuth';
+import { 
+  verifyAdminSessionWithDevice, 
+  assertUnrestrictedAdmin, 
+  validateRequestOrigin 
+} from '../../../lib/serverAdminAuth';
 import { supabaseAdmin, isSupabaseAdminConfigured } from '../../../lib/supabaseServer';
 import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
 import { DEFAULT_PROJECTS } from '../../../lib/projectsService';
@@ -10,13 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ error: 'Forbidden: Request origin invalid.' });
   }
 
-  // 1. Session Token Verification
-  const token = extractSessionToken(req);
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized: Admin token required.' });
-  }
-
-  const auth = await verifyAdminSessionToken(token);
+  // 1. Session & Device Verification
+  const auth = await verifyAdminSessionWithDevice(req);
   if (!auth.valid) {
     return res.status(401).json({ error: 'Unauthorized: Invalid or expired admin session.' });
   }
@@ -27,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // GET: Fetch all projects with full admin view
+    // GET: Fetch all projects with full admin view (Allowed for restricted sessions)
     if (req.method === 'GET') {
       const { data, error } = await client
         .from('projects')
@@ -40,6 +39,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       return res.status(200).json({ success: true, projects: data || [] });
     }
+
+    // 🛡️ 48-Hour Travel Security Gatekeeper for State Modifications:
+    if (!assertUnrestrictedAdmin(auth, res)) return;
 
     // POST: Create project OR seed projects
     if (req.method === 'POST') {

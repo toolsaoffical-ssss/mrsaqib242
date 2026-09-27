@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { 
-  verifyAdminSessionToken, 
-  extractSessionToken, 
+  verifyAdminSessionWithDevice,
   validateRequestOrigin 
 } from '../../../lib/serverAdminAuth';
 
@@ -15,19 +14,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ authenticated: false, message: 'Forbidden origin' });
   }
 
-  // Extract from HttpOnly cookie, Authorization header, or body
-  const token = extractSessionToken(req);
-
-  if (!token) {
-    return res.status(401).json({ authenticated: false, message: 'Missing token' });
-  }
-
   try {
-    const result = await verifyAdminSessionToken(token);
+    const result = await verifyAdminSessionWithDevice(req);
+
     if (result.valid) {
-      return res.status(200).json({ authenticated: true, username: result.username });
+      return res.status(200).json({ 
+        authenticated: true, 
+        username: result.username,
+        is_restricted: result.isRestricted,
+        device_id: result.deviceId,
+        device_status: result.deviceStatus,
+        remaining_restriction_seconds: result.remainingRestrictionSeconds || 0
+      });
     }
-    return res.status(401).json({ authenticated: false, message: 'Invalid or expired session' });
+
+    if (result.deviceStatus === 'blocked') {
+      return res.status(403).json({
+        authenticated: false,
+        blocked: true,
+        message: 'Security Alert: This device has been blocked by an administrator.'
+      });
+    }
+
+    return res.status(401).json({ 
+      authenticated: false, 
+      message: result.reason || 'Invalid or expired session' 
+    });
   } catch (err) {
     return res.status(401).json({ authenticated: false, message: 'Token verification failed' });
   }

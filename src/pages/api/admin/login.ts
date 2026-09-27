@@ -27,15 +27,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     : req.socket.remoteAddress || '127.0.0.1';
 
   try {
-    const result = await authenticateAdmin(username || '', password || '', clientIp);
+    const result = await authenticateAdmin(username || '', password || '', clientIp, req, res);
 
     if (result.success && result.token) {
-      // Set HttpOnly, Secure, SameSite=Strict Cookie (Token never exposed to JavaScript)
+      // Set HttpOnly, Secure, SameSite=Strict Cookie
       setAdminSessionCookie(res, result.token);
 
       return res.status(200).json({
         success: true,
         username: result.username,
+        is_restricted: Boolean(result.isRestricted),
+        device_id: result.deviceId,
+        remaining_restriction_seconds: result.remainingRestrictionSeconds || 0,
         message: result.message
       });
     }

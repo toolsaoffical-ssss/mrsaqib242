@@ -130,6 +130,24 @@ export async function saveProfileSettingsToDB(
     }
   }
 
+  // First try saving via the secure backend API route
+  try {
+    const res = await fetch('/api/admin/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(mergedPayload)
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && json.data) {
+        return { success: true, data: json.data };
+      }
+    }
+  } catch {
+    // Continue to fallback
+  }
+
   if (!isSupabaseConfigured() || !supabase) {
     return {
       success: true,

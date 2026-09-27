@@ -88,7 +88,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(429).json({ error: 'Too many analytics events. Throttled.' });
   }
 
-  const body = req.body || {};
+  let body: any = {};
+  if (typeof req.body === 'string') {
+    try {
+      body = JSON.parse(req.body);
+    } catch {
+      body = {};
+    }
+  } else if (req.body && typeof req.body === 'object') {
+    body = req.body;
+  }
 
   // 2. Extract Geolocation from Vercel Edge Headers
   const vercelCountry = (req.headers['x-vercel-ip-country'] as string)?.toUpperCase();

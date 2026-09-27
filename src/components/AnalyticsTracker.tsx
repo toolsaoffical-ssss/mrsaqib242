@@ -10,7 +10,7 @@ export function AnalyticsTracker() {
   useEffect(() => {
     const handleRouteChange = async (url: string) => {
       // Don't track admin panel visits so admin's own traffic doesn't distort real visitor analytics
-      if (url.startsWith('/mradmin')) {
+      if (url.startsWith('/mradmin') || url.startsWith('/admin')) {
         return;
       }
 

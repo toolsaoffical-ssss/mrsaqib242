@@ -150,7 +150,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
 
-      <GoogleAnalytics gaId="G-F768LWQ7CB" />
+      {process.env.NODE_ENV === 'production' && (
+        <GoogleAnalytics gaId="G-F768LWQ7CB" />
+      )}
 
       <AnalyticsTracker />
       <Component {...pageProps} />

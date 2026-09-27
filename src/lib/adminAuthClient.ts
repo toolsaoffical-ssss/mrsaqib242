@@ -1,4 +1,4 @@
-// Client-side helper for Admin Authentication & Credential Management
+// Client-side helper for Admin Authentication & Travel-Friendly Device Security
 // Guarantees tokens & passwords NEVER leak to frontend JavaScript or persist insecurely in browser storage.
 // Authentication is handled EXCLUSIVELY via HttpOnly, Secure, SameSite=Strict cookies.
 
@@ -9,23 +9,81 @@ export interface AdminAuthResponse {
   locked?: boolean;
   remainingLockSeconds?: number;
   attemptsLeft?: number;
+  is_restricted?: boolean;
+  device_id?: string;
+  remaining_restriction_seconds?: number;
 }
 
 export interface VerifySessionResponse {
   authenticated: boolean;
   username?: string;
+  is_restricted?: boolean;
+  device_id?: string;
+  device_status?: 'trusted' | 'pending_48h' | 'blocked';
+  remaining_restriction_seconds?: number;
+  blocked?: boolean;
+  message?: string;
 }
 
 export interface ChangeCredentialsResponse {
   success: boolean;
   message: string;
   newUsername?: string;
+  error?: string;
+}
+
+export interface SecurityDeviceItem {
+  id: string;
+  device_name: string;
+  ip_address: string;
+  browser: string;
+  os: string;
+  device_type: string;
+  city: string;
+  country: string;
+  country_code: string;
+  status: 'trusted' | 'pending_48h' | 'blocked';
+  restricted_until: string | null;
+  approved_at: string | null;
+  approved_by: string | null;
+  last_seen_at: string;
+  created_at: string;
+}
+
+export interface SecurityAlertItem {
+  id: string;
+  device_id: string;
+  event_type: 'unknown_device_login' | 'device_approved' | 'device_blocked' | 'recovery_attempt';
+  title: string;
+  message: string;
+  ip_address: string;
+  city: string;
+  country: string;
+  browser: string;
+  os: string;
+  device_type: string;
+  status: 'pending' | 'approved' | 'blocked' | 'resolved';
+  restricted_until: string | null;
+  resolved_at: string | null;
+  created_at: string;
+}
+
+export interface SecurityOverviewResponse {
+  success: boolean;
+  is_restricted: boolean;
+  current_device_id: string | null;
+  current_device_status: 'trusted' | 'pending_48h' | 'blocked';
+  current_client_ip: string;
+  remaining_restriction_seconds: number;
+  devices: SecurityDeviceItem[];
+  alerts: SecurityAlertItem[];
+  active_device: SecurityDeviceItem | null;
+  recovery_codes_count: number;
+  error?: string;
 }
 
 /**
- * Log in admin.
- * The session token is stored exclusively by the browser as an HttpOnly cookie.
- * No token is ever returned in JSON or stored in JavaScript storage.
+ * Log in admin with device recognition.
  */
 export async function loginAdmin(username: string, password: string): Promise<AdminAuthResponse> {
   try {
@@ -42,6 +100,9 @@ export async function loginAdmin(username: string, password: string): Promise<Ad
         if (data.username) {
           sessionStorage.setItem('ms_admin_user', data.username);
         }
+        if (data.is_restricted !== undefined) {
+          sessionStorage.setItem('ms_admin_restricted', data.is_restricted ? 'true' : 'false');
+        }
       }
     }
     return data;
@@ -54,8 +115,7 @@ export async function loginAdmin(username: string, password: string): Promise<Ad
 }
 
 /**
- * Verify admin session.
- * Relies entirely on the browser sending the HttpOnly cookie with credentials: 'include'.
+ * Verify admin session and device status.
  */
 export async function verifyAdminSession(): Promise<VerifySessionResponse> {
   try {
@@ -66,11 +126,17 @@ export async function verifyAdminSession(): Promise<VerifySessionResponse> {
     });
 
     if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('ms_admin_auth');
         sessionStorage.removeItem('ms_admin_user');
+        sessionStorage.removeItem('ms_admin_restricted');
       }
-      return { authenticated: false };
+      return { 
+        authenticated: false, 
+        blocked: Boolean(errData.blocked),
+        message: errData.message 
+      };
     }
 
     const data = await res.json();
@@ -80,12 +146,21 @@ export async function verifyAdminSession(): Promise<VerifySessionResponse> {
         if (data.username) {
           sessionStorage.setItem('ms_admin_user', data.username);
         }
+        sessionStorage.setItem('ms_admin_restricted', data.is_restricted ? 'true' : 'false');
       }
-      return { authenticated: true, username: data.username };
+      return { 
+        authenticated: true, 
+        username: data.username,
+        is_restricted: Boolean(data.is_restricted),
+        device_id: data.device_id,
+        device_status: data.device_status,
+        remaining_restriction_seconds: data.remaining_restriction_seconds || 0
+      };
     } else {
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('ms_admin_auth');
         sessionStorage.removeItem('ms_admin_user');
+        sessionStorage.removeItem('ms_admin_restricted');
       }
       return { authenticated: false };
     }
@@ -95,8 +170,180 @@ export async function verifyAdminSession(): Promise<VerifySessionResponse> {
 }
 
 /**
+ * Fetch full security devices, alerts & live session status.
+ */
+export async function fetchSecurityOverview(): Promise<SecurityOverviewResponse> {
+  try {
+    const res = await fetch('/api/admin/security/devices', {
+      method: 'GET',
+      credentials: 'include'
+    });
+    return await res.json();
+  } catch (err: any) {
+    return {
+      success: false,
+      is_restricted: false,
+      current_device_id: null,
+      current_device_status: 'pending_48h',
+      current_client_ip: '127.0.0.1',
+      remaining_restriction_seconds: 0,
+      devices: [],
+      alerts: [],
+      active_device: null,
+      recovery_codes_count: 0,
+      error: 'Network error fetching security overview.'
+    };
+  }
+}
+
+/**
+ * Direct Self-Approval / Trust Current Device from the UI.
+ * Verifies Master Password and immediately marks the current device as Trusted.
+ */
+export async function trustCurrentDevice(masterPassword: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch('/api/admin/security/devices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        action: 'trust_current_device',
+        masterPassword
+      })
+    });
+    const data = await res.json();
+    if (data.success && typeof window !== 'undefined') {
+      sessionStorage.setItem('ms_admin_restricted', 'false');
+    }
+    return {
+      success: Boolean(data.success),
+      message: data.message || data.error || 'Approval processed.'
+    };
+  } catch {
+    return {
+      success: false,
+      message: 'Network error during device trust verification.'
+    };
+  }
+}
+
+/**
+ * Approve a pending device.
+ */
+export async function approveSecurityDevice(
+  targetDeviceId: string, 
+  verifyPassword?: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch('/api/admin/security/devices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        action: 'approve_device',
+        targetDeviceId,
+        verifyPassword
+      })
+    });
+    const data = await res.json();
+    return {
+      success: Boolean(data.success),
+      message: data.message || data.error || 'Device approval failed.'
+    };
+  } catch {
+    return {
+      success: false,
+      message: 'Network error during device approval.'
+    };
+  }
+}
+
+/**
+ * Block a suspicious device.
+ */
+export async function blockSecurityDevice(targetDeviceId: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch('/api/admin/security/devices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        action: 'block_device',
+        targetDeviceId
+      })
+    });
+    const data = await res.json();
+    return {
+      success: Boolean(data.success),
+      message: data.message || data.error || 'Device blocking failed.'
+    };
+  } catch {
+    return {
+      success: false,
+      message: 'Network error during device blocking.'
+    };
+  }
+}
+
+/**
+ * Travel Recovery: Unlock access after 48 hours using recovery factor.
+ */
+export async function recoverDeviceAfter48h(recoveryCode: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch('/api/admin/security/devices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        action: 'recover_after_48h',
+        recoveryCode
+      })
+    });
+    const data = await res.json();
+    if (data.success && typeof window !== 'undefined') {
+      sessionStorage.setItem('ms_admin_restricted', 'false');
+    }
+    return {
+      success: Boolean(data.success),
+      message: data.message || data.error || '48-hour recovery failed.'
+    };
+  } catch {
+    return {
+      success: false,
+      message: 'Network error during 48-hour recovery.'
+    };
+  }
+}
+
+/**
+ * Generate 6 Emergency Travel Recovery Codes.
+ */
+export async function generateEmergencyRecoveryCodes(): Promise<{ success: boolean; codes?: string[]; message: string }> {
+  try {
+    const res = await fetch('/api/admin/security/devices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        action: 'generate_recovery_codes'
+      })
+    });
+    const data = await res.json();
+    return {
+      success: Boolean(data.success),
+      codes: data.codes,
+      message: data.message || data.error || 'Failed generating recovery codes.'
+    };
+  } catch {
+    return {
+      success: false,
+      message: 'Network error generating emergency codes.'
+    };
+  }
+}
+
+/**
  * Update administrative credentials.
- * Authorizes exclusively via the existing HttpOnly cookie.
  */
 export async function changeAdminCredentials(
   currentPassword: string,
@@ -123,7 +370,11 @@ export async function changeAdminCredentials(
       }
     }
 
-    return data;
+    return {
+      success: Boolean(data.success),
+      message: data.message || data.error || 'Failed to update credentials.',
+      newUsername: data.newUsername
+    };
   } catch (err) {
     return {
       success: false,
@@ -134,15 +385,14 @@ export async function changeAdminCredentials(
 
 /**
  * Logout admin.
- * Clears client state and calls backend to expire the HttpOnly cookie.
  */
 export function logoutAdmin(): void {
   if (typeof window !== 'undefined') {
     sessionStorage.removeItem('ms_admin_token');
     sessionStorage.removeItem('ms_admin_auth');
     sessionStorage.removeItem('ms_admin_user');
+    sessionStorage.removeItem('ms_admin_restricted');
   }
-  // Inform server asynchronously with credentials: 'include' to clear HttpOnly cookie
   fetch('/api/admin/logout', { 
     method: 'POST',
     credentials: 'include'

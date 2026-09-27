@@ -1,5 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { verifyAdminSessionToken, extractSessionToken, validateRequestOrigin } from '../../../lib/serverAdminAuth';
+import { 
+  verifyAdminSessionWithDevice, 
+  assertUnrestrictedAdmin, 
+  validateRequestOrigin 
+} from '../../../lib/serverAdminAuth';
 import { supabaseAdmin, isSupabaseAdminConfigured } from '../../../lib/supabaseServer';
 import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
 
@@ -8,12 +12,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ error: 'Forbidden: Request origin invalid.' });
   }
 
-  const token = extractSessionToken(req);
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized: Admin token required.' });
-  }
-
-  const auth = await verifyAdminSessionToken(token);
+  // 1. Session & Device Verification
+  const auth = await verifyAdminSessionWithDevice(req);
   if (!auth.valid) {
     return res.status(401).json({ error: 'Unauthorized: Invalid or expired admin session.' });
   }
@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // GET: Fetch gallery items (Allowed in restricted mode)
     if (req.method === 'GET') {
       const { data, error } = await client
         .from('gallery')
@@ -33,6 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (error) return res.status(500).json({ error: error.message });
       return res.status(200).json({ success: true, items: data || [] });
     }
+
+    // 🛡️ 48-Hour Travel Security Gatekeeper for State Modifications:
+    if (!assertUnrestrictedAdmin(auth, res)) return;
 
     if (req.method === 'POST') {
       const { item } = req.body || {};

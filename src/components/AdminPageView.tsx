@@ -15,10 +15,6 @@ import {
 } from 'lucide-react';
 import { loginAdmin, verifyAdminSession, logoutAdmin } from '../lib/adminAuthClient';
 
-// 🛡️ Code-Splitting Security Shield:
-// AdminAuthenticatedDashboard chunk is ONLY downloaded over the network
-// after the server successfully validates credentials or active session!
-// An unauthenticated visitor's browser will NEVER receive or download the dashboard code!
 const AdminAuthenticatedDashboard = dynamic(
   () => import('./AdminAuthenticatedDashboard'),
   {
@@ -45,6 +41,11 @@ export default function AdminPageView() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isCheckingSession, setIsCheckingSession] = useState<boolean>(true);
   const [adminUsername, setAdminUsername] = useState<string>('');
+  const [isRestricted, setIsRestricted] = useState<boolean>(false);
+  const [deviceId, setDeviceId] = useState<string>('');
+  const [deviceStatus, setDeviceStatus] = useState<string>('pending_48h');
+  const [remainingRestrictionSeconds, setRemainingRestrictionSeconds] = useState<number>(0);
+
   const [loginUsername, setLoginUsername] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
   const [showLoginPassword, setShowLoginPassword] = useState<boolean>(false);
@@ -62,8 +63,17 @@ export default function AdminPageView() {
         if (result.authenticated) {
           setIsAuthenticated(true);
           if (result.username) setAdminUsername(result.username);
+          setIsRestricted(Boolean(result.is_restricted));
+          if (result.device_id) setDeviceId(result.device_id);
+          if (result.device_status) setDeviceStatus(result.device_status);
+          if (result.remaining_restriction_seconds !== undefined) {
+            setRemainingRestrictionSeconds(result.remaining_restriction_seconds);
+          }
         } else {
           setIsAuthenticated(false);
+          if (result.blocked) {
+            setAuthError(result.message || 'This device has been permanently blocked by an administrator.');
+          }
         }
       } catch {
         setIsAuthenticated(false);
@@ -83,6 +93,12 @@ export default function AdminPageView() {
       if (res.success) {
         setIsAuthenticated(true);
         if (res.username) setAdminUsername(res.username);
+        setIsRestricted(Boolean(res.is_restricted));
+        if (res.device_id) setDeviceId(res.device_id);
+        if (res.remaining_restriction_seconds !== undefined) {
+          setRemainingRestrictionSeconds(res.remaining_restriction_seconds);
+        }
+        setDeviceStatus(res.is_restricted ? 'pending_48h' : 'trusted');
         setAuthError('');
         setLoginPassword('');
       } else {
@@ -105,6 +121,7 @@ export default function AdminPageView() {
     logoutAdmin();
     setIsAuthenticated(false);
     setLoginPassword('');
+    setIsRestricted(false);
   };
 
   // 1. Initial Session Checking State
@@ -120,14 +137,13 @@ export default function AdminPageView() {
         </div>
         <p className="text-xs uppercase font-black tracking-widest text-zinc-400 flex items-center gap-2">
           <RefreshCw size={14} className="animate-spin text-orange-400" />
-          Verifying Master Admin Credentials...
+          Verifying Master Admin &amp; Device Integrity...
         </p>
       </div>
     );
   }
 
-  // 2. Unauthenticated: Renders ONLY the login form
-  // Notice: AdminAuthenticatedDashboard is NOT loaded or rendered here!
+  // 2. Unauthenticated: Renders login form
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#0a0a0c] text-white flex flex-col justify-center items-center px-4 relative overflow-hidden font-sans selection:bg-orange-500 selection:text-white">
@@ -155,7 +171,7 @@ export default function AdminPageView() {
               Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">Admin Console</span>
             </h1>
             <p className="text-xs text-zinc-400">
-              Zero-Trust Protected: Admin Dashboard code will only load after backend credential validation.
+              Travel-Friendly Zero-Trust Protected: Unrecognized devices receive a 48-Hour Restricted Session with persistent security alerts.
             </p>
           </div>
 
@@ -249,7 +265,7 @@ export default function AdminPageView() {
 
             <div className="text-center pt-2">
               <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
-                Protected by SHA-256 PBKDF2 &amp; Server-Side Rate Limiter
+                Protected by SHA-256 PBKDF2 &amp; Travel Device Shield
               </span>
             </div>
           </form>
@@ -258,11 +274,20 @@ export default function AdminPageView() {
     );
   }
 
-  // 3. Authenticated: Dynamic chunk loads only after authenticated
+  // 3. Authenticated: Render dashboard with restriction status
   return (
     <AdminAuthenticatedDashboard
       adminUsername={adminUsername}
+      isRestricted={isRestricted}
+      remainingRestrictionSeconds={remainingRestrictionSeconds}
+      deviceId={deviceId}
+      deviceStatus={deviceStatus}
       onLogout={handleLogout}
+      onDeviceApproved={() => {
+        setIsRestricted(false);
+        setDeviceStatus('trusted');
+        setRemainingRestrictionSeconds(0);
+      }}
     />
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Head from 'next/head';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 
@@ -45,10 +46,12 @@ export default function FAQ() {
   return (
     <section id="faq" className="py-20 md:py-32 px-6 max-w-4xl mx-auto font-sans">
       {/* Inject FAQ Schema for AI Crawler / SGE optimization */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }}
-      />
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }}
+        />
+      </Head>
       
       <div className="text-center mb-16">
         <motion.div 

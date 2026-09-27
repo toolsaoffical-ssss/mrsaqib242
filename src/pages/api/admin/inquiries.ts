@@ -1,5 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { verifyAdminSessionToken, extractSessionToken, validateRequestOrigin } from '../../../lib/serverAdminAuth';
+import { 
+  verifyAdminSessionWithDevice, 
+  assertUnrestrictedAdmin, 
+  validateRequestOrigin 
+} from '../../../lib/serverAdminAuth';
 import { supabaseAdmin, isSupabaseAdminConfigured } from '../../../lib/supabaseServer';
 import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
 import { DEFAULT_INQUIRIES } from '../../../lib/inquiriesService';
@@ -9,12 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ error: 'Forbidden: Request origin invalid.' });
   }
 
-  const token = extractSessionToken(req);
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized: Admin token required.' });
-  }
-
-  const auth = await verifyAdminSessionToken(token);
+  // 1. Session & Device Verification
+  const auth = await verifyAdminSessionWithDevice(req);
   if (!auth.valid) {
     return res.status(401).json({ error: 'Unauthorized: Invalid or expired admin session.' });
   }
@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // GET: Fetch all inquiries (Admin only - RLS protected)
+    // GET: Fetch all inquiries (Allowed in restricted mode so admin can view client leads)
     if (req.method === 'GET') {
       const { data, error } = await client
         .from('client_inquiries')
@@ -37,6 +37,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       return res.status(200).json({ success: true, inquiries: data || [] });
     }
+
+    // 🛡️ 48-Hour Travel Security Gatekeeper for State Modifications:
+    if (!assertUnrestrictedAdmin(auth, res)) return;
 
     // POST: Seed or manual admin insert
     if (req.method === 'POST') {

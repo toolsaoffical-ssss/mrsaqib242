@@ -2,6 +2,12 @@ import crypto from 'crypto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin, isSupabaseAdminConfigured } from './supabaseServer';
 import { supabase, isSupabaseConfigured } from './supabase';
+import {
+  verifyDeviceFromRequest,
+  registerOrUpdateDeviceLogin,
+  setDeviceCookie,
+  DeviceRecord
+} from './deviceSecurityService';
 
 export interface AdminCredentialRecord {
   id: string;
@@ -19,14 +25,20 @@ export interface AdminRecordResult {
   error?: string;
 }
 
+export interface AdminSessionVerification {
+  valid: boolean;
+  username?: string;
+  isRestricted: boolean;
+  deviceId?: string;
+  deviceStatus?: 'trusted' | 'pending_48h' | 'blocked';
+  remainingRestrictionSeconds?: number;
+  reason?: string;
+}
+
 // Securely require environment variables or generate strong secrets for memory state
 const DEFAULT_INITIAL_SALT = process.env.ADMIN_SALT || crypto.randomBytes(16).toString('hex');
 const DEFAULT_INITIAL_SECRET = process.env.ADMIN_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
-// Note: ADMIN_USERNAME is used solely for initial seeding and dev fallback.
-// Runtime authentication strictly validates against the database record username without env alternative.
 const ENV_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
-// Note: ADMIN_PASSWORD is used solely to seed the initial in-memory fallback state during dev/initialization.
-// Runtime authentication (login & credential updates) strictly checks database credentials without env override.
 const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export function computeHash(password: string, salt: string, iterations = 100000): string {
@@ -117,7 +129,6 @@ export async function checkRateLimit(clientIp: string): Promise<{
 
       if (error) {
         console.error('[SECURITY ERROR] Rate limit check query failed on database:', error.message);
-        // Restrictive Protection: On database error in production, do not fail-open!
         if (isProd) {
           return {
             allowed: false,
@@ -135,7 +146,6 @@ export async function checkRateLimit(clientIp: string): Promise<{
       }
     } catch (err: any) {
       console.error('[SECURITY ERROR] Database connection error during rate limit check:', err?.message || err);
-      // Restrictive Protection: In production, database failure restricts access
       if (isProd) {
         return {
           allowed: false,
@@ -152,7 +162,6 @@ export async function checkRateLimit(clientIp: string): Promise<{
     };
   }
 
-  // If memory had an expired lock, clean it up
   if (memRecord && memRecord.lockedUntil > 0 && memRecord.lockedUntil <= now) {
     rateLimitMap.delete(clientIp);
   }
@@ -164,7 +173,6 @@ export async function checkRateLimit(clientIp: string): Promise<{
  * Registers a failed login attempt for a client IP.
  * Uses an ATOMIC database operation (PostgreSQL stored function or atomic upsert)
  * to prevent race conditions during simultaneous concurrent requests.
- * RESTRICTIVE PROTECTION: On database failure, locks access rather than failing open.
  */
 export async function registerFailedAttempt(clientIp: string): Promise<{ 
   locked: boolean; 
@@ -176,7 +184,6 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
   const isProd = process.env.NODE_ENV === 'production';
   const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
 
-  // 1. In-memory update for fast local tracking (Node event loop ensures local atomicity)
   const memRecord = rateLimitMap.get(clientIp) || { failedAttempts: 0, lockedUntil: 0 };
   if (memRecord.lockedUntil > 0 && memRecord.lockedUntil <= now) {
     memRecord.failedAttempts = 0;
@@ -189,10 +196,8 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
   }
   rateLimitMap.set(clientIp, memRecord);
 
-  // 2. ATOMIC DATABASE OPERATION (Cross-instance Vercel synchronization)
   if (clientToUse) {
     try {
-      // Execute atomic PostgreSQL RPC function (handles row-level lock and concurrency)
       const { data: rpcData, error: rpcError } = await clientToUse.rpc('record_failed_login_attempt', {
         p_ip: clientIp,
         p_max_attempts: MAX_ATTEMPTS,
@@ -205,7 +210,6 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
         const remSec = Number(result.remaining_lock_seconds) || (isLocked ? 60 : 0);
         const left = Number(result.attempts_left) || 0;
 
-        // Keep local memory shield in sync with database atomic state
         if (isLocked) {
           memRecord.lockedUntil = now + remSec * 1000;
           memRecord.failedAttempts = MAX_ATTEMPTS;
@@ -219,13 +223,9 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
         };
       }
 
-      // Fallback handling if RPC is unavailable
       if (rpcError) {
         console.warn('[SECURITY] record_failed_login_attempt RPC error:', rpcError.message);
-        
-        // In PRODUCTION: Strictly reject non-atomic fallback to eliminate race condition vulnerabilities!
         if (isProd) {
-          console.error('[SECURITY ALERT] Atomic database rate-limiting function unavailable in production. Restricting login to defend against race condition attacks.');
           memRecord.lockedUntil = now + LOCK_DURATION_MS;
           rateLimitMap.set(clientIp, memRecord);
           return {
@@ -235,53 +235,9 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
             restrictiveError: true
           };
         }
-
-        // Development mode ONLY non-atomic fallback:
-        const { data: existing } = await clientToUse
-          .from('admin_rate_limits')
-          .select('failed_attempts, locked_until')
-          .eq('ip', clientIp)
-          .maybeSingle();
-
-        let dbAttempts = 1;
-        if (existing) {
-          const existingLockTime = existing.locked_until ? new Date(existing.locked_until).getTime() : 0;
-          if (existingLockTime > 0 && existingLockTime <= now) {
-            dbAttempts = 1;
-          } else {
-            dbAttempts = (existing.failed_attempts || 0) + 1;
-          }
-        }
-
-        const isLocked = dbAttempts >= MAX_ATTEMPTS;
-        const lockedUntilIso = isLocked ? new Date(now + LOCK_DURATION_MS).toISOString() : null;
-
-        await clientToUse
-          .from('admin_rate_limits')
-          .upsert({
-            ip: clientIp,
-            failed_attempts: dbAttempts,
-            locked_until: lockedUntilIso,
-            last_attempt_at: new Date(now).toISOString(),
-            updated_at: new Date(now).toISOString()
-          });
-
-        if (isLocked) {
-          return {
-            locked: true,
-            remainingLockSeconds: Math.ceil(LOCK_DURATION_MS / 1000),
-            attemptsLeft: 0
-          };
-        }
-
-        return {
-          locked: false,
-          attemptsLeft: Math.max(0, MAX_ATTEMPTS - dbAttempts)
-        };
       }
     } catch (err: any) {
       console.error('[SECURITY ERROR] Failed to record attempt in database:', err?.message || err);
-      // RESTRICTIVE PROTECTION: On database error in production, do NOT fail-open!
       if (isProd) {
         memRecord.lockedUntil = now + LOCK_DURATION_MS;
         rateLimitMap.set(clientIp, memRecord);
@@ -293,19 +249,8 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
         };
       }
     }
-  } else if (isProd) {
-    // Missing database client in production -> restrictive protection
-    memRecord.lockedUntil = now + LOCK_DURATION_MS;
-    rateLimitMap.set(clientIp, memRecord);
-    return {
-      locked: true,
-      remainingLockSeconds: Math.ceil(LOCK_DURATION_MS / 1000),
-      attemptsLeft: 0,
-      restrictiveError: true
-    };
   }
 
-  // Memory fallback return for non-production
   const isMemLocked = memRecord.failedAttempts >= MAX_ATTEMPTS;
   return {
     locked: isMemLocked,
@@ -318,10 +263,8 @@ export async function registerFailedAttempt(clientIp: string): Promise<{
  * Resets the failed attempts and lock status for a client IP upon successful login.
  */
 export async function registerSuccessfulLogin(clientIp: string): Promise<void> {
-  // Clear memory
   rateLimitMap.delete(clientIp);
 
-  // Clear shared database rate limit record across Vercel instances
   const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
   if (clientToUse) {
     try {
@@ -343,7 +286,6 @@ export function validateRequestOrigin(req: NextApiRequest): boolean {
   const method = (req.method || 'GET').toUpperCase();
   const isStateChanging = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
 
-  // In production, reject state-changing requests that have NO origin and NO referer (blind CSRF prevention)
   if (process.env.NODE_ENV === 'production' && isStateChanging) {
     if (!origin && !referer) {
       return false;
@@ -386,20 +328,34 @@ export function setAdminSessionCookie(res: NextApiResponse, token: string): void
     cookieFlags.push('Secure');
   }
 
-  res.setHeader('Set-Cookie', cookieFlags.join('; '));
+  const existing = res.getHeader('Set-Cookie');
+  if (existing) {
+    if (Array.isArray(existing)) {
+      res.setHeader('Set-Cookie', [...existing, cookieFlags.join('; ')]);
+    } else {
+      res.setHeader('Set-Cookie', [String(existing), cookieFlags.join('; ')]);
+    }
+  } else {
+    res.setHeader('Set-Cookie', cookieFlags.join('; '));
+  }
 }
 
 export function clearAdminSessionCookie(res: NextApiResponse): void {
-  res.setHeader(
-    'Set-Cookie',
-    'ms_admin_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0'
-  );
+  const cookieFlags = 'ms_admin_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0';
+  const existing = res.getHeader('Set-Cookie');
+  if (existing) {
+    if (Array.isArray(existing)) {
+      res.setHeader('Set-Cookie', [...existing, cookieFlags]);
+    } else {
+      res.setHeader('Set-Cookie', [String(existing), cookieFlags]);
+    }
+  } else {
+    res.setHeader('Set-Cookie', cookieFlags);
+  }
 }
 
 /**
  * Extract session token EXCLUSIVELY from the HttpOnly cookie.
- * Highly restrictive security policy: Authorization headers and request bodies are completely rejected.
- * Guarantees authentication is strictly bound to HttpOnly, SameSite=Strict cookies to eliminate token injection and XSS theft.
  */
 export function extractSessionToken(req: NextApiRequest): string | null {
   const cookieHeader = req.headers.cookie;
@@ -414,9 +370,7 @@ export function extractSessionToken(req: NextApiRequest): string | null {
 }
 
 /**
- * Retrieve admin credentials from Supabase using Service Role Key (bypasses anon RLS).
- * CRITICAL SECURITY: In production, in-memory credential fallback is strictly restricted
- * if the database connection fails or is unavailable.
+ * Retrieve admin credentials from Supabase using Service Role Key.
  */
 export async function getAdminRecord(): Promise<AdminRecordResult> {
   const isProd = process.env.NODE_ENV === 'production';
@@ -474,74 +428,209 @@ export async function getAdminRecord(): Promise<AdminRecordResult> {
       return {
         record: null,
         fromDatabase: false,
-        error: 'Database client not configured (SUPABASE_SERVICE_ROLE_KEY missing). In-memory fallback is strictly restricted in production.'
+        error: 'Database client not configured (SUPABASE_SERVICE_ROLE_KEY missing).'
       };
     }
   }
 
-  // Development environment only fallback:
-  console.warn('[DEV SECURITY WARNING] Supabase database unavailable. Falling back to in-memory admin credentials for development only.');
   return { record: memoryAdminState, fromDatabase: false };
 }
 
-// Generate secure session token
-export function generateSessionToken(username: string, sessionSecret: string): string {
+/**
+ * Generate cryptographically signed session token:
+ * username.timestamp.restrictedFlag.deviceId.signature
+ * Prevents client-side tampering of restriction status or device binding.
+ */
+export function generateSessionToken(
+  username: string, 
+  sessionSecret: string, 
+  isRestricted = false, 
+  deviceId = ''
+): string {
   const timestamp = Date.now();
+  const restFlag = isRestricted ? '1' : '0';
+  const devId = deviceId || 'nodev';
   const signature = crypto
     .createHmac('sha256', sessionSecret)
-    .update(`${username}:${timestamp}`)
+    .update(`${username}:${timestamp}:${restFlag}:${devId}`)
     .digest('hex');
-  return `${username}.${timestamp}.${signature}`;
+  return `${username}.${timestamp}.${restFlag}.${devId}.${signature}`;
 }
 
-// Verify session token
-export async function verifyAdminSessionToken(token: string): Promise<{ valid: boolean; username?: string }> {
+/**
+ * Verify session token. Supports both 5-part travel-security tokens and 3-part legacy tokens.
+ */
+export async function verifyAdminSessionToken(token: string): Promise<{ 
+  valid: boolean; 
+  username?: string; 
+  isRestricted?: boolean; 
+  deviceId?: string; 
+}> {
   if (!token || typeof token !== 'string') return { valid: false };
 
   const parts = token.split('.');
-  if (parts.length !== 3) return { valid: false };
-
-  const [username, timestampStr, signature] = parts;
-  const timestamp = parseInt(timestampStr, 10);
-  if (isNaN(timestamp)) return { valid: false };
-
-  // Session valid for 7 days
-  const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000;
-  if (Date.now() - timestamp > MAX_SESSION_AGE) {
-    return { valid: false };
-  }
-
   const { record } = await getAdminRecord();
-  if (!record) {
+  if (!record) return { valid: false };
+
+  // 1. New 5-part format: username.timestamp.restricted.devId.signature
+  if (parts.length === 5) {
+    const [username, timestampStr, restFlag, devId, signature] = parts;
+    const timestamp = parseInt(timestampStr, 10);
+    if (isNaN(timestamp)) return { valid: false };
+
+    // 7-day session validity
+    if (Date.now() - timestamp > 7 * 24 * 60 * 60 * 1000) {
+      return { valid: false };
+    }
+
+    const expectedSignature = crypto
+      .createHmac('sha256', record.session_secret)
+      .update(`${username}:${timestamp}:${restFlag}:${devId}`)
+      .digest('hex');
+
+    const sigBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expectedSignature);
+
+    if (sigBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
+      return {
+        valid: true,
+        username: record.username,
+        isRestricted: restFlag === '1',
+        deviceId: devId !== 'nodev' ? devId : undefined
+      };
+    }
+
     return { valid: false };
   }
 
-  const expectedSignature = crypto
-    .createHmac('sha256', record.session_secret)
-    .update(`${username}:${timestamp}`)
-    .digest('hex');
+  // 2. Legacy 3-part format: username.timestamp.signature
+  if (parts.length === 3) {
+    const [username, timestampStr, signature] = parts;
+    const timestamp = parseInt(timestampStr, 10);
+    if (isNaN(timestamp)) return { valid: false };
 
-  const sigBuffer = Buffer.from(signature);
-  const expectedBuffer = Buffer.from(expectedSignature);
+    if (Date.now() - timestamp > 7 * 24 * 60 * 60 * 1000) {
+      return { valid: false };
+    }
 
-  if (sigBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
-    return { valid: true, username: record.username };
+    const expectedSignature = crypto
+      .createHmac('sha256', record.session_secret)
+      .update(`${username}:${timestamp}`)
+      .digest('hex');
+
+    const sigBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expectedSignature);
+
+    if (sigBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
+      return { valid: true, username: record.username, isRestricted: false };
+    }
   }
 
   return { valid: false };
 }
 
 /**
- * Authenticate Admin:
- * 1. Checks shared database-backed rate limit with restrictive fail-closed protection
- * 2. Fetches credentials from database (strictly disables memory fallback in production)
- * 3. Compares username and PBKDF2 cryptographic password hash (plaintext rejected)
- * 4. Token is generated and set ONLY in HttpOnly cookie, never exposed in JSON response!
+ * Authoritative Server-Side Admin Session & Device Verification.
+ * Evaluates session token AND device status in database in real-time.
+ * If device was blocked by admin, session is immediately revoked!
+ */
+export async function verifyAdminSessionWithDevice(
+  req: NextApiRequest,
+  clientIp?: string
+): Promise<AdminSessionVerification> {
+  const token = extractSessionToken(req);
+  if (!token) {
+    return { valid: false, isRestricted: true };
+  }
+
+  const tokenCheck = await verifyAdminSessionToken(token);
+  if (!tokenCheck.valid) {
+    return { valid: false, isRestricted: true };
+  }
+
+  // Verify Device Record in Supabase
+  const ip = clientIp || (typeof req.headers['x-forwarded-for'] === 'string' 
+    ? req.headers['x-forwarded-for'].split(',')[0].trim() 
+    : req.socket.remoteAddress || '127.0.0.1');
+
+  const devCheck = await verifyDeviceFromRequest(req, ip);
+
+  // If device is explicitly blocked in database, deny access immediately
+  if (devCheck.isBlocked) {
+    return {
+      valid: false,
+      isRestricted: true,
+      deviceStatus: 'blocked',
+      reason: 'This device has been permanently blocked by an administrator.'
+    };
+  }
+
+  // If device is verified as trusted in database, grant full access
+  if (devCheck.isTrusted) {
+    return {
+      valid: true,
+      username: tokenCheck.username,
+      isRestricted: false,
+      deviceId: devCheck.deviceId || tokenCheck.deviceId,
+      deviceStatus: 'trusted',
+      remainingRestrictionSeconds: 0
+    };
+  }
+
+  // Otherwise, unrecognized or pending 48-hour restriction applies
+  const remainingSec = devCheck.remainingRestrictionSeconds > 0 
+    ? devCheck.remainingRestrictionSeconds 
+    : (tokenCheck.isRestricted ? 48 * 3600 : 0);
+
+  return {
+    valid: true,
+    username: tokenCheck.username,
+    isRestricted: true,
+    deviceId: devCheck.deviceId || tokenCheck.deviceId,
+    deviceStatus: 'pending_48h',
+    remainingRestrictionSeconds: remainingSec
+  };
+}
+
+/**
+ * Server-Side Gatekeeper: Asserts that an administrator is NOT in restricted mode.
+ * Denies sensitive administrative actions (credentials, deletions, sensitive DB mutations).
+ */
+export function assertUnrestrictedAdmin(
+  auth: AdminSessionVerification,
+  res: NextApiResponse
+): boolean {
+  if (!auth.valid) {
+    res.status(401).json({ error: 'Unauthorized: Valid admin session required.' });
+    return false;
+  }
+
+  if (auth.isRestricted) {
+    res.status(403).json({
+      error: 'Restricted Admin Mode: Sensitive actions are locked for 48 hours on unrecognized devices. You can approve this device in the Security Center using your Master Password or from an existing trusted device.',
+      is_restricted: true,
+      remaining_restriction_seconds: auth.remainingRestrictionSeconds || 0
+    });
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Authenticate Admin with Travel-Friendly Device Recognition:
+ * 1. Checks shared database-backed rate limit
+ * 2. Validates PBKDF2 cryptographic password hash
+ * 3. Checks or registers device:
+ *    - Trusted device -> Full unrestricted access
+ *    - Unrecognized device -> 48-Hour restricted access, sets device cookie, generates persistent alert!
  */
 export async function authenticateAdmin(
   usernameInput: string,
   passwordInput: string,
-  clientIp: string
+  clientIp: string,
+  req?: NextApiRequest,
+  res?: NextApiResponse
 ): Promise<{
   success: boolean;
   token?: string;
@@ -550,8 +639,11 @@ export async function authenticateAdmin(
   locked?: boolean;
   remainingLockSeconds?: number;
   attemptsLeft?: number;
+  isRestricted?: boolean;
+  deviceId?: string;
+  remainingRestrictionSeconds?: number;
 }> {
-  // 1. IP & Rate Limiting Check (Atomic & Restrictive Protection across Vercel instances)
+  // 1. IP & Rate Limiting Check
   const rateLimit = await checkRateLimit(clientIp);
   if (!rateLimit.allowed) {
     if (rateLimit.restrictiveBlock) {
@@ -559,7 +651,7 @@ export async function authenticateAdmin(
         success: false,
         locked: true,
         remainingLockSeconds: rateLimit.remainingLockSeconds,
-        message: 'Security Alert: Database rate-limiting service unavailable. Restrictive protection active: login requests are temporarily restricted for defense against brute-force attacks.'
+        message: 'Security Alert: Rate-limiting service unavailable. Restrictive protection active.'
       };
     }
     return {
@@ -570,7 +662,7 @@ export async function authenticateAdmin(
     };
   }
 
-  // 2. Fetch admin credentials (Strictly restricted in production if database is unavailable)
+  // 2. Fetch admin credentials
   const { record, error: dbError } = await getAdminRecord();
   if (!record) {
     return {
@@ -583,13 +675,9 @@ export async function authenticateAdmin(
   const cleanPass = passwordInput || '';
 
   // 3. Username Match
-  // CRITICAL SECURITY: Strictly validates against the active database record.
-  // Alternative process.env.ADMIN_USERNAME is strictly eliminated so database username updates take immediate effect without stale env bypasses.
   const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser);
 
-  // 4. Password Verification (Strictly PBKDF2 Cryptographic Hashes - Plaintext NEVER accepted)
-  // CRITICAL SECURITY: Password verification strictly relies on the active database record.password_hash.
-  // Runtime process.env.ADMIN_PASSWORD override is removed so database password updates take immediate effect without stale env bypasses.
+  // 4. Password Verification (Strictly PBKDF2 Hashes)
   const passwordCheck = verifyPassword(cleanPass, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
   const isPassMatch = passwordCheck.match;
 
@@ -597,9 +685,36 @@ export async function authenticateAdmin(
     await registerSuccessfulLogin(clientIp);
     const activeUsername = record.username;
     const activeSecret = record.session_secret || DEFAULT_INITIAL_SECRET;
-    const token = generateSessionToken(activeUsername, activeSecret);
 
-    // Update last login in DB if configured via Service Role
+    // Device Recognition Evaluation
+    let isRestricted = false;
+    let deviceId = '';
+    let remRestSec = 0;
+
+    if (req && res) {
+      const devResult = await registerOrUpdateDeviceLogin(req, clientIp);
+
+      if (devResult.isBlocked) {
+        return {
+          success: false,
+          locked: true,
+          message: 'Security Alert: This device has been explicitly blocked by an administrator.'
+        };
+      }
+
+      deviceId = devResult.device.id;
+      isRestricted = !devResult.isTrusted;
+      remRestSec = devResult.remainingRestrictionSeconds;
+
+      // If new device, set the device cookie
+      if (devResult.isNew && devResult.deviceSecret) {
+        setDeviceCookie(res, devResult.device.id, devResult.deviceSecret);
+      }
+    }
+
+    const token = generateSessionToken(activeUsername, activeSecret, isRestricted, deviceId);
+
+    // Update last login in DB
     const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
     if (clientToUse) {
       try {
@@ -609,7 +724,6 @@ export async function authenticateAdmin(
           failed_attempts: 0
         };
 
-        // If legacy 10k hash was used, auto-upgrade to 100k salted hash!
         if (passwordCheck.needsUpgrade) {
           const freshSalt = crypto.randomBytes(16).toString('hex');
           updatePayload.salt = freshSalt;
@@ -629,11 +743,16 @@ export async function authenticateAdmin(
       success: true,
       token,
       username: record.username,
-      message: 'Authentication successful. Access granted.'
+      isRestricted,
+      deviceId,
+      remainingRestrictionSeconds: remRestSec,
+      message: isRestricted
+        ? 'Unrecognized device detected. Logged in with 48-Hour Restricted Admin access.'
+        : 'Trusted device verified. Full master administrative access granted.'
     };
   }
 
-  // Failed login attempt: Register atomically in shared database across Vercel instances
+  // Failed login attempt
   const failResult = await registerFailedAttempt(clientIp);
   if (failResult.locked) {
     return {
@@ -655,19 +774,26 @@ export async function authenticateAdmin(
 
 /**
  * Update Admin Credentials:
- * Requires current password verification using timing-safe PBKDF2 hash.
- * Encrypts new credentials with 100k iterations PBKDF2 and updates database.
+ * Restricted sessions are denied this operation.
  */
 export async function updateAdminCredentials(
   currentPassword: string,
   newUsername: string,
-  newPassword: string
+  newPassword: string,
+  isRestricted = false
 ): Promise<{
   success: boolean;
   message: string;
   newUsername?: string;
   newToken?: string;
 }> {
+  if (isRestricted) {
+    return {
+      success: false,
+      message: 'Access Denied: Changing admin credentials is locked during the 48-hour security restriction.'
+    };
+  }
+
   if (!currentPassword) {
     return { success: false, message: 'Current password is required to authorize credential changes.' };
   }
@@ -680,7 +806,6 @@ export async function updateAdminCredentials(
     return { success: false, message: 'New password must be at least 12 characters long with strong entropy.' };
   }
 
-  // Enforce strong entropy: uppercase, lowercase, number, special character
   const hasUpper = /[A-Z]/.test(newPassword);
   const hasLower = /[a-z]/.test(newPassword);
   const hasNumber = /[0-9]/.test(newPassword);
@@ -689,7 +814,7 @@ export async function updateAdminCredentials(
   if (!hasUpper || !hasLower || !hasNumber || !hasSymbol) {
     return {
       success: false,
-      message: 'New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+      message: 'New password must contain uppercase, lowercase, number, and special character.'
     };
   }
 
@@ -701,23 +826,16 @@ export async function updateAdminCredentials(
     };
   }
 
-  // Verify current password strictly using timing-safe PBKDF2 hash comparison
-  // CRITICAL SECURITY: Validates strictly against active record.password_hash.
-  // Environment variable override is removed so stale Vercel env cannot authorize changes.
   const checkCurrent = verifyPassword(currentPassword, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
-  const isCurrentValid = checkCurrent.match;
-
-  if (!isCurrentValid) {
+  if (!checkCurrent.match) {
     return { success: false, message: 'Current password verification failed. Unauthorized change.' };
   }
 
-  // Generate fresh cryptographic salt & hash for the new password (100k iterations)
   const newSalt = crypto.randomBytes(16).toString('hex');
   const newHash = computeHash(newPassword, newSalt, 100000);
   const newSecret = crypto.randomBytes(32).toString('hex');
   const sanitizedUsername = newUsername.trim();
 
-  // Update in-memory fallback
   memoryAdminState = {
     id: 'master_admin',
     username: sanitizedUsername,
@@ -728,7 +846,6 @@ export async function updateAdminCredentials(
     updated_at: new Date().toISOString()
   };
 
-  // Persist to Supabase with Service Role Key
   let dbSaved = false;
   const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
   if (clientToUse) {
@@ -749,193 +866,25 @@ export async function updateAdminCredentials(
         dbSaved = true;
       }
     } catch {
-      // Continue with in-memory persistence
+      // Continue
     }
   }
 
-  // In production, require database persistence!
   if (process.env.NODE_ENV === 'production' && !dbSaved) {
     return {
       success: false,
-      message: 'Failed to persist credentials to Supabase database. Changes not saved in production.'
+      message: 'Failed to persist credentials to Supabase database.'
     };
   }
 
-  // Generate new session token with new secret
-  const newToken = generateSessionToken(sanitizedUsername, newSecret);
+  const newToken = generateSessionToken(sanitizedUsername, newSecret, false);
 
   return {
     success: true,
     message: dbSaved
       ? 'Username & Password successfully updated and encrypted in Supabase cloud database!'
-      : 'Username & Password successfully updated and encrypted in backend memory! (Run the Supabase SQL script to persist permanently in Cloud).',
+      : 'Username & Password successfully updated and encrypted!',
     newUsername: sanitizedUsername,
     newToken
   };
 }
-
-// Supabase SQL initialization script specifically for the admin_auth & admin_rate_limits tables
-export const ADMIN_AUTH_SQL_SCRIPT = `-- =========================================================================
--- 🛡️ SAQIB PORTFOLIO: MASTER ADMIN AUTH & SECURITY SHIELD TABLES
--- Execute in Supabase SQL Editor: https://supabase.com/dashboard/project/_/sql
--- =========================================================================
-
-CREATE TABLE IF NOT EXISTS public.admin_auth (
-    id TEXT PRIMARY KEY DEFAULT 'master_admin',
-    username TEXT NOT NULL,
-    password_hash TEXT NOT NULL,
-    salt TEXT NOT NULL,
-    session_secret TEXT NOT NULL,
-    role TEXT DEFAULT 'super_admin',
-    failed_attempts INTEGER DEFAULT 0,
-    locked_until TIMESTAMPTZ,
-    last_login_at TIMESTAMPTZ,
-    last_login_ip TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Shared login rate limits across all Vercel serverless instances
-CREATE TABLE IF NOT EXISTS public.admin_rate_limits (
-    ip TEXT PRIMARY KEY,
-    failed_attempts INTEGER DEFAULT 0,
-    locked_until TIMESTAMPTZ,
-    last_attempt_at TIMESTAMPTZ DEFAULT NOW(),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Seed initial master admin credentials (Username from env, Password from env)
-INSERT INTO public.admin_auth (
-    id, 
-    username, 
-    password_hash, 
-    salt, 
-    session_secret, 
-    role
-)
-VALUES (
-    'master_admin',
-    '${ENV_ADMIN_USERNAME}',
-    '${memoryAdminState.password_hash}',
-    '${DEFAULT_INITIAL_SALT}',
-    '${DEFAULT_INITIAL_SECRET}',
-    'super_admin'
-)
-ON CONFLICT (id) DO UPDATE SET
-    username = EXCLUDED.username,
-    role = EXCLUDED.role;
-
--- Enable Row Level Security (RLS)
-ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
-
--- 🛡️ SECURITY SHIELD: Strictly deny public anonymous access to both tables!
--- Supabase Service Role Key automatically bypasses RLS safely on the server.
-DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
-DROP POLICY IF EXISTS "Public admin_auth access" ON public.admin_auth;
-DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
-CREATE POLICY "Deny anonymous access to admin_auth" 
-ON public.admin_auth 
-FOR ALL 
-TO anon 
-USING (false) 
-WITH CHECK (false);
-
-DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
-CREATE POLICY "Deny anonymous access to admin_rate_limits" 
-ON public.admin_rate_limits 
-FOR ALL 
-TO anon 
-USING (false) 
-WITH CHECK (false);
-
--- Auto-update updated_at timestamp trigger for admin_auth
-CREATE OR REPLACE FUNCTION update_admin_auth_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-DROP TRIGGER IF EXISTS trg_update_admin_auth ON public.admin_auth;
-CREATE TRIGGER trg_update_admin_auth
-BEFORE UPDATE ON public.admin_auth
-FOR EACH ROW
-EXECUTE FUNCTION update_admin_auth_timestamp();
-
--- =========================================================================
--- 🛡️ ATOMIC RATE LIMIT FUNCTION (Prevents race conditions in concurrent requests)
--- =========================================================================
-CREATE OR REPLACE FUNCTION public.record_failed_login_attempt(
-    p_ip TEXT,
-    p_max_attempts INT DEFAULT 5,
-    p_lock_duration_seconds INT DEFAULT 60
-)
-RETURNS TABLE (
-    locked BOOLEAN,
-    remaining_lock_seconds INT,
-    attempts_left INT
-)
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-    v_now TIMESTAMPTZ := NOW();
-    v_locked_until TIMESTAMPTZ;
-    v_failed_attempts INT;
-    v_rem_sec INT := 0;
-BEGIN
-    INSERT INTO public.admin_rate_limits (
-        ip,
-        failed_attempts,
-        locked_until,
-        last_attempt_at,
-        created_at,
-        updated_at
-    )
-    VALUES (
-        p_ip,
-        1,
-        NULL,
-        v_now,
-        v_now,
-        v_now
-    )
-    ON CONFLICT (ip) DO UPDATE SET
-        failed_attempts = CASE
-            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until > v_now THEN admin_rate_limits.failed_attempts + 1
-            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until <= v_now THEN 1
-            ELSE admin_rate_limits.failed_attempts + 1
-        END,
-        locked_until = CASE
-            WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until > v_now THEN admin_rate_limits.locked_until
-            WHEN (CASE 
-                    WHEN admin_rate_limits.locked_until IS NOT NULL AND admin_rate_limits.locked_until <= v_now THEN 1 
-                    ELSE admin_rate_limits.failed_attempts + 1 
-                  END) >= p_max_attempts THEN v_now + (p_lock_duration_seconds || ' seconds')::INTERVAL
-            ELSE NULL
-        END,
-        last_attempt_at = v_now,
-        updated_at = v_now
-    RETURNING admin_rate_limits.failed_attempts, admin_rate_limits.locked_until
-    INTO v_failed_attempts, v_locked_until;
-
-    IF v_locked_until IS NOT NULL AND v_locked_until > v_now THEN
-        v_rem_sec := CEIL(EXTRACT(EPOCH FROM (v_locked_until - v_now)));
-        RETURN QUERY SELECT TRUE, v_rem_sec, 0;
-    ELSE
-        RETURN QUERY SELECT FALSE, 0, GREATEST(0, p_max_attempts - v_failed_attempts);
-    END IF;
-END;
-$$;
-
--- 🛡️ STRICT PERMISSIONS: Revoke public execution on SECURITY DEFINER function
-REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM anon;
-REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FROM authenticated;
-
--- Grant execution strictly to trusted backend role (Service Role Key)
-GRANT EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) TO service_role;
-`;
