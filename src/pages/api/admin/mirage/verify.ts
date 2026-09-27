@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { verifyAdminSessionWithDevice } from '../../../../lib/serverAdminAuth';
-import { verifyMirageOtp, setMirageUnlockedCookie, verifyMirageState, clearMirageCookie } from '../../../../lib/mirageService';
+import { verifyMirageOtp, setMirageUnlockedCookie, verifyMirageState, clearMirageCookie, getMirageConfig } from '../../../../lib/mirageService';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -43,8 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Check strike count
   let strikes = parseInt(req.cookies['ms_mirage_strikes'] || '0', 10);
 
-  // Import getMirageConfig
-  const { getMirageConfig } = require('../../../../lib/mirageService');
+  // Get config
   const config = await getMirageConfig();
   const truePort = config?.true_port || 8;
 
