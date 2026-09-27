@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  productionBrowserSourceMaps: false, // Ensures source maps are never exposed
   eslint: {
     ignoreDuringBuilds: false,
   },
