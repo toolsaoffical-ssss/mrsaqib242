@@ -139,7 +139,7 @@ export function setMirageChallengeCookie(res: NextApiResponse) {
 }
 
 export function setMirageUnlockedCookie(req: NextApiRequest, res: NextApiResponse) {
-  const sessionToken = req.cookies['ms_admin_session'] || 'unknown';
+  const sessionToken = req.cookies['ms_admin_token'] || 'unknown';
   const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex');
   const timestamp = Date.now();
   const signature = crypto.createHmac('sha256', MIRAGE_SECRET).update(`unlocked:${timestamp}:${sessionHash}`).digest('hex');
@@ -181,7 +181,7 @@ export function verifyMirageState(req: NextApiRequest): { isUnlocked: boolean; c
   const [state, timestampStr, signature] = parts;
   const timestamp = parseInt(timestampStr, 10);
   
-  const sessionToken = req.cookies['ms_admin_session'] || 'unknown';
+  const sessionToken = req.cookies['ms_admin_token'] || 'unknown';
   const sessionHash = crypto.createHash('sha256').update(sessionToken).digest('hex');
 
   let expectedSig = '';
