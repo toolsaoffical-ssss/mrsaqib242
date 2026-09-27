@@ -15,25 +15,20 @@ import {
 } from 'lucide-react';
 import { loginAdmin, verifyAdminSession, logoutAdmin } from '../lib/adminAuthClient';
 import MirageLockScreen from './MirageLockScreen';
+import JarvisLoader from './JarvisLoader';
 
 const AdminAuthenticatedDashboard = dynamic(
   () => import('./AdminAuthenticatedDashboard'),
   {
     ssr: false,
     loading: () => (
-      <div className="min-h-screen bg-[#0a0a0c] text-white flex flex-col justify-center items-center px-4 relative overflow-hidden font-sans">
+      <>
         <Head>
           <title>Loading Master Admin Dashboard...</title>
           <meta name="robots" content="noindex, nofollow" />
         </Head>
-        <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 mb-4 animate-pulse">
-          <Shield size={26} />
-        </div>
-        <p className="text-xs uppercase font-black tracking-widest text-zinc-400 flex items-center gap-2">
-          <RefreshCw size={14} className="animate-spin text-orange-400" />
-          Loading Secure Admin Dashboard Modules...
-        </p>
-      </div>
+        <JarvisLoader text="S.A.Q.I.B." />
+      </>
     )
   }
 );
@@ -132,19 +127,13 @@ export default function AdminPageView() {
   // 1. Initial Session Checking State
   if (isCheckingSession) {
     return (
-      <div className="min-h-screen bg-[#0a0a0c] text-white flex flex-col justify-center items-center px-4 relative overflow-hidden font-sans">
+      <>
         <Head>
-          <title>Authenticating Master Session | Mr Saqib Portfolio</title>
+          <title>Authenticating Master Session | Mr Saqib</title>
           <meta name="robots" content="noindex, nofollow" />
         </Head>
-        <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 mb-4 animate-pulse">
-          <Shield size={26} />
-        </div>
-        <p className="text-xs uppercase font-black tracking-widest text-zinc-400 flex items-center gap-2">
-          <RefreshCw size={14} className="animate-spin text-orange-400" />
-          Verifying Master Admin &amp; Device Integrity...
-        </p>
-      </div>
+        <JarvisLoader text="S.A.Q.I.B." />
+      </>
     );
   }
 
