@@ -600,19 +600,17 @@ export async function verifyAdminSessionWithDevice(
 export function assertUnrestrictedAdmin(
   auth: AdminSessionVerification,
   res: NextApiResponse,
-  req?: NextApiRequest
+  req: NextApiRequest
 ): boolean {
   if (!auth.valid) {
     res.status(401).json({ error: 'Unauthorized: Valid admin session required.' });
     return false;
   }
   
-  if (req) {
-    const mirage = verifyMirageState(req);
-    if (!mirage.isUnlocked) {
-      res.status(403).json({ error: 'Mirage Challenge Active: Session is locked. Please complete Visual PIN verification.' });
-      return false;
-    }
+  const mirage = verifyMirageState(req);
+  if (!mirage.isUnlocked) {
+    res.status(403).json({ error: 'Mirage Challenge Active: Session is locked. Please complete Visual PIN verification.' });
+    return false;
   }
 
   if (auth.isRestricted) {
