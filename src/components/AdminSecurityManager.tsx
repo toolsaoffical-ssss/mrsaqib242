@@ -521,10 +521,10 @@ export default function AdminSecurityManager({
                 <div className="max-w-xl">
                   <h4 className="text-sm font-black uppercase tracking-wider text-amber-300 flex items-center gap-2 mb-1">
                     <KeyRound size={16} />
-                    <span>Approve &amp; Trust This Device Directly (No SQL Required!)</span>
+                    <span>Approve &amp; Trust This Device (48h Lock or Backup Code)</span>
                   </h4>
                   <p className="text-xs text-zinc-400 mb-4">
-                    Are you the master administrator logging in from a new travel device? Enter your Master Password below to immediately promote this device to <span className="text-white font-bold">Trusted Status</span>.
+                    To immediately promote this device to <span className="text-white font-bold">Trusted Status</span>, you must enter an <strong>Emergency Backup Code</strong>. Or, wait for 48 hours and use your Master Password.
                   </p>
 
                   <form onSubmit={handleTrustCurrent} className="space-y-3">

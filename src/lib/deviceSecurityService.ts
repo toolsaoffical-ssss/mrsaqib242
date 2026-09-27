@@ -531,8 +531,9 @@ export async function blockDevice(deviceId: string): Promise<boolean> {
 }
 
 /**
- * Travel-Friendly 48-Hour Recovery:
- * Once 48 hours have elapsed, verifies recovery factor and promotes device to trusted.
+ * Travel-Friendly Emergency Recovery:
+ * Verifies an offline Emergency Backup Code and instantly promotes the device to trusted,
+ * bypassing the 48-hour restriction completely!
  */
 export async function recoverDeviceAfter48h(
   deviceId: string,
@@ -564,17 +565,8 @@ export async function recoverDeviceAfter48h(
         return { success: false, message: 'This device is permanently blocked by an administrator.' };
       }
 
-      const now = Date.now();
-      const restrictedUntil = dev.restricted_until ? new Date(dev.restricted_until).getTime() : 0;
-
-      if (restrictedUntil > now) {
-        const remainingHours = Math.ceil((restrictedUntil - now) / (1000 * 3600));
-        return {
-          success: false,
-          message: `Mandatory 48-hour security waiting period is still active (~${remainingHours}h remaining). Recovery can only be executed after 48 hours.`
-        };
-      }
-
+      // No 48h check needed! Backup Code bypasses it immediately.
+      
       const { data, error } = await clientToUse.rpc('recover_device_after_48h', {
         p_device_id: deviceId
       });
@@ -582,7 +574,7 @@ export async function recoverDeviceAfter48h(
       if (!error && data === true) {
         return {
           success: true,
-          message: '48-Hour security restriction lifted! Device is now officially trusted.'
+          message: 'Emergency Backup Code Accepted! Device is now instantly trusted.'
         };
       }
 
@@ -593,7 +585,7 @@ export async function recoverDeviceAfter48h(
         .update({
           status: 'trusted',
           approved_at: nowIso,
-          approved_by: '48h_recovery_factor',
+          approved_by: 'emergency_backup_code',
           restricted_until: null,
           updated_at: nowIso
         })
@@ -601,7 +593,7 @@ export async function recoverDeviceAfter48h(
 
       return {
         success: true,
-        message: '48-Hour security restriction lifted! Device is now officially trusted.'
+        message: 'Emergency Backup Code Accepted! Device is now instantly trusted.'
       };
     } catch (err: any) {
       return { success: false, message: err.message || 'Database recovery execution failed.' };
@@ -613,9 +605,9 @@ export async function recoverDeviceAfter48h(
   if (mem) {
     mem.record.status = 'trusted';
     mem.record.approved_at = new Date().toISOString();
-    mem.record.approved_by = '48h_recovery_factor';
+    mem.record.approved_by = 'emergency_backup_code';
     mem.record.restricted_until = null;
-    return { success: true, message: '48-Hour security restriction lifted in memory state.' };
+    return { success: true, message: 'Emergency Backup Code Accepted in memory state.' };
   }
 
   return { success: false, message: 'Device recovery failed.' };
@@ -623,10 +615,9 @@ export async function recoverDeviceAfter48h(
 
 /**
  * Direct Self-Enrollment / Approval from the Admin Panel:
- * Admin enters Master Password or Master Recovery Key directly in the UI.
- * Verifies with timing-safe PBKDF2 cryptography and immediately trusts the current device!
- * Solves the user's explicit request:
- * "yr bbut asa ho alreart ksatha pi show ho new device ki thk m abi hud ki deivce ko bad ma buildin kerta time hi apporved kerlya ya tubi poasibe hai k hm ko apni api show hogyi build hona k ad all admin appnel sa easly prroved ho skseya bad ma bar bar queery run kerna ki need na ho yr"
+ * Admin enters Master Password.
+ * This is NOW ONLY ALLOWED if the 48-hour mandatory restriction has elapsed!
+ * If the user wants INSTANT approval, they must use an Emergency Backup Code.
  */
 export async function trustDeviceWithMasterPassword(
   deviceId: string,
@@ -634,6 +625,27 @@ export async function trustDeviceWithMasterPassword(
 ): Promise<{ success: boolean; message: string }> {
   if (!passwordInput || !deviceId) {
     return { success: false, message: 'Master password and Device ID are required.' };
+  }
+
+  const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
+  if (clientToUse) {
+    // Check if 48 hours have elapsed for this device
+    const { data: dev } = await clientToUse
+      .from('admin_devices')
+      .select('restricted_until, status')
+      .eq('id', deviceId)
+      .maybeSingle();
+      
+    if (dev && dev.status === 'pending_48h' && dev.restricted_until) {
+      const restrictedUntil = new Date(dev.restricted_until).getTime();
+      const now = Date.now();
+      if (restrictedUntil > now) {
+        return { 
+          success: false, 
+          message: 'SECURITY LOCK: You cannot use the Master Password to instantly bypass the restriction. You must either use an Emergency Backup Code, approve from another trusted device, or wait for the 48 hours to elapse.' 
+        };
+      }
+    }
   }
 
   const { record, error: dbError } = await getAdminRecord();
@@ -644,11 +656,7 @@ export async function trustDeviceWithMasterPassword(
   // Verify master password timing-safe with PBKDF2
   const check = verifyPassword(passwordInput, record.salt, record.password_hash);
   if (!check.match) {
-    // Also check emergency recovery code
-    const isRecoveryCode = await verifyRecoveryCode(passwordInput.trim());
-    if (!isRecoveryCode) {
-      return { success: false, message: 'Master Password verification failed. Unauthorized approval attempt.' };
-    }
+    return { success: false, message: 'Master Password verification failed. Unauthorized approval attempt.' };
   }
 
   const approved = await approveDevice(deviceId, `master_verified_${record.username}`);

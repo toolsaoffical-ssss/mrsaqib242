@@ -66,14 +66,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (action === 'trust_current_device') {
         const { masterPassword } = req.body || {};
         if (!masterPassword) {
-          return res.status(400).json({ error: 'Master Password is required to verify and trust this device.' });
+          return res.status(400).json({ error: 'Master Password or Backup Code is required to verify and trust this device.' });
         }
 
         if (!auth.deviceId) {
           return res.status(400).json({ error: 'No active device identified for this session.' });
         }
 
-        const result = await trustDeviceWithMasterPassword(auth.deviceId, masterPassword);
+        let result;
+        // If it looks like a backup code (SAQIB-XXX-XXX), try that first. Or just try it.
+        if (masterPassword.startsWith('SAQIB-')) {
+          result = await recoverDeviceAfter48h(auth.deviceId, masterPassword);
+        } else {
+          result = await trustDeviceWithMasterPassword(auth.deviceId, masterPassword);
+        }
+
         if (!result.success) {
           return res.status(400).json({ error: result.message });
         }

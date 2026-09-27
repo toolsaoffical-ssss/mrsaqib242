@@ -415,7 +415,7 @@ export default function AdminAuthenticatedDashboard({
               Verify &amp; Trust This Device
             </h3>
             <p className="text-xs text-zinc-400 mb-5 leading-relaxed">
-              Enter your Master Admin Password or Emergency Travel Recovery Key to immediately verify and promote this device to <span className="text-emerald-400 font-bold">Trusted Status</span> without running database queries.
+              Enter your <span className="text-emerald-400 font-bold">Emergency Travel Backup Code</span> to instantly promote this device to Trusted Status. If you don't have one, you must wait 48 hours to use your Master Password, or approve from another trusted device.
             </p>
 
             <form onSubmit={handleTrustCurrentDevice} className="space-y-4">
