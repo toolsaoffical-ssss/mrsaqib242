@@ -520,12 +520,7 @@ export default function App() {
         </div>
 
         {/* Foreground Sharp Image (Primary LCP Element) */}
-        <motion.div 
-          initial={{ opacity: 1, y: skipAnimation ? 0 : 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: skipAnimation ? 0 : 0.05 }}
-          className="absolute z-20 bottom-0 w-full flex justify-center items-end h-[75%] md:h-[85%]"
-        >
+        <div className="absolute z-20 bottom-0 w-full flex justify-center items-end h-[75%] md:h-[85%]">
           <img 
             src="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto" 
             srcSet="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-400,q-80,f-auto 400w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-600,q-80,f-auto 600w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto 800w"
@@ -536,9 +531,9 @@ export default function App() {
             className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
             referrerPolicy="no-referrer"
             fetchPriority="high"
-            decoding="sync"
-          />
-        </motion.div>
+              decoding="async"
+            />
+          </div>
 
         {/* Floating Content Overlays */}
         <div className="absolute z-30 inset-0 w-full h-full pointer-events-none max-w-7xl mx-auto">
