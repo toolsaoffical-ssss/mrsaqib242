@@ -195,7 +195,7 @@ export default function AdminAuthenticatedDashboard({
 
       {/* Floating Toast Notification */}
       {toast && (
-        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border text-xs font-bold transition-all animate-bounce ${
+        <div className={`fixed bottom-6 right-6 z-[100] px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border text-xs font-bold transition-all animate-bounce ${
           toast.type === 'error'
             ? 'bg-rose-950/90 border-rose-500/40 text-rose-200'
             : 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200'
