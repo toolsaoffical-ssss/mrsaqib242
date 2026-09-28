@@ -474,11 +474,11 @@ export default function App() {
               className="md:hidden flex flex-col items-center gap-6 overflow-hidden text-sm font-bold tracking-widest uppercase text-white/70"
             >
               <a href="#about" onClick={() => setIsMobileMenuOpen(false)} onDoubleClick={() => setIsAdminOpen(true)} className="hover:text-white transition-colors w-full text-center py-2">About</a>
-              <a href="/projects" onClick={(e) => { e.preventDefault(); window.location.hash = "#all-projects"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Projects</a>
-              <a href="/skills" onClick={(e) => { e.preventDefault(); window.location.hash = "#skills-page"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Skills</a>
-              <a href="/plans" onClick={(e) => { e.preventDefault(); window.location.hash = "#website-plans"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Plans</a>
+              <a href="/projects" onClick={(e) => { e.preventDefault(); window.location.hash = "#all-projects"; setIsMobileMenuOpen(false); }} className="hover:text-white transition-colors w-full text-center py-2">Projects</a>
+              <a href="/skills" onClick={(e) => { e.preventDefault(); window.location.hash = "#skills-page"; setIsMobileMenuOpen(false); }} className="hover:text-white transition-colors w-full text-center py-2">Skills</a>
+              <a href="/plans" onClick={(e) => { e.preventDefault(); window.location.hash = "#website-plans"; setIsMobileMenuOpen(false); }} className="hover:text-white transition-colors w-full text-center py-2">Plans</a>
               <a href="#gallery" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Gallery</a>
-              <a href="/contact" onClick={(e) => { e.preventDefault(); window.location.hash = "#contact-team"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Contact</a>
+              <a href="/contact" onClick={(e) => { e.preventDefault(); window.location.hash = "#contact-team"; setIsMobileMenuOpen(false); }} className="hover:text-white transition-colors w-full text-center py-2">Contact</a>
             </motion.div>
           )}
         </AnimatePresence>
