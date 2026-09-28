@@ -306,22 +306,22 @@ export default function ToolsPage({
       </AnimatePresence>
 
       {/* Top Global Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-[#08090e]/85 backdrop-blur-xl border-b border-white/10 px-4 sm:px-6 lg:px-8 py-3.5 transition-all">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[#08090e]/85 backdrop-blur-xl border-b border-white/10 px-2 sm:px-6 lg:px-8 py-3.5 transition-all">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           {/* Back Button */}
           <button 
             onClick={onClose}
-            className="group flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+            className="group flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             <span>Back</span>
           </button>
 
           {/* View Mode Switcher Pills (Highlighting Mobile Home Screen!) */}
-          <div className="flex items-center gap-1.5 p-1 bg-black/50 border border-white/10 rounded-2xl shadow-inner">
+          <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-black/50 border border-white/10 rounded-2xl shadow-inner shrink-0">
             <button
               onClick={() => setViewMode('phone')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'phone'
                   ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-lg shadow-orange-500/25 scale-102'
                   : 'text-zinc-400 hover:text-white'
@@ -329,7 +329,7 @@ export default function ToolsPage({
               title="Mobile Home Screen App Launcher"
             >
               <Smartphone size={14} />
-              <span>Mobile Apps</span>
+              <span className="hidden sm:inline">Mobile Apps</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
             </button>
 
@@ -360,7 +360,7 @@ export default function ToolsPage({
             </button>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 shrink-0">
             {/* Quick Favorites Trigger */}
             {settings.enable_favorites && (
               <button
