@@ -131,7 +131,7 @@ const MobileBottomNav = ({ currentHash }: { currentHash: string }) => {
           {isHome && <motion.div layoutId="nav-pill" className="absolute inset-0.5 bg-zinc-100/80 rounded-2xl z-0" />}
         </a>
 
-        <a href="#all-projects" aria-label="View All Projects" className="relative group w-1/5 flex justify-center items-center">
+        <a href="/projects" onClick={(e) => { e.preventDefault(); window.location.hash = "#all-projects"; }} aria-label="View All Projects" className="relative group w-1/5 flex justify-center items-center">
           <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isProjects ? 'text-zinc-800' : 'text-zinc-500 hover:text-zinc-700'}`}>
             <Briefcase size={18} className={isProjects ? 'drop-shadow-sm' : ''} />
             <span className={`text-[8px] font-bold ${isProjects ? 'opacity-100' : 'opacity-70'}`}>Projects</span>
@@ -139,13 +139,13 @@ const MobileBottomNav = ({ currentHash }: { currentHash: string }) => {
           {isProjects && <motion.div layoutId="nav-pill" className="absolute inset-0.5 bg-zinc-100/80 rounded-2xl z-0" />}
         </a>
 
-        <a href="#skills-page" aria-label="View Skills and Tech Stack" className="relative group w-1/5 flex justify-center items-center">
+        <a href="/skills" onClick={(e) => { e.preventDefault(); window.location.hash = "#skills-page"; }} aria-label="View Skills and Tech Stack" className="relative group w-1/5 flex justify-center items-center">
           <div className={`h-12 w-12 rounded-full transition-all duration-300 relative z-10 -mt-6 flex items-center justify-center border-[3px] border-[#F0F2F5] shadow-[0_8px_20px_rgba(0,0,0,0.2)] ${isSkills ? 'bg-zinc-800 text-white scale-110' : 'bg-zinc-700 text-white hover:scale-105'}`}>
             <Code2 size={20} />
           </div>
         </a>
 
-        <a href="#website-plans" aria-label="View Website Plans and Pricing" className="relative group w-1/5 flex justify-center items-center">
+        <a href="/plans" onClick={(e) => { e.preventDefault(); window.location.hash = "#website-plans"; }} aria-label="View Website Plans and Pricing" className="relative group w-1/5 flex justify-center items-center">
           <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isPlans ? 'text-zinc-800' : 'text-zinc-500 hover:text-zinc-700'}`}>
             <CreditCard size={18} className={isPlans ? 'drop-shadow-sm' : ''} />
             <span className={`text-[8px] font-bold ${isPlans ? 'opacity-100' : 'opacity-70'}`}>Plans</span>
@@ -153,7 +153,7 @@ const MobileBottomNav = ({ currentHash }: { currentHash: string }) => {
           {isPlans && <motion.div layoutId="nav-pill" className="absolute inset-0.5 bg-zinc-100/80 rounded-2xl z-0" />}
         </a>
 
-        <a href="#contact-team" aria-label="Contact Muhammad Saqib" className="relative group w-1/5 flex justify-center items-center">
+        <a href="/contact" onClick={(e) => { e.preventDefault(); window.location.hash = "#contact-team"; }} aria-label="Contact Muhammad Saqib" className="relative group w-1/5 flex justify-center items-center">
           <div className={`h-12 w-full rounded-2xl transition-all duration-300 relative z-10 flex flex-col justify-center items-center gap-0.5 ${isContact ? 'text-zinc-800' : 'text-zinc-500 hover:text-zinc-700'}`}>
             <User size={18} className={isContact ? 'drop-shadow-sm' : ''} />
             <span className={`text-[8px] font-bold ${isContact ? 'opacity-100' : 'opacity-70'}`}>Contact</span>
@@ -449,11 +449,11 @@ export default function App() {
           </div>
           <div className="hidden md:flex items-center gap-8 text-xs font-bold tracking-widest uppercase text-white/70">
             <a href="#about" onDoubleClick={() => setIsAdminOpen(true)} className="hover:text-white transition-colors">About</a>
-            <a href="#all-projects" className="hover:text-white transition-colors">Projects</a>
-            <a href="#skills-page" className="hover:text-white transition-colors">Skills</a>
-            <a href="#website-plans" className="hover:text-white transition-colors">Plans</a>
+            <a href="/projects" onClick={(e) => { e.preventDefault(); window.location.hash = "#all-projects"; }} className="hover:text-white transition-colors">Projects</a>
+            <a href="/skills" onClick={(e) => { e.preventDefault(); window.location.hash = "#skills-page"; }} className="hover:text-white transition-colors">Skills</a>
+            <a href="/plans" onClick={(e) => { e.preventDefault(); window.location.hash = "#website-plans"; }} className="hover:text-white transition-colors">Plans</a>
             <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-            <a href="#contact-team" className="hover:text-white transition-colors">Contact</a>
+            <a href="/contact" onClick={(e) => { e.preventDefault(); window.location.hash = "#contact-team"; }} className="hover:text-white transition-colors">Contact</a>
           </div>
           <button 
             aria-label={isMobileMenuOpen ? "Close Menu" : "Open Menu"}
@@ -474,11 +474,11 @@ export default function App() {
               className="md:hidden flex flex-col items-center gap-6 overflow-hidden text-sm font-bold tracking-widest uppercase text-white/70"
             >
               <a href="#about" onClick={() => setIsMobileMenuOpen(false)} onDoubleClick={() => setIsAdminOpen(true)} className="hover:text-white transition-colors w-full text-center py-2">About</a>
-              <a href="#all-projects" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Projects</a>
-              <a href="#skills-page" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Skills</a>
-              <a href="#website-plans" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Plans</a>
+              <a href="/projects" onClick={(e) => { e.preventDefault(); window.location.hash = "#all-projects"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Projects</a>
+              <a href="/skills" onClick={(e) => { e.preventDefault(); window.location.hash = "#skills-page"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Skills</a>
+              <a href="/plans" onClick={(e) => { e.preventDefault(); window.location.hash = "#website-plans"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Plans</a>
               <a href="#gallery" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Gallery</a>
-              <a href="#contact-team" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Contact</a>
+              <a href="/contact" onClick={(e) => { e.preventDefault(); window.location.hash = "#contact-team"; }} onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors w-full text-center py-2">Contact</a>
             </motion.div>
           )}
         </AnimatePresence>
