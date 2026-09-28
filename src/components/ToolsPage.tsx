@@ -418,7 +418,7 @@ export default function ToolsPage({
           </div>
 
           {/* Main Mobile Screen — no outer border/frame on mobile */}
-          <div className="relative bg-gradient-to-b from-[#131525]/90 via-[#0e101c]/95 to-[#08090f] sm:rounded-[48px] sm:border sm:border-white/20 sm:p-7 sm:shadow-[0_25px_70px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] overflow-hidden">
+          <div className="relative sm:bg-gradient-to-b sm:from-[#131525]/90 sm:via-[#0e101c]/95 sm:to-[#08090f] sm:rounded-[48px] sm:border sm:border-white/20 sm:p-7 sm:shadow-[0_25px_70px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] sm:overflow-hidden">
             
             {/* Top Status Bar — hidden on mobile to save space */}
             <div className="hidden sm:flex items-center justify-between text-xs font-semibold px-2 sm:px-4 pt-1 pb-4 border-b border-white/5">
@@ -599,10 +599,10 @@ export default function ToolsPage({
                       </div>
 
                       {/* App Label Below Icon */}
-                      <span className="text-[11px] sm:text-xs font-semibold text-white/90 group-hover:text-orange-400 text-center mt-2.5 truncate w-20 sm:w-24 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-colors">
+                      <span className="text-[11px] sm:text-xs font-semibold text-white/90 group-hover:text-orange-400 text-center mt-2.5 line-clamp-2 w-full px-0.5 leading-tight h-8 sm:h-9 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-colors">
                         {tool.title}
                       </span>
-                      <span className="text-[9px] text-zinc-400 text-center truncate w-20 sm:w-24 font-normal">
+                      <span className="text-[9px] text-zinc-400 text-center truncate w-full px-1 font-normal">
                         {tool.category_name}
                       </span>
                     </motion.div>
