@@ -572,7 +572,7 @@ export default function ToolsPage({
                             <img
                               src={tool.logo_url}
                               alt={tool.title}
-                              className="w-full h-full object-cover object-center relative z-10 select-none p-1.5"
+                              className="w-full h-full object-cover object-center relative z-10 select-none"
                               onError={(e) => {
                                 (e.target as HTMLElement).style.display = 'none';
                               }}
@@ -721,7 +721,7 @@ export default function ToolsPage({
                     <div className="flex items-start justify-between mb-4">
                       <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${tool.gradient || 'from-orange-500 to-amber-500'} flex items-center justify-center text-white shadow-lg relative overflow-hidden`}>
                         {tool.logo_url ? (
-                          <img src={tool.logo_url} alt={tool.title} className="w-full h-full object-cover p-1" />
+                          <img src={tool.logo_url} alt={tool.title} className="w-full h-full object-cover" />
                         ) : (
                           <ToolIcon name={tool.icon} size={24} />
                         )}
@@ -777,7 +777,7 @@ export default function ToolsPage({
               <div className="flex items-center gap-3.5">
                 <div className={`w-11 h-11 rounded-xl bg-gradient-to-tr ${tool.gradient || 'from-orange-500 to-amber-500'} flex items-center justify-center text-white shrink-0 relative overflow-hidden`}>
                   {tool.logo_url ? (
-                    <img src={tool.logo_url} alt={tool.title} className="w-full h-full object-cover p-1" />
+                    <img src={tool.logo_url} alt={tool.title} className="w-full h-full object-cover" />
                   ) : (
                     <ToolIcon name={tool.icon} size={20} />
                   )}
@@ -826,7 +826,7 @@ export default function ToolsPage({
                   selectedAppForSheet.gradient || 'from-orange-500 to-amber-500'
                 } flex items-center justify-center text-white shadow-xl border border-white/25 shrink-0 relative overflow-hidden`}>
                   {selectedAppForSheet.logo_url ? (
-                    <img src={selectedAppForSheet.logo_url} alt={selectedAppForSheet.title} className="w-full h-full object-cover p-1.5" />
+                    <img src={selectedAppForSheet.logo_url} alt={selectedAppForSheet.title} className="w-full h-full object-cover" />
                   ) : (
                     <ToolIcon name={selectedAppForSheet.icon} size={32} />
                   )}
