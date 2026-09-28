@@ -642,7 +642,7 @@ export default function App() {
             <motion.img
               animate={{ y: [0, -15, 0], rotate: [0, -2, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              src={profileImages[0].includes('imagekit.io') ? `${profileImages[0]}?tr=w-600,q-80` : profileImages[0]}
+              src={profileImages[0].includes('imagekit.io') ? `${profileImages[0]}?tr=w-400,q-80,f-auto` : profileImages[0]}
               alt="Profile 1"
               className="absolute top-0 left-0 w-[70%] h-[75%] object-cover rounded-3xl shadow-2xl z-10 border border-white/10"
               referrerPolicy="no-referrer"
@@ -651,7 +651,7 @@ export default function App() {
             <motion.img
               animate={{ y: [0, 15, 0], rotate: [0, 2, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              src={profileImages[1].includes('imagekit.io') ? `${profileImages[1]}?tr=w-600,q-80` : profileImages[1]}
+              src={profileImages[1].includes('imagekit.io') ? `${profileImages[1]}?tr=w-400,q-80,f-auto` : profileImages[1]}
               alt="Profile 2"
               className="absolute bottom-0 right-0 w-[65%] h-[70%] object-cover rounded-3xl shadow-2xl z-20 border-4 border-black"
               referrerPolicy="no-referrer"
@@ -758,7 +758,7 @@ export default function App() {
                 }}
               >
                 <img 
-                  src="https://ik.imagekit.io/shaban/SHABAN-1768575245369_aFwAR5G1A.jpg?tr=f-auto" 
+                  src="https://ik.imagekit.io/shaban/SHABAN-1768575245369_aFwAR5G1A.jpg?tr=w-500,q-80,f-auto" 
                   alt="Graphic Design Showcase"
                   className="absolute max-w-none object-cover"
                   style={{
