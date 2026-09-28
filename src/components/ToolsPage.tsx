@@ -410,16 +410,22 @@ export default function ToolsPage({
       {/* MODE 1: MOBILE HOME SCREEN APP LAUNCHER (Requested by User) */}
       {/* ========================================================================= */}
       {viewMode === 'phone' && (
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-8 pb-32">
-          {/* Main Mobile Screen Enclosure */}
-          <div className="relative rounded-[40px] sm:rounded-[48px] bg-gradient-to-b from-[#131525]/90 via-[#0e101c]/95 to-[#08090f] border border-white/20 p-4 sm:p-7 shadow-[0_25px_70px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] overflow-hidden">
+        <div className="relative z-10 max-w-5xl mx-auto px-2 sm:px-4 pt-2 sm:pt-4 pb-32">
+          {/* SEO-only: hidden from UI, readable by Googlebot */}
+          <div className="sr-only">
+            <h2>Muhammad Saqib Tools & Utilities OS</h2>
+            <p>System Installed: {tools.length} Apps Ready. 100% Free, Verified Safe, Fast Launch. All Cloud Services Operational.</p>
+          </div>
+
+          {/* Main Mobile Screen — no outer border/frame on mobile */}
+          <div className="relative bg-gradient-to-b from-[#131525]/90 via-[#0e101c]/95 to-[#08090f] sm:rounded-[48px] sm:border sm:border-white/20 sm:p-7 sm:shadow-[0_25px_70px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] overflow-hidden">
             
-            {/* Top Phone Frame Bezel & Status Bar */}
-            <div className="flex items-center justify-between text-xs font-semibold px-2 sm:px-4 pt-1 pb-4 border-b border-white/5">
+            {/* Top Status Bar — hidden on mobile to save space */}
+            <div className="hidden sm:flex items-center justify-between text-xs font-semibold px-2 sm:px-4 pt-1 pb-4 border-b border-white/5">
               {/* Left: Clock */}
               <div className="flex items-center gap-2">
                 <span className="font-mono text-sm font-black tracking-tight text-white">{currentTime}</span>
-                <span className="text-[10px] text-zinc-400 font-medium hidden sm:inline">{currentDate}</span>
+                <span className="text-[10px] text-zinc-400 font-medium">{currentDate}</span>
               </div>
 
               {/* Center: Dynamic Island Pill */}
@@ -440,50 +446,6 @@ export default function ToolsPage({
                 <div className="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full border border-white/15">
                   <span className="text-[10px] font-mono font-bold text-emerald-400">100%</span>
                   <BatteryCharging size={13} className="text-emerald-400" />
-                </div>
-              </div>
-            </div>
-
-            {/* Smart Widgets Section (iOS style widgets) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 my-5">
-              {/* Widget 1: Studio Hub & Date */}
-              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/15 rounded-3xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
-                <div className="space-y-1">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-orange-400 flex items-center gap-1.5">
-                    <Sparkles size={12} className="animate-spin" />
-                    <span>Muhammad Saqib Studio</span>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    Tools &amp; Utilities OS
-                  </div>
-                  <div className="text-xs text-zinc-300 flex items-center gap-1.5 pt-0.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>All Cloud Services Operational</span>
-                  </div>
-                </div>
-
-                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
-                  <Compass size={24} />
-                </div>
-              </div>
-
-              {/* Widget 2: Apps Count & Fast Launch Stats */}
-              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/15 rounded-3xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
-                <div className="space-y-1">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
-                    <ShieldCheck size={12} />
-                    <span>System Installed</span>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    {tools.length} Apps Ready
-                  </div>
-                  <div className="text-xs text-zinc-300">
-                    100% Free • Verified Safe • Fast Launch
-                  </div>
-                </div>
-
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                  <Wrench size={24} />
                 </div>
               </div>
             </div>
