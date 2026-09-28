@@ -410,7 +410,7 @@ export default function ToolsPage({
       {/* MODE 1: MOBILE HOME SCREEN APP LAUNCHER (Requested by User) */}
       {/* ========================================================================= */}
       {viewMode === 'phone' && (
-        <div className="relative z-10 max-w-5xl mx-auto px-2 sm:px-4 pt-2 sm:pt-4 pb-32">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-4 pb-32">
           {/* SEO-only: hidden from UI, readable by Googlebot */}
           <div className="sr-only">
             <h2>Muhammad Saqib Tools & Utilities OS</h2>
@@ -418,7 +418,7 @@ export default function ToolsPage({
           </div>
 
           {/* Main Mobile Screen — no outer border/frame on mobile */}
-          <div className="relative sm:bg-gradient-to-b sm:from-[#131525]/90 sm:via-[#0e101c]/95 sm:to-[#08090f] sm:rounded-[48px] sm:border sm:border-white/20 sm:p-7 sm:shadow-[0_25px_70px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] sm:overflow-hidden">
+          <div className="relative p-4 sm:bg-gradient-to-b sm:from-[#131525]/90 sm:via-[#0e101c]/95 sm:to-[#08090f] sm:rounded-[48px] sm:border sm:border-white/20 sm:p-7 sm:shadow-[0_25px_70px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] sm:overflow-hidden">
             
             {/* Top Status Bar — hidden on mobile to save space */}
             <div className="hidden sm:flex items-center justify-between text-xs font-semibold px-2 sm:px-4 pt-1 pb-4 border-b border-white/5">
