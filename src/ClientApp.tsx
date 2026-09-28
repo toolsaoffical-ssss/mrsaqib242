@@ -55,12 +55,12 @@ const LocalGeographicSEOHub = dynamic(() => import('./components/LocalGeographic
 const AnalyticsDashboard = dynamic(() => import('./components/AnalyticsDashboard').then(m => m.AnalyticsDashboard), { ssr: false });
 const SourceCodeModal = dynamic(() => import('./components/SourceCodeModal').then(m => m.SourceCodeModal), { ssr: false });
 const FreeCoursesModal = dynamic(() => import('./components/FreeCoursesModal'), { ssr: false });
-import AllProjectsPage from './components/AllProjectsPage';
-import WebsitePlansPage from './components/WebsitePlansPage';
-import MySkillsPage from './components/MySkillsPage';
-import ContactTeamPage from './components/ContactTeamPage';
+const AllProjectsPage = dynamic(() => import('./components/AllProjectsPage'), { ssr: false });
+const WebsitePlansPage = dynamic(() => import('./components/WebsitePlansPage'), { ssr: false });
+const MySkillsPage = dynamic(() => import('./components/MySkillsPage'), { ssr: false });
+const ContactTeamPage = dynamic(() => import('./components/ContactTeamPage'), { ssr: false });
 import WelcomeOverlay from './components/WelcomeOverlay';
-import ToolsPage from './components/ToolsPage';
+const ToolsPage = dynamic(() => import('./components/ToolsPage'), { ssr: false });
 import { useSEO } from './hooks/useSEO';
 
 const personalInfo = {
@@ -493,7 +493,9 @@ export default function App() {
             src="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-100,q-20,bl-10" 
             alt="Muhammad Saqib, Best Web Developer in Gojra, Faisalabad - Background" 
             className="w-full h-full object-cover opacity-30 blur-3xl scale-125"
-            referrerPolicy="no-referrer"
+              referrerPolicy="no-referrer"
+              fetchPriority="low"
+              decoding="async"
             loading="lazy"
           />
         </div>
@@ -519,7 +521,7 @@ export default function App() {
 
         {/* Foreground Sharp Image (Primary LCP Element) */}
         <motion.div 
-          initial={skipAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          initial={{ opacity: 1, y: skipAnimation ? 0 : 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: skipAnimation ? 0 : 0.05 }}
           className="absolute z-20 bottom-0 w-full flex justify-center items-end h-[75%] md:h-[85%]"
