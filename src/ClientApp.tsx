@@ -526,7 +526,7 @@ export default function App() {
             width={800}
             height={1000}
             alt="Muhammad Saqib (MrSaqib) - Top Website Designer and SEO Expert in Pakistan" 
-            className="h-full w-auto object-contain object-bottom md:drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
+            className="hero-image-animate h-full w-auto object-contain object-bottom md:drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
             referrerPolicy="no-referrer"
             fetchPriority="high"
               
