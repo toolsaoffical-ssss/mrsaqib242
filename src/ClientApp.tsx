@@ -376,7 +376,7 @@ export default function App() {
   if (isAllProjectsPageOpen) {
     return (
       <>
-        <WelcomeOverlay />
+        
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
           <AllProjectsPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
@@ -388,7 +388,7 @@ export default function App() {
   if (isWebsitePlansPageOpen) {
     return (
       <>
-        <WelcomeOverlay />
+        
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
           <WebsitePlansPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
@@ -400,7 +400,7 @@ export default function App() {
   if (isSkillsPageOpen) {
     return (
       <>
-        <WelcomeOverlay />
+        
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
           <MySkillsPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
@@ -412,7 +412,7 @@ export default function App() {
   if (isContactTeamPageOpen) {
     return (
       <>
-        <WelcomeOverlay />
+        
         <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950">
           <ContactTeamPage onBack={navigateToHome} />
           <MobileBottomNav currentHash={currentHash} />
@@ -423,7 +423,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen selection:bg-accent selection:text-white pb-24">
-      <WelcomeOverlay />
+      
       <MobileBottomNav currentHash={currentHash} />
       
       <AnimatePresence mode="wait">
