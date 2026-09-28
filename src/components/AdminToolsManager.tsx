@@ -330,11 +330,8 @@ export default function AdminToolsManager({
       setEditingTool(null);
       onRefresh();
     } else {
-      showToast(`Saved locally (${res.error})`, 'error');
-      setIsAddToolModalOpen(false);
-      setIsEditToolModalOpen(false);
-      setEditingTool(null);
-      onRefresh();
+      showToast(`Error saving to DB: ${res.error}`, "error");
+        // DO NOT close modal on error so user can fix it
     }
   };
 
@@ -438,10 +435,8 @@ export default function AdminToolsManager({
       setEditingCategory(null);
       onRefresh();
     } else {
-      showToast(`Saved locally (${res.error})`, 'error');
-      setIsAddCategoryModalOpen(false);
-      setIsEditCategoryModalOpen(false);
-      setEditingCategory(null);
+      showToast(`Error saving category: ${res.error}`, "error");
+        // DO NOT close modal on error so user can fix it
       onRefresh();
     }
   };
@@ -1315,9 +1310,8 @@ export default function AdminToolsManager({
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
                     Tool Title *
                   </label>
-                  <input
-                    type="text"
-                    required
+                  <input type="text"
+                    
                     value={toolFormData.title}
                     onChange={e => setToolFormData({ ...toolFormData, title: e.target.value })}
                     placeholder="e.g. Wingo AI Predictor, API Console, Mod APKs..."
@@ -1869,9 +1863,8 @@ export default function AdminToolsManager({
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
                     Category Name *
                   </label>
-                  <input
-                    type="text"
-                    required
+                  <input type="text"
+                    
                     value={categoryFormData.name}
                     onChange={e => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
                     placeholder="e.g. AI & Predictors, Gaming, Web Utilities..."
