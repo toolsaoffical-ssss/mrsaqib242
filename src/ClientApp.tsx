@@ -540,7 +540,7 @@ export default function App() {
           <motion.div 
             initial={skipAnimation ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: skipAnimation ? 0.2 : 3.5 }}
+            transition={{ delay: 0.2 }}
             className="pointer-events-auto absolute top-[15%] md:top-[15%] left-6 md:left-12 max-w-[220px] md:max-w-xs text-[#1a1a1a]"
           >
             <ul className="space-y-1.5 md:space-y-2 text-[9px] md:text-xs font-bold tracking-widest uppercase">
@@ -555,7 +555,7 @@ export default function App() {
           <motion.div 
             initial={skipAnimation ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: skipAnimation ? 0.3 : 3.7 }}
+            transition={{ delay: 0.3 }}
             className="pointer-events-auto absolute right-6 md:right-12 top-[42%] md:top-[45%] text-right text-[#1a1a1a]"
           >
             <p className="font-bold tracking-widest uppercase text-[10px] md:text-sm whitespace-nowrap">by {_0xData._n}</p>
@@ -565,7 +565,7 @@ export default function App() {
           <motion.div 
             initial={skipAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: skipAnimation ? 0.4 : 3.8 }}
+            transition={{ delay: 0.4 }}
             className="pointer-events-auto absolute w-full text-center top-[58%] md:top-[65%] text-white drop-shadow-md px-4"
           >
             <p className="font-bold tracking-widest uppercase text-[12px] md:text-xl leading-snug">
