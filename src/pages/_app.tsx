@@ -72,16 +72,32 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         "areaServed": ["Gojra", "Faisalabad", "Lahore", "Islamabad", "Karachi"],
         "priceRange": "$$"
       },
-      {
+            {
         "@type": "FAQPage",
         "@id": "https://mrsaqib242.vercel.app/#faq",
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "Who is Muhammad Saqib (Saqib242)?",
+            "name": "What high-end web development services does Muhammad Saqib provide in Pakistan?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Muhammad Saqib is a freelance full-stack web developer and local SEO integration expert based in Gojra, Faisalabad, Pakistan."
+              "text": "Based in Gojra, Pakistan, Muhammad Saqib (known online as mrsaqib242) engineers high-performance web applications using the Next.js 15 App Router and React 19. His specialized services include full-stack SaaS frontend development, creative visual arts, and sub-0.4 second Core Web Vitals optimization. By leveraging React Server Components (RSC) and edge computing deployments, MrSaqib delivers highly scalable, zero-hydration-error digital infrastructures for both enterprise and international local markets."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does mrsaqib242 integrate AI chatbots into modern Next.js websites?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Muhammad Saqib integrates custom AI chatbots into Next.js architectures utilizing advanced Natural Language Processing (NLP) and Retrieval-Augmented Generation (RAG) models. Operating from Faisalabad, his integrations securely process enterprise data, which can reduce customer support response times by up to 80 percent and significantly increase user engagement metrics. These tailored AI solutions seamlessly blend generative AI capabilities with flawless frontend UI/UX design via strict TypeScript enforcement."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why should international clients hire Muhammad Saqib for Next.js and AI projects?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "International clients hire Muhammad Saqib for his elite mastery of modern web architecture and generative AI integrations, delivering enterprise-grade code directly from Gojra, Pakistan. His comprehensive portfolio demonstrates a commitment to resolving complex technical challenges, including zero-hydration-error development and dynamic Answer Engine Optimization (AEO). MrSaqib provides a unique synthesis of high-end software engineering and creative visual arts, resulting in digital products that outperform competitors in both algorithmic visibility and aesthetic conversion rates."
             }
           }
         ]
@@ -94,7 +110,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title key="title">Mr Saqib (Saqib 242) | Best Web Developer & Local SEO Expert in Faisalabad, Gojra, Pakistan</title>
         <meta key="viewport" name="viewport" content="width=device-width, initial-scale=1" />
-        <meta key="description" name="description" content="Mr Saqib (Saqib 242) is the top freelance full-stack web developer and local SEO integration expert in Gojra, Faisalabad, Lahore, and Islamabad, Pakistan." />
+        <meta key="description" name="description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
         <meta key="robots" name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         
         {/* Canonical URL */}
@@ -130,7 +146,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         {/* OpenGraph */}
         <meta key="og:type" property="og:type" content="website" />
         <meta key="og:title" property="og:title" content="Mr Saqib (Saqib 242) | Web Developer & SEO Expert" />
-        <meta key="og:description" property="og:description" content="Top freelance full-stack web developer and local SEO integration expert in Pakistan." />
+        <meta key="og:description" property="og:description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
         <meta key="og:url" property="og:url" content={canonicalUrl} />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
         <meta property="og:site_name" content="Mr Saqib Portfolio" />
@@ -138,7 +154,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Mr Saqib (Saqib 242) | Web Developer & SEO Expert" />
-        <meta name="twitter:description" content="Top freelance full-stack web developer and local SEO integration expert in Pakistan." />
+        <meta name="twitter:description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
         <meta name="twitter:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
         
         {/* Unified Schema Graph */}
