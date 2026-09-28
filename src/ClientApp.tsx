@@ -495,7 +495,7 @@ export default function App() {
             className="w-full h-full object-cover opacity-30 blur-3xl scale-125"
               referrerPolicy="no-referrer"
               fetchPriority="low"
-              decoding="async"
+              
             loading="lazy"
           />
         </div>
@@ -531,7 +531,7 @@ export default function App() {
             className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
             referrerPolicy="no-referrer"
             fetchPriority="high"
-              decoding="async"
+              
             />
           </div>
 

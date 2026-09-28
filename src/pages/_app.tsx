@@ -105,8 +105,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           rel="preload" 
           as="image" 
           href="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto" 
-          imageSrcSet="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-400,q-80,f-auto 400w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto 800w" 
-          imageSizes="(max-width: 640px) 90vw, 800px" 
+          imageSrcSet="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-400,q-80,f-auto 400w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-600,q-80,f-auto 600w, https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-800,q-80,f-auto 800w" 
+          imageSizes="(max-width: 640px) 90vw, (max-width: 1024px) 60vw, 800px" 
           fetchPriority="high" 
         />
 
