@@ -495,8 +495,6 @@ export default function App() {
             className="w-full h-full object-cover opacity-30 scale-125"
               referrerPolicy="no-referrer"
               fetchPriority="low" loading="lazy"
-              
-            loading="lazy"
           />
         </div>
 
