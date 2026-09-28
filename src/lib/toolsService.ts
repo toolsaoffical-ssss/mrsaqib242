@@ -39,6 +39,9 @@ export interface ToolPageSettings {
   badge_text: string;
   announcement_text: string;
   show_announcement: boolean;
+  announcement_color?: string;
+  announcement_speed?: string;
+  announcement_font?: string;
   featured_section_title: string;
   show_featured_section: boolean;
   default_view_mode: 'grid' | 'compact';
@@ -67,6 +70,9 @@ export const DEFAULT_TOOL_PAGE_SETTINGS: ToolPageSettings = {
   badge_text: 'Dynamic Tools Engine',
   announcement_text: '🔥 Live Update: New AI predictors, free source repos & web utilities updated today!',
   show_announcement: true,
+  announcement_color: 'text-orange-200',
+  announcement_speed: 'normal',
+  announcement_font: 'font-medium',
   featured_section_title: 'Featured & Staff Picks',
   show_featured_section: true,
   default_view_mode: 'grid',
