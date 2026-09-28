@@ -966,8 +966,7 @@ export default function AdminToolsManager({
                 <span className="text-[10px] text-zinc-500 font-mono">Animated notification banner at top of page</span>
               </div>
 
-              {pageSettings.show_announcement && (
-                <div>
+              {pageSettings.show_announcement && (<><div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
                     Announcement Ticker Text
                   </label>
@@ -1032,6 +1031,7 @@ export default function AdminToolsManager({
                     </select>
                   </div>
                 </div>
+                </>
               )}
             </div>
           </div>
