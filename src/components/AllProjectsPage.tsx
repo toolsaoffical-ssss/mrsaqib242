@@ -204,6 +204,7 @@ export default function AllProjectsPage({ onBack }: AllProjectsPageProps) {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-white selection:text-black">
+<div className="sr-only"><h2>Elite Next.js Architectures &amp; AI Chatbot Integrations</h2></div>
       {/* Header */}
       <header className="sticky top-0 z-40 bg-zinc-950/80 backdrop-blur-md border-b border-white/5 py-4 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">

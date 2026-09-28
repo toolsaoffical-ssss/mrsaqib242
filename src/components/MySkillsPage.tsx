@@ -471,6 +471,7 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 text-white relative">
+<div className="sr-only"><h2>Advanced Engineering: React, Next.js, and Generative AI</h2></div>
       {/* Background radial highlight */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
