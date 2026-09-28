@@ -490,11 +490,11 @@ export default function App() {
         {/* Background Blurred Image */}
         <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
           <img 
-            src="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-100,q-20,bl-10" 
+            src="https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png?tr=w-100,q-20,bl-30" 
             alt="Muhammad Saqib, Best Web Developer in Gojra, Faisalabad - Background" 
-            className="w-full h-full object-cover opacity-30 blur-3xl scale-125"
+            className="w-full h-full object-cover opacity-30 scale-125"
               referrerPolicy="no-referrer"
-              fetchPriority="low"
+              fetchPriority="low" loading="lazy"
               
             loading="lazy"
           />
@@ -528,7 +528,7 @@ export default function App() {
             width={800}
             height={1000}
             alt="Muhammad Saqib (MrSaqib) - Top Website Designer and SEO Expert in Pakistan" 
-            className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
+            className="h-full w-auto object-contain object-bottom md:drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
             referrerPolicy="no-referrer"
             fetchPriority="high"
               
