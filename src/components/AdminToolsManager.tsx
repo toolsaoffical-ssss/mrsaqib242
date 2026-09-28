@@ -1390,11 +1390,10 @@ export default function AdminToolsManager({
 
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
-                    Target URL or Action *
-                  </label>
-                  <input
-                    type="text"
-                    required
+                      Target URL or Action
+                    </label>
+                    <input
+                      type="text"
                     value={toolFormData.url}
                     onChange={e => setToolFormData({ ...toolFormData, url: e.target.value })}
                     placeholder="https://example.com, /admin, or #website-plans"
@@ -1486,8 +1485,8 @@ export default function AdminToolsManager({
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <input
-                        type="url"
-                        value={toolFormData.logo_url || ''}
+                          type="text"
+                          value={toolFormData.logo_url || ''}
                         onChange={e => {
                           setToolFormData({ ...toolFormData, logo_url: e.target.value });
                           handleResetLogoCrop();
