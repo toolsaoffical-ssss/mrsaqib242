@@ -12,8 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'Supabase not configured' });
   }
 
-  const { ip, userAgent, location, isp, reason } = req.body;
-  const clientIp = ip || (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
+  const { userAgent, location, isp, reason } = req.body;
+  // SECURITY FIX: Never trust client-supplied IP. Derive strictly from server headers.
+  const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
 
   // 1. Strict Spam Rate Limit (Max 5 requests per IP per minute)
   const now = Date.now();
@@ -36,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { error } = await supabaseAdmin
       .from('admin_hack_attempts')
       .insert({
-        ip_address: ip || 'Unknown',
+        ip_address: clientIp,
         user_agent: userAgent || 'Unknown',
         location: location || 'Unknown',
         isp: isp || 'Unknown',

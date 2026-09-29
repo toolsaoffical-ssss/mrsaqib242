@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { SiWhatsapp, SiInstagram, SiTiktok, SiFacebook, SiSnapchat, SiExpress } from 'react-icons/si';
 import { useProfileSettings } from '../hooks/useProfileSettings';
-import { submitInquiryToDB } from '../lib/inquiriesService';
+// Contact form now uses server-side /api/contact route
 
 interface ContactTeamPageProps {
   onBack: () => void;
@@ -99,21 +99,26 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
 
     setIsSubmitting(true);
     try {
-      const res = await submitInquiryToDB({
-        name: clientName.trim(),
-        email: clientEmail.trim() || 'contact@client.com',
-        phone: clientPhone.trim(),
-        service_type: serviceType,
-        budget,
-        timeline,
-        subject: `Project Inquiry: ${serviceType}`,
-        message: queryDetails.trim(),
+      const apiRes = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: clientName.trim(),
+          email: clientEmail.trim() || 'contact@client.com',
+          phone: clientPhone.trim(),
+          service_type: serviceType,
+          budget,
+          timeline,
+          subject: `Project Inquiry: ${serviceType}`,
+          message: queryDetails.trim(),
           priority: 'high',
           custom_budget_amount: budget === 'Custom' ? customBudgetAmount.trim() : undefined,
           custom_features: budget === 'Custom' ? customFeatures.trim() : undefined,
           reference_links: budget === 'Custom' ? referenceLinks.trim() : undefined,
           custom_timeline_date: timeline === 'Custom' ? customTimelineDate.trim() : undefined
-        });
+        })
+      });
+      const res = await apiRes.json();
 
       if (res.success && res.data) {
         setSubmittedId(res.data.id);

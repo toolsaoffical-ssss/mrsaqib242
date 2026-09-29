@@ -6,6 +6,33 @@ export function middleware(request: NextRequest) {
   const accept = request.headers.get('accept') || '';
   const acceptLanguage = request.headers.get('accept-language') || '';
   const secFetchDest = request.headers.get('sec-fetch-dest') || '';
+  const pathname = request.nextUrl.pathname;
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // LAYER 0: EDGE ADMIN ROUTE PROTECTION (HIGH PRIORITY FIX)
+  // Block unauthenticated access to admin routes at the Edge
+  // BEFORE any API code even runs.
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  const isAdminPage = pathname.startsWith('/mradmin');
+  const isAdminApi = pathname.startsWith('/api/admin/');
+  const isPublicAdminRoute = 
+    pathname === '/api/admin/login' || 
+    pathname === '/api/admin/login-honeypot' || 
+    pathname === '/api/admin/logout';
+
+  if ((isAdminPage || isAdminApi) && !isPublicAdminRoute) {
+    const adminToken = request.cookies.get('ms_admin_token')?.value;
+    if (!adminToken) {
+      // No token = No access. Redirect pages, block APIs.
+      if (isAdminPage) {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+      return NextResponse.json(
+        { error: 'Unauthorized: No session token' },
+        { status: 401 }
+      );
+    }
+  }
 
   // 1. Explicitly allow search engines and bots to ensure SEO is not affected
   const searchEngineRegex = /(googlebot|bingbot|yandex|baiduspider|slurp|duckduckbot|google-inspectiontool|googleweblight)/i;
@@ -17,14 +44,11 @@ export function middleware(request: NextRequest) {
   const cliToolsRegex = /(curl|wget|python|libwww|sqlmap|nmap|nikto|dirb|gobuster|postman|insomnia|go-http-client|java|ruby|perl|php|masscan|zgrab|httpx)/i;
 
   // Stronger heuristics to block scripts that spoof or omit User-Agent
-  // Browsers almost always send Accept-Language and complex Accept headers.
-  // Scripts usually send Accept: */* or nothing, and no Accept-Language.
   const isSuspiciousScript = 
     !userAgent || 
     (accept === '*/*' && !acceptLanguage && !secFetchDest);
 
   if (cliToolsRegex.test(userAgent) || isSuspiciousScript) {
-    // Generate the terminal trap
     const skull = `
 \x1b[31m\x1b[1m
         _..._
@@ -40,7 +64,7 @@ export function middleware(request: NextRequest) {
     const trapMessage = `${skull}
 \x1b[41m\x1b[97m\x1b[1m [!] ACCESS DENIED - SCRIPT KIDDIE DETECTED \x1b[0m
 
-\x1b[33m> Target:\x1b[0m ${request.nextUrl.pathname}
+\x1b[33m> Target:\x1b[0m ${pathname}
 \x1b[33m> Tool:\x1b[0m ${userAgent || 'Unknown CLI/Script'}
 \x1b[33m> Trace:\x1b[0m Logged and reported
 
