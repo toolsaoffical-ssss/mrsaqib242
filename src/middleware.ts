@@ -9,24 +9,19 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // LAYER 0: EDGE ADMIN ROUTE PROTECTION (HIGH PRIORITY FIX)
-  // Block unauthenticated access to admin routes at the Edge
-  // BEFORE any API code even runs.
+  // LAYER 0: EDGE ADMIN ROUTE PROTECTION
+  // Block unauthenticated access to admin APIs at the Edge
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  const isAdminPage = pathname.startsWith('/mradmin');
   const isAdminApi = pathname.startsWith('/api/admin/');
   const isPublicAdminRoute = 
     pathname === '/api/admin/login' || 
     pathname === '/api/admin/login-honeypot' || 
     pathname === '/api/admin/logout';
 
-  if ((isAdminPage || isAdminApi) && !isPublicAdminRoute) {
+  if (isAdminApi && !isPublicAdminRoute) {
     const adminToken = request.cookies.get('ms_admin_token')?.value;
     if (!adminToken) {
-      // No token = No access. Redirect pages, block APIs.
-      if (isAdminPage) {
-        return NextResponse.redirect(new URL('/', request.url));
-      }
+      // No token = No access. Block APIs.
       return NextResponse.json(
         { error: 'Unauthorized: No session token' },
         { status: 401 }
