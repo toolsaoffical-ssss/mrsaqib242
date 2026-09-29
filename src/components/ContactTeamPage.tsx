@@ -43,6 +43,7 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
   const [budget, setBudget] = useState('$300 - $500');
   const [timeline, setTimeline] = useState('1-2 weeks');
   const [customBudgetAmount, setCustomBudgetAmount] = useState('');
+  const [customTimelineDate, setCustomTimelineDate] = useState('');
   const [customFeatures, setCustomFeatures] = useState('');
   const [referenceLinks, setReferenceLinks] = useState('');
   const [queryDetails, setQueryDetails] = useState('');
@@ -110,7 +111,8 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
           priority: 'high',
           custom_budget_amount: budget === 'Custom' ? customBudgetAmount.trim() : undefined,
           custom_features: budget === 'Custom' ? customFeatures.trim() : undefined,
-          reference_links: budget === 'Custom' ? referenceLinks.trim() : undefined
+          reference_links: budget === 'Custom' ? referenceLinks.trim() : undefined,
+          custom_timeline_date: timeline === 'Custom' ? customTimelineDate.trim() : undefined
         });
 
       if (res.success && res.data) {

@@ -15,6 +15,7 @@ export interface ClientInquiry {
   admin_notes?: string;
   custom_budget_amount?: string;
   custom_features?: string;
+  custom_timeline_date?: string;
   reference_links?: string;
   created_at: string;
   updated_at?: string;
