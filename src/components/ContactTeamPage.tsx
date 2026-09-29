@@ -24,7 +24,7 @@ import {
   Check,
   MessageSquare
 } from 'lucide-react';
-import { SiWhatsapp, SiInstagram, SiTiktok, SiFacebook, SiSnapchat } from 'react-icons/si';
+import { SiWhatsapp, SiInstagram, SiTiktok, SiFacebook, SiSnapchat, SiExpress } from 'react-icons/si';
 import { useProfileSettings } from '../hooks/useProfileSettings';
 import { submitInquiryToDB } from '../lib/inquiriesService';
 
@@ -279,7 +279,7 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
                 {/* Express */}
                 <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-zinc-800">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" alt="Express.js" className="w-full h-full object-contain dark:invert" />
+                    <SiExpress size={28} className="text-zinc-800" />
                   </div>
                   <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-zinc-900 transition-colors">Express</span>
                 </motion.div>
