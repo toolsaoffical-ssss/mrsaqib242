@@ -42,6 +42,10 @@ export interface ToolPageSettings {
   announcement_color?: string;
   announcement_speed?: string;
   announcement_font?: string;
+  whatsapp_popup_enabled: boolean;
+  whatsapp_popup_title: string;
+  whatsapp_popup_description: string;
+  whatsapp_channel_link: string;
   featured_section_title: string;
   show_featured_section: boolean;
   default_view_mode: 'grid' | 'compact';
@@ -73,6 +77,10 @@ export const DEFAULT_TOOL_PAGE_SETTINGS: ToolPageSettings = {
   announcement_color: 'text-orange-200',
   announcement_speed: 'normal',
   announcement_font: 'font-medium',
+  whatsapp_popup_enabled: false,
+  whatsapp_popup_title: 'Join Our WhatsApp Community! 🚀',
+  whatsapp_popup_description: 'Get early access to leaked source codes, premium modded APKs, AI tools, and secret hacks directly on your phone.',
+  whatsapp_channel_link: 'https://whatsapp.com/channel/your_channel_id',
   featured_section_title: 'Featured & Staff Picks',
   show_featured_section: true,
   default_view_mode: 'grid',
