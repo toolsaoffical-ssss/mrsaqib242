@@ -42,6 +42,9 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
   const [serviceType, setServiceType] = useState('Full-Stack Web App');
   const [budget, setBudget] = useState('$300 - $500');
   const [timeline, setTimeline] = useState('1-2 weeks');
+  const [customBudgetAmount, setCustomBudgetAmount] = useState('');
+  const [customFeatures, setCustomFeatures] = useState('');
+  const [referenceLinks, setReferenceLinks] = useState('');
   const [queryDetails, setQueryDetails] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -64,14 +67,16 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
     '$300 - $500',
     '$500 - $1000',
     '$1000+',
-    'Flexible'
+    'Flexible',
+      'Custom'
   ];
 
   const TIMELINES = [
     'Urgent (1-3 days)',
     '1-2 weeks',
     '1 month',
-    'Flexible'
+    'Flexible',
+      'Custom'
   ];
 
   const handleSubmitInquiry = async (e: React.FormEvent) => {

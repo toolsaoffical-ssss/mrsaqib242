@@ -13,6 +13,9 @@ export interface ClientInquiry {
   status: 'new' | 'contacted' | 'in_progress' | 'completed' | 'archived';
   priority: 'high' | 'medium' | 'normal';
   admin_notes?: string;
+  custom_budget_amount?: string;
+  custom_features?: string;
+  reference_links?: string;
   created_at: string;
   updated_at?: string;
 }
