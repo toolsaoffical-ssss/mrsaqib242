@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('site_analytics')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(300);
+      .limit(10000);
 
     if (error) {
       console.warn('Error fetching analytics from Supabase:', error.message);

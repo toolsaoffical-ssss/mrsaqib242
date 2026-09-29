@@ -392,7 +392,7 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
         .from('site_analytics')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(300);
+        .limit(10000);
 
       if (!error && Array.isArray(data)) {
         if (data.length > 0) {
