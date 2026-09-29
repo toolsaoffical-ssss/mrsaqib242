@@ -43,6 +43,7 @@ export interface ToolPageSettings {
   announcement_speed?: string;
   announcement_font?: string;
   whatsapp_popup_enabled: boolean;
+  popup_platform?: string;
   whatsapp_popup_title: string;
   whatsapp_popup_description: string;
   whatsapp_channel_link: string;
@@ -78,6 +79,7 @@ export const DEFAULT_TOOL_PAGE_SETTINGS: ToolPageSettings = {
   announcement_speed: 'normal',
   announcement_font: 'font-medium',
   whatsapp_popup_enabled: false,
+  popup_platform: 'whatsapp',
   whatsapp_popup_title: 'Join Our WhatsApp Community! 🚀',
   whatsapp_popup_description: 'Get early access to leaked source codes, premium modded APKs, AI tools, and secret hacks directly on your phone.',
   whatsapp_channel_link: 'https://whatsapp.com/channel/your_channel_id',

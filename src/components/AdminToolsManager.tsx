@@ -1242,7 +1242,7 @@ export default function AdminToolsManager({
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
                   <span className="text-emerald-500"><MessageCircle size={16} /></span>
-                  <span>WhatsApp Welcome Popup</span>
+                  <span>Social Welcome Popup</span>
                 </h4>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -1283,7 +1283,7 @@ export default function AdminToolsManager({
 
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
-                      WhatsApp Channel Link
+                      Social Profile / Channel Link
                     </label>
                     <input
                       type="text"
