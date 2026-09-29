@@ -16,7 +16,8 @@ export function middleware(request: NextRequest) {
   const isPublicAdminRoute = 
     pathname === '/api/admin/login' || 
     pathname === '/api/admin/login-honeypot' || 
-    pathname === '/api/admin/logout';
+    pathname === '/api/admin/logout' ||
+    pathname === '/api/admin/mirage/generate';
 
   if (isAdminApi && !isPublicAdminRoute) {
     const adminToken = request.cookies.get('ms_admin_token')?.value;
