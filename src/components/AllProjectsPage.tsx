@@ -121,11 +121,18 @@ function ProjectCard({ project }: { project: Project; key?: any }) {
               <p className="text-[8px] md:text-[10px] text-zinc-500 max-w-[140px] md:max-w-[200px] line-clamp-2">Hosting sandbox restricts embed. Tap card to view safely.</p>
             </div>
           ) : inView ? (
-            <iframe 
-              src={project.url} 
-              title={project.name}
-              className="project-iframe"
+            <img 
+              src={`https://image.thum.io/get/width/600/crop/800/${project.url}`} 
+              alt={project.name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              style={{ objectPosition: 'top' }}
               loading="lazy"
+              onError={(e) => {
+                // Fallback to microlink if thum.io fails
+                if (!e.currentTarget.src.includes('microlink')) {
+                  e.currentTarget.src = `https://api.microlink.io/?url=${encodeURIComponent(project.url)}&screenshot=true&meta=false&embed=screenshot.url`;
+                }
+              }}
             />
           ) : null}
 
