@@ -118,6 +118,7 @@ export default function AdminSecurityManager({
   const [miragePin, setMiragePin] = useState('');
   const [mirageColors, setMirageColors] = useState(['#10b981', '#10b981', '#10b981', '#10b981']);
   const [mirageTruePort, setMirageTruePort] = useState(8);
+  const [mirageLabels, setMirageLabels] = useState<string[]>(Array(12).fill('').map((_, i) => String(i + 1).padStart(2, '0')));
   const [isSubmittingMirage, setIsSubmittingMirage] = useState(false);
   const [mirageMessage, setMirageMessage] = useState('');
   const [mirageError, setMirageError] = useState('');
@@ -136,6 +137,9 @@ export default function AdminSecurityManager({
           }
           if (data.success && data.truePort) {
             setMirageTruePort(data.truePort);
+          }
+          if (data.success && data.portLabels) {
+            setMirageLabels(data.portLabels);
           }
         })
         .catch(() => {});
@@ -459,7 +463,12 @@ export default function AdminSecurityManager({
       const res = await fetch('/api/admin/mirage/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newPin: miragePin, newColors: mirageColors, newTruePort: mirageTruePort })
+        body: JSON.stringify({ 
+          newPin: miragePin, 
+          newColors: mirageColors, 
+          newTruePort: mirageTruePort,
+          newPortLabels: mirageLabels
+        })
       });
       const data = await res.json();
       
@@ -1199,6 +1208,32 @@ export default function AdminSecurityManager({
                   ))}
                 </select>
                 <p className="text-xs text-zinc-500 mt-1">The only valid port out of 12 for the True OTP injection.</p>
+              </div>
+
+              <div className="space-y-4">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                  Custom Port Labels (12 Ports)
+                </label>
+                <div className="grid grid-cols-4 gap-2">
+                  {mirageLabels.map((label, index) => (
+                    <div key={index} className="space-y-1">
+                      <div className="text-center text-[9px] text-zinc-500 font-bold uppercase">Port {index + 1}</div>
+                      <input
+                        type="text"
+                        value={label}
+                        disabled={isRestricted}
+                        onChange={e => {
+                          const newLabels = [...mirageLabels];
+                          newLabels[index] = e.target.value.substring(0, 5); // max 5 chars
+                          setMirageLabels(newLabels);
+                        }}
+                        className="w-full bg-zinc-900 border border-zinc-700 rounded p-2 text-center text-cyan-400 font-mono text-xs focus:outline-none focus:border-cyan-500 disabled:opacity-50"
+                        placeholder={String(index + 1).padStart(2, '0')}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-zinc-500 mt-1">Set decoy labels. Only you know the True Port mapping.</p>
               </div>
 
               <div className="space-y-4">

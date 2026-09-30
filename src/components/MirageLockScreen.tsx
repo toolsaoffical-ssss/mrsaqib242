@@ -9,9 +9,21 @@ export default function MirageLockScreen() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [penaltyTimeLeft, setPenaltyTimeLeft] = useState(0);
   
-  // Array of 12 ports
+  // Array of 12 ports and their visual labels
   const [ports, setPorts] = useState(Array(12).fill(''));
+  const [portLabels, setPortLabels] = useState<string[]>(Array(12).fill('').map((_, i) => String(i + 1).padStart(2, '0')));
   const router = useRouter();
+
+  useEffect(() => {
+    fetch('/api/admin/mirage/labels')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.labels) {
+          setPortLabels(data.labels);
+        }
+      })
+      .catch(err => console.error('Failed to load port labels'));
+  }, []);
 
   // 60-second total lock
   useEffect(() => {
@@ -132,11 +144,9 @@ export default function MirageLockScreen() {
               <div key={idx} className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-b from-cyan-500/50 to-blue-500/50 rounded-xl opacity-0 group-hover:opacity-100 transition duration-300 blur-sm pointer-events-none" />
                 <div className="relative bg-black border border-zinc-800 hover:border-cyan-500/50 rounded-xl p-3 flex flex-col items-center transition-colors">
-                  <div className="text-[9px] text-zinc-500 font-bold tracking-[0.2em] uppercase mb-2 flex items-center gap-1 opacity-50">
+                  <div className="text-[9px] text-zinc-500 font-bold tracking-[0.2em] uppercase mb-2 flex items-center gap-1 opacity-80">
                     <Cpu size={10} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/20" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/20" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/20" />
+                    {portLabels[idx]}
                   </div>
                   <input
                     type="password"
