@@ -13,8 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('projects')
       .select('*')
       .eq('is_active', true)
-      .eq('restricted', true) // or whatever field marks it as a pick
-      .order('display_order', { ascending: true });
+      .order('display_order', { ascending: true })
+      .limit(6); // We are limiting to top 6 as 'picks' for now
 
     if (error) throw error;
 
