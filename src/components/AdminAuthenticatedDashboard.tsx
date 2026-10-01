@@ -20,7 +20,8 @@ import {
   KeyRound,
   AlertTriangle,
   RefreshCw,
-  X
+  X,
+  Server
 } from 'lucide-react';
 
 import AdminInquiriesManager from './AdminInquiriesManager';
@@ -30,6 +31,7 @@ import AdminPricingManager from './AdminPricingManager';
 import AdminToolsManager from './AdminToolsManager';
 import AdminTrafficAnalytics from './AdminTrafficAnalytics';
 import AdminSecurityManager from './AdminSecurityManager';
+import AdminApiHub from './AdminApiHub';
 
 import { 
   ToolItem, 
@@ -52,7 +54,7 @@ interface AdminAuthenticatedDashboardProps {
   onDeviceApproved?: () => void;
 }
 
-type TabType = 'inquiries' | 'projects' | 'gallery' | 'pricing' | 'tools' | 'analytics' | 'security';
+type TabType = 'inquiries' | 'projects' | 'gallery' | 'pricing' | 'tools' | 'analytics' | 'security' | 'api';
 
 export default function AdminAuthenticatedDashboard({
   adminUsername,
@@ -178,6 +180,7 @@ export default function AdminAuthenticatedDashboard({
     { id: 'pricing' as TabType, label: 'Pricing Plans', icon: CreditCard },
     { id: 'tools' as TabType, label: 'Tools & Utilities', icon: Wrench },
     { id: 'analytics' as TabType, label: 'Traffic & Geo', icon: Activity },
+    { id: 'api' as TabType, label: 'Central API Hub', icon: Server },
     { 
       id: 'security' as TabType, 
       label: 'Security & Devices', 
@@ -374,6 +377,10 @@ export default function AdminAuthenticatedDashboard({
 
         {activeTab === 'analytics' && (
           <AdminTrafficAnalytics onNotify={showToast} />
+        )}
+
+        {activeTab === 'api' && (
+          <AdminApiHub onNotify={showToast} />
         )}
 
         {activeTab === 'security' && (
