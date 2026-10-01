@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Server, Globe, Power, Trash2, Plus, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Server, Globe, Power, Trash2, Plus, AlertTriangle, ShieldCheck, Copy, Check } from 'lucide-react';
 
 interface ApiSettings {
   projects_api_enabled: boolean;
@@ -24,6 +24,7 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
   const [domains, setDomains] = useState<AllowedDomain[]>([]);
   const [newDomain, setNewDomain] = useState('');
   const [loading, setLoading] = useState(true);
+  const [copiedApi, setCopiedApi] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -154,23 +155,42 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
             
             <div className="space-y-4">
               {[
-                { key: 'projects_api_enabled', label: 'Projects API', desc: 'Allow fetching all active projects' },
-                { key: 'picks_api_enabled', label: 'My Picks API', desc: 'Allow fetching featured projects' },
-                { key: 'contact_api_enabled', label: 'Contact API', desc: 'Allow fetching contact information' }
+                { key: 'projects_api_enabled', label: 'Projects API', desc: 'Allow fetching all active projects', endpoint: '/api/public/projects' },
+                { key: 'picks_api_enabled', label: 'My Picks API', desc: 'Allow fetching featured projects', endpoint: '/api/public/picks' },
+                { key: 'contact_api_enabled', label: 'Contact API', desc: 'Allow fetching contact information', endpoint: '/api/public/contact' }
               ].map((api) => {
                 const isActive = settings[api.key as keyof ApiSettings];
+                const fullUrl = typeof window !== 'undefined' ? `${window.location.origin}${api.endpoint}` : api.endpoint;
+                
                 return (
-                  <div key={api.key} className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5">
-                    <div>
-                      <div className="text-sm font-bold text-white">{api.label}</div>
-                      <div className="text-xs text-zinc-500 mt-0.5">{api.desc}</div>
+                  <div key={api.key} className="flex flex-col p-4 bg-black/40 rounded-xl border border-white/5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-bold text-white">{api.label}</div>
+                        <div className="text-xs text-zinc-500 mt-0.5">{api.desc}</div>
+                      </div>
+                      <button 
+                        onClick={() => toggleGlobalSetting(api.key as keyof ApiSettings)}
+                        className={`w-12 h-6 rounded-full transition-colors relative flex items-center shrink-0 ${isActive ? 'bg-orange-500' : 'bg-zinc-700'}`}
+                      >
+                        <div className={`w-4 h-4 rounded-full bg-white absolute transition-all ${isActive ? 'right-1' : 'left-1'}`} />
+                      </button>
                     </div>
-                    <button 
-                      onClick={() => toggleGlobalSetting(api.key as keyof ApiSettings)}
-                      className={`w-12 h-6 rounded-full transition-colors relative flex items-center shrink-0 ${isActive ? 'bg-orange-500' : 'bg-zinc-700'}`}
-                    >
-                      <div className={`w-4 h-4 rounded-full bg-white absolute transition-all ${isActive ? 'right-1' : 'left-1'}`} />
-                    </button>
+                    
+                    <div className="flex items-center gap-2 bg-black/60 p-2 rounded-lg border border-white/5">
+                      <code className="text-[10px] text-zinc-400 font-mono truncate flex-1 select-all">{fullUrl}</code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(fullUrl);
+                          setCopiedApi(api.key);
+                          setTimeout(() => setCopiedApi(null), 2000);
+                        }}
+                        className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-zinc-400 hover:text-white shrink-0"
+                        title="Copy API URL"
+                      >
+                        {copiedApi === api.key ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                      </button>
+                    </div>
                   </div>
                 )
               })}
