@@ -9,15 +9,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { data: profile } = await supabase
       .from('profile_settings')
-      .select('email, whatsapp_url, phone')
+      .select('*')
       .eq('id', 'default')
       .maybeSingle();
 
     res.status(200).json({ 
       success: true, 
       data: {
+        name: profile?.name || "Saqib Developer",
+        bio: profile?.bio || "Available for freelance work",
         email: profile?.email || "saqibsaqqibsaqib@gmail.com",
-        whatsapp: profile?.whatsapp_url || profile?.phone || "+92 347 8936242",
+        whatsapp: profile?.whatsapp_url || profile?.phone || "https://wa.me/923478936242",
+        instagram: profile?.instagram_url || "",
+        facebook: profile?.facebook_url || "",
+        tiktok: profile?.tiktok_url || "",
+        snapchat: profile?.snapchat_url || "",
+        portfolio: profile?.portfolio_url || "",
+        resume: profile?.resume_url || "",
       } 
     });
   } catch (error: any) {
