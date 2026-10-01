@@ -19,7 +19,8 @@ import {
   Database,
   Grid,
   FolderOpen,
-  Tag
+  Tag,
+  Star
 } from 'lucide-react';
 import { 
   ProjectItem, 
@@ -254,6 +255,18 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
     } else {
       setProjects(prev => prev.map(item => item.id === p.id ? { ...item, is_active: newStatus } : item));
       onNotify(`Project status changed to ${newStatus ? 'Active' : 'Inactive'}`, 'success');
+    }
+  };
+
+  const handleTogglePick = async (p: ProjectItem) => {
+    if (!p.id) return;
+    const newStatus = !p.is_pick;
+    const res = await updateProjectInDB(p.id, { is_pick: newStatus });
+    if (res.error) {
+      onNotify(`Toggle Pick failed: ${res.error}`, 'error');
+    } else {
+      setProjects(prev => prev.map(item => item.id === p.id ? { ...item, is_pick: newStatus } : item));
+      onNotify(newStatus ? 'Project added to Picks' : 'Project removed from Picks', 'success');
     }
   };
 
@@ -564,6 +577,7 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
                     project={p}
                     onEdit={() => openEditModal(p)}
                     onToggleActive={() => handleToggleActive(p)}
+                      onTogglePick={() => handleTogglePick(p)}
                     onDelete={() => p.id && setDeletingId(p.id)}
                   />
                 ))}
@@ -580,6 +594,7 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
               project={p}
               onEdit={() => openEditModal(p)}
               onToggleActive={() => handleToggleActive(p)}
+                      onTogglePick={() => handleTogglePick(p)}
               onDelete={() => p.id && setDeletingId(p.id)}
             />
           ))}
@@ -833,11 +848,13 @@ function ProjectCard({
   project,
   onEdit,
   onToggleActive,
+  onTogglePick,
   onDelete
 }: {
   project: ProjectItem;
   onEdit: () => void;
   onToggleActive: () => void;
+  onTogglePick: () => void;
   onDelete: () => void;
 }) {
   const isActive = project.is_active !== false;
@@ -875,13 +892,22 @@ function ProjectCard({
             </a>
           </div>
 
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
-            isActive 
-              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-              : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
-          }`}>
-            {isActive ? 'Active' : 'Disabled'}
-          </span>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={onTogglePick}
+              className={`p-1.5 rounded-md transition-all ${project.is_pick ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'}`}
+              title={project.is_pick ? 'Remove from Picks' : 'Add to Picks'}
+            >
+              <Star size={14} className={project.is_pick ? 'fill-amber-400' : ''} />
+            </button>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+              isActive 
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
+            }`}>
+              {isActive ? 'Active' : 'Disabled'}
+            </span>
+          </div>
         </div>
 
         <p className="text-xs text-zinc-400 mt-2.5 line-clamp-2 leading-relaxed">

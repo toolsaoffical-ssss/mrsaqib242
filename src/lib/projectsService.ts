@@ -10,6 +10,7 @@ export interface ProjectItem {
   gradient?: string;
   category?: string;
   is_active?: boolean;
+  is_pick?: boolean;
   display_order?: number;
   created_at?: string;
 }
