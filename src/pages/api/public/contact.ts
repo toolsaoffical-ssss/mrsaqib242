@@ -7,21 +7,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!isAllowed) return;
 
   try {
-    // Fetch contact info from admin_mirage_config or similar settings table
-    const { data: config, error } = await supabase
-      .from('admin_mirage_config')
-      .select('*')
-      .limit(1)
-      .single();
-
-    if (error) throw error;
+    const { data: profile } = await supabase
+      .from('profile_settings')
+      .select('email, whatsapp_url, phone')
+      .eq('id', 'default')
+      .maybeSingle();
 
     res.status(200).json({ 
       success: true, 
       data: {
-        email: "saqibsaqqibsaqib@gmail.com",
-        whatsapp: config?.whatsapp_number || "+92 347 8936242",
-        // Add more contact details here if needed
+        email: profile?.email || "saqibsaqqibsaqib@gmail.com",
+        whatsapp: profile?.whatsapp_url || profile?.phone || "+92 347 8936242",
       } 
     });
   } catch (error: any) {
