@@ -156,7 +156,7 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
             <div className="space-y-4">
               {[
                 { key: 'projects_api_enabled', label: 'Projects API', desc: 'Allow fetching all active projects', endpoint: '/api/public/projects' },
-                { key: 'picks_api_enabled', label: 'My Picks API', desc: 'Allow fetching featured projects', endpoint: '/api/public/picks' },
+                { key: 'picks_api_enabled', label: 'Gallery Picks API', desc: 'Allow fetching gallery photos (My Picks)', endpoint: '/api/public/picks' },
                 { key: 'contact_api_enabled', label: 'Contact API', desc: 'Allow fetching contact information', endpoint: '/api/public/contact' }
               ].map((api) => {
                 const isActive = settings[api.key as keyof ApiSettings];

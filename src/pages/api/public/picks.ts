@@ -10,10 +10,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Assuming 'restricted' or another flag defines "picks". For now, we fetch where it's a pick or featured
     // Adjust the query based on your actual database schema for 'My Picks'
     const { data: picks, error } = await supabase
-      .from('projects')
+      .from('gallery')
       .select('*')
       .eq('is_active', true)
-      .eq('is_pick', true)
       .order('display_order', { ascending: true });
 
     if (error) throw error;
