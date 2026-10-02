@@ -803,19 +803,19 @@ export default function ToolsPage({
       {/* MODE 3: COMPACT LIST VIEW */}
       {/* ========================================================================= */}
       {viewMode === 'compact' && (
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-28 space-y-3">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-28 space-y-2.5">
           {filteredTools.map(tool => (
             <div
               key={tool.id}
               onClick={(e) => handleToolClick(tool, e)}
-              className="p-4 bg-[#13141f]/90 hover:bg-[#181a29] border border-white/10 rounded-2xl flex items-center justify-between gap-4 cursor-pointer group"
+              className="p-3 bg-[#13141f]/90 hover:bg-[#181a29] border border-white/10 rounded-2xl flex items-center justify-between gap-3 cursor-pointer group"
             >
-              <div className="flex items-center gap-3.5">
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-tr ${tool.gradient || 'from-orange-500 to-amber-500'} flex items-center justify-center text-white shrink-0 relative overflow-hidden`}>
+              <div className="flex items-center gap-4">
+                <div className={`w-9 h-9 rounded-[10px] bg-gradient-to-tr ${tool.gradient || 'from-orange-500 to-amber-500'} flex items-center justify-center text-white shrink-0 relative overflow-hidden`}>
                   {tool.logo_url ? (
                     <img src={tool.logo_url} alt={tool.title} className="w-full h-full object-cover" />
                   ) : (
-                    <ToolIcon name={tool.icon} size={20} />
+                    <ToolIcon name={tool.icon} size={16} />
                   )}
                 </div>
                 <div>

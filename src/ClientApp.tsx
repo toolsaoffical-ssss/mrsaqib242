@@ -112,6 +112,8 @@ const profileImages = [
 ];
 
 const MobileBottomNav = ({ currentHash }: { currentHash: string }) => {
+  if (currentHash === '#tools-page') return null;
+
   const isHome = currentHash === '' || currentHash === '#about' || currentHash === '#gallery' || currentHash === '#contact-section';
   const isProjects = currentHash === '#all-projects';
   const isSkills = currentHash === '#skills-page';
