@@ -793,8 +793,6 @@ export default function App() {
       {/* Poster Showcase Section */}
       <PosterShowcase />
 
-      {/* Project Preview Showcase Section (3rd) */}
-      <ProjectPreviewShowcase onViewAll={navigateToAllProjects} />
 
       {/* Enroute Showcase Section */}
       <EnrouteShowcase />
