@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: 'https://earingwhteui.vercel.app/',
+      destination: 'https://earnbyus-phi.vercel.app/',
       permanent: false, // Temporary redirect, just in case you want to change it later
     },
   };
