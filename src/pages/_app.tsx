@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { Inter, Plus_Jakarta_Sans, Alex_Brush, Bodoni_Moda } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { AnalyticsTracker } from '../components/AnalyticsTracker';
+import { SaveBlocker } from '../components/SaveBlocker';
 import '../index.css';
 
 const inter = Inter({
@@ -170,6 +171,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <GoogleAnalytics gaId="G-F768LWQ7CB" />
       )}
 
+      <SaveBlocker />
       <AnalyticsTracker />
       <Component {...pageProps} />
     </div>
