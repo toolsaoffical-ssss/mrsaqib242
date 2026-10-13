@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowLeft, 
@@ -478,16 +479,29 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
 
       {/* Navigation & Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-white/5">
-        <button 
-          onClick={onBack}
+        <Link 
+          href="/"
+          onClick={(e) => {
+            if (onBack) {
+              e.preventDefault();
+              onBack();
+            }
+          }}
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-xs font-bold tracking-widest uppercase text-white/80 hover:text-white"
         >
           <ArrowLeft size={14} /> Back to Portfolio
-        </button>
+        </Link>
 
-        <div className="flex items-center gap-2 bg-purple-950/40 border border-purple-500/30 px-3 py-1.5 rounded-full">
-          <Sparkles size={14} className="text-purple-400 animate-pulse" />
-          <span className="text-[10px] font-black tracking-wider uppercase text-purple-300">Skills Hub & AI Sandbox</span>
+        <div className="flex items-center gap-6">
+          <nav className="hidden sm:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-zinc-400">
+            <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
+            <Link href="/plans" className="hover:text-white transition-colors">Plans</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+          </nav>
+          <div className="flex items-center gap-2 bg-purple-950/40 border border-purple-500/30 px-3 py-1.5 rounded-full">
+            <Sparkles size={14} className="text-purple-400 animate-pulse" />
+            <span className="text-[10px] font-black tracking-wider uppercase text-purple-300">Skills Hub & AI Sandbox</span>
+          </div>
         </div>
       </div>
 

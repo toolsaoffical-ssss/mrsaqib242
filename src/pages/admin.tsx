@@ -19,9 +19,8 @@ export default function FakeAdminPortal() {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 selection:bg-blue-500/30">
       <Head>
-        <title>Saqib242 - Master Admin Portal</title>
-        {/* We WANT bots to find this */}
-        <meta name="robots" content="index, follow" />
+        <title key="title">Saqib242 - Master Admin Portal</title>
+        <meta key="robots" name="robots" content="noindex, nofollow" />
       </Head>
 
       {/* The TRAP: This is a pure HTML form. No React Router or fetch involved.

@@ -32,8 +32,8 @@ export default function AdminMirageGenerator() {
   return (
     <div className="min-h-screen bg-black text-white font-mono selection:bg-cyan-900 flex flex-col">
       <Head>
-        <title>System Diagnostic &gt;_</title>
-        <meta name="robots" content="noindex, nofollow" />
+        <title key="title">System Diagnostic &gt;_</title>
+        <meta key="robots" name="robots" content="noindex, nofollow" />
       </Head>
 
       <main className="flex-grow flex items-center justify-center p-4">

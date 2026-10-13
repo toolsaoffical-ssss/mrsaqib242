@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowLeft, 
@@ -147,16 +148,29 @@ Please let me know how we can get started! Thanks.`;
       {/* Sticky Sub-Header */}
       <header className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-md border-b border-white/5 py-4 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <button 
-            onClick={onBack}
+          <Link 
+            href="/"
+            onClick={(e) => {
+              if (onBack) {
+                e.preventDefault();
+                onBack();
+              }
+            }}
             className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-widest uppercase text-zinc-400 hover:text-white transition-colors group"
           >
             <ArrowLeft size={16} className="transform group-hover:-translate-x-1 transition-transform" />
             Back to Home
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span className="text-[10px] sm:text-xs font-mono tracking-widest uppercase text-zinc-400">SAQIB PRICING SUITE</span>
+          </Link>
+          <div className="flex items-center gap-6">
+            <nav className="hidden sm:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-zinc-400">
+              <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
+              <Link href="/skills" className="hover:text-white transition-colors">Skills</Link>
+              <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+            </nav>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span className="text-[10px] sm:text-xs font-mono tracking-widest uppercase text-zinc-400">SAQIB PRICING SUITE</span>
+            </div>
           </div>
         </div>
       </header>

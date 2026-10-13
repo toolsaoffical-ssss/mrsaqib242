@@ -150,13 +150,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <meta key="og:description" property="og:description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
         <meta key="og:url" property="og:url" content={canonicalUrl} />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
-        <meta property="og:site_name" content="Mr Saqib Portfolio" />
+        <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Mr Saqib (Saqib 242) | Web Developer & SEO Expert" />
-        <meta name="twitter:description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
-        <meta name="twitter:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
+        <meta key="twitter:title" name="twitter:title" content="Mr Saqib (Saqib 242) | Web Developer & SEO Expert" />
+        <meta key="twitter:description" name="twitter:description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="keywords" name="keywords" content="saqib gojra, gojra developer, mr saqib, mr saqib developer, saqib 242, web developer Faisalabad, website designer Gojra, freelance developer Lahore, software engineer Karachi" />
         
         {/* Unified Schema Graph */}
         <script

@@ -1,12 +1,54 @@
-# Robots.txt for Saqib242 Portfolio
+# Robots.txt for Muhammad Saqib (mrsaqib242)
 
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin
+Disallow: /mradmin
+Disallow: /mradmin2
+Disallow: /saqibadmin
+Disallow: /yourareadmin
 Disallow: /private/
 
-# AI Search & Large Language Model Crawlers
+# Explicit Search Engine Crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: Google-InspectionTool
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# Social Media Link Preview Bots
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# AI Search & LLM Crawlers
 User-agent: GPTBot
 Allow: /
 
@@ -25,18 +67,9 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-User-agent: GoogleOther
-Allow: /
-
-User-agent: Applebot
-Allow: /
-
 User-agent: Applebot-Extended
 Allow: /
 
-User-agent: FacebookBot
-Allow: /
-
-# LLM Direct Index Standards
-Markdown-Index: https://mrsaqib242.vercel.app/llms.txt
+# Sitemap & Direct LLM Documentation
 Sitemap: https://mrsaqib242.vercel.app/sitemap.xml
+Markdown-Index: https://mrsaqib242.vercel.app/llms.txt

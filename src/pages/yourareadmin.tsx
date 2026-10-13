@@ -20,8 +20,8 @@ export default function ShamePage({ data }: ShamePageProps) {
   return (
     <div className="min-h-screen bg-black text-rose-500 font-mono flex flex-col items-center justify-center p-4 relative overflow-hidden selection:bg-rose-900 selection:text-white">
       <Head>
-        <title>INTRUSION BLOCKED</title>
-        <meta name="robots" content="noindex, nofollow" />
+        <title key="title">INTRUSION BLOCKED</title>
+        <meta key="robots" name="robots" content="noindex, nofollow" />
       </Head>
 
       {/* Red flashing background effect */}

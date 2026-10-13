@@ -3,10 +3,25 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const userAgent = request.headers.get('user-agent') || '';
-  const accept = request.headers.get('accept') || '';
-  const acceptLanguage = request.headers.get('accept-language') || '';
-  const secFetchDest = request.headers.get('sec-fetch-dest') || '';
   const pathname = request.nextUrl.pathname;
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // LAYER -1: ALWAYS ALLOW STATIC ASSETS & PUBLIC SEO FILES
+  // Never block robots, sitemaps, favicons, llms, or fonts
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  if (
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/llms.txt' ||
+    pathname === '/version.json' ||
+    pathname === '/favicon.ico' ||
+    pathname === '/favicon.png' ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api/public') ||
+    pathname.match(/\.(xml|txt|json|ico|png|jpg|jpeg|svg|webp|woff|woff2|ttf|css|js)$/i)
+  ) {
+    return NextResponse.next();
+  }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // LAYER 0: EDGE ADMIN ROUTE PROTECTION
@@ -31,21 +46,24 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 1. Explicitly allow search engines and bots to ensure SEO is not affected
-  const searchEngineRegex = /(googlebot|bingbot|yandex|baiduspider|slurp|duckduckbot|google-inspectiontool|googleweblight)/i;
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // LAYER 1: SEARCH ENGINES, CRAWLERS, SOCIAL & AI PREVIEWS
+  // Explicitly allow all legitimate search engines, SEO tools,
+  // social bots, and AI agents so SEO & indexing are 100% flawless.
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  const searchEngineRegex = /(google|googlebot|google-inspectiontool|googleother|google-extended|googleweblight|adsbot|mediapartners|feedfetcher|apis-google|bingbot|bingpreview|msnbot|adidxbot|microsoft-inspectiontool|slurp|duckduckbot|baiduspider|yandex|sogou|exabot|applebot|facebookexternalhit|facebot|twitterbot|linkedinbot|whatsapp|telegrambot|discordbot|pinterest|slackbot|skypeuripreview|vkshare|redditbot|gptbot|chatgpt|claudebot|claude-web|perplexitybot|anthropic|cohere|lighthouse|chrome-lighthouse|screaming\s*frog|ahrefsbot|semrushbot)/i;
+
   if (searchEngineRegex.test(userAgent)) {
     return NextResponse.next();
   }
 
-  // Regex to detect popular terminal-based hacking/scanning tools
-  const cliToolsRegex = /(curl|wget|python|libwww|sqlmap|nmap|nikto|dirb|gobuster|postman|insomnia|go-http-client|java|ruby|perl|php|masscan|zgrab|httpx)/i;
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // LAYER 2: TERMINAL HACKING & EXPLOIT SCANNER PROTECTION
+  // Block known penetration testing scanners and exploit tools
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  const cliToolsRegex = /(sqlmap|nmap|nikto|dirb|gobuster|masscan|zgrab|httpx|wpscan|acunetix|nessus)/i;
 
-  // Stronger heuristics to block scripts that spoof or omit User-Agent
-  const isSuspiciousScript = 
-    !userAgent || 
-    (accept === '*/*' && !acceptLanguage && !secFetchDest);
-
-  if (cliToolsRegex.test(userAgent) || isSuspiciousScript) {
+  if (cliToolsRegex.test(userAgent)) {
     const skull = `
 \x1b[31m\x1b[1m
         _..._
@@ -83,12 +101,12 @@ Admin: Saqib242\x1b[0m
     });
   }
 
-  // Allow browsers to pass through normally
+  // Allow browsers and clean visitors to pass through normally
   return NextResponse.next();
 }
 
 export const config = {
   // Apply to all routes except Next.js static files and images
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|favicon.png|robots.txt|sitemap.xml|llms.txt|version.json).*)'],
 };
 

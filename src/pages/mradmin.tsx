@@ -1,9 +1,18 @@
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import AdminPageView from '../components/AdminPageView';
 import { supabaseAdmin } from '../lib/supabaseServer';
 
 export default function MrAdminPage() {
-  return <AdminPageView />;
+  return (
+    <>
+      <Head>
+        <title key="title">Admin Dashboard</title>
+        <meta key="robots" name="robots" content="noindex, nofollow" />
+      </Head>
+      <AdminPageView />
+    </>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

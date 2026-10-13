@@ -15,8 +15,13 @@ export default function ToolsRoute() {
   return (
     <>
       <Head>
-        <title>Tools &amp; Utilities OS | Muhammad Saqib Studio</title>
-        <meta name="description" content="Explore verified web utilities, AI tools, developer resources, and free apps designed like a mobile home screen." />
+        <title key="title">Tools &amp; Utilities OS | Muhammad Saqib Studio</title>
+        <meta key="description" name="description" content="Explore verified web utilities, AI tools, developer resources, and free apps designed like a mobile home screen." />
+        <meta key="og:title" property="og:title" content="Tools &amp; Utilities OS | Muhammad Saqib Studio" />
+        <meta key="og:description" property="og:description" content="Explore verified web utilities, AI tools, developer resources, and free apps designed like a mobile home screen." />
+        <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/tools" />
+        <meta key="twitter:title" name="twitter:title" content="Tools &amp; Utilities OS | Muhammad Saqib Studio" />
+        <meta key="twitter:description" name="twitter:description" content="Explore verified web utilities, AI tools, developer resources, and free apps designed like a mobile home screen." />
       </Head>
 
       <ToolsPage

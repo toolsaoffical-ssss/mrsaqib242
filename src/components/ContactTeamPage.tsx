@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Code,
@@ -151,17 +152,29 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
       
       {/* Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center bg-[#F0F2F5]/80 backdrop-blur-xl border-b border-white/40 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
-        <button 
-          onClick={onBack}
+        <Link 
+          href="/"
+          onClick={(e) => {
+            if (onBack) {
+              e.preventDefault();
+              onBack();
+            }
+          }}
           className="flex items-center gap-2 text-zinc-600 hover:text-black transition-colors font-semibold tracking-widest uppercase text-xs"
         >
           <ArrowLeft size={16} />
           <span>Back to Home</span>
-        </button>
+        </Link>
         <div className="text-sm font-black uppercase tracking-[0.3em] text-zinc-800">
           Contact & Team
         </div>
-        <div className="w-24"></div> {/* Spacer */}
+        <div className="flex items-center gap-4">
+          <nav className="hidden sm:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Link href="/projects" className="hover:text-black transition-colors">Projects</Link>
+            <Link href="/skills" className="hover:text-black transition-colors">Skills</Link>
+            <Link href="/plans" className="hover:text-black transition-colors">Plans</Link>
+          </nav>
+        </div>
       </nav>
 
       <div className="pt-28 pb-20 px-4 sm:px-6 max-w-7xl mx-auto relative z-10">

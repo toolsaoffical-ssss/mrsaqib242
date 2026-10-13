@@ -86,7 +86,22 @@ export default function Footer() {
         })}
       </div>
 
-      <div className="mt-24 text-zinc-400 text-xs md:text-sm font-bold tracking-[0.2em] uppercase relative z-10 flex flex-wrap items-center justify-center gap-2">
+      {/* Crawlable Internal Links for Googlebot & Users */}
+      <nav aria-label="Footer Navigation" className="mt-14 mb-4 relative z-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-bold tracking-widest uppercase text-zinc-400">
+        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+        <span className="text-zinc-700 hidden sm:inline">•</span>
+        <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
+        <span className="text-zinc-700 hidden sm:inline">•</span>
+        <Link href="/skills" className="hover:text-white transition-colors">Skills</Link>
+        <span className="text-zinc-700 hidden sm:inline">•</span>
+        <Link href="/plans" className="hover:text-white transition-colors">Website Plans</Link>
+        <span className="text-zinc-700 hidden sm:inline">•</span>
+        <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+        <span className="text-zinc-700 hidden sm:inline">•</span>
+        <Link href="/tools" className="hover:text-white transition-colors">Tools</Link>
+      </nav>
+
+      <div className="mt-8 text-zinc-500 text-xs font-bold tracking-[0.2em] uppercase relative z-10 flex flex-wrap items-center justify-center gap-2">
         <span>© {new Date().getFullYear()} {profile.brand_name || 'Saqib Visuals'}. All rights reserved.</span>
       </div>
     </footer>
