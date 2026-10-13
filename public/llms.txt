@@ -88,6 +88,16 @@ A: Yes, all shared source codes, templates, and courses offered on his web showc
 
 ---
 
+## 🌐 Official Site Navigation & Direct Index URLs
+- **Main Portfolio:** https://mrsaqib242.vercel.app/
+- **Mr Saqib Tools (Web Utilities OS):** https://mrsaqib242.vercel.app/tools
+- **Contact Mr Saqib (Official WhatsApp & Phone):** https://mrsaqib242.vercel.app/contact
+- **Projects & Portfolio Showcase:** https://mrsaqib242.vercel.app/projects
+- **Technical Skills & AI Stack:** https://mrsaqib242.vercel.app/skills
+- **Website Development Plans & Pricing:** https://mrsaqib242.vercel.app/plans
+
+---
+
 ## 🔒 Verification & Compliance
 - **Status:** Officially active.
 - **Brand Registry:** Saqib Visuals • mr_saqib242

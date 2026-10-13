@@ -165,6 +165,7 @@ Please let me know how we can get started! Thanks.`;
             <nav className="hidden sm:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-zinc-400">
               <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
               <Link href="/skills" className="hover:text-white transition-colors">Skills</Link>
+              <Link href="/tools" className="hover:text-white transition-colors">Tools</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             </nav>
             <div className="flex items-center gap-2">
@@ -194,6 +195,7 @@ Please let me know how we can get started! Thanks.`;
             transition={{ duration: 0.6 }}
             className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-none mb-6 uppercase"
           >
+            <span className="sr-only">Mr Saqib Website Plans &amp; Pricing Packages - </span>
             Website <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">Development</span> Plans
           </motion.h1>
 

@@ -322,14 +322,28 @@ export default function ToolsPage({
       {/* Top Global Navigation Bar */}
       <header className="sticky top-0 z-40 bg-[#08090e]/85 backdrop-blur-xl border-b border-white/10 px-2 sm:px-6 lg:px-8 py-3.5 transition-all">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
-          {/* Back Button */}
-          <button 
-            onClick={onClose}
+          {/* Back to Home Link for Crawlers and Users */}
+          <Link 
+            href="/"
+            onClick={(e) => {
+              if (onClose) {
+                e.preventDefault();
+                onClose();
+              }
+            }}
             className="group flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shrink-0"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            <span>Back</span>
-          </button>
+            <span>Back to Home</span>
+          </Link>
+
+          {/* Quick Cross-Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-zinc-400">
+            <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
+            <Link href="/skills" className="hover:text-white transition-colors">Skills</Link>
+            <Link href="/plans" className="hover:text-white transition-colors">Plans</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+          </nav>
 
           {/* View Mode Switcher Pills (Highlighting Mobile Home Screen!) */}
           <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-black/50 border border-white/10 rounded-2xl shadow-inner shrink-0">
@@ -449,8 +463,13 @@ export default function ToolsPage({
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-4 pb-32">
           {/* SEO-only: hidden from UI, readable by Googlebot */}
           <div className="sr-only">
-            <h2>Muhammad Saqib Tools & Utilities OS</h2>
-            <p>System Installed: {tools.length} Apps Ready. 100% Free, Verified Safe, Fast Launch. All Cloud Services Operational.</p>
+            <h1>Mr Saqib Tools &amp; Web Utilities OS (Saqib 242)</h1>
+            <h2>Free Developer Apps, AI Bots &amp; Online Utilities by Muhammad Saqib</h2>
+            <p>
+              Welcome to the official Mr Saqib tools suite (mr saqib tool). Access {tools.length} verified cloud applications, 
+              developer utilities, AI chatbot models, free coding templates, network testers, and system tools created 
+              by Muhammad Saqib (mrsaqib242) for engineers and businesses in Pakistan and worldwide.
+            </p>
           </div>
 
           {/* Main Mobile Screen — no outer border/frame on mobile */}
@@ -734,10 +753,10 @@ export default function ToolsPage({
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-8">
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-2">
-              All Tools &amp; Utilities
+              Mr Saqib Tools &amp; Web Utilities
             </h2>
             <p className="text-zinc-400 text-sm">
-              Instant access to AI predictors, developer portals, free coding repos, and web utilities.
+              Instant access to Mr Saqib's AI tools, developer software, code repositories, and online web utilities.
             </p>
           </div>
 

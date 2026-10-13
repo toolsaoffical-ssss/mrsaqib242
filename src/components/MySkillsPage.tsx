@@ -496,6 +496,7 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
           <nav className="hidden sm:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-zinc-400">
             <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
             <Link href="/plans" className="hover:text-white transition-colors">Plans</Link>
+            <Link href="/tools" className="hover:text-white transition-colors">Tools</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
           </nav>
           <div className="flex items-center gap-2 bg-purple-950/40 border border-purple-500/30 px-3 py-1.5 rounded-full">
@@ -517,6 +518,7 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent uppercase"
           >
+            <span className="sr-only">Mr Saqib Skills &amp; AI Tech Stack - </span>
             Bento Skills Hub
           </motion.h1>
           <p className="text-zinc-400 text-xs sm:text-sm mt-1 max-w-xl font-medium">

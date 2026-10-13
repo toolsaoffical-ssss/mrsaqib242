@@ -173,6 +173,7 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
             <Link href="/projects" className="hover:text-black transition-colors">Projects</Link>
             <Link href="/skills" className="hover:text-black transition-colors">Skills</Link>
             <Link href="/plans" className="hover:text-black transition-colors">Plans</Link>
+            <Link href="/tools" className="hover:text-black transition-colors">Tools</Link>
           </nav>
         </div>
       </nav>
@@ -187,7 +188,7 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-4xl sm:text-5xl md:text-7xl font-black text-zinc-800 tracking-tighter mb-4"
           >
-            {profile.brand_name || 'SAQIB VISUALS'}
+            Contact Mr Saqib
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -195,7 +196,7 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-zinc-500 font-bold tracking-widest uppercase text-[10px] sm:text-xs md:text-sm"
           >
-            {profile.tagline || 'Full-Stack Development & Creative Studio'}
+            Hire Muhammad Saqib (Saqib 242) | Official Phone, WhatsApp &amp; Consultations
           </motion.p>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
