@@ -263,8 +263,7 @@ export default function AllProjectsPage({ onBack }: AllProjectsPageProps) {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-none mb-4 uppercase"
           >
-            <span className="sr-only">Mr Saqib Projects &amp; Portfolio - </span>
-            All <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">Projects</span> Hub
+            Mr Saqib <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">Projects</span> &amp; Portfolio
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 15 }}
@@ -272,7 +271,7 @@ export default function AllProjectsPage({ onBack }: AllProjectsPageProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-zinc-400 text-xs sm:text-sm md:text-lg max-w-2xl mx-auto leading-relaxed"
           >
-            Explore the live, fully interactive website prototypes, utility builders, and design systems custom-developed by Saqib.
+            Explore real-world client websites, full-stack Next.js web applications, e-commerce solutions, and AI integrations engineered by Mr Saqib (Saqib 242).
           </motion.p>
         </div>
       </section>
@@ -345,9 +344,26 @@ export default function AllProjectsPage({ onBack }: AllProjectsPageProps) {
         </div>
       </section>
 
+      {/* Crawlable SEO Portfolio Summary Section */}
+      <section className="px-4 sm:px-6 py-12 border-t border-white/5 bg-zinc-950/50">
+        <div className="max-w-4xl mx-auto text-center space-y-4">
+          <h2 className="text-xl sm:text-2xl font-black uppercase text-white tracking-wider">
+            About Mr Saqib Projects &amp; Development Portfolio
+          </h2>
+          <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
+            Every project in the <strong>Mr Saqib Projects</strong> portfolio is engineered using production-tested architectures including Next.js 15, React 19, TypeScript, Tailwind CSS, Supabase, and custom AI agents. From high-converting e-commerce web applications to interactive utility tools, Saqib (Saqib 242) builds fast, responsive, and search-optimized web solutions for businesses in Pakistan and worldwide.
+          </p>
+          <div className="pt-2 flex flex-wrap justify-center gap-4 text-xs font-bold uppercase tracking-wider">
+            <Link href="/plans" className="text-cyan-400 hover:text-cyan-300">View Mr Saqib Plans →</Link>
+            <Link href="/tools" className="text-purple-400 hover:text-purple-300">Explore Developer Tools →</Link>
+            <Link href="/contact" className="text-emerald-400 hover:text-emerald-300">Hire Saqib for a Project →</Link>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-white/5 py-8 text-center text-xs text-zinc-500 font-mono">
-        <p>&copy; {new Date().getFullYear()} Saqib Developer. Built for extreme response speed & high Google Search rankings.</p>
+        <p>&copy; {new Date().getFullYear()} Saqib Developer. Built for extreme response speed &amp; high Google Search rankings.</p>
       </footer>
     </div>
   );

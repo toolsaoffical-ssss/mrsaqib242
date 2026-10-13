@@ -87,18 +87,18 @@ export default function Footer() {
       </div>
 
       {/* Crawlable Internal Links for Googlebot & Users */}
-      <nav aria-label="Footer Navigation" className="mt-14 mb-4 relative z-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-bold tracking-widest uppercase text-zinc-400">
-        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+      <nav aria-label="Footer Navigation" className="mt-14 mb-4 relative z-10 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs font-bold tracking-widest uppercase text-zinc-400">
+        <Link href="/" className="hover:text-white transition-colors" title="Mr Saqib Home">Home</Link>
         <span className="text-zinc-700 hidden sm:inline">•</span>
-        <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
+        <Link href="/projects" className="hover:text-white transition-colors" title="Mr Saqib Projects &amp; Portfolio">Mr Saqib Projects</Link>
         <span className="text-zinc-700 hidden sm:inline">•</span>
-        <Link href="/skills" className="hover:text-white transition-colors">Skills</Link>
+        <Link href="/plans" className="hover:text-white transition-colors" title="Mr Saqib Plans &amp; Website Pricing">Mr Saqib Plans</Link>
         <span className="text-zinc-700 hidden sm:inline">•</span>
-        <Link href="/plans" className="hover:text-white transition-colors">Website Plans</Link>
+        <Link href="/skills" className="hover:text-white transition-colors" title="Mr Saqib Skills &amp; Tech Stack">Mr Saqib Skills</Link>
         <span className="text-zinc-700 hidden sm:inline">•</span>
-        <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+        <Link href="/tools" className="hover:text-white transition-colors" title="Mr Saqib Tools &amp; Dev Utilities">Mr Saqib Tools</Link>
         <span className="text-zinc-700 hidden sm:inline">•</span>
-        <Link href="/tools" className="hover:text-white transition-colors">Tools</Link>
+        <Link href="/contact" className="hover:text-white transition-colors" title="Mr Saqib Contacts &amp; Hire Developer">Mr Saqib Contacts</Link>
       </nav>
 
       <div className="mt-8 text-zinc-500 text-xs font-bold tracking-[0.2em] uppercase relative z-10 flex flex-wrap items-center justify-center gap-2">

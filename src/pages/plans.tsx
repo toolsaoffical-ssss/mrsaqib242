@@ -33,7 +33,8 @@ export default function PlansRoute() {
       {
         "@type": "Product",
         "@id": "https://mrsaqib242.vercel.app/plans#pricing",
-        "name": "Mr Saqib Website Design & Development Packages",
+        "name": "Mr Saqib Website Plans & Pricing Packages",
+        "alternateName": ["Mr Saqib Plans", "Saqib Plans", "Saqib Mr Saqib Plans", "Saqib 242 Packages", "Saqib Pricing"],
         "description": "Premium, low-cost website design and custom full-stack development plans by Mr Saqib (Saqib 242) for startups, businesses, and e-commerce stores in Pakistan.",
         "url": "https://mrsaqib242.vercel.app/plans",
         "brand": {
@@ -55,25 +56,25 @@ export default function PlansRoute() {
   return (
     <>
       <Head>
-        <title key="title">Mr Saqib Website Plans &amp; Pricing | Web Development Packages (Saqib 242)</title>
-        <meta key="description" name="description" content="View Mr Saqib website plans and pricing (saqib 242 packages). Affordable web design, Next.js eCommerce, business landing pages, and AI chatbots in Pakistan." />
-        <meta key="keywords" name="keywords" content="mr saqib website plans, mr saqib pricing, mr saqib, saqib 242 pricing, website design packages pakistan, affordable web development gojra, web designer faisalabad pricing, cheap website cost pakistan" />
+        <title key="title">Mr Saqib Plans &amp; Pricing | Website Development Packages (Saqib 242)</title>
+        <meta key="description" name="description" content="Explore Mr Saqib plans and website pricing packages (saqib plans). Affordable custom web design, Next.js eCommerce, business landing pages, and AI chatbots by Saqib 242." />
+        <meta key="keywords" name="keywords" content="mr saqib plans, saqib plans, saqib mr saqib plans, mr saqib website plans, mr saqib pricing, saqib 242 pricing, website design packages pakistan, affordable web development gojra, web designer faisalabad pricing, cheap website cost pakistan" />
         
         {/* Canonical */}
         <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/plans" />
 
         {/* OpenGraph */}
         <meta key="og:type" property="og:type" content="website" />
-        <meta key="og:title" property="og:title" content="Mr Saqib Website Plans &amp; Pricing | Web Packages (Saqib 242)" />
-        <meta key="og:description" property="og:description" content="View Mr Saqib website plans and pricing (saqib 242 packages). Affordable web design, Next.js eCommerce, business landing pages, and AI chatbots in Pakistan." />
+        <meta key="og:title" property="og:title" content="Mr Saqib Plans &amp; Pricing | Web Packages (Saqib 242)" />
+        <meta key="og:description" property="og:description" content="Explore Mr Saqib plans and website pricing packages (saqib plans). Affordable custom web design, Next.js eCommerce, business landing pages, and AI chatbots by Saqib 242." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/plans" />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
-        <meta key="twitter:title" name="twitter:title" content="Mr Saqib Website Plans &amp; Pricing | Web Packages (Saqib 242)" />
-        <meta key="twitter:description" name="twitter:description" content="View Mr Saqib website plans and pricing (saqib 242 packages). Affordable web design, Next.js eCommerce, business landing pages, and AI chatbots in Pakistan." />
+        <meta key="twitter:title" name="twitter:title" content="Mr Saqib Plans &amp; Pricing | Web Packages (Saqib 242)" />
+        <meta key="twitter:description" name="twitter:description" content="Explore Mr Saqib plans and website pricing packages (saqib plans). Affordable custom web design, Next.js eCommerce, business landing pages, and AI chatbots by Saqib 242." />
         <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
 
         {/* JSON-LD Schema */}

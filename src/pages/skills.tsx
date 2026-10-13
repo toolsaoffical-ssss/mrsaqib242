@@ -34,6 +34,7 @@ export default function SkillsRoute() {
         "@type": "ProfilePage",
         "@id": "https://mrsaqib242.vercel.app/skills#profile",
         "name": "Mr Saqib Skills & Modern AI Tech Stack",
+        "alternateName": ["Mr Saqib Skills", "Saqib Skills", "Saqib Mr Saqib Skills", "Saqib 242 Skills", "Saqib Tech Stack"],
         "description": "Deep-dive into the technical expertise of Mr Saqib (Saqib 242): Next.js, React, TypeScript, Node.js, MERN Stack, and Generative AI chatbot automation.",
         "url": "https://mrsaqib242.vercel.app/skills",
         "mainEntity": {
@@ -55,8 +56,8 @@ export default function SkillsRoute() {
     <>
       <Head>
         <title key="title">Mr Saqib Skills &amp; Tech Stack | Full-Stack &amp; AI Engineer (Saqib 242)</title>
-        <meta key="description" name="description" content="Explore Mr Saqib skills (saqib 242 skills). Full-Stack Web Development, Next.js 15, React 19, TypeScript, Python, and Generative AI Chatbots in Pakistan." />
-        <meta key="keywords" name="keywords" content="mr saqib skills, mr saqib tech stack, saqib 242 skills, mr saqib ai expert, freelance developer skills gojra, full stack developer faisalabad, mern stack developer saqib" />
+        <meta key="description" name="description" content="Explore Mr Saqib skills and modern tech stack (saqib skills). Full-Stack Web Development, Next.js 15, React 19, TypeScript, Python, and Generative AI Chatbots by Saqib 242." />
+        <meta key="keywords" name="keywords" content="mr saqib skills, saqib skills, saqib mr saqib skills, mr saqib tech stack, saqib 242 skills, mr saqib ai expert, freelance developer skills gojra, full stack developer faisalabad, mern stack developer saqib" />
         
         {/* Canonical */}
         <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/skills" />

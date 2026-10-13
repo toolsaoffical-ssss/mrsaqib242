@@ -195,8 +195,7 @@ Please let me know how we can get started! Thanks.`;
             transition={{ duration: 0.6 }}
             className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-none mb-6 uppercase"
           >
-            <span className="sr-only">Mr Saqib Website Plans &amp; Pricing Packages - </span>
-            Website <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">Development</span> Plans
+            Mr Saqib <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">Website Plans</span> &amp; Pricing
           </motion.h1>
 
           <motion.p 
@@ -205,7 +204,7 @@ Please let me know how we can get started! Thanks.`;
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-zinc-400 text-xs sm:text-sm md:text-lg max-w-2xl mx-auto leading-relaxed"
           >
-            Bespoke pricing solutions carefully constructed for high scalability, sleek visual elegance, and state-of-the-art interactive user experiences.
+            Transparent website development plans &amp; packages by Mr Saqib (Saqib 242). Bespoke solutions constructed for high scalability, e-commerce growth, and sleek user experiences.
           </motion.p>
         </div>
       </section>
@@ -654,6 +653,21 @@ Please let me know how we can get started! Thanks.`;
             </div>
           </motion.div>
         </div>
+
+        {/* Crawlable Semantic SEO Section for Mr Saqib Plans */}
+        <section className="mt-12 p-6 sm:p-10 rounded-[2.5rem] bg-zinc-900/30 border border-white/5 text-center space-y-4">
+          <h2 className="text-xl sm:text-2xl font-black uppercase text-white tracking-wider">
+            Why Choose Mr Saqib Website Plans &amp; Packages?
+          </h2>
+          <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed max-w-3xl mx-auto">
+            <strong>Mr Saqib Plans</strong> (Saqib 242) offer transparent, fixed pricing with zero hidden maintenance fees. Every package delivers mobile-first responsiveness, modern Next.js 15 architectures, sub-second loading speeds, and post-delivery client support. Whether launching a custom startup MVP, an e-commerce store, or custom AI chatbots, Saqib provides high-tier development across Pakistan and globally.
+          </p>
+          <div className="pt-2 flex flex-wrap justify-center gap-4 text-xs font-bold uppercase tracking-wider">
+            <Link href="/projects" className="text-cyan-400 hover:text-cyan-300">Browse Mr Saqib Projects →</Link>
+            <Link href="/tools" className="text-purple-400 hover:text-purple-300">Free Online Dev Tools →</Link>
+            <Link href="/contact" className="text-emerald-400 hover:text-emerald-300">Contact Saqib for Custom Plan →</Link>
+          </div>
+        </section>
 
       </main>
 

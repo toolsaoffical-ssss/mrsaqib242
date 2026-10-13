@@ -516,13 +516,12 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
           <motion.h1 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent uppercase"
+            className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white uppercase"
           >
-            <span className="sr-only">Mr Saqib Skills &amp; AI Tech Stack - </span>
-            Bento Skills Hub
+            Mr Saqib <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Skills</span> &amp; Tech Stack
           </motion.h1>
           <p className="text-zinc-400 text-xs sm:text-sm mt-1 max-w-xl font-medium">
-            Explore Saqib's complete full-stack workflow, custom graphic assets, and multi-agent AI sandbox.
+            Explore Mr Saqib's (Saqib 242) complete full-stack web development workflow, Next.js architecture, and multi-agent AI sandbox.
           </p>
         </div>
         <div className="text-zinc-500 text-[10px] font-mono text-center sm:text-right uppercase tracking-wider shrink-0">

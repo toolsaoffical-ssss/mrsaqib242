@@ -34,6 +34,7 @@ export default function ProjectsRoute() {
         "@type": "CollectionPage",
         "@id": "https://mrsaqib242.vercel.app/projects#collection",
         "name": "Mr Saqib Projects & Portfolio Showcase",
+        "alternateName": ["Mr Saqib Projects", "Saqib Projects", "Saqib Mr Saqib Projects", "Saqib 242 Projects", "Saqib Portfolio"],
         "description": "Showcase of high-performance Next.js web applications, e-commerce stores, and generative AI systems developed by Mr Saqib (Saqib 242).",
         "url": "https://mrsaqib242.vercel.app/projects",
         "creator": {
@@ -49,25 +50,25 @@ export default function ProjectsRoute() {
   return (
     <>
       <Head>
-        <title key="title">Mr Saqib Projects &amp; Portfolio | Web Apps, Software &amp; AI (Saqib 242)</title>
-        <meta key="description" name="description" content="Explore Mr Saqib projects (mr saqib portfolio). High-performance Next.js web applications, e-commerce stores, custom AI chatbots, and software built by Saqib 242." />
-        <meta key="keywords" name="keywords" content="mr saqib projects, mr saqib portfolio, mr saqib, saqib 242 projects, web development projects pakistan, react apps gojra, nextjs portfolio mr saqib, full stack projects faisalabad" />
+        <title key="title">Mr Saqib Projects &amp; Portfolio | Saqib Full-Stack Web Apps &amp; Software (Saqib 242)</title>
+        <meta key="description" name="description" content="Explore all Mr Saqib projects (saqib projects portfolio). High-performance Next.js web applications, e-commerce stores, custom AI systems, and SaaS tools built by Mr Saqib (Saqib 242)." />
+        <meta key="keywords" name="keywords" content="mr saqib projects, saqib projects, saqib mr saqib projects, mr saqib portfolio, saqib 242 projects, web development projects pakistan, react apps gojra, nextjs portfolio mr saqib, full stack projects faisalabad" />
         
         {/* Canonical */}
         <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/projects" />
 
         {/* OpenGraph */}
         <meta key="og:type" property="og:type" content="website" />
-        <meta key="og:title" property="og:title" content="Mr Saqib Projects &amp; Portfolio | Web Apps &amp; AI (Saqib 242)" />
-        <meta key="og:description" property="og:description" content="Explore Mr Saqib projects (mr saqib portfolio). High-performance Next.js web applications, e-commerce stores, custom AI chatbots, and software built by Saqib 242." />
+        <meta key="og:title" property="og:title" content="Mr Saqib Projects &amp; Portfolio | Saqib Web Apps (Saqib 242)" />
+        <meta key="og:description" property="og:description" content="Explore all Mr Saqib projects (saqib projects portfolio). High-performance Next.js web applications, e-commerce stores, custom AI systems, and SaaS tools built by Mr Saqib (Saqib 242)." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/projects" />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
-        <meta key="twitter:title" name="twitter:title" content="Mr Saqib Projects &amp; Portfolio | Web Apps &amp; AI (Saqib 242)" />
-        <meta key="twitter:description" name="twitter:description" content="Explore Mr Saqib projects (mr saqib portfolio). High-performance Next.js web applications, e-commerce stores, custom AI chatbots, and software built by Saqib 242." />
+        <meta key="twitter:title" name="twitter:title" content="Mr Saqib Projects &amp; Portfolio | Saqib Web Apps (Saqib 242)" />
+        <meta key="twitter:description" name="twitter:description" content="Explore all Mr Saqib projects (saqib projects portfolio). High-performance Next.js web applications, e-commerce stores, custom AI systems, and SaaS tools built by Mr Saqib (Saqib 242)." />
         <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
 
         {/* JSON-LD Schema */}
