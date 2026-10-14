@@ -26,7 +26,9 @@ import {
   ShieldCheck,
   GraduationCap,
   Briefcase,
-  Leaf
+  Leaf,
+  Server,
+  Smartphone
 } from 'lucide-react';
 import { 
   SiHtml5, 
@@ -204,23 +206,6 @@ interface PipelineStep {
 
 const steps: PipelineStep[] = [
   {
-    id: "cyber-security",
-    title: "Cyber Security",
-    techs: ["Zero-Trust", "Supabase RLS", "API Guard"],
-    description: "Fortress-grade web defense & database lockdown",
-    details: [
-      "Row-Level Security (RLS) policies preventing unauthorized data access",
-      "API Mirage Guard middleware for bot mitigation & honeypot traps",
-      "Offensive pentesting & zero-trust server hardening against exploits"
-    ],
-    color: "#10B981",
-    logo: (
-      <div className="flex items-center justify-center bg-zinc-950/80 p-2 rounded-xl border border-white/5 shadow-inner">
-        <span className="text-emerald-400 flex items-center justify-center"><ShieldCheck size={20} /></span>
-      </div>
-    )
-  },
-  {
     id: "html-css-js",
     title: "HTML, CSS & JS",
     techs: ["HTML5", "CSS3", "ES6+"],
@@ -321,40 +306,6 @@ const steps: PipelineStep[] = [
     logo: (
       <div className="flex items-center justify-center bg-zinc-950/80 p-2 rounded-xl border border-white/5 shadow-inner">
         <span className="text-[#F05032] flex items-center justify-center"><SiGit size={20} /></span>
-      </div>
-    )
-  },
-  {
-    id: "ai-integration",
-    title: "AI Integration",
-    techs: ["OpenAI", "Gemini", "Machine Learning"],
-    description: "Generative AI & Smart Automations",
-    details: [
-      "Expert AI developer in Pakistan delivering custom chatbot solutions",
-      "Next-generation machine learning APIs for dynamic content generation",
-      "Advanced prompt engineering and AI-driven backend automation"
-    ],
-    color: "#a855f7",
-    logo: (
-      <div className="flex items-center justify-center bg-zinc-950/80 p-2 rounded-xl border border-white/5 shadow-inner">
-        <span className="text-purple-500 flex items-center justify-center"><Bot size={20} /></span>
-      </div>
-    )
-  },
-  {
-    id: "app-development",
-    title: "App Dev",
-    techs: ["React Native", "PWA", "Service Workers"],
-    description: "Cross-platform mobile & progressive web apps",
-    details: [
-      "Progressive Web Apps (PWA) with offline caching and instant load",
-      "Cross-platform hybrid app architectures for iOS and Android",
-      "Mobile-first responsive optimization and sub-second touch response"
-    ],
-    color: "#38BDF8",
-    logo: (
-      <div className="flex items-center justify-center bg-zinc-950/80 p-2 rounded-xl border border-white/5 shadow-inner">
-        <span className="text-sky-400 flex items-center justify-center"><Layers size={20} /></span>
       </div>
     )
   }
@@ -1148,6 +1099,175 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
         </motion.div>
 
       </div>
+
+      {/* ========================================================== */}
+      {/* CORE ENGINEERING PILLARS (4 DOMINANT ROLES) */}
+      {/* ========================================================== */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="mt-14 mb-10 relative z-10"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
+          <div className="flex items-center gap-2.5">
+            <div className="w-1.5 h-5 bg-gradient-to-b from-emerald-400 via-cyan-400 to-purple-400 rounded-full" />
+            <div>
+              <h2 className="text-sm sm:text-base font-black text-white tracking-widest uppercase">
+                CORE ENGINEERING PILLARS &amp; SPECIALIZED ROLES
+              </h2>
+              <p className="text-zinc-500 text-[10px] sm:text-xs font-medium">Four high-velocity engineering specializations backing enterprise-grade digital products.</p>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-950/40 border border-cyan-500/20 px-3 py-1 rounded-full uppercase tracking-wider self-start sm:self-auto">
+            Elite Full-Stack Specialization
+          </span>
+        </div>
+
+        {/* 4 Pillars Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {/* Card 1: Cyber Security Expert */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            transition={{ type: "spring", stiffness: 350, damping: 20 }}
+            className="bg-zinc-900/40 border border-emerald-500/20 hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden backdrop-blur-md transition-all duration-300 group shadow-lg"
+          >
+            <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-emerald-500/20 transition-all" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-11 h-11 rounded-xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-inner group-hover:scale-110 transition-transform">
+                  <ShieldCheck size={22} />
+                </div>
+                <span className="text-[9px] font-mono font-bold text-emerald-300 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 rounded-full uppercase">
+                  100% Hardened
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-white uppercase tracking-tight mb-1">
+                Cyber Security Expert
+              </h3>
+              <p className="text-[10px] text-emerald-400 font-mono font-bold uppercase tracking-wider mb-2.5">
+                Zero-Trust &amp; API Guard
+              </p>
+              <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+                Row-Level Security (RLS) enforcement, API Mirage Guard honeypot traps, offensive pentesting, bot attack mitigation, and hardened database lockdown.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/5">
+              {["Supabase RLS", "API Mirage Guard", "Zero-Trust", "Bot Mitigation", "Offensive Pentest"].map((chip, idx) => (
+                <span key={idx} className="text-[8px] font-mono font-semibold bg-zinc-950 border border-emerald-500/20 text-emerald-300/90 px-2 py-0.5 rounded-md">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Card 2: Backend Architect */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            transition={{ type: "spring", stiffness: 350, damping: 20 }}
+            className="bg-zinc-900/40 border border-cyan-500/20 hover:border-cyan-500/50 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden backdrop-blur-md transition-all duration-300 group shadow-lg"
+          >
+            <div className="absolute top-0 right-0 w-28 h-28 bg-cyan-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-cyan-500/20 transition-all" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-11 h-11 rounded-xl bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-inner group-hover:scale-110 transition-transform">
+                  <Server size={22} />
+                </div>
+                <span className="text-[9px] font-mono font-bold text-cyan-300 bg-cyan-950/40 border border-cyan-500/30 px-2 py-0.5 rounded-full uppercase">
+                  High Throughput
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-white uppercase tracking-tight mb-1">
+                Backend Architect
+              </h3>
+              <p className="text-[10px] text-cyan-400 font-mono font-bold uppercase tracking-wider mb-2.5">
+                Node &amp; Express APIs
+              </p>
+              <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+                Engineered asynchronous server runtimes, RESTful microservices, PostgreSQL &amp; MongoDB schemas, token auth pipelines, and cloud webhooks.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/5">
+              {["Node.js 20+", "Express.js", "PostgreSQL", "MongoDB", "REST Microservices"].map((chip, idx) => (
+                <span key={idx} className="text-[8px] font-mono font-semibold bg-zinc-950 border border-cyan-500/20 text-cyan-300/90 px-2 py-0.5 rounded-md">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Card 3: Frontend Developer */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            transition={{ type: "spring", stiffness: 350, damping: 20 }}
+            className="bg-zinc-900/40 border border-purple-500/20 hover:border-purple-500/50 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden backdrop-blur-md transition-all duration-300 group shadow-lg"
+          >
+            <div className="absolute top-0 right-0 w-28 h-28 bg-purple-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-purple-500/20 transition-all" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-11 h-11 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-inner group-hover:scale-110 transition-transform">
+                  <Code2 size={22} />
+                </div>
+                <span className="text-[9px] font-mono font-bold text-purple-300 bg-purple-950/40 border border-purple-500/30 px-2 py-0.5 rounded-full uppercase">
+                  98+ Lighthouse SEO
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-white uppercase tracking-tight mb-1">
+                Frontend Developer
+              </h3>
+              <p className="text-[10px] text-purple-400 font-mono font-bold uppercase tracking-wider mb-2.5">
+                Next.js 15 &amp; React 19
+              </p>
+              <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+                Ultra-fast Next.js 15 SSR/SSG rendering, responsive Tailwind CSS layouts, Framer Motion micro-physics, and search-optimized core web vitals.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/5">
+              {["Next.js 15", "React 19", "Tailwind CSS", "TypeScript", "Core Web Vitals"].map((chip, idx) => (
+                <span key={idx} className="text-[8px] font-mono font-semibold bg-zinc-950 border border-purple-500/20 text-purple-300/90 px-2 py-0.5 rounded-md">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Card 4: App Developer */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            transition={{ type: "spring", stiffness: 350, damping: 20 }}
+            className="bg-zinc-900/40 border border-sky-500/20 hover:border-sky-500/50 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden backdrop-blur-md transition-all duration-300 group shadow-lg"
+          >
+            <div className="absolute top-0 right-0 w-28 h-28 bg-sky-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none group-hover:bg-sky-500/20 transition-all" />
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-11 h-11 rounded-xl bg-sky-950/60 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-inner group-hover:scale-110 transition-transform">
+                  <Smartphone size={22} />
+                </div>
+                <span className="text-[9px] font-mono font-bold text-sky-300 bg-sky-950/40 border border-sky-500/30 px-2 py-0.5 rounded-full uppercase">
+                  Cross-Platform
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-white uppercase tracking-tight mb-1">
+                App Developer
+              </h3>
+              <p className="text-[10px] text-sky-400 font-mono font-bold uppercase tracking-wider mb-2.5">
+                Mobile &amp; PWA Apps
+              </p>
+              <p className="text-zinc-400 text-xs leading-relaxed mb-4">
+                Hybrid cross-platform iOS &amp; Android apps, Progressive Web Apps with service worker offline caching, and sub-second touch responsiveness.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/5">
+              {["React Native", "PWA Offline", "Service Workers", "iOS & Android", "Sub-Second Touch"].map((chip, idx) => (
+                <span key={idx} className="text-[8px] font-mono font-semibold bg-zinc-950 border border-sky-500/20 text-sky-300/90 px-2 py-0.5 rounded-md">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
 
       {/* ========================================================== */}
       {/* FULL EXPERT TECH STACK & PRODUCTION ARSENAL */}
