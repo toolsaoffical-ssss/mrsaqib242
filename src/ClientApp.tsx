@@ -99,11 +99,11 @@ const skills = [
 ];
 
 const interests = [
-  'Technology Innovation',
-  'Content Creation',
-  'AI Tools & Development',
-  'Creative Design',
-  'Digital Growth'
+  'Cyber Security Expert',
+  'Backend Architecture',
+  'Frontend Engineering',
+  'Cross-Platform App Dev',
+  'Zero-Trust Cloud Systems'
 ];
 
 const profileImages = [
@@ -548,10 +548,10 @@ export default function App() {
             className="pointer-events-auto absolute top-[15%] md:top-[15%] left-6 md:left-12 max-w-[220px] md:max-w-xs text-[#1a1a1a]"
           >
             <ul className="space-y-1.5 md:space-y-2 text-[9px] md:text-xs font-bold tracking-widest uppercase">
-              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> Creative Visual Artist</li>
-              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> Content Creator</li>
-              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> Tech Enthusiast</li>
-              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> AI Developer</li>
+              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> Cyber Security Expert</li>
+              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> Backend Developer</li>
+              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> Frontend Developer</li>
+              <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#1a1a1a]"></div> App Developer</li>
             </ul>
           </motion.div>
 

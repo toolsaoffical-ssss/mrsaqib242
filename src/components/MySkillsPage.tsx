@@ -196,6 +196,23 @@ interface PipelineStep {
 
 const steps: PipelineStep[] = [
   {
+    id: "cyber-security",
+    title: "Cyber Security",
+    techs: ["Zero-Trust", "Supabase RLS", "API Guard"],
+    description: "Fortress-grade web defense & database lockdown",
+    details: [
+      "Row-Level Security (RLS) policies preventing unauthorized data access",
+      "API Mirage Guard middleware for bot mitigation & honeypot traps",
+      "Offensive pentesting & zero-trust server hardening against exploits"
+    ],
+    color: "#10B981",
+    logo: (
+      <div className="flex items-center justify-center bg-zinc-950/80 p-2 rounded-xl border border-white/5 shadow-inner">
+        <span className="text-emerald-400 flex items-center justify-center"><ShieldCheck size={20} /></span>
+      </div>
+    )
+  },
+  {
     id: "html-css-js",
     title: "HTML, CSS & JS",
     techs: ["HTML5", "CSS3", "ES6+"],
@@ -313,6 +330,23 @@ const steps: PipelineStep[] = [
     logo: (
       <div className="flex items-center justify-center bg-zinc-950/80 p-2 rounded-xl border border-white/5 shadow-inner">
         <span className="text-purple-500 flex items-center justify-center"><Bot size={20} /></span>
+      </div>
+    )
+  },
+  {
+    id: "app-development",
+    title: "App Dev",
+    techs: ["React Native", "PWA", "Service Workers"],
+    description: "Cross-platform mobile & progressive web apps",
+    details: [
+      "Progressive Web Apps (PWA) with offline caching and instant load",
+      "Cross-platform hybrid app architectures for iOS and Android",
+      "Mobile-first responsive optimization and sub-second touch response"
+    ],
+    color: "#38BDF8",
+    logo: (
+      <div className="flex items-center justify-center bg-zinc-950/80 p-2 rounded-xl border border-white/5 shadow-inner">
+        <span className="text-sky-400 flex items-center justify-center"><Layers size={20} /></span>
       </div>
     )
   }
@@ -554,25 +588,29 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
             <div className="mb-6">
               <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">MUHAMMAD SAQIB</div>
               <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-2 leading-none">
-                Multidisciplinary Artist
+                Cyber Security &amp; Full-Stack Prodigy
               </h2>
               <p className="text-zinc-400 text-xs leading-relaxed font-medium">
-                17-year-old Full-Stack Developer, Visual Director, and Creative Scriptwriter based in Pakistan. Bridging structural software architectures with high-end creative visual design.
+                Elite Cyber Security Specialist, Backend Architect, Frontend Developer, and App Engineer based in Pakistan. Operating at the intersection of zero-trust security and high-velocity modern web/mobile performance.
               </p>
             </div>
 
             {/* Quick Metrics */}
             <div className="space-y-2 mb-6 border-t border-white/5 pt-4">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-zinc-500">MERN Pipeline Mastery</span>
-                <span className="text-cyan-400 font-bold font-mono">100%</span>
+                <span className="text-zinc-500">Zero-Trust &amp; Cyber Security</span>
+                <span className="text-emerald-400 font-bold font-mono">100% Hardened</span>
               </div>
               <div className="w-full bg-zinc-950 h-1.5 rounded-full overflow-hidden">
-                <div className="w-full h-full bg-gradient-to-r from-cyan-400 to-purple-500" />
+                <div className="w-full h-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500" />
               </div>
               <div className="flex justify-between items-center text-xs mt-2">
-                <span className="text-zinc-500">Graphic Compositions</span>
-                <span className="text-purple-400 font-bold font-mono">150+ Posters</span>
+                <span className="text-zinc-500">Backend &amp; Supabase RLS</span>
+                <span className="text-cyan-400 font-bold font-mono">Node.js / Express</span>
+              </div>
+              <div className="flex justify-between items-center text-xs mt-2">
+                <span className="text-zinc-500">Frontend &amp; Mobile Apps</span>
+                <span className="text-purple-400 font-bold font-mono">Next.js 15 / React / PWA</span>
               </div>
             </div>
           </div>
@@ -756,7 +794,7 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
               <div className="lg:col-span-8 bg-zinc-900/40 p-3.5 rounded-xl border border-white/5 shadow-inner">
                 <div className="font-mono text-[8px] text-zinc-500 uppercase tracking-widest mb-2.5 flex items-center justify-between">
                   <span>SYSTEM SPECIFICATIONS & STACKS</span>
-                  <span className="text-cyan-400 font-bold animate-pulse">0{activeStep + 1} / 06</span>
+                  <span className="text-cyan-400 font-bold animate-pulse">0{activeStep + 1} / 0{steps.length}</span>
                 </div>
 
                 <ul className="space-y-2">

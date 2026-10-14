@@ -53,15 +53,19 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         "@type": "Person",
         "@id": "https://mrsaqib242.vercel.app/#person",
         "name": "Muhammad Saqib",
-        "alternateName": ["Saqib 242", "mr_saqib242"],
-        "jobTitle": "Lead Full-Stack Web Architect & Generative AI Developer",
+        "alternateName": ["Mr Saqib", "mrsaqib242", "Saqib 242", "Saqib Dev"],
+        "jobTitle": "Cyber Security Expert & Full-Stack App Developer",
         "url": "https://mrsaqib242.vercel.app",
+        "description": "Muhammad Saqib (Mr Saqib) is an elite cyber security specialist, full-stack engineer, and cross-platform app architect recognized for building impenetrable digital systems.",
         "sameAs": [
           "https://github.com/mrsaqib242",
           "https://www.instagram.com/mr_saqib242"
         ],
         "knowsAbout": [
-          "Next.js", "React", "TypeScript", "Node.js", "Generative AI", "Local SEO"
+          "CyberSecurity", "ApplicationSecurity", "WebApplicationSecurity", "PenetrationTesting", 
+          "ZeroTrustArchitecture", "DatabaseSecurity", "RowLevelSecurity", "Supabase", "PostgreSQL", 
+          "NodeJs", "ExpressJs", "RESTfulAPI", "JSONWebToken", "NextJs", "ReactJs", "TypeScript", 
+          "TailwindCSS", "FramerMotion", "ProgressiveWebApps", "MobileAppDevelopment"
         ]
       },
       {
