@@ -41,7 +41,15 @@ import {
   SiPicsart,
   SiClaude,
   SiMeta,
-  SiPerplexity
+  SiPerplexity,
+  SiTypescript,
+  SiPostgresql,
+  SiTailwindcss,
+  SiVite,
+  SiSupabase,
+  SiPython,
+  SiAngular,
+  SiNextdotjs
 } from 'react-icons/si';
 import { FaMicrosoft } from 'react-icons/fa6';
 
@@ -1140,6 +1148,84 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
         </motion.div>
 
       </div>
+
+      {/* ========================================================== */}
+      {/* FULL EXPERT TECH STACK & PRODUCTION ARSENAL */}
+      {/* ========================================================== */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="mt-14 mb-14 relative z-10"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
+          <div className="flex items-center gap-2.5">
+            <div className="w-1.5 h-5 bg-gradient-to-b from-cyan-400 to-emerald-400 rounded-full" />
+            <div>
+              <h2 className="text-sm sm:text-base font-black text-white tracking-widest uppercase">
+                FULL EXPERT TECH STACK &amp; PRODUCTION ARSENAL
+              </h2>
+              <p className="text-zinc-500 text-[10px] sm:text-xs font-medium">Core battle-tested frameworks, database systems, and full-stack runtimes.</p>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-3 py-1 rounded-full uppercase tracking-wider self-start sm:self-auto">
+            100% Production Ready
+          </span>
+        </div>
+
+        {/* Core Expertise Tags */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {[
+            { label: 'Full-Stack Web', color: 'border-cyan-500/30 text-cyan-300 bg-cyan-950/20' },
+            { label: 'Mobile Apps & PWA', color: 'border-purple-500/30 text-purple-300 bg-purple-950/20' },
+            { label: 'Cyber Security & RLS', color: 'border-emerald-500/30 text-emerald-300 bg-emerald-950/20' },
+            { label: 'React & Next.js 15', color: 'border-sky-500/30 text-sky-300 bg-sky-950/20' },
+            { label: 'Databases & REST APIs', color: 'border-blue-500/30 text-blue-300 bg-blue-950/20' },
+            { label: 'AI Chatbot Integration', color: 'border-amber-500/30 text-amber-300 bg-amber-950/20' },
+            { label: 'UI/UX & Micro-interactions', color: 'border-pink-500/30 text-pink-300 bg-pink-950/20' },
+            { label: 'Cloud & Vercel DevOps', color: 'border-zinc-500/30 text-zinc-300 bg-zinc-900/40' }
+          ].map((tag, idx) => (
+            <span key={idx} className={`text-[10px] font-bold px-3 py-1.5 rounded-xl border ${tag.color} shadow-sm backdrop-blur-sm transition-all hover:scale-105 cursor-default`}>
+              {tag.label}
+            </span>
+          ))}
+        </div>
+
+        {/* Tech Stack Visual Grid */}
+        <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4 mb-6">
+          {[
+            { name: 'React', desc: 'UI Engine', icon: <SiReact size={26} />, color: '#61DAFB', bg: 'hover:border-[#61DAFB]/40' },
+            { name: 'Next.js', desc: 'Full-Stack SSR', icon: <SiNextdotjs size={26} />, color: '#FFFFFF', bg: 'hover:border-white/40' },
+            { name: 'TypeScript', desc: 'Type Safety', icon: <SiTypescript size={24} />, color: '#3178C6', bg: 'hover:border-[#3178C6]/40' },
+            { name: 'Tailwind', desc: 'Utility CSS', icon: <SiTailwindcss size={26} />, color: '#06B6D4', bg: 'hover:border-[#06B6D4]/40' },
+            { name: 'Vite', desc: 'Rapid Bundler', icon: <SiVite size={26} />, color: '#646CFF', bg: 'hover:border-[#646CFF]/40' },
+            { name: 'Node.js', desc: 'Async Runtime', icon: <SiNodedotjs size={26} />, color: '#339933', bg: 'hover:border-[#339933]/40' },
+            { name: 'Express', desc: 'API Router', icon: <SiExpress size={26} />, color: '#FFFFFF', bg: 'hover:border-white/40' },
+            { name: 'PostgreSQL', desc: 'Relational DB', icon: <SiPostgresql size={26} />, color: '#336791', bg: 'hover:border-[#336791]/40' },
+            { name: 'Supabase', desc: 'Zero-Trust RLS', icon: <SiSupabase size={26} />, color: '#3ECF8E', bg: 'hover:border-[#3ECF8E]/40' },
+            { name: 'MongoDB', desc: 'NoSQL Cloud', icon: <SiMongodb size={26} />, color: '#47A248', bg: 'hover:border-[#47A248]/40' },
+            { name: 'Angular', desc: 'Enterprise Dev', icon: <SiAngular size={26} />, color: '#DD0031', bg: 'hover:border-[#DD0031]/40' },
+            { name: 'Python', desc: 'AI & Automation', icon: <SiPython size={26} />, color: '#3776AB', bg: 'hover:border-[#3776AB]/40' }
+          ].map((item, idx) => (
+            <motion.div 
+              key={idx}
+              whileHover={{ y: -4, scale: 1.03 }}
+              transition={{ type: "spring", stiffness: 350, damping: 15 }}
+              className={`bg-zinc-900/50 border border-white/5 rounded-2xl p-4 flex flex-col items-center text-center backdrop-blur-md transition-all duration-300 ${item.bg} group cursor-pointer shadow-lg`}
+            >
+              <div 
+                className="w-12 h-12 rounded-xl bg-zinc-950 flex items-center justify-center mb-3 shadow-inner border border-white/5 group-hover:scale-110 transition-transform duration-300"
+                style={{ color: item.color }}
+              >
+                {item.icon}
+              </div>
+              <h3 className="text-xs font-black text-white group-hover:text-white transition-colors">{item.name}</h3>
+              <p className="text-[9px] font-mono text-zinc-500 mt-0.5">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* Software Skills Section */}
       <motion.div 

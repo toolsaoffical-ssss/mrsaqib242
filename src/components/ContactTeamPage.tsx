@@ -222,119 +222,147 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl -mr-10 -mt-10" />
             
-            <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center mb-6 sm:mb-8 relative z-10">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#F0F2F5] shadow-[inset_6px_6px_12px_#d9dadc,inset_-6px_-6px_12px_#ffffff] flex items-center justify-center shrink-0 border-[3px] border-white">
-                <Code className="text-zinc-700 w-8 h-8 sm:w-10 sm:h-10" />
+            {/* Live Availability Status */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 relative z-10 border-b border-zinc-200/60 pb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 text-emerald-800 text-xs font-black uppercase tracking-wider shadow-sm">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Active &amp; Available for New Projects</span>
+              </div>
+              <span className="text-[11px] font-mono font-bold text-zinc-500 uppercase tracking-widest">
+                Direct Founder Access
+              </span>
+            </div>
+
+            {/* Profile Header */}
+            <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center mb-6 relative z-10">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white shadow-[inset_4px_4px_8px_#d9dadc,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center shrink-0 border-2 border-white">
+                <img 
+                  src="https://ik.imagekit.io/19imy4f1u/lite_1791955994422_-jhmpCKzP.webp?tr=w-200,h-200,fo-face,q-90" 
+                  alt="Muhammad Saqib" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
-                <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
-                  <Briefcase size={12} className="sm:w-3.5 sm:h-3.5" />
-                  Founder & Lead Developer
+                <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-600 mb-1 flex items-center gap-1.5">
+                  <Briefcase size={12} className="sm:w-3.5 sm:h-3.5 text-emerald-600" />
+                  Founder • Cyber Security &amp; Full-Stack App Architect
                 </h3>
                 <h2 className="text-2xl sm:text-3xl font-black text-zinc-800 tracking-tight">{profile.name || 'Muhammad Saqib'}</h2>
+                <p className="text-zinc-500 text-xs font-medium mt-0.5">Based in Faisalabad / Gojra, Pakistan • Available for Remote Worldwide Contracts</p>
               </div>
             </div>
             
-            <p className="text-zinc-600 text-sm sm:text-base leading-relaxed font-medium mb-6 sm:mb-8">
-              {profile.bio || "I'm a passionate Full-Stack Web Developer, App Developer, AI Enthusiast, and Creative Content Creator with a strong focus on building modern, fast, and scalable digital solutions. My goal is to help businesses, creators, and startups bring their ideas to life through innovative technology and creative design."}
+            <p className="text-zinc-600 text-sm sm:text-base leading-relaxed font-medium mb-6">
+              {profile.bio || "Passionate Cyber Security Specialist, Full-Stack Engineer, and Cross-Platform App Developer building zero-trust web architectures, hardened cloud databases, and lightning-fast Next.js applications. Direct consultations, security audits, and enterprise project inquiries welcome."}
             </p>
 
-            <div className="bg-[#F0F2F5] rounded-2xl p-5 sm:p-6 shadow-[inset_4px_4px_8px_#d9dadc,inset_-4px_-4px_8px_#ffffff] sm:shadow-[inset_6px_6px_12px_#d9dadc,inset_-6px_-6px_12px_#ffffff]">
-              <h4 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3 sm:mb-4">Expertise</h4>
-              <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 sm:gap-3 text-xs sm:text-sm font-semibold text-zinc-700 mb-6">
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><Code size={14} className="text-zinc-500 shrink-0" /> Full-Stack Web</motion.div>
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><Smartphone size={14} className="text-zinc-500 shrink-0" /> Mobile Apps</motion.div>
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><Cpu size={14} className="text-zinc-500 shrink-0" /> AI Integration</motion.div>
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><Globe size={14} className="text-zinc-500 shrink-0" /> React & Next.js</motion.div>
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><Database size={14} className="text-zinc-500 shrink-0" /> Databases & APIs</motion.div>
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><Layout size={14} className="text-zinc-500 shrink-0" /> UI/UX Design</motion.div>
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><PenTool size={14} className="text-zinc-500 shrink-0" /> Branding</motion.div>
-                <motion.div whileHover={{ scale: 1.05, x: 5 }} className="flex items-center gap-2"><Video size={14} className="text-zinc-500 shrink-0" /> Video Editing</motion.div>
+            {/* 4 Direct VIP Action Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+              {/* WhatsApp */}
+              <motion.a 
+                whileHover={{ y: -3, scale: 1.02 }}
+                href={`https://wa.me/92343673242?text=${encodeURIComponent('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a project with you.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/25 flex flex-col justify-between group cursor-pointer transition-all"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white">
+                    <SiWhatsapp size={20} />
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">Instant</span>
+                </div>
+                <div>
+                  <div className="text-xs font-black uppercase tracking-wide">WhatsApp Chat</div>
+                  <div className="text-[10px] text-white/80 font-medium">Direct priority messaging</div>
+                </div>
+              </motion.a>
+
+              {/* Call */}
+              <motion.a 
+                whileHover={{ y: -3, scale: 1.02 }}
+                href={`tel:${(profile.phone || '+92343673242').replace(/\s+/g, '')}`}
+                className="p-4 rounded-2xl bg-white shadow-md border border-zinc-100 flex flex-col justify-between group cursor-pointer hover:border-emerald-300 transition-all"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <Phone size={18} />
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Voice</span>
+                </div>
+                <div>
+                  <div className="text-xs font-black text-zinc-800 uppercase tracking-wide">Direct Call</div>
+                  <div className="text-[10px] text-zinc-500 font-medium">{profile.phone || '+92 343 673242'}</div>
+                </div>
+              </motion.a>
+
+              {/* Email */}
+              <motion.a 
+                whileHover={{ y: -3, scale: 1.02 }}
+                href={`mailto:${profile.email || 'mrsaqib242242@gmail.com'}`}
+                className="p-4 rounded-2xl bg-white shadow-md border border-zinc-100 flex flex-col justify-between group cursor-pointer hover:border-blue-300 transition-all"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Mail size={18} />
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">Email</span>
+                </div>
+                <div>
+                  <div className="text-xs font-black text-zinc-800 uppercase tracking-wide">Official Email</div>
+                  <div className="text-[10px] text-zinc-500 font-medium truncate">{profile.email || 'mrsaqib242242@gmail.com'}</div>
+                </div>
+              </motion.a>
+
+              {/* Resume */}
+              <motion.a 
+                whileHover={{ y: -3, scale: 1.02 }}
+                href={profile.resume_url || '/resume.pdf'}
+                download="Saqib_Resume.pdf"
+                className="p-4 rounded-2xl bg-white shadow-md border border-zinc-100 flex flex-col justify-between group cursor-pointer hover:border-purple-300 transition-all"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <Briefcase size={18} />
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">PDF</span>
+                </div>
+                <div>
+                  <div className="text-xs font-black text-zinc-800 uppercase tracking-wide">Download CV</div>
+                  <div className="text-[10px] text-zinc-500 font-medium">Verified Credentials</div>
+                </div>
+              </motion.a>
+            </div>
+
+            {/* Trust & Guarantee Badges */}
+            <div className="p-4 rounded-2xl bg-white/60 border border-white shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 mb-6">
+              <div className="flex items-center gap-1.5 font-bold">
+                <span className="text-emerald-500">⚡</span> &lt; 2 Hours Response Time
               </div>
-
-              {/* Core Expert Tech Stack */}
-              <h4 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4 mt-6 border-t border-zinc-200/50 pt-4">Full Expert Tech Stack</h4>
-              <div className="flex flex-wrap items-center justify-start gap-4 sm:gap-6">
-                {/* React */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#61DAFB]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#61DAFB] transition-colors">React</span>
-                </motion.div>
-                
-                {/* Next.js */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-zinc-800">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-zinc-900 transition-colors">Next.js</span>
-                </motion.div>
-
-                {/* Vite */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#646CFF]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg" alt="Vite" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#646CFF] transition-colors">Vite</span>
-                </motion.div>
-
-                {/* Tailwind */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#06B6D4]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#06B6D4] transition-colors">Tailwind</span>
-                </motion.div>
-
-                {/* MongoDB */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#47A248]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#47A248] transition-colors">MongoDB</span>
-                </motion.div>
-
-                {/* Express */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-zinc-800">
-                    <SiExpress size={28} className="text-zinc-800" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-zinc-900 transition-colors">Express</span>
-                </motion.div>
-
-                {/* Node.js */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#339933]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#339933] transition-colors">Node.js</span>
-                </motion.div>
-
-                {/* Angular */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#DD0031]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" alt="Angular" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#DD0031] transition-colors">Angular</span>
-                </motion.div>
-
-                {/* TypeScript */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#3178C6]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#3178C6] transition-colors">TypeScript</span>
-                </motion.div>
-                
-                {/* PostgreSQL */}
-                <motion.div whileHover={{ y: -3, scale: 1.05 }} className="flex flex-col items-center gap-2 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl shadow-md border border-zinc-100 flex items-center justify-center p-2.5 transition-colors group-hover:border-[#336791]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-zinc-600 group-hover:text-[#336791] transition-colors">PostgreSQL</span>
-                </motion.div>
+              <div className="flex items-center gap-1.5 font-bold">
+                <span className="text-blue-500">🔒</span> 100% NDA &amp; Privacy Protected
               </div>
+              <div className="flex items-center gap-1.5 font-bold">
+                <span className="text-purple-500">🛡️</span> Zero-Trust Hardened Code
+              </div>
+              <div className="flex items-center gap-1.5 font-bold">
+                <span className="text-amber-500">🌍</span> Direct 1-on-1 Consultation
+              </div>
+            </div>
+
+            {/* Link to Skills Hub */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-zinc-900 to-black text-white shadow-lg">
+              <div className="text-center sm:text-left">
+                <div className="text-xs font-black uppercase tracking-wider text-emerald-400">Looking for Technical Stacks &amp; Frameworks?</div>
+                <div className="text-[11px] text-zinc-400 font-medium">Inspect our full production tech stack, architecture pipeline &amp; AI sandbox.</div>
+              </div>
+              <Link 
+                href="/skills"
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-xs font-black uppercase tracking-wider shrink-0 transition-all hover:scale-105 flex items-center gap-1.5"
+              >
+                <span>View Skills Matrix</span>
+                <span>→</span>
+              </Link>
             </div>
           </motion.div>
         </div>
