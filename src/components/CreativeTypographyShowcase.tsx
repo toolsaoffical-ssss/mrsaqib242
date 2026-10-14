@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Instagram, Send } from 'lucide-react';
 
 export default function CreativeTypographyShowcase() {
-  const userImageUrl = "https://ik.imagekit.io/shaban/SHABAN-1768575063823_VKv0h9E-k.jpg?tr=w-500,q-70";
+  const userImageUrl = "https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-500,q-80";
   const leafImageUrl = "https://images.unsplash.com/photo-1536882240095-0379873feb4e?q=60&w=400&auto=format&fit=crop";
 
   return (

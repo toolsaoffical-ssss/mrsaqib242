@@ -77,14 +77,14 @@ export default function ContactRoute() {
         <meta key="og:title" property="og:title" content="Mr Saqib Contact &amp; WhatsApp Number | Hire Web Developer (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Contact Mr Saqib (mr saqib contact / saqib 242). Get phone number, official WhatsApp (+92 343 673242), email, office location in Gojra, Faisalabad, and instant project quotes." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/contact" />
-        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
         <meta key="twitter:title" name="twitter:title" content="Mr Saqib Contact &amp; WhatsApp Number | Hire Web Developer (Saqib 242)" />
         <meta key="twitter:description" name="twitter:description" content="Contact Mr Saqib (mr saqib contact / saqib 242). Get phone number, official WhatsApp (+92 343 673242), email, office location in Gojra, Faisalabad, and instant project quotes." />
-        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
 
         {/* JSON-LD Schema */}
         <script

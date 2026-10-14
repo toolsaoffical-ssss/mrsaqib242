@@ -16,7 +16,7 @@ const Hexagon = ({ cx, cy, r, ...props }: { cx: number; cy: number; r: number; [
 };
 
 export default function EnrouteShowcase() {
-  const imageUrl = "https://ik.imagekit.io/shaban/SHABAN-1768575218262_6SqMS7ijo.jpg";
+  const imageUrl = "https://ik.imagekit.io/mrsaqib/mrsaqib242-img2_qZL3jHY-8w.png";
 
   // Hexagon grid configuration
   const R = 90;

@@ -68,14 +68,14 @@ export default function PlansRoute() {
         <meta key="og:title" property="og:title" content="Mr Saqib Plans &amp; Pricing | Web Packages (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Explore Mr Saqib plans and website pricing packages (saqib plans). Affordable custom web design, Next.js eCommerce, business landing pages, and AI chatbots by Saqib 242." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/plans" />
-        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
         <meta key="twitter:title" name="twitter:title" content="Mr Saqib Plans &amp; Pricing | Web Packages (Saqib 242)" />
         <meta key="twitter:description" name="twitter:description" content="Explore Mr Saqib plans and website pricing packages (saqib plans). Affordable custom web design, Next.js eCommerce, business landing pages, and AI chatbots by Saqib 242." />
-        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/shaban/SHABAN-1768573425069_nIPVZQOaT.jpg?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
 
         {/* JSON-LD Schema */}
         <script

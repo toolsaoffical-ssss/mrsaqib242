@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Copy } from 'lucide-react';
 
 export default function WeatherShowcase() {
-  const imageUrl = "https://ik.imagekit.io/shaban/SHABAN-1768575240340_5tz9dWXNo.jpg?tr=w-500,q-70";
+  const imageUrl = "https://ik.imagekit.io/mrsaqib/mrsaqib242-img4_PMS638wr1.png?tr=w-500,q-80";
 
   return (
     <section id="weather-showcase" className="relative w-full min-h-[100dvh] bg-zinc-950 flex items-center justify-center py-20 font-sans">

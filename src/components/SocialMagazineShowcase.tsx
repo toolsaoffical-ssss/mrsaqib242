@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Heart, MessageCircle, Send, Bookmark, Home, Search, PlusSquare, User, MoreHorizontal, BadgeCheck } from 'lucide-react';
 
 export default function SocialMagazineShowcase() {
-  const imageUrl = "https://ik.imagekit.io/shaban/SHABAN-1768575063823_VKv0h9E-k.jpg";
+  const imageUrl = "https://ik.imagekit.io/mrsaqib/mrsaqib242-img13_XhJhYKDvf.png";
   const redColor = "#E62B2B";
 
   return (

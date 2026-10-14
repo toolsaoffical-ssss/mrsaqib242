@@ -20,9 +20,9 @@ const RippedEdge = ({ className, inverted = false, shadow = false }: { className
 );
 
 export default function TornPaperShowcase() {
-  const topImage = "https://ik.imagekit.io/shaban/SHABAN-1768575240340_5tz9dWXNo.jpg?tr=w-800,q-75";
-  const middleImage = "https://ik.imagekit.io/shaban/SHABAN-1768575063823_VKv0h9E-k.jpg?tr=w-800,q-80";
-  const bottomImage = "https://ik.imagekit.io/shaban/SHABAN-1768575265565_APidCqJd2.jpg?tr=w-800,q-75";
+  const topImage = "https://ik.imagekit.io/mrsaqib/mrsaqib242-img21_uVmQwGGeVd.png?tr=w-800,q-75";
+  const middleImage = "https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-800,q-80";
+  const bottomImage = "https://ik.imagekit.io/mrsaqib/mrsaqib242-img24_lzMFBE7QO.png?tr=w-800,q-75";
 
   return (
     <section className="w-full bg-zinc-900 flex flex-col relative overflow-hidden font-serif">

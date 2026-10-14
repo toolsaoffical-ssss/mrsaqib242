@@ -755,7 +755,7 @@ export default function App() {
                 }}
               >
                 <img 
-                  src="https://ik.imagekit.io/shaban/SHABAN-1768575245369_aFwAR5G1A.jpg?tr=w-500,q-80,f-auto" 
+                  src="https://ik.imagekit.io/mrsaqib/mrsaqib242-img3_1O2fIqT4c.png?tr=w-500,q-80,f-auto" 
                   alt="Graphic Design Showcase"
                   className="absolute max-w-none object-cover"
                   style={{
