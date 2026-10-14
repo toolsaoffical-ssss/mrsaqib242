@@ -844,6 +844,10 @@ export default function App() {
                   className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
                   loading="lazy"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const el = (e.currentTarget as HTMLImageElement).closest('.break-inside-avoid');
+                    if (el) (el as HTMLElement).style.display = 'none';
+                  }}
                 />
               </motion.div>
             ))}
