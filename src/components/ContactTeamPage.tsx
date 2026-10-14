@@ -104,14 +104,14 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
   };
 
   const SERVICES = [
-    { name: 'Full-Stack Web App', desc: 'Next.js 15, React 19 & Cloud DB', icon: <Code2 size={18} />, color: 'from-cyan-500/20 to-blue-500/20 text-cyan-400 border-cyan-500/30' },
-    { name: 'Cyber Security & RLS', desc: 'Zero-Trust, Pentesting & API Guard', icon: <ShieldCheck size={18} />, color: 'from-emerald-500/20 to-teal-500/20 text-emerald-400 border-emerald-500/30' },
-    { name: 'Mobile App (React Native/PWA)', desc: 'iOS, Android & Offline Cache', icon: <Smartphone size={18} />, color: 'from-purple-500/20 to-pink-500/20 text-purple-400 border-purple-500/30' },
-    { name: 'AI Solution & Gemini API', desc: 'Smart Chatbots & Automated LLMs', icon: <Bot size={18} />, color: 'from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30' },
-    { name: 'E-Commerce Marketplace', desc: 'High Converting & WhatsApp Order', icon: <Layers size={18} />, color: 'from-emerald-500/20 to-green-500/20 text-emerald-300 border-emerald-500/30' },
-    { name: 'Custom Tool / API', desc: 'High-Throughput Node/Express APIs', icon: <Server size={18} />, color: 'from-sky-500/20 to-indigo-500/20 text-sky-400 border-sky-500/30' },
-    { name: 'Portfolio / Landing Page', desc: 'Ultra-Fast 98+ SEO & Conversions', icon: <Globe size={18} />, color: 'from-violet-500/20 to-purple-500/20 text-violet-400 border-violet-500/30' },
-    { name: 'UI/UX & Brand Design', desc: 'Modern Cyberpunk & SaaS Interfaces', icon: <PenTool size={18} />, color: 'from-pink-500/20 to-rose-500/20 text-pink-400 border-pink-500/30' }
+    { name: 'Full-Stack Web App', desc: 'Next.js 15, React 19 & Cloud DB', icon: <Code2 size={18} className="text-cyan-600" /> },
+    { name: 'Cyber Security & RLS', desc: 'Zero-Trust, Pentesting & API Guard', icon: <ShieldCheck size={18} className="text-emerald-600" /> },
+    { name: 'Mobile App (React Native/PWA)', desc: 'iOS, Android & Offline Cache', icon: <Smartphone size={18} className="text-purple-600" /> },
+    { name: 'AI Solution & Gemini API', desc: 'Smart Chatbots & Automated LLMs', icon: <Bot size={18} className="text-amber-600" /> },
+    { name: 'E-Commerce Marketplace', desc: 'High Converting & WhatsApp Order', icon: <Layers size={18} className="text-emerald-600" /> },
+    { name: 'Custom Tool / API', desc: 'High-Throughput Node/Express APIs', icon: <Server size={18} className="text-sky-600" /> },
+    { name: 'Portfolio / Landing Page', desc: 'Ultra-Fast 98+ SEO & Conversions', icon: <Globe size={18} className="text-indigo-600" /> },
+    { name: 'UI/UX & Brand Design', desc: 'Modern SaaS Interfaces & Identity', icon: <PenTool size={18} className="text-pink-600" /> }
   ];
 
   const BUDGETS = [
@@ -250,15 +250,15 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
   const rawPhone = phoneDisplay.replace(/[\s\-\+]/g, '');
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white font-sans relative selection:bg-cyan-500 selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-[#F0F2F5] text-zinc-800 selection:bg-pink-300 selection:text-white font-sans relative overflow-x-hidden">
       
-      {/* Dynamic Ambient Glow Highlights */}
-      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="fixed bottom-1/4 right-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
-      <div className="fixed top-1/2 left-[-10%] w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      {/* Soft Background Decorative Blobs */}
+      <div className="fixed top-[-10%] left-[-10%] w-[55%] h-[55%] bg-white/70 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-100/50 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed top-1/2 right-[-5%] w-[35%] h-[35%] bg-emerald-100/30 rounded-full blur-[120px] pointer-events-none -z-10" />
 
       {/* Top Floating Glass Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4 bg-[#F0F2F5]/85 backdrop-blur-xl border-b border-white/60 shadow-[0_4px_25px_rgba(0,0,0,0.03)]">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link 
             href="/"
@@ -268,33 +268,33 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                 onBack();
               }
             }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-xs font-bold tracking-widest uppercase text-white/80 hover:text-white"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-[3px_3px_6px_#d9dadc,-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white text-zinc-700 hover:text-black transition-all text-xs font-bold tracking-widest uppercase cursor-pointer"
           >
             <ArrowLeft size={14} />
-            <span>Portfolio</span>
+            <span>Back to Home</span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-black uppercase tracking-widest text-zinc-300 hidden sm:inline">
-              Founder VIP Desk
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs font-black uppercase tracking-widest text-zinc-800 hidden sm:inline">
+              Contact &amp; VIP Founder Desk
             </span>
           </div>
 
           <div className="flex items-center gap-4">
-            <nav className="hidden md:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-zinc-400">
-              <Link href="/projects" className="hover:text-white transition-colors">Projects</Link>
-              <Link href="/skills" className="hover:text-white transition-colors">Skills</Link>
-              <Link href="/plans" className="hover:text-white transition-colors">Plans</Link>
-              <Link href="/tools" className="hover:text-white transition-colors">Tools</Link>
+            <nav className="hidden md:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-zinc-600">
+              <Link href="/projects" className="hover:text-black transition-colors">Projects</Link>
+              <Link href="/skills" className="hover:text-black transition-colors">Skills</Link>
+              <Link href="/plans" className="hover:text-black transition-colors">Plans</Link>
+              <Link href="/tools" className="hover:text-black transition-colors">Tools</Link>
             </nav>
             <a
               href={`https://wa.me/92343673242?text=${encodeURIComponent('Hi Muhammad Saqib! I would like to chat about a new project.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] hover:bg-[#1EBE5D] text-black text-xs font-black uppercase tracking-wider rounded-full shadow-lg shadow-emerald-500/20 transition-all hover:scale-105"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-black uppercase tracking-wider rounded-full shadow-md shadow-emerald-500/25 transition-all hover:scale-105"
             >
-              <SiWhatsapp size={13} />
+              <SiWhatsapp size={14} />
               <span className="hidden xs:inline">WhatsApp</span>
             </a>
           </div>
@@ -312,53 +312,59 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-widest mb-6 shadow-inner"
+            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] text-emerald-700 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-6 border border-white"
           >
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>DIRECT FOUNDER VIP GATEWAY • 24/7 PRIORITY INBOX</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+            <span>DIRECT FOUNDER VIP ACCESS • 24/7 PRIORITY INBOX</span>
           </motion.div>
 
           <motion.h1 
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight uppercase leading-none mb-6"
+            className="text-4xl sm:text-6xl md:text-7xl font-black text-zinc-800 tracking-tight mb-4 leading-none"
           >
-            Let's Build Something{' '}
-            <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              Legendary
-            </span>
+            Contact Mr Saqib
           </motion.h1>
 
           <motion.p 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.5 }}
-            className="text-zinc-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-medium"
+            className="text-zinc-500 font-bold tracking-widest uppercase text-xs sm:text-sm max-w-2xl mx-auto"
           >
-            Connect directly with <strong className="text-white">Muhammad Saqib (Saqib 242)</strong> — Cyber Security Specialist, Backend Architect, Frontend Developer &amp; App Engineer based in Pakistan.
+            Hire Muhammad Saqib (Saqib 242) | Official Phone, WhatsApp &amp; Consultations
           </motion.p>
 
-          {/* Real-time Pakistan Status Bar */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.5 }}
-            className="mt-6 inline-flex flex-wrap items-center justify-center gap-3 sm:gap-6 px-5 py-2.5 rounded-2xl bg-zinc-900/60 border border-white/10 text-xs text-zinc-400 backdrop-blur-md shadow-lg"
+            className="mt-4 text-base sm:text-xl font-serif italic text-zinc-600 max-w-xl mx-auto"
+          >
+            &ldquo;Turning Ideas into Powerful Digital Experiences.&rdquo;
+          </motion.div>
+
+          {/* Real-time Status Badge */}
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.5 }}
+            className="mt-6 inline-flex flex-wrap items-center justify-center gap-3 sm:gap-6 px-5 py-2.5 rounded-2xl bg-white shadow-[4px_4px_10px_#d9dadc,-4px_-4px_10px_#ffffff] border border-white text-xs text-zinc-600"
           >
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-emerald-400 font-bold font-mono uppercase tracking-wider">Active Now</span>
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-emerald-700 font-bold uppercase tracking-wider">Active Now</span>
             </div>
-            <div className="hidden sm:block h-3.5 w-px bg-white/10" />
-            <div className="flex items-center gap-1.5 font-mono text-zinc-300">
-              <Clock size={13} className="text-cyan-400" />
+            <div className="hidden sm:block h-3.5 w-px bg-zinc-200" />
+            <div className="flex items-center gap-1.5 font-mono text-zinc-700">
+              <Clock size={13} className="text-cyan-600" />
               <span>{livePktTime || 'PKT (UTC+5)'}</span>
-              <span className="text-[10px] text-zinc-500 uppercase">Faisalabad, PK</span>
+              <span className="text-[10px] text-zinc-400 uppercase">Faisalabad, PK</span>
             </div>
-            <div className="hidden sm:block h-3.5 w-px bg-white/10" />
-            <div className="flex items-center gap-1.5 font-mono text-amber-300">
-              <Zap size={13} className="text-amber-400" />
+            <div className="hidden sm:block h-3.5 w-px bg-zinc-200" />
+            <div className="flex items-center gap-1.5 font-mono text-amber-700">
+              <Zap size={13} className="text-amber-500" />
               <span>WhatsApp Reply: &lt; 15 Mins</span>
             </div>
           </motion.div>
@@ -372,61 +378,59 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
-          className="max-w-5xl mx-auto bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-white/10 rounded-3xl p-6 sm:p-8 md:p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden mb-16"
+          className="max-w-5xl mx-auto bg-[#F0F2F5] rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-8 md:p-12 shadow-[8px_8px_16px_#d9dadc,-8px_-8px_16px_#ffffff] sm:shadow-[12px_12px_24px_#d9dadc,-12px_-12px_24px_#ffffff] border border-white/60 relative overflow-hidden mb-16"
         >
-          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-white/40 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
 
-          {/* Top Profile Strip */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-white/10 relative z-10">
+          {/* Top Profile Header */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-zinc-200/60 relative z-10">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
               
-              {/* Avatar with Glow Ring */}
-              <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-zinc-900 border-2 border-emerald-500/40 shadow-[0_0_25px_rgba(16,185,129,0.25)] shrink-0">
-                  <img 
-                    src="https://ik.imagekit.io/19imy4f1u/lite_1791955994422_-jhmpCKzP.webp?tr=w-240,h-240,fo-face,q-90" 
-                    alt="Muhammad Saqib" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-zinc-950 flex items-center justify-center text-[10px] text-black font-black">
-                  ✓
-                </span>
+              {/* Avatar with White Inset Border */}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white shadow-[inset_4px_4px_8px_#d9dadc,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center shrink-0 border-2 border-white relative">
+                <img 
+                  src="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png" 
+                  alt="Muhammad Saqib" 
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <div>
-                <div className="inline-flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                    Lead Architect &amp; Founder
-                  </span>
-                  <span className="text-[10px] font-mono text-zinc-500">ID: Saqib242</span>
+                <div className="inline-flex items-center gap-1.5 mb-1 text-xs font-bold uppercase tracking-widest text-emerald-700">
+                  <Briefcase size={13} className="text-emerald-600" />
+                  <span>Founder • Cyber Security &amp; Full-Stack App Architect</span>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+                <h2 className="text-2xl sm:text-3xl font-black text-zinc-800 tracking-tight flex items-center gap-2">
                   <span>{profile.name || 'Muhammad Saqib'}</span>
-                  <span className="text-xs text-cyan-400 font-mono font-bold border border-cyan-500/30 px-2 py-0.5 rounded-md bg-cyan-950/30">
-                    Verified
+                  <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full">
+                    Verified ID
                   </span>
                 </h2>
-                <p className="text-zinc-400 text-xs sm:text-sm mt-1 max-w-xl font-medium">
-                  Operating at the intersection of Zero-Trust Cyber Security, high-scale Backend microservices, and fluid Next.js 15 / React Native apps.
+                <p className="text-zinc-500 text-xs sm:text-sm font-medium mt-1 max-w-xl">
+                  Based in Faisalabad / Gojra, Pakistan • Available for Remote Worldwide Contracts &amp; Security Audits.
                 </p>
               </div>
             </div>
 
-            {/* Quick Consultation Badge */}
-            <div className="w-full md:w-auto bg-zinc-950/70 border border-white/5 rounded-2xl p-4 shrink-0 text-left md:text-right space-y-1">
-              <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">CONTRACT AVAILABILITY</div>
-              <div className="text-sm font-black text-emerald-400 flex items-center md:justify-end gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Open for Q4 &amp; 2027 Contracts</span>
+            {/* Quick Status Pill */}
+            <div className="w-full md:w-auto p-4 rounded-2xl bg-white/70 border border-white shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] text-left md:text-right shrink-0">
+              <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">CONTRACT STATUS</div>
+              <div className="text-sm font-black text-emerald-600 flex items-center md:justify-end gap-1.5 mt-0.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Open for New Projects</span>
               </div>
-              <div className="text-[11px] text-zinc-400 font-medium">Remote Worldwide • NDA Protected</div>
+              <div className="text-[11px] text-zinc-500 font-medium">Remote Worldwide • NDA Protected</div>
             </div>
           </div>
 
-          {/* 4 Direct VIP Action Hubs */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-8 border-b border-white/10 relative z-10">
+          {/* Bio statement */}
+          <p className="text-zinc-600 text-sm sm:text-base leading-relaxed font-medium my-6 relative z-10">
+            {profile.bio || "Passionate Cyber Security Specialist, Full-Stack Engineer, and Cross-Platform App Developer building zero-trust web architectures, hardened cloud databases, and lightning-fast Next.js applications. Direct consultations, security audits, and enterprise project inquiries welcome."}
+          </p>
+
+          {/* 4 Direct VIP Action Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mb-6 relative z-10">
             
             {/* WhatsApp */}
             <motion.a 
@@ -435,19 +439,19 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               href={`https://wa.me/92343673242?text=${encodeURIComponent('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a project with you.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-5 rounded-2xl bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white shadow-xl shadow-emerald-500/20 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+              className="p-5 rounded-2xl bg-[#25D366] text-white shadow-lg shadow-emerald-500/25 flex flex-col justify-between group cursor-pointer transition-all"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white backdrop-blur-sm group-hover:scale-110 transition-transform">
                   <SiWhatsapp size={22} />
                 </div>
-                <span className="text-[9px] font-black uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded-full">
-                  Instant Reply
+                <span className="text-[9px] font-black uppercase tracking-wider bg-black/15 px-2 py-0.5 rounded-full">
+                  Instant
                 </span>
               </div>
               <div>
                 <div className="text-sm font-black uppercase tracking-wide">WhatsApp Chat</div>
-                <div className="text-[11px] text-white/90 font-medium mt-0.5">Direct 1-on-1 Founder Chat</div>
+                <div className="text-[11px] text-white/90 font-medium mt-0.5">Direct priority messaging</div>
                 <div className="text-[10px] font-mono font-bold text-white/80 mt-2 flex items-center gap-1">
                   <span>+92 343 673242</span>
                   <ExternalLink size={10} />
@@ -460,20 +464,20 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               whileHover={{ y: -4, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 350, damping: 15 }}
               href={`tel:${rawPhone}`}
-              className="p-5 rounded-2xl bg-zinc-950/80 border border-white/10 hover:border-cyan-500/40 shadow-lg flex flex-col justify-between group cursor-pointer transition-all relative"
+              className="p-5 rounded-2xl bg-white shadow-[4px_4px_10px_#d9dadc,-4px_-4px_10px_#ffffff] border border-white flex flex-col justify-between group cursor-pointer hover:border-emerald-300 transition-all"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Phone size={20} />
                 </div>
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-cyan-300 bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded-full">
-                  Direct Line
+                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                  Voice
                 </span>
               </div>
               <div>
-                <div className="text-sm font-black text-white uppercase tracking-wide">Direct Voice Call</div>
-                <div className="text-[11px] text-zinc-400 font-medium mt-0.5">Phone &amp; Cell Consultation</div>
-                <div className="text-[10px] font-mono font-bold text-cyan-400 mt-2 truncate">
+                <div className="text-sm font-black text-zinc-800 uppercase tracking-wide">Direct Call</div>
+                <div className="text-[11px] text-zinc-500 font-medium mt-0.5">Phone &amp; Cell consultation</div>
+                <div className="text-[10px] font-mono font-bold text-zinc-800 mt-2 truncate">
                   {phoneDisplay}
                 </div>
               </div>
@@ -484,71 +488,82 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               whileHover={{ y: -4, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 350, damping: 15 }}
               onClick={() => copyToClipboard(emailDisplay, 'email')}
-              className="p-5 rounded-2xl bg-zinc-950/80 border border-white/10 hover:border-blue-500/40 shadow-lg flex flex-col justify-between group cursor-pointer transition-all relative"
+              className="p-5 rounded-2xl bg-white shadow-[4px_4px_10px_#d9dadc,-4px_-4px_10px_#ffffff] border border-white flex flex-col justify-between group cursor-pointer hover:border-blue-300 transition-all"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-950/60 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Mail size={20} />
                 </div>
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-blue-300 bg-blue-950/60 border border-blue-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                  {copiedField === 'email' ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
-                  {copiedField === 'email' ? 'Copied!' : 'Click to Copy'}
+                <span className="text-[9px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  {copiedField === 'email' ? <Check size={10} className="text-emerald-600" /> : <Copy size={10} />}
+                  {copiedField === 'email' ? 'Copied!' : 'Copy Email'}
                 </span>
               </div>
               <div>
-                <div className="text-sm font-black text-white uppercase tracking-wide">Official Email</div>
-                <div className="text-[11px] text-zinc-400 font-medium mt-0.5">Formal RFP &amp; Contracts</div>
-                <div className="text-[10px] font-mono font-bold text-blue-400 mt-2 truncate">
+                <div className="text-sm font-black text-zinc-800 uppercase tracking-wide">Official Email</div>
+                <div className="text-[11px] text-zinc-500 font-medium mt-0.5">Formal RFP &amp; Contracts</div>
+                <div className="text-[10px] font-mono font-bold text-blue-600 mt-2 truncate">
                   {emailDisplay}
                 </div>
               </div>
             </motion.div>
 
-            {/* CV / Credentials Download */}
+            {/* CV Download */}
             <motion.a 
               whileHover={{ y: -4, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 350, damping: 15 }}
               href={profile.resume_url || '/resume.pdf'}
               download="Muhammad_Saqib_CV.pdf"
-              className="p-5 rounded-2xl bg-zinc-950/80 border border-white/10 hover:border-purple-500/40 shadow-lg flex flex-col justify-between group cursor-pointer transition-all relative"
+              className="p-5 rounded-2xl bg-white shadow-[4px_4px_10px_#d9dadc,-4px_-4px_10px_#ffffff] border border-white flex flex-col justify-between group cursor-pointer hover:border-purple-300 transition-all"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <FileText size={20} />
                 </div>
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-purple-300 bg-purple-950/60 border border-purple-500/30 px-2 py-0.5 rounded-full">
+                <span className="text-[9px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">
                   PDF 2026/27
                 </span>
               </div>
               <div>
-                <div className="text-sm font-black text-white uppercase tracking-wide">Download CV</div>
-                <div className="text-[11px] text-zinc-400 font-medium mt-0.5">Verified Credentials &amp; Certs</div>
-                <div className="text-[10px] font-mono font-bold text-purple-400 mt-2 flex items-center gap-1">
-                  <span>Instant PDF Download</span>
+                <div className="text-sm font-black text-zinc-800 uppercase tracking-wide">Download CV</div>
+                <div className="text-[11px] text-zinc-500 font-medium mt-0.5">Verified credentials &amp; certs</div>
+                <div className="text-[10px] font-mono font-bold text-purple-600 mt-2 flex items-center gap-1">
+                  <span>Instant Download</span>
                   <span>↓</span>
                 </div>
               </div>
             </motion.a>
           </div>
 
-          {/* Trust, Security & SLA Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 relative z-10 text-xs text-zinc-300">
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-950/60 border border-white/5">
-              <span className="text-emerald-400"><Zap size={14} /></span>
-              <span className="font-bold">&lt; 15 Mins WhatsApp Reply</span>
+          {/* Trust & Guarantee Badges */}
+          <div className="p-4 rounded-2xl bg-white/70 border border-white shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 mb-6 relative z-10">
+            <div className="flex items-center gap-1.5 font-bold">
+              <span className="text-emerald-500">⚡</span> &lt; 15 Mins WhatsApp Response
             </div>
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-950/60 border border-white/5">
-              <span className="text-blue-400"><Lock size={14} /></span>
-              <span className="font-bold">100% NDA &amp; IP Protection</span>
+            <div className="flex items-center gap-1.5 font-bold">
+              <span className="text-blue-500">🔒</span> 100% NDA &amp; Privacy Protected
             </div>
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-950/60 border border-white/5">
-              <span className="text-purple-400"><ShieldCheck size={14} /></span>
-              <span className="font-bold">Zero-Trust Hardened Code</span>
+            <div className="flex items-center gap-1.5 font-bold">
+              <span className="text-purple-500">🛡️</span> Zero-Trust Hardened Code
             </div>
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-950/60 border border-white/5">
-              <span className="text-amber-400"><Star size={14} /></span>
-              <span className="font-bold">30-Day Post-Launch Support</span>
+            <div className="flex items-center gap-1.5 font-bold">
+              <span className="text-amber-500">⭐</span> 30-Day Post-Launch Support
             </div>
+          </div>
+
+          {/* Link to Skills Hub */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-zinc-900 to-black text-white shadow-lg relative z-10">
+            <div className="text-center sm:text-left">
+              <div className="text-xs font-black uppercase tracking-wider text-emerald-400">Looking for Technical Stacks &amp; Frameworks?</div>
+              <div className="text-[11px] text-zinc-400 font-medium">Inspect our full production tech stack, architecture pipeline &amp; AI sandbox.</div>
+            </div>
+            <Link 
+              href="/skills"
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-xs font-black uppercase tracking-wider shrink-0 transition-all hover:scale-105 flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>View Skills Matrix</span>
+              <span>→</span>
+            </Link>
           </div>
         </motion.div>
 
@@ -564,8 +579,8 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
         >
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
-              <Sparkles size={16} className="text-emerald-400 animate-pulse" />
-              <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
+              <Sparkles size={16} className="text-emerald-600 animate-pulse" />
+              <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-zinc-800">
                 Quick-Start Inquiries (1-Tap WhatsApp Connect)
               </h3>
             </div>
@@ -579,18 +594,18 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                 href={`https://wa.me/92343673242?text=${encodeURIComponent(prompt.msg)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3.5 rounded-2xl bg-zinc-900/40 hover:bg-zinc-900 border border-white/5 hover:border-emerald-500/40 flex items-center justify-between group transition-all cursor-pointer shadow-md"
+                className="p-3.5 rounded-2xl bg-white shadow-[4px_4px_8px_#d9dadc,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white flex items-center justify-between group transition-all cursor-pointer"
               >
                 <div className="pr-2">
-                  <div className="text-xs font-bold text-zinc-200 group-hover:text-emerald-300 transition-colors">
+                  <div className="text-xs font-bold text-zinc-800 group-hover:text-emerald-600 transition-colors">
                     {prompt.title}
                   </div>
                   <div className="text-[10px] text-zinc-500 truncate max-w-[240px] mt-0.5">
                     {prompt.msg}
                   </div>
                 </div>
-                <div className="w-7 h-7 rounded-lg bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-110 transition-transform">
-                  <SiWhatsapp size={13} />
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <SiWhatsapp size={15} />
                 </div>
               </a>
             ))}
@@ -606,24 +621,48 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            className="bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 md:p-12 backdrop-blur-xl shadow-2xl relative overflow-hidden"
+            className="bg-[#F0F2F5] rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 md:p-12 shadow-[8px_8px_16px_#d9dadc,-8px_-8px_16px_#ffffff] sm:shadow-[12px_12px_24px_#d9dadc,-12px_-12px_24px_#ffffff] border border-white/60 relative overflow-hidden"
           >
             {/* Ambient Background Accents */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-28 -mt-28" />
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -ml-28 -mb-28" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-200/40 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
 
             {/* Header */}
             <div className="text-center max-w-2xl mx-auto mb-10 relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400 mb-3">
-                <Sparkles size={12} className="text-cyan-400 animate-pulse" />
-                <span>Smart Project Estimator &amp; RFP</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] text-[11px] font-bold uppercase tracking-widest text-emerald-600 mb-3 border border-white">
+                <Sparkles size={14} className="text-emerald-500 animate-pulse" />
+                <span>Quick &amp; Easy Project Details</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
-                Send Project Requirements
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-zinc-800 tracking-tight">
+                Send Project Query &amp; Details
               </h2>
-              <p className="text-zinc-400 text-xs sm:text-sm font-medium mt-2 leading-relaxed">
-                Fill this 3-step blueprint. Every inquiry is personally reviewed by Muhammad Saqib with actionable architectural feedback and milestone estimates.
+              <p className="text-zinc-500 text-xs sm:text-sm font-medium mt-2 leading-relaxed">
+                Fill this simple 3-step form. We review every requirement immediately and reply via WhatsApp or Email within a few hours!
               </p>
+
+              {/* Instant WhatsApp Shortcut Banner */}
+              <div className="mt-5 p-3.5 rounded-2xl bg-white/70 border border-white shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#25D366] text-white flex items-center justify-center shrink-0 shadow-md">
+                    <SiWhatsapp size={20} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black text-zinc-800">Prefer Instant WhatsApp Chat?</div>
+                    <div className="text-[11px] text-zinc-500 font-medium">Skip typing and discuss directly with Saqib right now</div>
+                  </div>
+                </div>
+                <a
+                  href={`https://wa.me/92343673242?text=${encodeURIComponent(
+                    `Hi Muhammad Saqib! I came from your portfolio website and want to discuss a new project with you.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md flex items-center gap-1.5 transition-transform hover:scale-105 shrink-0"
+                >
+                  <SiWhatsapp size={14} />
+                  <span>Chat on WhatsApp</span>
+                </a>
+              </div>
             </div>
 
             {/* SUCCESS STATE */}
@@ -631,49 +670,49 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-zinc-950/80 rounded-3xl p-8 sm:p-12 text-center border border-emerald-500/30 shadow-2xl relative z-10 space-y-6"
+                className="bg-white/80 rounded-3xl p-8 sm:p-12 text-center border border-white shadow-[inset_4px_4px_8px_#d9dadc,inset_-4px_-4px_8px_#ffffff] relative z-10 space-y-6"
               >
-                <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
-                  <Check size={40} className="stroke-[3]" />
+                <div className="w-20 h-20 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/30">
+                  <Check size={42} className="stroke-[3]" />
                 </div>
                 <div className="space-y-2">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-300 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1 rounded-full">
-                    Inquiry Logged on Portal
+                  <span className="text-[11px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                    Query Received
                   </span>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
+                  <h3 className="text-2xl sm:text-3xl font-black text-zinc-800">
                     Thank You, {clientName}! 🚀
                   </h3>
-                  <p className="text-zinc-400 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
-                    Your inquiry has been submitted directly to Muhammad Saqib&apos;s priority queue. Reference ID: <code className="text-xs bg-zinc-900 px-2 py-0.5 rounded font-mono font-bold text-emerald-400 border border-white/10">{submittedId}</code>
+                  <p className="text-zinc-600 text-sm max-w-lg mx-auto leading-relaxed">
+                    Your project inquiry has been delivered directly to Muhammad Saqib&apos;s priority desk. Reference ID: <code className="text-xs bg-zinc-100 px-2.5 py-1 rounded-lg font-mono font-bold text-zinc-900 border border-zinc-200">{submittedId}</code>
                   </p>
                 </div>
 
                 {/* Submitted Recap Card */}
-                <div className="max-w-md mx-auto p-4 rounded-2xl bg-zinc-900/60 border border-white/10 text-left text-xs space-y-2">
-                  <div className="text-zinc-500 font-mono font-bold uppercase tracking-wider text-[10px]">SUBMISSION SNAPSHOT</div>
-                  <div className="flex justify-between text-zinc-300"><span>Service:</span> <strong className="text-white">{serviceType}</strong></div>
-                  <div className="flex justify-between text-zinc-300"><span>Budget:</span> <strong className="text-emerald-400">{budget}</strong></div>
-                  <div className="flex justify-between text-zinc-300"><span>Timeline:</span> <strong className="text-amber-400">{timeline}</strong></div>
+                <div className="max-w-md mx-auto p-4 rounded-2xl bg-[#F0F2F5] shadow-[inset_3px_3px_6px_#d9dadc,inset_-3px_-3px_6px_#ffffff] border border-white text-left text-xs space-y-1.5">
+                  <div className="text-zinc-500 font-bold uppercase tracking-wider text-[10px]">SUBMITTED DETAILS:</div>
+                  <div className="flex justify-between text-zinc-700"><span>Service:</span> <strong className="text-zinc-900">{serviceType}</strong></div>
+                  <div className="flex justify-between text-zinc-700"><span>Budget:</span> <strong className="text-emerald-600">{budget}</strong></div>
+                  <div className="flex justify-between text-zinc-700"><span>Timeline:</span> <strong className="text-zinc-900">{timeline}</strong></div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   <a
                     href={`https://wa.me/92343673242?text=${encodeURIComponent(
-                      `Hi Saqib! I submitted my project inquiry on your website (${submittedId}) for ${serviceType} (Budget: ${budget}). My Name: ${clientName} (${clientPhone || clientEmail}). Let's discuss!`
+                      `Hi Saqib! I submitted my project query on your website (${submittedId}) for ${serviceType} (Budget: ${budget}). My Name: ${clientName} (${clientPhone || clientEmail}). Let's discuss!`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-3.5 bg-[#25D366] hover:bg-[#1EBE5D] text-black font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-transform hover:scale-105 cursor-pointer"
+                    className="px-6 py-3.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-transform hover:scale-105 cursor-pointer"
                   >
-                    <SiWhatsapp size={16} />
+                    <SiWhatsapp size={18} />
                     <span>Ping Saqib on WhatsApp Now</span>
                   </a>
 
                   <button
                     onClick={handleResetForm}
-                    className="px-6 py-3.5 bg-white/5 hover:bg-white/10 text-white font-bold text-xs uppercase tracking-wider rounded-xl border border-white/10 transition-all cursor-pointer"
+                    className="px-6 py-3.5 bg-[#F0F2F5] hover:bg-white text-zinc-700 font-bold text-xs uppercase tracking-wider rounded-2xl shadow-[4px_4px_8px_#d9dadc,-4px_-4px_8px_#ffffff] border border-white transition-all cursor-pointer"
                   >
-                    Submit Another Inquiry
+                    Submit Another Query
                   </button>
                 </div>
               </motion.div>
@@ -681,87 +720,129 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               /* THE 3-STEP FORM */
               <form onSubmit={handleSubmitInquiry} className="space-y-8 relative z-10">
                 {errorMsg && (
-                  <div className="p-4 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-300 text-xs font-semibold flex items-center gap-2.5 shadow-sm">
-                    <AlertCircle size={16} className="shrink-0 text-red-400" />
+                  <div className="p-4 rounded-2xl bg-red-100/90 border border-red-200 text-red-700 text-xs sm:text-sm font-semibold flex items-center gap-2.5 shadow-sm">
+                    <AlertCircle size={18} className="shrink-0" />
                     <span>{errorMsg}</span>
                   </div>
                 )}
 
-                {/* STEP 1: SERVICE TYPE */}
-                <div className="bg-zinc-950/50 p-5 sm:p-6 rounded-2xl border border-white/5">
+                {/* STEP 1: CONTACT INFO */}
+                <div className="bg-white/40 p-5 sm:p-6 rounded-3xl border border-white/80 shadow-[inset_2px_2px_5px_#d9dadc,inset_-2px_-2px_5px_#ffffff]">
                   <div className="flex items-center gap-2.5 mb-4">
-                    <span className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-black flex items-center justify-center">
-                      1
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
-                      Select Service Category
-                    </h3>
-                    <span className="text-[10px] font-mono text-zinc-500 ml-auto">Active Selection: <strong className="text-emerald-400">{serviceType}</strong></span>
+                    <span className="w-6 h-6 rounded-full bg-zinc-800 text-white text-xs font-black flex items-center justify-center">1</span>
+                    <h3 className="text-sm font-black uppercase tracking-wider text-zinc-800">Your Contact Info</h3>
+                    <span className="text-[11px] text-zinc-500 font-normal ml-auto">(How we reach you)</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    {SERVICES.map((svc) => {
-                      const isSelected = svc.name === serviceType;
-                      return (
-                        <button
-                          key={svc.name}
-                          type="button"
-                          onClick={() => setServiceType(svc.name)}
-                          className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer border flex flex-col justify-between group ${
-                            isSelected
-                              ? 'bg-zinc-900 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)] scale-[1.02]'
-                              : 'bg-zinc-950/60 border-white/5 hover:border-white/20 hover:bg-zinc-900/60 text-zinc-300'
-                          }`}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-2">
-                              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${svc.color} border flex items-center justify-center shrink-0`}>
-                                {svc.icon}
-                              </div>
-                              <span className={`text-[9px] font-mono font-bold uppercase ${isSelected ? 'text-emerald-400' : 'text-zinc-600'}`}>
-                                {isSelected ? 'Selected ✓' : 'Select'}
-                              </span>
-                            </div>
-                            <div className="text-xs font-black text-white tracking-tight">{svc.name}</div>
-                            <div className="text-[10px] text-zinc-500 mt-1 leading-snug">{svc.desc}</div>
-                          </div>
-                        </button>
-                      );
-                    })}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-1.5">
+                        Your Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={clientName}
+                        onChange={e => setClientName(e.target.value)}
+                        placeholder="e.g. Asad Malik"
+                        className="w-full px-4 py-3 rounded-2xl bg-[#F0F2F5] shadow-[inset_3px_3px_6px_#d9dadc,inset_-3px_-3px_6px_#ffffff] border border-white/60 text-zinc-800 text-sm placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all font-medium"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-1.5 flex items-center justify-between">
+                        <span>WhatsApp / Phone</span>
+                        <span className="text-[10px] text-emerald-600 font-bold">Fastest Reply</span>
+                      </label>
+                      <input
+                        type="tel"
+                        value={clientPhone}
+                        onChange={e => setClientPhone(e.target.value)}
+                        placeholder="+92 300 1234567"
+                        className="w-full px-4 py-3 rounded-2xl bg-[#F0F2F5] shadow-[inset_3px_3px_6px_#d9dadc,inset_-3px_-3px_6px_#ffffff] border border-white/60 text-zinc-800 text-sm placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all font-medium"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-1.5">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={clientEmail}
+                        onChange={e => setClientEmail(e.target.value)}
+                        placeholder="you@company.com"
+                        className="w-full px-4 py-3 rounded-2xl bg-[#F0F2F5] shadow-[inset_3px_3px_6px_#d9dadc,inset_-3px_-3px_6px_#ffffff] border border-white/60 text-zinc-800 text-sm placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all font-medium"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* STEP 2: BUDGET & TIMELINE */}
-                <div className="bg-zinc-950/50 p-5 sm:p-6 rounded-2xl border border-white/5 space-y-6">
+                {/* STEP 2: SELECT WHAT YOU NEED */}
+                <div className="bg-white/40 p-5 sm:p-6 rounded-3xl border border-white/80 shadow-[inset_2px_2px_5px_#d9dadc,inset_-2px_-2px_5px_#ffffff] space-y-6">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 text-xs font-black flex items-center justify-center">
-                      2
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
-                      Scope &amp; Investment Range
-                    </h3>
+                    <span className="w-6 h-6 rounded-full bg-zinc-800 text-white text-xs font-black flex items-center justify-center">2</span>
+                    <h3 className="text-sm font-black uppercase tracking-wider text-zinc-800">Select What You Need</h3>
+                    <span className="text-[11px] text-zinc-500 font-normal ml-auto">(Click to choose)</span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Services Grid */}
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-2.5">
+                      Service Type: <strong className="text-emerald-600">{serviceType}</strong>
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      {SERVICES.map((svc) => {
+                        const isSelected = svc.name === serviceType;
+                        return (
+                          <button
+                            key={svc.name}
+                            type="button"
+                            onClick={() => setServiceType(svc.name)}
+                            className={`p-3 rounded-2xl text-left transition-all cursor-pointer border flex flex-col justify-between ${
+                              isSelected
+                                ? 'bg-zinc-900 text-white border-zinc-900 shadow-md scale-102'
+                                : 'bg-[#F0F2F5] text-zinc-700 hover:text-black hover:bg-white/70 border-white shadow-[3px_3px_6px_#d9dadc,-3px_-3px_6px_#ffffff]'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              {svc.icon}
+                              <span className={`text-[10px] font-mono ${isSelected ? 'text-emerald-400 font-bold' : 'text-zinc-400'}`}>
+                                {isSelected ? '✓ Selected' : 'Choose'}
+                              </span>
+                            </div>
+                            <span className="text-xs font-bold leading-tight">{svc.name}</span>
+                            <span className={`text-[10px] mt-1 font-medium ${isSelected ? 'text-zinc-300' : 'text-zinc-500'}`}>
+                              {svc.desc}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Budget & Timeline Selectors */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-zinc-200/50">
+                    
                     {/* Budget */}
                     <div>
-                      <div className="flex items-center justify-between mb-2.5">
-                        <label className="text-[11px] font-mono font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                          <DollarSign size={14} className="text-emerald-400" />
-                          <span>Estimated Budget</span>
-                        </label>
-                        <span className="text-xs font-mono font-black text-emerald-400">{budget}</span>
-                      </div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-2 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5">
+                          <DollarSign size={14} className="text-emerald-500" />
+                          <span>Estimated Budget:</span>
+                        </span>
+                        <strong className="text-emerald-600 font-black">{budget}</strong>
+                      </label>
                       <div className="flex flex-wrap gap-2">
                         {BUDGETS.map(b => (
                           <button
                             key={b}
                             type="button"
                             onClick={() => setBudget(b)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                               budget === b
-                                ? 'bg-emerald-500 text-black font-black shadow-lg shadow-emerald-500/25 scale-105'
-                                : 'bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:border-white/20'
+                                ? 'bg-emerald-600 text-white shadow-md scale-105'
+                                : 'bg-[#F0F2F5] shadow-[3px_3px_6px_#d9dadc,-3px_-3px_6px_#ffffff] text-zinc-600 hover:text-black border border-white'
                             }`}
                           >
                             {b}
@@ -772,23 +853,23 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
 
                     {/* Timeline */}
                     <div>
-                      <div className="flex items-center justify-between mb-2.5">
-                        <label className="text-[11px] font-mono font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                          <Clock size={14} className="text-amber-400" />
-                          <span>Target Delivery</span>
-                        </label>
-                        <span className="text-xs font-mono font-black text-amber-400">{timeline}</span>
-                      </div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-2 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5">
+                          <Clock size={14} className="text-amber-500" />
+                          <span>Desired Timeline:</span>
+                        </span>
+                        <strong className="text-amber-600 font-black">{timeline}</strong>
+                      </label>
                       <div className="flex flex-wrap gap-2">
                         {TIMELINES.map(t => (
                           <button
                             key={t}
                             type="button"
                             onClick={() => setTimeline(t)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                               timeline === t
-                                ? 'bg-amber-400 text-black font-black shadow-lg shadow-amber-500/25 scale-105'
-                                : 'bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:border-white/20'
+                                ? 'bg-amber-500 text-black font-black shadow-md scale-105'
+                                : 'bg-[#F0F2F5] shadow-[3px_3px_6px_#d9dadc,-3px_-3px_6px_#ffffff] text-zinc-600 hover:text-black border border-white'
                             }`}
                           >
                             {t}
@@ -798,58 +879,87 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                     </div>
                   </div>
 
-                  {/* Custom Scope Expandable Box */}
+                  {/* CUSTOM BUDGET EXTENDED PORTAL */}
                   <AnimatePresence>
                     {budget === 'Custom' && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden pt-3 border-t border-white/5"
+                        className="overflow-hidden pt-2"
                       >
-                        <div className="bg-emerald-950/20 border border-emerald-500/30 rounded-2xl p-4 space-y-4">
-                          <div className="flex items-center gap-2">
-                            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                            <h4 className="text-xs font-black uppercase text-emerald-300 font-mono tracking-widest">
-                              Custom Scope Specification
-                            </h4>
+                        <div className="bg-emerald-50 border border-emerald-500/20 rounded-2xl p-4 sm:p-6 space-y-4 shadow-[inset_0_2px_10px_rgba(16,185,129,0.05)]">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <h4 className="text-sm font-black uppercase text-emerald-800 tracking-widest">Custom Rate &amp; Scope Portal</h4>
                           </div>
+                          
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1">
-                                Desired Budget / Rate
+                              <label className="block text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1.5">
+                                Your Desired Rate / Budget
                               </label>
                               <input
                                 type="text"
                                 value={customBudgetAmount}
                                 onChange={e => setCustomBudgetAmount(e.target.value)}
-                                placeholder="e.g. $2500, PKR 150K, Flexible"
-                                className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-400"
+                                placeholder="e.g. $2000, 50K PKR, Flexible"
+                                className="w-full bg-white border border-emerald-200 rounded-xl px-4 py-2.5 text-xs text-emerald-900 font-bold focus:outline-none focus:border-emerald-500 shadow-sm"
                               />
                             </div>
+
                             <div>
-                              <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1">
-                                Reference Links (Optional)
+                              <label className="block text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1.5">
+                                Reference Websites / Links (Optional)
                               </label>
                               <input
                                 type="text"
                                 value={referenceLinks}
                                 onChange={e => setReferenceLinks(e.target.value)}
-                                placeholder="https://example.com"
-                                className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-400"
+                                placeholder="https://..."
+                                className="w-full bg-white border border-emerald-200 rounded-xl px-4 py-2.5 text-xs text-emerald-900 focus:outline-none focus:border-emerald-500 shadow-sm"
                               />
                             </div>
                           </div>
+
                           <div>
-                            <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1">
-                              Special Complex Features
+                            <label className="block text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1.5">
+                              Special Features Needed
                             </label>
                             <textarea
-                              rows={2}
                               value={customFeatures}
                               onChange={e => setCustomFeatures(e.target.value)}
-                              placeholder="Any specific AI integrations, payment gateways, custom APIs..."
-                              className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-400 resize-none"
+                              rows={2}
+                              placeholder="Any specific complex features, API integrations, etc."
+                              className="w-full bg-white border border-emerald-200 rounded-xl px-4 py-2.5 text-xs text-emerald-900 focus:outline-none focus:border-emerald-500 resize-none shadow-sm"
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* CUSTOM TIMELINE EXTENDED PORTAL */}
+                  <AnimatePresence>
+                    {timeline === 'Custom' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden pt-2"
+                      >
+                        <div className="bg-amber-50 border border-amber-500/20 rounded-2xl p-4 sm:p-6 shadow-[inset_0_2px_10px_rgba(245,158,11,0.05)]">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            <h4 className="text-sm font-black uppercase text-amber-800 tracking-widest">Select Target Date</h4>
+                          </div>
+                          
+                          <div>
+                            <input
+                              type="date"
+                              value={customTimelineDate}
+                              onChange={e => setCustomTimelineDate(e.target.value)}
+                              className="w-full bg-white border border-amber-200 rounded-xl px-4 py-2.5 text-sm text-amber-900 font-bold focus:outline-none focus:border-amber-500 shadow-sm"
                             />
                           </div>
                         </div>
@@ -858,166 +968,110 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                   </AnimatePresence>
                 </div>
 
-                {/* STEP 3: CONTACT INFO & REQUIREMENTS */}
-                <div className="bg-zinc-950/50 p-5 sm:p-6 rounded-2xl border border-white/5 space-y-6">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/40 text-purple-400 text-xs font-black flex items-center justify-center">
-                      3
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
-                      Your Contact Info &amp; Requirements
-                    </h3>
-                  </div>
-
-                  {/* Input Fields */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1.5">
-                        Your Full Name <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={clientName}
-                        onChange={e => setClientName(e.target.value)}
-                        placeholder="e.g. Asad Malik"
-                        className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-cyan-400 transition-colors"
-                      />
+                {/* STEP 3: REQUIREMENTS & LIVE SUMMARY */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  
+                  {/* Left 2 Cols: Textarea */}
+                  <div className="lg:col-span-2 bg-white/40 p-5 sm:p-6 rounded-3xl border border-white/80 shadow-[inset_2px_2px_5px_#d9dadc,inset_-2px_-2px_5px_#ffffff] space-y-3">
+                    <div className="flex items-center gap-2.5 mb-1">
+                      <span className="w-6 h-6 rounded-full bg-zinc-800 text-white text-xs font-black flex items-center justify-center">3</span>
+                      <h3 className="text-sm font-black uppercase tracking-wider text-zinc-800">Project Requirements</h3>
+                      <span className="text-[11px] text-zinc-500 font-normal ml-auto">(Key features &amp; ideas)</span>
                     </div>
 
-                    <div>
-                      <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1.5 flex items-center justify-between">
-                        <span>WhatsApp / Phone</span>
-                        <span className="text-emerald-400 text-[9px] font-bold">Fastest Reply</span>
-                      </label>
-                      <input
-                        type="tel"
-                        value={clientPhone}
-                        onChange={e => setClientPhone(e.target.value)}
-                        placeholder="+92 300 1234567"
-                        className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-emerald-400 transition-colors"
-                      />
-                    </div>
+                    <textarea
+                      required
+                      rows={4}
+                      value={queryDetails}
+                      onChange={e => setQueryDetails(e.target.value)}
+                      placeholder="Describe what you want to build (e.g., An e-commerce store with WhatsApp checkout, a custom AI chatbot, portfolio with admin panel, reference links, etc.)..."
+                      className="w-full px-4 py-3 rounded-2xl bg-[#F0F2F5] shadow-[inset_3px_3px_6px_#d9dadc,inset_-3px_-3px_6px_#ffffff] border border-white/60 text-zinc-800 text-sm placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all font-medium leading-relaxed"
+                    />
 
-                    <div>
-                      <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1.5">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        value={clientEmail}
-                        onChange={e => setClientEmail(e.target.value)}
-                        placeholder="you@company.com"
-                        className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-blue-400 transition-colors"
-                      />
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-zinc-500">
+                      <span className="font-bold text-zinc-600">Quick suggestions:</span>
+                      <button
+                        type="button"
+                        onClick={() => setQueryDetails(prev => prev ? `${prev}, needs responsive mobile design` : 'Need a modern responsive web app with high performance and mobile optimization.')}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-zinc-700 hover:text-black shadow-sm cursor-pointer"
+                      >
+                        + Mobile Responsive
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setQueryDetails(prev => prev ? `${prev}, include WhatsApp integration` : 'Need 1-click WhatsApp order notification and direct customer chat.')}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-zinc-700 hover:text-black shadow-sm cursor-pointer"
+                      >
+                        + WhatsApp Order Flow
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setQueryDetails(prev => prev ? `${prev}, custom admin dashboard` : 'Need an intuitive admin control panel to manage content and leads.')}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-zinc-700 hover:text-black shadow-sm cursor-pointer"
+                      >
+                        + Admin Dashboard
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setQueryDetails(prev => prev ? `${prev}, zero-trust database security` : 'Require zero-trust Supabase RLS database policies and API bot traps.')}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-zinc-700 hover:text-black shadow-sm cursor-pointer"
+                      >
+                        + Zero-Trust Security
+                      </button>
                     </div>
                   </div>
 
-                  {/* Requirements Textarea & Live Holographic Ticket */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-2">
-                    
-                    {/* Left: Textarea */}
-                    <div className="lg:col-span-8 space-y-2">
-                      <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1 flex items-center justify-between">
-                        <span>Project Specifications &amp; Features <span className="text-red-400">*</span></span>
-                        <span className="text-zinc-500 text-[9px]">(Be as detailed as possible)</span>
-                      </label>
-                      <textarea
-                        required
-                        rows={4}
-                        value={queryDetails}
-                        onChange={e => setQueryDetails(e.target.value)}
-                        placeholder="Describe your vision (e.g. Modern restaurant booking system with WhatsApp order receipt, Next.js portfolio with admin panel, custom AI bot, design preferences, reference links)..."
-                        className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/10 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-purple-400 transition-colors leading-relaxed"
-                      />
-
-                      {/* Quick Suggestion Chips */}
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[10px]">
-                        <span className="text-zinc-500 font-mono">Suggestions:</span>
-                        <button
-                          type="button"
-                          onClick={() => setQueryDetails(prev => prev ? `${prev}, mobile-first responsive UI` : 'Need a mobile-first responsive web app with 60fps animations.')}
-                          className="px-2 py-0.5 rounded bg-zinc-900 border border-white/10 hover:border-white/30 text-zinc-300 cursor-pointer"
-                        >
-                          + Mobile Responsive
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setQueryDetails(prev => prev ? `${prev}, WhatsApp checkout flow` : 'Need 1-click WhatsApp order confirmation and customer dispatch.')}
-                          className="px-2 py-0.5 rounded bg-zinc-900 border border-white/10 hover:border-white/30 text-zinc-300 cursor-pointer"
-                        >
-                          + WhatsApp Checkout
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setQueryDetails(prev => prev ? `${prev}, custom admin control dashboard` : 'Need an intuitive admin control panel to manage content and leads.')}
-                          className="px-2 py-0.5 rounded bg-zinc-900 border border-white/10 hover:border-white/30 text-zinc-300 cursor-pointer"
-                        >
-                          + Admin Dashboard
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setQueryDetails(prev => prev ? `${prev}, zero-trust database security` : 'Require zero-trust Supabase RLS database policies and API bot traps.')}
-                          className="px-2 py-0.5 rounded bg-zinc-900 border border-white/10 hover:border-white/30 text-zinc-300 cursor-pointer"
-                        >
-                          + Zero-Trust Security
-                        </button>
+                  {/* Right 1 Col: Live Instant Summary Card */}
+                  <div className="bg-gradient-to-br from-zinc-900 to-black text-white p-5 rounded-3xl shadow-xl flex flex-col justify-between border border-zinc-800">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Live Query Summary</span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                       </div>
-                    </div>
 
-                    {/* Right: Live Dynamic Blueprint Ticket */}
-                    <div className="lg:col-span-4 bg-gradient-to-b from-zinc-950 to-zinc-900 border border-white/10 rounded-2xl p-4 flex flex-col justify-between shadow-xl">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                          <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-emerald-400 flex items-center gap-1">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                            <span>LIVE RFP TICKET</span>
-                          </span>
-                          <span className="text-[9px] font-mono text-zinc-500">v3.0</span>
+                      <div className="space-y-2 text-xs">
+                        <div>
+                          <div className="text-[10px] text-zinc-400 uppercase">Client:</div>
+                          <div className="font-bold text-white truncate">{clientName || 'Your Name'}</div>
                         </div>
 
-                        <div className="space-y-2 text-[11px]">
+                        <div>
+                          <div className="text-[10px] text-zinc-400 uppercase">Selected Service:</div>
+                          <div className="font-bold text-emerald-400">{serviceType}</div>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-1 border-t border-zinc-800">
                           <div>
-                            <div className="text-[9px] font-mono text-zinc-500 uppercase">CLIENT:</div>
-                            <div className="font-bold text-white truncate">{clientName || 'Anonymous Founder'}</div>
+                            <div className="text-[10px] text-zinc-400 uppercase">Budget:</div>
+                            <div className="font-bold text-white">{budget}</div>
                           </div>
                           <div>
-                            <div className="text-[9px] font-mono text-zinc-500 uppercase">CATEGORY:</div>
-                            <div className="font-bold text-cyan-400">{serviceType}</div>
+                            <div className="text-[10px] text-zinc-400 uppercase">Timeline:</div>
+                            <div className="font-bold text-amber-400">{timeline}</div>
                           </div>
-                          <div className="flex justify-between items-center pt-1 border-t border-white/5">
-                            <div>
-                              <div className="text-[9px] font-mono text-zinc-500 uppercase">BUDGET:</div>
-                              <div className="font-bold text-emerald-400">{budget}</div>
-                            </div>
-                            <div>
-                              <div className="text-[9px] font-mono text-zinc-500 uppercase">TIMELINE:</div>
-                              <div className="font-bold text-amber-400">{timeline}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="pt-3 border-t border-white/10 space-y-1 text-[9px] font-mono text-zinc-500">
-                        <div className="flex items-center gap-1 text-emerald-400">
-                          <CheckCircle2 size={10} />
-                          <span>Zero-Trust Hardening Included</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-cyan-400">
-                          <Clock size={10} />
-                          <span>Turnaround: &lt; 2 Hours</span>
                         </div>
                       </div>
                     </div>
 
+                    <div className="pt-4 border-t border-zinc-800/80 space-y-2">
+                      <div className="text-[10px] text-zinc-400 flex items-center gap-1.5">
+                        <CheckCircle2 size={12} className="text-emerald-400 shrink-0" />
+                        <span>100% Free Initial Consultation</span>
+                      </div>
+                      <div className="text-[10px] text-zinc-400 flex items-center gap-1.5">
+                        <Clock size={12} className="text-amber-400 shrink-0" />
+                        <span>Typical turnaround: &lt; 2 hours</span>
+                      </div>
+                    </div>
                   </div>
+
                 </div>
 
                 {/* DUAL ACTION DISPATCH BAR */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
-                  <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
-                    <span>Inquiry is securely logged into Muhammad Saqib&apos;s encrypted database.</span>
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-zinc-200">
+                  <div className="flex items-center gap-2 text-xs text-zinc-500 font-medium">
+                    <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
+                    <span>Your query is saved directly to Muhammad Saqib&apos;s active portal.</span>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -1025,30 +1079,32 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                     <button
                       type="button"
                       onClick={handleWhatsAppDispatch}
-                      className="flex-1 sm:flex-none px-6 py-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-emerald-500/40 text-emerald-300 hover:text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                      className="flex-1 sm:flex-none px-6 py-4 rounded-2xl bg-white hover:bg-emerald-50 text-emerald-700 font-black text-xs uppercase tracking-wider border border-emerald-300 shadow-[4px_4px_8px_#d9dadc,-4px_-4px_8px_#ffffff] flex items-center justify-center gap-2 transition-all cursor-pointer"
                     >
-                      <SiWhatsapp size={14} className="text-[#25D366]" />
+                      <SiWhatsapp size={16} className="text-[#25D366]" />
                       <span>Dispatch via WhatsApp</span>
                     </button>
 
-                    {/* Standard Submit */}
-                    <button
+                    {/* Submit Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 sm:flex-none px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-emerald-500 to-teal-500 hover:from-cyan-400 hover:to-emerald-400 text-black font-black text-xs uppercase tracking-widest shadow-xl shadow-cyan-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98]"
+                      className="flex-1 sm:flex-none px-10 py-4 rounded-2xl bg-zinc-900 hover:bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl flex items-center justify-center gap-2.5 transition-all cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                          <span>Submitting...</span>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Sending Query...</span>
                         </>
                       ) : (
                         <>
-                          <Send size={14} />
-                          <span>Submit Project RFP 🚀</span>
+                          <Send size={16} className="text-emerald-400" />
+                          <span>Submit Project Query 🚀</span>
                         </>
                       )}
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
 
@@ -1059,60 +1115,132 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
         </div>
 
         {/* ========================================================== */}
-        {/* WHAT WE DELIVER — FULL PRODUCTION CAPABILITIES */}
+        {/* WHAT WE BUILD / DELIVER SECTION */}
         {/* ========================================================== */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
-          className="max-w-5xl mx-auto mb-20"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-            <div className="flex items-center gap-2.5">
-              <div className="w-1.5 h-5 bg-gradient-to-b from-cyan-400 to-purple-400 rounded-full" />
-              <div>
-                <h3 className="text-base sm:text-lg font-black uppercase tracking-wider text-white">
-                  What You Get When Working With Saqib 🚀
-                </h3>
-                <p className="text-xs text-zinc-400">Battle-tested engineering standards applied to every client deliverable.</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-20 md:mb-24">
+          
+          {/* What We Build */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="md:col-span-2 bg-[#F0F2F5] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 shadow-[8px_8px_16px_#d9dadc,-8px_-8px_16px_#ffffff] border border-white/50"
+          >
+            <div className="flex items-center justify-between mb-5 sm:mb-6">
+              <h3 className="text-xl sm:text-2xl font-black text-zinc-800 tracking-tight">What We Build 🚀</h3>
+              <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 uppercase">
+                Production Ready
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3.5 sm:gap-y-4 gap-x-6">
+              {[
+                "Business & Corporate Websites",
+                "Portfolio & Personal Brands",
+                "Admin Control Dashboards",
+                "AI-Powered Chatbots & Gemini Apps",
+                "Custom Full-Stack Web Applications",
+                "Cross-Platform Mobile Apps (React Native)",
+                "High-Converting Landing Pages",
+                "E-Commerce & WhatsApp Order Checkout",
+                "Zero-Trust Supabase RLS Security",
+                "RESTful API & Microservice Integration",
+                "UI/UX Design Systems & Micro-Interactions",
+                "Search Engine Optimization (98+ Score)"
+              ].map((item, i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04 }}
+                  className="flex items-center gap-2.5 sm:gap-3 text-sm text-zinc-700 font-medium"
+                >
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#F0F2F5] shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] flex items-center justify-center shrink-0 text-emerald-600">
+                    <CheckCircle2 size={13} className="sm:w-3.5 sm:h-3.5" />
+                  </div>
+                  <span>{item}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Contact Details Quick Card */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="bg-[#F0F2F5] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 shadow-[8px_8px_16px_#d9dadc,-8px_-8px_16px_#ffffff] border border-white/50 flex flex-col justify-between relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-pink-200/40 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-200/30 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none" />
+            
+            <div className="relative z-10">
+              <h3 className="text-xl sm:text-2xl font-black text-zinc-800 tracking-tight mb-6 flex items-center gap-2">
+                Connect With Us <span className="text-2xl">🌍</span>
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Location */}
+                <div className="flex items-center gap-3.5 bg-white/50 p-3.5 rounded-2xl shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white">
+                  <div className="w-11 h-11 rounded-xl bg-pink-100 flex items-center justify-center text-pink-600 shrink-0">
+                    <MapPin size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-pink-500 mb-0.5">Location</h4>
+                    <p className="text-zinc-800 font-extrabold text-sm">{profile.location || 'Faisalabad, Pakistan'}</p>
+                  </div>
+                </div>
+
+                {/* Call */}
+                <a 
+                  href={`tel:${rawPhone}`}
+                  className="flex items-center gap-3.5 bg-white/50 p-3.5 rounded-2xl shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white hover:bg-white transition-all group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
+                    <Phone size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-0.5">Contact</h4>
+                    <p className="text-zinc-800 font-extrabold text-sm">{phoneDisplay}</p>
+                  </div>
+                </a>
+
+                {/* Email */}
+                <a 
+                  href={`mailto:${emailDisplay}`}
+                  className="flex items-center gap-3.5 bg-white/50 p-3.5 rounded-2xl shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white hover:bg-white transition-all group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0 group-hover:scale-110 transition-transform">
+                    <Mail size={20} />
+                  </div>
+                  <div className="overflow-hidden">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-0.5">Email</h4>
+                    <p className="text-zinc-800 font-extrabold text-xs sm:text-sm truncate">{emailDisplay}</p>
+                  </div>
+                </a>
+
+                {/* Resume Download */}
+                <a 
+                  href={profile.resume_url || '/resume.pdf'}
+                  download="Muhammad_Saqib_Resume.pdf"
+                  className="flex items-center gap-3.5 bg-white/50 p-3.5 rounded-2xl shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white hover:bg-white transition-all group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 group-hover:scale-110 transition-transform">
+                    <Briefcase size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-purple-500 mb-0.5">Resume / CV</h4>
+                    <p className="text-zinc-800 font-extrabold text-sm">Download Verified PDF</p>
+                  </div>
+                </a>
               </div>
             </div>
-            <Link 
-              href="/skills"
-              className="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 self-start sm:self-auto"
-            >
-              <span>Explore Technical Architecture</span>
-              <span>→</span>
-            </Link>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { title: 'Zero-Trust Security', desc: 'Supabase Row-Level Security (RLS) & honeypot bot traps.', icon: <ShieldCheck size={20} className="text-emerald-400" /> },
-              { title: 'Next.js 15 SSR / SSG', desc: 'Sub-second page speeds with React 19 architecture.', icon: <Code2 size={20} className="text-cyan-400" /> },
-              { title: 'Node & Express APIs', desc: 'High-throughput async runtimes and microservices.', icon: <Server size={20} className="text-purple-400" /> },
-              { title: 'Mobile Apps & PWA', desc: 'React Native & Progressive Web Apps with offline cache.', icon: <Smartphone size={20} className="text-sky-400" /> },
-              { title: 'AI & Gemini Engine', desc: 'Custom OpenAI & Gemini LLM background automation.', icon: <Bot size={20} className="text-amber-400" /> },
-              { title: 'E-Commerce Checkout', desc: 'Instant WhatsApp order ping & conversion flows.', icon: <Layers size={20} className="text-rose-400" /> },
-              { title: 'Admin Dashboards', desc: 'Bespoke CMS portals to manage analytics and data.', icon: <Layout size={20} className="text-teal-400" /> },
-              { title: '98+ Lighthouse SEO', desc: 'Strict semantic markup & Google schema structured data.', icon: <Globe size={20} className="text-indigo-400" /> }
-            ].map((feature, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -4 }}
-                transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                className="p-5 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-white/20 transition-all shadow-md group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-zinc-950 border border-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-inner">
-                  {feature.icon}
-                </div>
-                <h4 className="text-xs font-black uppercase text-white tracking-tight mb-1">{feature.title}</h4>
-                <p className="text-[11px] text-zinc-400 leading-relaxed font-medium">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        </div>
 
         {/* ========================================================== */}
         {/* INTERACTIVE CLIENT FAQ ACCORDION */}
@@ -1125,11 +1253,11 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
           className="max-w-4xl mx-auto mb-20"
         >
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-400 mb-2">
-              <HelpCircle size={12} className="text-cyan-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-600 mb-2 border border-white">
+              <HelpCircle size={12} className="text-emerald-600" />
               <span>Client FAQ &amp; Assurance</span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
+            <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-zinc-800">
               Frequently Asked Questions
             </h3>
           </div>
@@ -1140,19 +1268,19 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               return (
                 <div 
                   key={idx}
-                  className="rounded-2xl bg-zinc-900/50 border border-white/5 overflow-hidden transition-colors hover:border-white/10"
+                  className="rounded-2xl bg-[#F0F2F5] shadow-[4px_4px_8px_#d9dadc,-4px_-4px_8px_#ffffff] border border-white overflow-hidden transition-all"
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
                     className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
                   >
-                    <span className="text-xs sm:text-sm font-bold text-white tracking-wide">
+                    <span className="text-xs sm:text-sm font-bold text-zinc-800 tracking-wide">
                       {faq.q}
                     </span>
                     <ChevronDown 
                       size={16} 
-                      className={`text-zinc-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-cyan-400' : ''}`} 
+                      className={`text-zinc-500 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-emerald-600' : ''}`} 
                     />
                   </button>
 
@@ -1165,7 +1293,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-4 sm:px-5 pb-5 text-xs text-zinc-400 leading-relaxed font-medium border-t border-white/5 pt-3">
+                        <div className="px-4 sm:px-5 pb-5 text-xs text-zinc-600 leading-relaxed font-medium border-t border-zinc-200/60 pt-3">
                           {faq.a}
                         </div>
                       </motion.div>
@@ -1178,131 +1306,84 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
         </motion.div>
 
         {/* ========================================================== */}
-        {/* SOCIAL CHANNELS & LOCATION RADAR */}
+        {/* MISSION & SOCIAL MEDIA CHANNELS */}
         {/* ========================================================== */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           
-          {/* Location & Timezone Card */}
+          {/* Mission */}
           <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.95, x: -30 }}
+            whileInView={{ opacity: 1, scale: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
-            className="p-6 sm:p-8 rounded-3xl bg-zinc-900/60 border border-white/10 flex flex-col justify-between relative overflow-hidden backdrop-blur-xl"
+            className="bg-gradient-to-br from-zinc-800 to-zinc-950 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none -mr-8 -mt-8" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <MapPin size={16} className="text-pink-400" />
-                  <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-300">
-                    Base Coordinates
-                  </h4>
-                </div>
-                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-                  PKT (UTC+5)
-                </span>
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight mb-2">
-                {profile.location || 'Faisalabad / Gojra, Pakistan'}
-              </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed font-medium mb-6">
-                Operating remotely across international borders. Available for synchronous audio/video consultations via Google Meet, Zoom, or WhatsApp.
+              <h3 className="text-xl sm:text-2xl font-black tracking-tight mb-4">Our Mission 🎯</h3>
+              <p className="text-zinc-300 leading-relaxed font-medium mb-6 sm:mb-8 text-sm sm:text-base">
+                We combine <strong className="text-white">technology, creativity, and innovation</strong> to build high-quality digital products that are fast, modern, secure, and visually outstanding. Every project is developed with attention to detail, performance, and user experience.
               </p>
-
-              <div className="p-3.5 rounded-2xl bg-zinc-950 border border-white/5 font-mono text-xs space-y-1 text-zinc-400">
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">COORDINATES:</span>
-                  <span className="text-zinc-300 font-bold">30.3753° N, 69.3451° E</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">LOCAL CLOCK:</span>
-                  <span className="text-emerald-400 font-bold">{livePktTime || 'PKT Live'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">STATUS:</span>
-                  <span className="text-cyan-400 font-bold">Ready for Inquiries</span>
-                </div>
-              </div>
             </div>
-
-            <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-              <span>OFFICIAL DOMAIN:</span>
-              <a href="https://mrsaqib.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-zinc-300 hover:text-white font-bold flex items-center gap-1">
-                <span>mrsaqib.vercel.app</span>
-                <ExternalLink size={11} />
-              </a>
-            </div>
+            
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              className="bg-white/10 border border-white/20 rounded-2xl p-5 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
+            >
+              <p className="text-xs sm:text-sm font-semibold text-white/90 leading-relaxed">
+                ✨ Need a Website, Mobile App, AI Solution, or Custom Software?
+              </p>
+              <p className="mt-1 text-sm sm:text-base text-white font-bold tracking-tight">
+                📩 Let&apos;s work together and turn your vision into reality.
+              </p>
+            </motion.div>
           </motion.div>
 
-          {/* Social Channels Radar */}
+          {/* Socials Neumorphic */}
           <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.95, x: 30 }}
+            whileInView={{ opacity: 1, scale: 1, x: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="p-6 sm:p-8 rounded-3xl bg-zinc-900/60 border border-white/10 flex flex-col justify-between relative overflow-hidden backdrop-blur-xl"
+            className="bg-[#F0F2F5] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 shadow-[8px_8px_16px_#d9dadc,-8px_-8px_16px_#ffffff] border border-white/50 flex flex-col justify-center"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none -mr-8 -mt-8" />
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Compass size={16} className="text-purple-400" />
-                  <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-300">
-                    Official Social Channels
-                  </h4>
-                </div>
-                <span className="text-[10px] font-mono font-bold text-purple-300 bg-purple-950/40 border border-purple-500/20 px-2 py-0.5 rounded-full">
-                  Direct Verification
-                </span>
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight mb-2">
-                Connect Across The Web
-              </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed font-medium mb-6">
-                Follow behind-the-scenes engineering builds, design breakdowns, and short-form tutorials.
-              </p>
-
-              {/* Social Channels Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {[
-                  { name: 'WhatsApp', icon: SiWhatsapp, handle: '+92 343 673242', link: profile.whatsapp_url || 'https://wa.me/92343673242', color: 'hover:border-emerald-500/50 hover:text-emerald-400' },
-                  { name: 'Instagram', icon: SiInstagram, handle: '@mr_saqib242', link: profile.instagram_url || 'https://www.instagram.com/mr_saqib242', color: 'hover:border-pink-500/50 hover:text-pink-400' },
-                  { name: 'TikTok', icon: SiTiktok, handle: '@mr_saqib_242', link: profile.tiktok_url || 'https://www.tiktok.com/@mr_saqib_242', color: 'hover:border-white/50 hover:text-white' },
-                  { name: 'Facebook', icon: SiFacebook, handle: 'Muhammad Saqib', link: profile.facebook_url || 'https://web.facebook.com/muhammad.saqib.718278', color: 'hover:border-blue-500/50 hover:text-blue-400' },
-                  { name: 'Snapchat', icon: SiSnapchat, handle: 'mrsaqib242', link: profile.snapchat_url || 'https://www.snapchat.com/add/mrsaqib242', color: 'hover:border-yellow-500/50 hover:text-yellow-400' },
-                  { name: 'GitHub', icon: SiGithub, handle: 'techai342', link: profile.github_url || 'https://github.com/techai342', color: 'hover:border-purple-500/50 hover:text-purple-400' }
-                ].map((social, idx) => {
-                  const Icon = social.icon;
-                  return (
-                    <motion.a
-                      key={idx}
-                      href={social.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-3 rounded-2xl bg-zinc-950 border border-white/5 text-zinc-400 flex flex-col justify-between transition-all ${social.color} shadow-md group`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <Icon size={18} />
-                        <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-black text-white">{social.name}</div>
-                        <div className="text-[9px] font-mono text-zinc-500 truncate mt-0.5">{social.handle}</div>
-                      </div>
-                    </motion.a>
-                  );
-                })}
-              </div>
+            <h3 className="text-xl sm:text-2xl font-black text-zinc-800 tracking-tight mb-6 sm:mb-8 text-center">
+              Connect With Us 📱
+            </h3>
+            
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              {[
+                { name: 'WhatsApp', icon: SiWhatsapp, link: profile.whatsapp_url || "https://wa.me/92343673242", color: "text-[#25D366]" },
+                { name: 'Instagram', icon: SiInstagram, link: profile.instagram_url || "https://www.instagram.com/mr_saqib242", color: "text-[#E1306C]" },
+                { name: 'TikTok', icon: SiTiktok, link: profile.tiktok_url || "https://www.tiktok.com/@mr_saqib_242", color: "text-zinc-900" },
+                { name: 'Facebook', icon: SiFacebook, link: profile.facebook_url || "https://web.facebook.com/muhammad.saqib.718278", color: "text-[#1877F2]" },
+                { name: 'Snapchat', icon: SiSnapchat, link: profile.snapchat_url || "https://www.snapchat.com/add/mrsaqib242", color: "text-[#FFFC00] drop-shadow-md" },
+                { name: 'GitHub', icon: SiGithub, link: profile.github_url || "https://github.com/techai342", color: "text-zinc-800" }
+              ].map((social, i) => {
+                const Icon = social.icon;
+                return (
+                  <motion.a 
+                    key={i}
+                    href={social.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, scale: 0 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08, type: "spring", stiffness: 200, damping: 10 }}
+                    whileHover={{ scale: 1.15, rotate: 4 }}
+                    whileTap={{ scale: 0.9 }}
+                    title={social.name}
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#F0F2F5] shadow-[4px_4px_8px_#d9dadc,-4px_-4px_8px_#ffffff] sm:shadow-[6px_6px_12px_#d9dadc,-6px_-6px_12px_#ffffff] flex items-center justify-center border border-white hover:shadow-[inset_4px_4px_8px_#d9dadc,inset_-4px_-4px_8px_#ffffff] transition-shadow ${social.color}`}
+                  >
+                    <Icon size={24} />
+                  </motion.a>
+                );
+              })}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-              <span>PRIORITY CONTACT:</span>
-              <span className="text-emerald-400 font-bold">Available 7 Days a Week</span>
+            <div className="mt-8 pt-4 border-t border-zinc-200/60 text-center text-xs font-mono text-zinc-500">
+              Direct Inquiries Available 7 Days a Week
             </div>
           </motion.div>
 

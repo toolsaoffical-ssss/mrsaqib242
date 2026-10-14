@@ -94,7 +94,7 @@ export default function ContactRoute() {
           }}
         />
       </Head>
-      <div className="min-h-screen selection:bg-accent selection:text-white pb-24 bg-zinc-950 font-sans">
+      <div className="min-h-screen selection:bg-pink-300 selection:text-white pb-24 bg-[#F0F2F5] font-sans">
         <ContactTeamPage onBack={handleBack} />
       </div>
     </>
