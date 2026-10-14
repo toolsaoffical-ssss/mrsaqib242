@@ -857,40 +857,79 @@ export default function App() {
 
       {/* Contact & Team Section Link */}
       <section id="contact-section" className="py-24 px-6 max-w-5xl mx-auto text-center">
-        <div className="bg-gradient-to-br from-zinc-900 to-black rounded-[3rem] p-12 md:p-20 border border-white/10 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+        <div className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black rounded-[3rem] p-10 md:p-16 border border-white/10 relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20"></div>
           
-          <h2 className="font-display text-4xl md:text-6xl uppercase tracking-tighter mb-6 relative z-10">
-            Meet the Team &<br />Get in Touch
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-widest mb-6 relative z-10 shadow-inner">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>DIRECT FOUNDER VIP DESK • WHATSAPP: +92 343 673242</span>
+          </div>
+
+          <h2 className="font-display text-3xl sm:text-5xl md:text-6xl uppercase tracking-tighter mb-4 relative z-10 text-white leading-tight">
+            Ready to Build Your Next<br />
+            <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              High-Velocity Project?
+            </span>
           </h2>
-          <p className="text-zinc-400 font-medium mb-10 max-w-xl mx-auto text-lg relative z-10">
-            SAQIB VISUALS | Full-Stack Development & Creative Studio
+          <p className="text-zinc-400 font-medium mb-8 max-w-xl mx-auto text-sm sm:text-base relative z-10 leading-relaxed">
+            Connect directly with <strong className="text-white">Muhammad Saqib</strong> for custom Next.js full-stack systems, zero-trust security audits, and cross-platform mobile apps.
           </p>
+
+          {/* Quick Metrics */}
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-zinc-400 mb-8 relative z-10">
+            <div className="flex items-center gap-1.5 bg-zinc-900/60 px-3 py-1.5 rounded-xl border border-white/5">
+              <span className="text-emerald-400">⚡</span>
+              <span>&lt; 15 Mins WhatsApp Reply</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-zinc-900/60 px-3 py-1.5 rounded-xl border border-white/5">
+              <span className="text-cyan-400">🔒</span>
+              <span>100% NDA Protected</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-zinc-900/60 px-3 py-1.5 rounded-xl border border-white/5">
+              <span className="text-purple-400">🚀</span>
+              <span>50+ Deployed Apps</span>
+            </div>
+          </div>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 relative z-10">
             <motion.button
               onClick={navigateToContactTeamPage}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-black rounded-full font-black uppercase tracking-widest text-xs sm:text-sm shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:shadow-[0_0_40px_rgba(249,115,22,0.5)] transition-all cursor-pointer flex items-center gap-2"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-cyan-500 via-emerald-500 to-teal-500 text-black rounded-2xl font-black uppercase tracking-widest text-xs sm:text-sm shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <span>Submit Project Query & Details 🚀</span>
             </motion.button>
+
+            <motion.a
+              href={`https://wa.me/92343673242?text=${encodeURIComponent('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a new project with you.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="w-full sm:w-auto px-6 py-4 bg-[#25D366] hover:bg-[#1EBE5D] text-black font-black uppercase tracking-wider text-xs sm:text-sm rounded-2xl shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <SiWhatsapp size={16} />
+              <span>Direct WhatsApp Chat</span>
+            </motion.a>
 
             <motion.button
               onClick={navigateToContactTeamPage}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm transition-all cursor-pointer"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="w-full sm:w-auto px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl font-bold uppercase tracking-widest text-xs transition-all cursor-pointer"
             >
-              <span>Explore Team & Socials</span>
+              <span>Explore VIP Desk</span>
             </motion.button>
           </div>
         </div>

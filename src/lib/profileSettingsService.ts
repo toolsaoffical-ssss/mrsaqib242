@@ -17,6 +17,7 @@ export interface ProfileSettings {
   facebook_url: string;
   tiktok_url: string;
   snapchat_url: string;
+  github_url?: string;
   updated_at?: string;
 }
 
@@ -36,7 +37,8 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   instagram_url: 'https://www.instagram.com/mr_saqib242',
   facebook_url: 'https://www.facebook.com/profile.php?id=100085188689033',
   tiktok_url: 'https://www.tiktok.com/@mr_saqib_242',
-  snapchat_url: 'https://www.snapchat.com/add/mrsaqib242'
+  snapchat_url: 'https://www.snapchat.com/add/mrsaqib242',
+  github_url: 'https://github.com/techai342'
 };
 
 const STORAGE_KEY = 'saqib_profile_settings_cache';
