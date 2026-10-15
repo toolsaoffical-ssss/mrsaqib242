@@ -1,0 +1,505 @@
+<!-- Saved copy for live URL -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Muhammad Saqib | Live Contact & Social Hub</title>
+  <meta name="description" content="Connect with Muhammad Saqib across all official social media and communication channels." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body { background-color: #090a0f; color: #f3f4f6; }
+    .glass-card {
+      background: rgba(18, 20, 29, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(249, 115, 22, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #181b26 25%, #242938 50%, #181b26 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-orange-500 selection:text-white relative">
+
+  <!-- Ambient Glow Effects -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[650px] h-[400px] bg-orange-600/15 rounded-full blur-[140px]"></div>
+    <div class="absolute bottom-10 -left-20 w-[450px] h-[350px] bg-blue-600/10 rounded-full blur-[120px]"></div>
+    <div class="absolute top-1/2 -right-20 w-[450px] h-[350px] bg-emerald-600/10 rounded-full blur-[120px]"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="w-full border-b border-white/5 bg-zinc-950/70 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      
+      <!-- User Brand -->
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <img 
+            id="nav-avatar" 
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" 
+            alt="Muhammad Saqib" 
+            class="w-9 h-9 rounded-full object-cover ring-2 ring-orange-500/40 skeleton"
+          />
+          <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-zinc-950 rounded-full"></span>
+        </div>
+        <div>
+          <span id="nav-name" class="font-bold text-white text-xs sm:text-sm block leading-tight">Connecting API...</span>
+          <span class="text-[10px] text-zinc-400 font-mono block">REST API Read-Only Hub</span>
+        </div>
+      </div>
+
+      <!-- Live API Status Indicator -->
+      <div id="api-status-badge" class="flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        <span id="api-status-text">Fetching...</span>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-10 w-full flex-1">
+    
+    <!-- Hero Profile Card (100% Fetched from API) -->
+    <div class="glass-card rounded-3xl p-6 sm:p-8 mb-8 text-center relative overflow-hidden">
+      
+      <div class="relative inline-block mb-4">
+        <img 
+          id="hero-avatar" 
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" 
+          alt="Avatar" 
+          class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl object-cover ring-4 ring-orange-500/30 mx-auto shadow-2xl skeleton"
+        />
+        <div class="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-full bg-emerald-500 text-black text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-md">
+          <span class="w-1.5 h-1.5 rounded-full bg-black"></span>
+          <span>Online</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-2 mb-1">
+        <h1 id="hero-name" class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          Muhammad Saqib
+        </h1>
+        <i class="fa-solid fa-circle-check text-blue-400 text-base" title="Verified Creator"></i>
+      </div>
+
+      <p id="hero-tagline" class="text-xs sm:text-sm font-mono text-orange-400 font-semibold mb-3">
+        Full-Stack Engineer & Cyber Security Specialist
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-2 text-xs text-zinc-400 mb-5">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/5 font-mono text-[11px]">
+          <i class="fa-solid fa-location-dot text-zinc-500"></i>
+          <span id="hero-location">Gojra, Faisalabad, PK</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px]">
+          <i class="fa-solid fa-bolt text-[10px]"></i>
+          <span>Open for Freelance Projects</span>
+        </span>
+      </div>
+
+      <p id="hero-bio" class="text-zinc-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed italic mb-6">
+        "Loading official bio from API..."
+      </p>
+
+      <!-- Primary Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a 
+          id="btn-whatsapp" 
+          href="#" 
+          target="_blank" 
+          class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-950/40 transition-all hover:scale-105"
+        >
+          <i class="fa-brands fa-whatsapp text-base"></i>
+          <span>Open WhatsApp</span>
+        </a>
+
+        <a 
+          id="btn-email" 
+          href="#" 
+          class="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-black font-bold text-xs flex items-center gap-2 shadow-lg shadow-orange-950/40 transition-all hover:scale-105"
+        >
+          <i class="fa-solid fa-envelope text-sm"></i>
+          <span>Email Saqib</span>
+        </a>
+
+        <button 
+          onclick="copyEmail()" 
+          class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 font-bold text-xs flex items-center gap-2 border border-white/10 transition-colors"
+          title="Copy Email to Clipboard"
+        >
+          <i id="copy-icon" class="fa-regular fa-copy text-sm"></i>
+          <span id="copy-text">Copy Email</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Section Heading -->
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-share-nodes text-orange-500 text-sm"></i>
+          <span>Official Social & Direct Channels</span>
+        </h2>
+        <p class="text-[11px] text-zinc-400 font-mono">Live synchronization with master database</p>
+      </div>
+      <div class="text-[11px] font-mono text-zinc-500 hidden sm:block">
+        GET /api/public/contact
+      </div>
+    </div>
+
+    <!-- Channels Grid (All Links Fetched from API) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <!-- 1. WhatsApp Card -->
+      <a id="card-whatsapp" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-brands fa-whatsapp"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider">Instant Chat</div>
+            <div class="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">WhatsApp</div>
+            <div id="channel-wa-text" class="text-xs text-zinc-400 font-mono truncate">+92 347 8936242</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-emerald-500/20 text-zinc-400 group-hover:text-emerald-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 2. Email Card -->
+      <a id="card-email" href="#" class="glass-card rounded-2xl p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-orange-400/80 tracking-wider">Direct Inbox</div>
+            <div class="text-sm font-bold text-white group-hover:text-orange-400 transition-colors">Email Message</div>
+            <div id="channel-email-text" class="text-xs text-zinc-400 font-mono truncate">loading email...</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-orange-500/20 text-zinc-400 group-hover:text-orange-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 3. Instagram Card -->
+      <a id="card-instagram" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500/10 via-pink-500/10 to-purple-500/10 text-pink-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-brands fa-instagram"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-pink-400/80 tracking-wider">Social Profile</div>
+            <div class="text-sm font-bold text-white group-hover:text-pink-400 transition-colors">Instagram</div>
+            <div class="text-xs text-zinc-400 font-mono truncate">@mr_saqib242</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-pink-500/20 text-zinc-400 group-hover:text-pink-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 4. GitHub Card -->
+      <a id="card-github" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-zinc-700/20 text-zinc-200 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-brands fa-github"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Source Code & Works</div>
+            <div class="text-sm font-bold text-white group-hover:text-zinc-200 transition-colors">GitHub Repository</div>
+            <div class="text-xs text-zinc-400 font-mono truncate">github.com/mrsaqib242</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-zinc-700/30 text-zinc-400 group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 5. Portfolio Website Card -->
+      <a id="card-portfolio" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-globe"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-blue-400/80 tracking-wider">Official Domain</div>
+            <div class="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">Master Portfolio</div>
+            <div id="channel-portfolio-text" class="text-xs text-zinc-400 font-mono truncate">mrsaqib242.vercel.app</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-blue-500/20 text-zinc-400 group-hover:text-blue-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 6. Direct Phone Call -->
+      <a id="card-phone" href="#" class="glass-card rounded-2xl p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-violet-500/10 text-violet-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-phone-volume"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-violet-400/80 tracking-wider">Mobile Voice</div>
+            <div class="text-sm font-bold text-white group-hover:text-violet-400 transition-colors">Direct Phone Call</div>
+            <div id="channel-phone-text" class="text-xs text-zinc-400 font-mono truncate">loading phone...</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-violet-500/20 text-zinc-400 group-hover:text-violet-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-phone text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 7. Facebook Card (Conditional) -->
+      <a id="card-facebook" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group hidden">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-blue-600/10 text-blue-500 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-brands fa-facebook"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-blue-400/80 tracking-wider">Social Network</div>
+            <div class="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">Facebook Profile</div>
+            <div class="text-xs text-zinc-400 font-mono truncate">Muhammad Saqib</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-blue-600/20 text-zinc-400 group-hover:text-blue-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 8. TikTok Card (Conditional) -->
+      <a id="card-tiktok" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group hidden">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-brands fa-tiktok"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-rose-400/80 tracking-wider">Short Video Content</div>
+            <div class="text-sm font-bold text-white group-hover:text-rose-400 transition-colors">TikTok</div>
+            <div class="text-xs text-zinc-400 font-mono truncate">@mr_saqib_242</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-rose-500/20 text-zinc-400 group-hover:text-rose-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 9. Snapchat Card (Conditional) -->
+      <a id="card-snapchat" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group hidden">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-yellow-400/10 text-yellow-300 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-brands fa-snapchat"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-yellow-300/80 tracking-wider">Stories & Snaps</div>
+            <div class="text-sm font-bold text-white group-hover:text-yellow-300 transition-colors">Snapchat</div>
+            <div class="text-xs text-zinc-400 font-mono truncate">mrsaqib242</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-yellow-400/20 text-zinc-400 group-hover:text-yellow-300 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
+      <!-- 10. Resume / CV Download (Conditional) -->
+      <a id="card-resume" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group hidden">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-file-pdf"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-teal-400/80 tracking-wider">Curriculum Vitae</div>
+            <div class="text-sm font-bold text-white group-hover:text-teal-400 transition-colors">Official Resume</div>
+            <div class="text-xs text-zinc-400 font-mono truncate">Download PDF</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-teal-500/20 text-zinc-400 group-hover:text-teal-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-download text-xs"></i>
+        </div>
+      </a>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full border-t border-white/5 py-6 bg-zinc-950 mt-12 text-center text-xs text-zinc-500 font-mono">
+    &copy; <span id="year"></span> <span id="footer-name">Muhammad Saqib</span> &bull; Master Central API Hub Connected
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: 100% PURE READ-ONLY FETCH FROM /api/public/contact -->
+  <!-- ========================================================================= -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const API_ENDPOINT = "https://mrsaqib242.vercel.app/api/public/contact";
+
+    let globalEmail = "saqibsaqqibsaqib@gmail.com";
+
+    async function loadContactDetails() {
+      const badge = document.getElementById('api-status-badge');
+      const badgeText = document.getElementById('api-status-text');
+
+      try {
+        const response = await fetch(API_ENDPOINT);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const json = await response.json();
+
+        if (json.success && json.data) {
+          const p = json.data;
+
+          // Header
+          if (p.name) document.getElementById('nav-name').textContent = p.name;
+          if (p.avatar) {
+            const navAvatar = document.getElementById('nav-avatar');
+            navAvatar.src = p.avatar;
+            navAvatar.classList.remove('skeleton');
+          }
+
+          // Hero Card
+          if (p.avatar) {
+            const heroAvatar = document.getElementById('hero-avatar');
+            heroAvatar.src = p.avatar;
+            heroAvatar.classList.remove('skeleton');
+          }
+          if (p.name) {
+            document.getElementById('hero-name').textContent = p.name;
+            document.getElementById('footer-name').textContent = p.name;
+          }
+          if (p.tagline) document.getElementById('hero-tagline').textContent = p.tagline;
+          if (p.location) document.getElementById('hero-location').textContent = p.location;
+          if (p.bio) document.getElementById('hero-bio').textContent = `"${p.bio}"`;
+
+          // Buttons
+          if (p.whatsapp) {
+            document.getElementById('btn-whatsapp').href = p.whatsapp;
+            document.getElementById('card-whatsapp').href = p.whatsapp;
+          }
+          if (p.email) {
+            globalEmail = p.email;
+            document.getElementById('btn-email').href = `mailto:${p.email}`;
+            document.getElementById('card-email').href = `mailto:${p.email}`;
+            document.getElementById('channel-email-text').textContent = p.email;
+          }
+
+          // Phone
+          if (p.phone) {
+            document.getElementById('card-phone').href = `tel:${p.phone.replace(/[^0-9+]/g, '')}`;
+            document.getElementById('channel-phone-text').textContent = p.phone;
+            document.getElementById('channel-wa-text').textContent = p.phone;
+          }
+
+          // Portfolio
+          if (p.portfolio) {
+            document.getElementById('card-portfolio').href = p.portfolio;
+            try {
+              document.getElementById('channel-portfolio-text').textContent = new URL(p.portfolio).hostname;
+            } catch (e) {
+              document.getElementById('channel-portfolio-text').textContent = p.portfolio;
+            }
+          }
+
+          // Instagram
+          if (p.instagram) {
+            document.getElementById('card-instagram').href = p.instagram;
+          }
+
+          // GitHub
+          if (p.github) {
+            document.getElementById('card-github').href = p.github;
+          }
+
+          // Optional Social Links (Revealed dynamically if present in DB)
+          if (p.facebook && p.facebook.trim() !== '') {
+            const fb = document.getElementById('card-facebook');
+            fb.href = p.facebook;
+            fb.classList.remove('hidden');
+          }
+          if (p.tiktok && p.tiktok.trim() !== '') {
+            const tt = document.getElementById('card-tiktok');
+            tt.href = p.tiktok;
+            tt.classList.remove('hidden');
+          }
+          if (p.snapchat && p.snapchat.trim() !== '') {
+            const sc = document.getElementById('card-snapchat');
+            sc.href = p.snapchat;
+            sc.classList.remove('hidden');
+          }
+          if (p.resume && p.resume.trim() !== '') {
+            const cv = document.getElementById('card-resume');
+            cv.href = p.resume;
+            cv.classList.remove('hidden');
+          }
+
+          // Badge Green Pulse
+          badge.className = 'flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-mono';
+          badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>Live Connected</span>';
+        }
+      } catch (err) {
+        console.warn('API fetch error, using default cached info:', err);
+        badge.className = 'flex items-center gap-2 px-3 py-1 bg-zinc-800 border border-white/10 rounded-full text-zinc-400 text-xs font-mono';
+        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-zinc-500"></span><span>Offline Mode</span>';
+      }
+    }
+
+    loadContactDetails();
+
+    function copyEmail() {
+      navigator.clipboard.writeText(globalEmail);
+      const icon = document.getElementById('copy-icon');
+      const text = document.getElementById('copy-text');
+      icon.className = 'fa-solid fa-check text-emerald-400';
+      text.textContent = 'Copied!';
+      setTimeout(() => {
+        icon.className = 'fa-regular fa-copy';
+        text.textContent = 'Copy Email';
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
