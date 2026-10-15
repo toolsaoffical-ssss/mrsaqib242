@@ -400,6 +400,72 @@ export default function AdminProfileContactManager({
                 className="w-full bg-[#181922] border border-white/10 rounded-xl p-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-sans transition-colors leading-relaxed"
               />
             </div>
+
+            {/* Hero Card Customizations (Status, Badges & Scope) */}
+            <div className="pt-4 border-t border-white/5 space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
+                <Sparkles size={14} />
+                <span>Contact Page Hero Customizations</span>
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Contract Status */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                    Contract Availability Status
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.contract_status || ''}
+                    onChange={e => handleChange('contract_status', e.target.value)}
+                    placeholder="Open for New Projects"
+                    className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-sans transition-colors"
+                  />
+                </div>
+
+                {/* Contract Subtitle */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                    Status Pill Subtitle
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.contract_subtitle || ''}
+                    onChange={e => handleChange('contract_subtitle', e.target.value)}
+                    placeholder="Remote Worldwide • NDA Protected"
+                    className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-sans transition-colors"
+                  />
+                </div>
+
+                {/* Availability Note */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                    Location Scope &amp; Availability Note
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.availability_note || ''}
+                    onChange={e => handleChange('availability_note', e.target.value)}
+                    placeholder="Available for Remote Worldwide Contracts & Security Audits."
+                    className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-sans transition-colors"
+                  />
+                </div>
+
+                {/* ID Badge */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                    Verified ID Badge Text
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.badge_text || ''}
+                    onChange={e => handleChange('badge_text', e.target.value)}
+                    placeholder="Verified ID"
+                    className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -597,18 +663,44 @@ export default function AdminProfileContactManager({
               </div>
 
               {/* Resume */}
-              <div className="md:col-span-2">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-teal-400 mb-2 flex items-center gap-1.5">
-                  <FileText size={13} />
-                  <span>Resume / CV PDF URL</span>
-                </label>
-                <input
-                  type="text"
-                  value={profile.resume_url || ''}
-                  onChange={e => handleChange('resume_url', e.target.value)}
-                  placeholder="/resume.pdf"
-                  className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-teal-500 font-mono transition-colors"
-                />
+              <div className="md:col-span-2 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                    <FileText size={13} />
+                    <span>Resume / CV PDF URL</span>
+                  </label>
+                  <a
+                    href={profile.resume_url || '/resume.pdf'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-teal-400 hover:text-teal-300 font-mono flex items-center gap-1 underline"
+                  >
+                    <span>Test Download / Preview CV</span>
+                    <ExternalLink size={11} />
+                  </a>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="md:col-span-2">
+                    <input
+                      type="text"
+                      value={profile.resume_url || ''}
+                      onChange={e => handleChange('resume_url', e.target.value)}
+                      placeholder="/resume.pdf"
+                      className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-teal-500 font-mono transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={profile.cv_badge || ''}
+                      onChange={e => handleChange('cv_badge', e.target.value)}
+                      placeholder="PDF 2026/27"
+                      className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-purple-500 font-mono transition-colors"
+                      title="CV Download Pill Badge"
+                    />
+                  </div>
+                </div>
+                <p className="text-[11px] text-zinc-500 font-mono">Use default <code>/resume.pdf</code> (official generated CV) or paste any direct Google Drive / Dropbox PDF link.</p>
               </div>
             </div>
           </div>

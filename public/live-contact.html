@@ -114,6 +114,9 @@
           let targetHref = rawValue;
           if (config.isEmail) targetHref = `mailto:${rawValue}`;
           else if (config.isPhone) targetHref = `tel:${rawValue.replace(/[^0-9+]/g, '')}`;
+          else if (key === 'resume' && !rawValue.startsWith('http')) {
+            targetHref = `https://mrsaqib242.vercel.app${rawValue.startsWith('/') ? '' : '/'}${rawValue}`;
+          }
 
           cardsHtml += `
             <a href="${targetHref}" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group">

@@ -416,11 +416,11 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                 <h2 className="text-2xl sm:text-3xl font-black text-zinc-800 tracking-tight flex items-center gap-2">
                   <span>{profile.name || 'Muhammad Saqib'}</span>
                   <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full">
-                    Verified ID
+                    {profile.badge_text || 'Verified ID'}
                   </span>
                 </h2>
                 <p className="text-zinc-500 text-xs sm:text-sm font-medium mt-1 max-w-xl">
-                  Based in {locationDisplay} • Available for Remote Worldwide Contracts &amp; Security Audits.
+                  Based in {locationDisplay} • {profile.availability_note || 'Available for Remote Worldwide Contracts & Security Audits.'}
                 </p>
               </div>
             </div>
@@ -430,9 +430,9 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">CONTRACT STATUS</div>
               <div className="text-sm font-black text-emerald-600 flex items-center md:justify-end gap-1.5 mt-0.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Open for New Projects</span>
+                <span>{profile.contract_status || 'Open for New Projects'}</span>
               </div>
-              <div className="text-[11px] text-zinc-500 font-medium">Remote Worldwide • NDA Protected</div>
+              <div className="text-[11px] text-zinc-500 font-medium">{profile.contract_subtitle || 'Remote Worldwide • NDA Protected'}</div>
             </div>
           </div>
 
@@ -525,7 +525,9 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               whileHover={{ y: -4, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 350, damping: 15 }}
               href={profile.resume_url || '/resume.pdf'}
-              download="Muhammad_Saqib_CV.pdf"
+              target={profile.resume_url && profile.resume_url.startsWith('http') ? '_blank' : undefined}
+              rel={profile.resume_url && profile.resume_url.startsWith('http') ? 'noopener noreferrer' : undefined}
+              download={profile.resume_url && profile.resume_url.startsWith('http') ? undefined : "Muhammad_Saqib_CV.pdf"}
               className="p-5 rounded-2xl bg-white shadow-[4px_4px_10px_#d9dadc,-4px_-4px_10px_#ffffff] border border-white flex flex-col justify-between group cursor-pointer hover:border-purple-300 transition-all"
             >
               <div className="flex items-center justify-between mb-4">
@@ -533,7 +535,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                   <FileText size={20} />
                 </div>
                 <span className="text-[9px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">
-                  PDF 2026/27
+                  {profile.cv_badge || 'PDF 2026/27'}
                 </span>
               </div>
               <div>
@@ -1233,7 +1235,9 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                 {/* Resume Download */}
                 <a 
                   href={profile.resume_url || '/resume.pdf'}
-                  download="Muhammad_Saqib_Resume.pdf"
+                  target={profile.resume_url && profile.resume_url.startsWith('http') ? '_blank' : undefined}
+                  rel={profile.resume_url && profile.resume_url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  download={profile.resume_url && profile.resume_url.startsWith('http') ? undefined : "Muhammad_Saqib_Resume.pdf"}
                   className="flex items-center gap-3.5 bg-white/50 p-3.5 rounded-2xl shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white hover:bg-white transition-all group"
                 >
                   <div className="w-11 h-11 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 group-hover:scale-110 transition-transform">

@@ -65,6 +65,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         tiktok_url: raw.tiktok_url !== undefined ? String(raw.tiktok_url).trim() : DEFAULT_PROFILE_SETTINGS.tiktok_url,
         snapchat_url: raw.snapchat_url !== undefined ? String(raw.snapchat_url).trim() : DEFAULT_PROFILE_SETTINGS.snapchat_url,
         github_url: raw.github_url !== undefined ? String(raw.github_url).trim() : (DEFAULT_PROFILE_SETTINGS.github_url || ''),
+        contract_status: raw.contract_status !== undefined ? String(raw.contract_status).trim() : DEFAULT_PROFILE_SETTINGS.contract_status,
+        contract_subtitle: raw.contract_subtitle !== undefined ? String(raw.contract_subtitle).trim() : DEFAULT_PROFILE_SETTINGS.contract_subtitle,
+        availability_note: raw.availability_note !== undefined ? String(raw.availability_note).trim() : DEFAULT_PROFILE_SETTINGS.availability_note,
+        badge_text: raw.badge_text !== undefined ? String(raw.badge_text).trim() : DEFAULT_PROFILE_SETTINGS.badge_text,
+        cv_badge: raw.cv_badge !== undefined ? String(raw.cv_badge).trim() : DEFAULT_PROFILE_SETTINGS.cv_badge,
         updated_at: new Date().toISOString()
       };
 

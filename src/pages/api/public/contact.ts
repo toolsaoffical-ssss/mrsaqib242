@@ -43,7 +43,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         snapchat: profile?.snapchat_url || "",
         portfolio: profile?.portfolio_url || "https://mrsaqib242.vercel.app",
         github: profile?.github_url || "https://github.com/mrsaqib242",
-        resume: profile?.resume_url || "",
+        resume: profile?.resume_url || "/resume.pdf",
+        contract_status: profile?.contract_status || "Open for New Projects",
+        contract_subtitle: profile?.contract_subtitle || "Remote Worldwide • NDA Protected",
+        availability_note: profile?.availability_note || "Available for Remote Worldwide Contracts & Security Audits.",
+        badge_text: profile?.badge_text || "Verified ID",
+        cv_badge: profile?.cv_badge || "PDF 2026/27",
       } 
     });
   } catch (error: any) {

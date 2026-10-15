@@ -19,6 +19,11 @@ export interface ProfileSettings {
   snapchat_url: string;
   github_url?: string;
   avatar_url?: string;
+  contract_status?: string;
+  contract_subtitle?: string;
+  availability_note?: string;
+  badge_text?: string;
+  cv_badge?: string;
   updated_at?: string;
 }
 
@@ -40,7 +45,12 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   tiktok_url: 'https://www.tiktok.com/@mr_saqib_242',
   snapchat_url: 'https://www.snapchat.com/add/mrsaqib242',
   github_url: 'https://github.com/mrsaqib242',
-  avatar_url: 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90'
+  avatar_url: 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
+  contract_status: 'Open for New Projects',
+  contract_subtitle: 'Remote Worldwide • NDA Protected',
+  availability_note: 'Available for Remote Worldwide Contracts & Security Audits.',
+  badge_text: 'Verified ID',
+  cv_badge: 'PDF 2026/27'
 };
 
 const STORAGE_KEY = 'saqib_profile_settings_cache';
@@ -99,6 +109,11 @@ export async function fetchProfileSettingsFromDB(): Promise<{
         snapchat_url: data.snapchat_url || cached.snapchat_url,
         github_url: data.github_url || cached.github_url || DEFAULT_PROFILE_SETTINGS.github_url,
         avatar_url: data.avatar_url || cached.avatar_url || DEFAULT_PROFILE_SETTINGS.avatar_url,
+        contract_status: data.contract_status || cached.contract_status || DEFAULT_PROFILE_SETTINGS.contract_status,
+        contract_subtitle: data.contract_subtitle || cached.contract_subtitle || DEFAULT_PROFILE_SETTINGS.contract_subtitle,
+        availability_note: data.availability_note || cached.availability_note || DEFAULT_PROFILE_SETTINGS.availability_note,
+        badge_text: data.badge_text || cached.badge_text || DEFAULT_PROFILE_SETTINGS.badge_text,
+        cv_badge: data.cv_badge || cached.cv_badge || DEFAULT_PROFILE_SETTINGS.cv_badge,
         updated_at: data.updated_at
       };
 

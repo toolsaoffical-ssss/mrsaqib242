@@ -21,6 +21,11 @@ ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS instagram_url TEXT 
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS facebook_url TEXT DEFAULT 'https://www.facebook.com/profile.php?id=100085188689033';
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS tiktok_url TEXT DEFAULT 'https://www.tiktok.com/@mr_saqib_242';
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS snapchat_url TEXT DEFAULT 'https://www.snapchat.com/add/mrsaqib242';
+ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS contract_status TEXT DEFAULT 'Open for New Projects';
+ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS contract_subtitle TEXT DEFAULT 'Remote Worldwide • NDA Protected';
+ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS availability_note TEXT DEFAULT 'Available for Remote Worldwide Contracts & Security Audits.';
+ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS badge_text TEXT DEFAULT 'Verified ID';
+ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS cv_badge TEXT DEFAULT 'PDF 2026/27';
 
 -- 2. Upsert the master default row with live values
 INSERT INTO public.profile_settings (
