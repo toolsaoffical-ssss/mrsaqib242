@@ -33,8 +33,18 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
   const fetchData = async () => {
     setLoading(true);
     try {
+      // 1. Try server admin API route first
+      const apiRes = await fetch('/api/admin/api-hub', { credentials: 'include' }).catch(() => null);
+      if (apiRes && apiRes.ok) {
+        const json = await apiRes.json();
+        if (json.settings) setSettings(json.settings);
+        if (json.domains) setDomains(json.domains);
+        return;
+      }
+
+      // 2. Direct Supabase client fallback
       const [settingsRes, domainsRes] = await Promise.all([
-        supabase.from('api_settings').select('*').limit(1).single(),
+        supabase.from('api_settings').select('*').limit(1).maybeSingle(),
         supabase.from('api_allowed_domains').select('*').order('created_at', { ascending: false })
       ]);
 
@@ -55,13 +65,26 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
     const newValue = !settings[key];
     setSettings(prev => ({ ...prev, [key]: newValue }));
     
-    const { error } = await supabase.from('api_settings').update({ [key]: newValue }).eq('id', '00000000-0000-0000-0000-000000000000');
-    if (error) {
-      // Revert if error
-      setSettings(prev => ({ ...prev, [key]: !newValue }));
-      onNotify('Failed to update setting', 'error');
-    } else {
+    try {
+      const res = await fetch('/api/admin/api-hub', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action: 'update_setting', settingKey: key, settingValue: newValue })
+      }).catch(() => null);
+
+      if (res && res.ok) {
+        onNotify('API Setting updated', 'success');
+        return;
+      }
+
+      // Direct fallback
+      const { error } = await supabase.from('api_settings').update({ [key]: newValue }).eq('id', '00000000-0000-0000-0000-000000000000');
+      if (error) throw error;
       onNotify('API Setting updated', 'success');
+    } catch (err: any) {
+      setSettings(prev => ({ ...prev, [key]: !newValue }));
+      onNotify(err?.message || 'Failed to update setting', 'error');
     }
   };
 
@@ -69,12 +92,26 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
     const newValue = !currentStatus;
     setDomains(prev => prev.map(d => d.id === id ? { ...d, is_active: newValue } : d));
 
-    const { error } = await supabase.from('api_allowed_domains').update({ is_active: newValue }).eq('id', id);
-    if (error) {
-      fetchData(); // Revert
-      onNotify('Failed to update domain', 'error');
-    } else {
+    try {
+      const res = await fetch('/api/admin/api-hub', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id, is_active: newValue })
+      }).catch(() => null);
+
+      if (res && res.ok) {
+        onNotify(newValue ? 'Domain Activated' : 'Domain Deactivated', 'success');
+        return;
+      }
+
+      // Direct fallback
+      const { error } = await supabase.from('api_allowed_domains').update({ is_active: newValue }).eq('id', id);
+      if (error) throw error;
       onNotify(newValue ? 'Domain Activated' : 'Domain Deactivated', 'success');
+    } catch (err: any) {
+      fetchData(); // Revert
+      onNotify(err?.message || 'Failed to update domain', 'error');
     }
   };
 
@@ -99,25 +136,76 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
       return;
     }
 
-    const { data, error } = await supabase.from('api_allowed_domains').insert([{ domain: cleanDomain, is_active: true }]).select();
-    
-    if (error) {
-      onNotify(error.message, 'error');
-    } else if (data) {
-      setDomains(prev => [data[0], ...prev]);
-      setNewDomain('');
-      onNotify('Domain added to whitelist', 'success');
+    try {
+      // 1. Try server admin route first (uses Supabase service-role admin client to bypass client RLS)
+      const res = await fetch('/api/admin/api-hub', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action: 'add_domain', domain: cleanDomain })
+      }).catch(() => null);
+
+      if (res) {
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.data) {
+          setDomains(prev => [json.data, ...prev]);
+          setNewDomain('');
+          onNotify('Domain added to whitelist', 'success');
+          return;
+        } else if (!res.ok && json?.error) {
+          // If server returned specific error, notify and don't double-fail unless server is unreachable
+          if (res.status === 401 || res.status === 403) {
+            onNotify(json.error, 'error');
+            return;
+          }
+        }
+      }
+
+      // 2. Direct client fallback
+      const { data, error } = await supabase.from('api_allowed_domains').insert([{ domain: cleanDomain, is_active: true }]).select();
+      
+      if (error) {
+        if (error.message?.includes('violates row-level security policy')) {
+          onNotify('RLS Policy Error: Run fix SQL in Supabase SQL editor.', 'error');
+        } else {
+          onNotify(error.message, 'error');
+        }
+      } else if (data) {
+        setDomains(prev => [data[0], ...prev]);
+        setNewDomain('');
+        onNotify('Domain added to whitelist', 'success');
+      }
+    } catch (err: any) {
+      onNotify(err?.message || 'Failed to add domain', 'error');
     }
   };
 
   const deleteDomain = async (id: string) => {
     if (!window.confirm('Are you sure you want to remove this domain from whitelist?')) return;
-    const { error } = await supabase.from('api_allowed_domains').delete().eq('id', id);
-    if (error) {
-      onNotify('Failed to delete domain', 'error');
-    } else {
-      setDomains(prev => prev.filter(d => d.id !== id));
-      onNotify('Domain removed', 'success');
+    try {
+      const res = await fetch('/api/admin/api-hub', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id })
+      }).catch(() => null);
+
+      if (res && res.ok) {
+        setDomains(prev => prev.filter(d => d.id !== id));
+        onNotify('Domain removed', 'success');
+        return;
+      }
+
+      // Direct fallback
+      const { error } = await supabase.from('api_allowed_domains').delete().eq('id', id);
+      if (error) {
+        onNotify('Failed to delete domain', 'error');
+      } else {
+        setDomains(prev => prev.filter(d => d.id !== id));
+        onNotify('Domain removed', 'success');
+      }
+    } catch (err: any) {
+      onNotify(err?.message || 'Failed to delete domain', 'error');
     }
   };
 
