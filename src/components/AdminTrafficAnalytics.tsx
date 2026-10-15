@@ -6,6 +6,7 @@ import {
   Tablet,
   Clock,
   ArrowUpRight,
+  ArrowDownRight,
   RefreshCw,
   Search,
   Filter,
@@ -41,6 +42,11 @@ interface AdminTrafficAnalyticsProps {
 export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalyticsProps) {
   const [entries, setEntries] = useState<SiteAnalyticsEntry[]>([]);
   const [totalDatabaseHits, setTotalDatabaseHits] = useState<number>(0);
+  const [totalDbPageViews, setTotalDbPageViews] = useState<number | undefined>(undefined);
+  const [totalDbToolClicks, setTotalDbToolClicks] = useState<number | undefined>(undefined);
+  const [hasMoreFromDB, setHasMoreFromDB] = useState<boolean>(false);
+  const [displayLimit, setDisplayLimit] = useState<number>(500);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [isFromDB, setIsFromDB] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,12 +54,15 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [copiedIp, setCopiedIp] = useState<string | null>(null);
 
-  const loadData = async (isBackground = false) => {
+  const loadData = async (isBackground = false, fetchAll = false) => {
     if (!isBackground) setLoading(true);
     try {
-      const res = await fetchSiteAnalyticsFromDB();
+      const res = await fetchSiteAnalyticsFromDB({ fetchAll });
       setEntries(res.entries);
       setTotalDatabaseHits(res.totalVisits);
+      setTotalDbPageViews(res.totalPageViews);
+      setTotalDbToolClicks(res.totalToolClicks);
+      setHasMoreFromDB(Boolean(res.hasMore));
       setIsFromDB(res.fromDatabase);
       if (res.error && !isBackground) {
         onNotify(`Supabase note: ${res.error}. Showing live local cache.`, 'error');
@@ -62,6 +71,43 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       if (!isBackground) onNotify('Failed to load traffic analytics', 'error');
     } finally {
       if (!isBackground) setLoading(false);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    if (entries.length > displayLimit) {
+      setDisplayLimit(prev => Math.min(prev + 500, entries.length));
+      return;
+    }
+
+    if (hasMoreFromDB) {
+      setLoadingMore(true);
+      try {
+        await loadData(false, true);
+        setDisplayLimit(prev => prev + 500);
+        onNotify('Loaded additional records from database!', 'success');
+      } catch {
+        onNotify('Could not load more records.', 'error');
+      } finally {
+        setLoadingMore(false);
+      }
+    }
+  };
+
+  const handleShowAll = async () => {
+    if (hasMoreFromDB) {
+      setLoadingMore(true);
+      try {
+        await loadData(false, true);
+        setDisplayLimit(10000);
+        onNotify('All records loaded successfully!', 'success');
+      } catch {
+        onNotify('Failed to load all records.', 'error');
+      } finally {
+        setLoadingMore(false);
+      }
+    } else {
+      setDisplayLimit(entries.length);
     }
   };
 
@@ -208,12 +254,16 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
     const totalSessions = sessionSet.size;
     const uniqueIps = new Set(entries.map(e => e.ip_address)).size;
 
-    // Accurate page views & tool clicks (scaled to true database total if larger than local sample)
+    // Accurate page views & tool clicks (using direct database counts if available)
     const rawToolClicks = entries.filter(e => e.event_type === 'tool_click').length;
     const rawPageViews = entries.filter(e => e.event_type === 'page_view').length;
     const sampleSize = entries.length || 1;
-    const pageViews = total > sampleSize ? Math.round((rawPageViews / sampleSize) * total) : rawPageViews;
-    const toolClicks = total > sampleSize ? total - pageViews : rawToolClicks;
+    const pageViews = totalDbPageViews !== undefined && totalDbPageViews > 0
+      ? totalDbPageViews
+      : (total > sampleSize ? Math.round((rawPageViews / sampleSize) * total) : rawPageViews);
+    const toolClicks = totalDbToolClicks !== undefined && totalDbToolClicks > 0
+      ? totalDbToolClicks
+      : (total > sampleSize ? total - pageViews : rawToolClicks);
 
     // Smart New vs Returning detection across the visitor dataset
     const seenVisitorIds = new Set<string>();
@@ -311,7 +361,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       sortedTools,
       lastActive: entries[0] ? new Date(entries[0].created_at) : null
     };
-  }, [entries, totalDatabaseHits]);
+  }, [entries, totalDatabaseHits, totalDbPageViews, totalDbToolClicks]);
 
   // Filtered entries
   const filteredEntries = useMemo(() => {
@@ -337,14 +387,25 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
     });
   }, [entries, searchQuery, filterType]);
 
+  // Display limit slice (default: 500 records)
+  const displayedEntries = useMemo(() => {
+    return filteredEntries.slice(0, displayLimit);
+  }, [filteredEntries, displayLimit]);
+
   const timeAgo = (dateStr: string) => {
     const diffSec = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+    if (diffSec < 0) return 'Just now';
     if (diffSec < 60) return `${diffSec}s ago`;
     const diffMin = Math.floor(diffSec / 60);
     if (diffMin < 60) return `${diffMin}m ago`;
     const diffHr = Math.floor(diffMin / 60);
-    if (diffHr < 24) return `${diffHr}h ago`;
-    return `${Math.floor(diffHr / 24)}d ago`;
+    const remMin = diffMin % 60;
+    if (diffHr < 24) {
+      return remMin > 0 ? `${diffHr}h ${remMin}m ago` : `${diffHr}h ago`;
+    }
+    const diffDays = Math.floor(diffHr / 24);
+    const remHr = diffHr % 24;
+    return remHr > 0 ? `${diffDays}d ${remHr}h ago` : `${diffDays}d ago`;
   };
 
   return (
@@ -699,7 +760,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {filteredEntries.map(row => {
+              {displayedEntries.map(row => {
                 const date = new Date(row.created_at);
                 const flag = getCountryFlag(row.country_code, row.country);
                 const isTool = row.event_type === 'tool_click';
@@ -838,17 +899,17 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
                     </td>
 
                     {/* Timestamp */}
-                    <td className="px-5 py-4 text-right font-mono text-xs">
+                    <td className="px-5 py-4 text-right font-mono text-xs whitespace-nowrap">
                       <div className="text-white font-bold">{timeAgo(row.created_at)}</div>
-                      <div className="text-[10px] text-zinc-500 mt-0.5">
-                        {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      <div className="text-[10px] text-zinc-400 mt-0.5">
+                        <span className="text-zinc-500">{date.toLocaleDateString([], { month: 'short', day: 'numeric' })}</span> • {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                       </div>
                     </td>
                   </tr>
                 );
               })}
 
-              {filteredEntries.length === 0 && (
+              {displayedEntries.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-zinc-500 font-mono text-xs">
                     No visitor records found matching your filters.
@@ -857,6 +918,51 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination & Load More Controls */}
+        <div className="p-4 sm:p-5 border-t border-white/10 bg-black/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="text-zinc-400 font-mono">
+            Showing <span className="text-white font-bold">{Math.min(displayedEntries.length, filteredEntries.length)}</span> of{' '}
+            <span className="text-emerald-400 font-bold">{filteredEntries.length}</span> loaded records
+            {stats.total > filteredEntries.length && (
+              <span className="text-zinc-500 ml-1">
+                ({stats.total} total hits recorded in database)
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {(filteredEntries.length > displayLimit || hasMoreFromDB) && (
+              <button
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl font-bold transition flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+              >
+                {loadingMore ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <ArrowDownRight size={14} />
+                )}
+                <span>View More (+500 Visitors)</span>
+              </button>
+            )}
+
+            {(hasMoreFromDB || filteredEntries.length > displayLimit) && (
+              <button
+                onClick={handleShowAll}
+                disabled={loadingMore}
+                className="px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10 rounded-xl font-bold transition flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+              >
+                {loadingMore ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <Eye size={14} />
+                )}
+                <span>Load All From DB</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

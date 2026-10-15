@@ -488,14 +488,16 @@ export async function collectDeviceIntel(): Promise<Partial<SiteAnalyticsEntry>>
 /**
  * Fetch all analytics entries from /api/analytics/list or Supabase directly
  */
-export async function fetchSiteAnalyticsFromDB(): Promise<{
+export async function fetchSiteAnalyticsFromDB(params?: { fetchAll?: boolean }): Promise<{
   entries: SiteAnalyticsEntry[];
   fromDatabase: boolean;
   totalVisits: number;
+  totalPageViews?: number;
+  totalToolClicks: number;
   uniqueVisitors: number;
   totalSessions: number;
   uniqueIps: number;
-  totalToolClicks: number;
+  hasMore?: boolean;
   error?: string | null;
 }> {
   const localData = getLocalAnalytics();
@@ -521,7 +523,8 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
 
   // 1. Try secure /api/analytics/list endpoint first
   try {
-    const apiRes = await fetch('/api/analytics/list', {
+    const queryStr = params?.fetchAll ? '?fetch_all=true' : '';
+    const apiRes = await fetch(`/api/analytics/list${queryStr}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include'
@@ -536,14 +539,19 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
           const realTotal = typeof result.totalHits === 'number' && result.totalHits > 0 
             ? result.totalHits 
             : result.entries.length;
+          const realToolClicks = typeof result.totalToolClicks === 'number' 
+            ? result.totalToolClicks 
+            : toolClicks;
           return {
             entries: result.entries,
             fromDatabase: true,
             totalVisits: realTotal,
+            totalPageViews: result.totalPageViews,
+            totalToolClicks: realToolClicks,
             uniqueVisitors,
             totalSessions,
             uniqueIps,
-            totalToolClicks: toolClicks,
+            hasMore: Boolean(result.hasMore),
             error: null
           };
         } else if (result.fromDatabase) {
@@ -551,10 +559,12 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
             entries: [],
             fromDatabase: true,
             totalVisits: 0,
+            totalPageViews: 0,
+            totalToolClicks: 0,
             uniqueVisitors: 0,
             totalSessions: 0,
             uniqueIps: 0,
-            totalToolClicks: 0,
+            hasMore: false,
             error: null
           };
         }

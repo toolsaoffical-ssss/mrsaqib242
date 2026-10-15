@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
-  // 3. Fetch visitor entries and exact count (bypassing PostgREST 1000 row ceiling)
+  // 3. Fetch visitor entries and exact database aggregates
   try {
     const client = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
     if (!client) {
@@ -43,32 +43,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         fromDatabase: false,
         entries: [],
         totalHits: 0,
+        totalPageViews: 0,
+        totalToolClicks: 0,
         error: 'Supabase client is not configured'
       });
     }
 
-    // First batch (0 - 999) + Exact PostgreSQL row count
-    const { data: firstBatch, count: totalCount, error } = await client
-      .from('site_analytics')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(0, 999);
+    const fetchAll = req.query.fetch_all === 'true' || req.body?.fetch_all === true;
 
-    if (error) {
-      console.warn('Error fetching analytics from Supabase:', error.message);
+    // Run exact counts and initial 500 records concurrently in PostgreSQL
+    const [totalCountRes, pageViewCountRes, toolClickCountRes, initialBatchRes] = await Promise.all([
+      client.from('site_analytics').select('id', { count: 'exact', head: true }),
+      client.from('site_analytics').select('id', { count: 'exact', head: true }).eq('event_type', 'page_view'),
+      client.from('site_analytics').select('id', { count: 'exact', head: true }).eq('event_type', 'tool_click'),
+      client
+        .from('site_analytics')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .range(0, fetchAll ? 999 : 499)
+    ]);
+
+    if (initialBatchRes.error) {
+      console.warn('Error fetching analytics from Supabase:', initialBatchRes.error.message);
       return res.status(200).json({
         success: true,
         fromDatabase: false,
         entries: [],
         totalHits: 0,
-        error: error.message
+        totalPageViews: 0,
+        totalToolClicks: 0,
+        error: initialBatchRes.error.message
       });
     }
 
-    let allEntries = firstBatch || [];
+    let allEntries = initialBatchRes.data || [];
+    const totalCount = typeof totalCountRes.count === 'number' ? totalCountRes.count : allEntries.length;
+    const totalPageViews = typeof pageViewCountRes.count === 'number' ? pageViewCountRes.count : 0;
+    const totalToolClicks = typeof toolClickCountRes.count === 'number' ? toolClickCountRes.count : 0;
 
-    // If table has more than 1000 records, fetch subsequent 1000-row chunks in parallel (up to 5,000)
-    if (typeof totalCount === 'number' && totalCount > 1000) {
+    // If fetchAll is requested and total records exceed 1000, fetch remaining in parallel up to 5,000
+    if (fetchAll && totalCount > 1000) {
       const maxToFetch = Math.min(totalCount, 5000);
       const batchPromises: Promise<any>[] = [];
       for (let offset = 1000; offset < maxToFetch; offset += 1000) {
@@ -91,14 +105,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    const realTotal = typeof totalCount === 'number' && totalCount > 0 ? totalCount : allEntries.length;
-
     return res.status(200).json({
       success: true,
       fromDatabase: true,
       entries: allEntries,
       count: allEntries.length,
-      totalHits: realTotal
+      totalHits: totalCount,
+      totalPageViews,
+      totalToolClicks,
+      hasMore: totalCount > allEntries.length
     });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
