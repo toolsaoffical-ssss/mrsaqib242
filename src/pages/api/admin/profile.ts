@@ -56,6 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         phone: raw.phone !== undefined ? String(raw.phone).trim() : DEFAULT_PROFILE_SETTINGS.phone,
         email: raw.email !== undefined ? String(raw.email).trim() : DEFAULT_PROFILE_SETTINGS.email,
         location: raw.location !== undefined ? String(raw.location).trim() : DEFAULT_PROFILE_SETTINGS.location,
+        avatar_url: raw.avatar_url !== undefined ? String(raw.avatar_url).trim() : (DEFAULT_PROFILE_SETTINGS.avatar_url || ''),
         portfolio_url: raw.portfolio_url !== undefined ? String(raw.portfolio_url).trim() : DEFAULT_PROFILE_SETTINGS.portfolio_url,
         resume_url: raw.resume_url !== undefined ? String(raw.resume_url).trim() : DEFAULT_PROFILE_SETTINGS.resume_url,
         whatsapp_url: raw.whatsapp_url !== undefined ? String(raw.whatsapp_url).trim() : DEFAULT_PROFILE_SETTINGS.whatsapp_url,
@@ -63,14 +64,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         facebook_url: raw.facebook_url !== undefined ? String(raw.facebook_url).trim() : DEFAULT_PROFILE_SETTINGS.facebook_url,
         tiktok_url: raw.tiktok_url !== undefined ? String(raw.tiktok_url).trim() : DEFAULT_PROFILE_SETTINGS.tiktok_url,
         snapchat_url: raw.snapchat_url !== undefined ? String(raw.snapchat_url).trim() : DEFAULT_PROFILE_SETTINGS.snapchat_url,
+        github_url: raw.github_url !== undefined ? String(raw.github_url).trim() : (DEFAULT_PROFILE_SETTINGS.github_url || ''),
         updated_at: new Date().toISOString()
       };
 
-      const { data, error } = await client
+      let { data, error } = await client
         .from('profile_settings')
         .upsert(payload, { onConflict: 'id' })
         .select()
         .single();
+
+      // If database is missing newly added columns (error 42703), retry without those columns
+      if (error && (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist'))) {
+        console.warn('Profile settings column missing, attempting fallback without new columns:', error.message);
+        const { avatar_url, github_url, ...fallbackPayload } = payload;
+        const fallbackRes = await client
+          .from('profile_settings')
+          .upsert(fallbackPayload, { onConflict: 'id' })
+          .select()
+          .single();
+
+        if (!fallbackRes.error) {
+          return res.status(200).json({ 
+            success: true, 
+            data: { ...fallbackRes.data, avatar_url, github_url },
+            warning: 'Saved partially: avatar_url or github_url column is missing in Supabase. Please run the SQL migration query provided in the admin panel.'
+          });
+        }
+      }
 
       if (error) {
         return res.status(500).json({ error: error.message });

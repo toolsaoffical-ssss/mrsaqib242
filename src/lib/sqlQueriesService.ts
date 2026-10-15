@@ -102,13 +102,15 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
     phone TEXT DEFAULT '+92 343 673242',
     email TEXT DEFAULT 'mrsaqib242242@gmail.com',
     location TEXT DEFAULT 'Faisalabad, Pakistan',
-    portfolio_url TEXT DEFAULT 'https://mrsaqib.vercel.app/',
+    portfolio_url TEXT DEFAULT 'https://mrsaqib242.vercel.app',
     resume_url TEXT DEFAULT '/resume.pdf',
-    whatsapp_url TEXT DEFAULT 'https://wa.me/92343673242',
+    whatsapp_url TEXT DEFAULT 'https://wa.me/923478936242',
     instagram_url TEXT DEFAULT 'https://www.instagram.com/mr_saqib242',
     facebook_url TEXT DEFAULT 'https://www.facebook.com/profile.php?id=100085188689033',
     tiktok_url TEXT DEFAULT 'https://www.tiktok.com/@mr_saqib_242',
     snapchat_url TEXT DEFAULT 'https://www.snapchat.com/add/mrsaqib242',
+    avatar_url TEXT DEFAULT 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
+    github_url TEXT DEFAULT 'https://github.com/mrsaqib242',
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -666,11 +668,13 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
     location TEXT DEFAULT 'Faisalabad, Pakistan',
     portfolio_url TEXT DEFAULT 'https://mrsaqib.vercel.app/',
     resume_url TEXT DEFAULT '/resume.pdf',
-    whatsapp_url TEXT DEFAULT 'https://wa.me/92343673242',
+    whatsapp_url TEXT DEFAULT 'https://wa.me/923478936242',
     instagram_url TEXT,
     facebook_url TEXT,
     tiktok_url TEXT,
     snapchat_url TEXT,
+    avatar_url TEXT DEFAULT 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
+    github_url TEXT DEFAULT 'https://github.com/mrsaqib242',
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 

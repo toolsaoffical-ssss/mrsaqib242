@@ -21,7 +21,8 @@ import {
   AlertTriangle,
   RefreshCw,
   X,
-  Server
+  Server,
+  UserCheck
 } from 'lucide-react';
 
 import AdminInquiriesManager from './AdminInquiriesManager';
@@ -32,6 +33,7 @@ import AdminToolsManager from './AdminToolsManager';
 import AdminTrafficAnalytics from './AdminTrafficAnalytics';
 import AdminSecurityManager from './AdminSecurityManager';
 import AdminApiHub from './AdminApiHub';
+import AdminProfileContactManager from './AdminProfileContactManager';
 
 import { 
   ToolItem, 
@@ -54,7 +56,7 @@ interface AdminAuthenticatedDashboardProps {
   onDeviceApproved?: () => void;
 }
 
-type TabType = 'inquiries' | 'projects' | 'gallery' | 'pricing' | 'tools' | 'analytics' | 'security' | 'api';
+type TabType = 'inquiries' | 'profile' | 'projects' | 'gallery' | 'pricing' | 'tools' | 'analytics' | 'security' | 'api';
 
 export default function AdminAuthenticatedDashboard({
   adminUsername,
@@ -175,6 +177,7 @@ export default function AdminAuthenticatedDashboard({
 
   const navItems = [
     { id: 'inquiries' as TabType, label: 'Client Inquiries', icon: Inbox, badge: 'Leads' },
+    { id: 'profile' as TabType, label: 'Contact & Socials', icon: UserCheck, badge: 'Live API' },
     { id: 'projects' as TabType, label: 'Projects', icon: FolderGit2 },
     { id: 'gallery' as TabType, label: 'Gallery', icon: ImageIcon },
     { id: 'pricing' as TabType, label: 'Pricing Plans', icon: CreditCard },
@@ -346,6 +349,10 @@ export default function AdminAuthenticatedDashboard({
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'inquiries' && (
           <AdminInquiriesManager onNotify={showToast} />
+        )}
+
+        {activeTab === 'profile' && (
+          <AdminProfileContactManager onNotify={showToast} isRestricted={isRestricted} />
         )}
 
         {activeTab === 'projects' && (

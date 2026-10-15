@@ -18,6 +18,7 @@ export interface ProfileSettings {
   tiktok_url: string;
   snapchat_url: string;
   github_url?: string;
+  avatar_url?: string;
   updated_at?: string;
 }
 
@@ -26,19 +27,20 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   name: 'Muhammad Saqib',
   short_name: 'Saqib',
   brand_name: 'Saqib Visuals',
-  tagline: 'Creative Visual Artist | Content Creator | Tech Enthusiast',
-  bio: "I'm a passionate Full-Stack Web Developer, App Developer, AI Enthusiast, and Creative Content Creator with a strong focus on building modern, fast, and scalable digital solutions.",
-  phone: '+92 343 673242',
-  email: 'mrsaqib242242@gmail.com',
-  location: 'Faisalabad, Pakistan',
-  portfolio_url: 'https://mrsaqib.vercel.app/',
+  tagline: 'Full-Stack Engineer & Cyber Security Specialist',
+  bio: 'Available for elite web applications, Next.js SaaS engineering, and AI chatbot integrations.',
+  phone: '+92 347 8936242',
+  email: 'saqibsaqqibsaqib@gmail.com',
+  location: 'Gojra, Faisalabad, Pakistan',
+  portfolio_url: 'https://mrsaqib242.vercel.app',
   resume_url: '/resume.pdf',
-  whatsapp_url: 'https://wa.me/92343673242',
+  whatsapp_url: 'https://wa.me/923478936242',
   instagram_url: 'https://www.instagram.com/mr_saqib242',
   facebook_url: 'https://www.facebook.com/profile.php?id=100085188689033',
   tiktok_url: 'https://www.tiktok.com/@mr_saqib_242',
   snapchat_url: 'https://www.snapchat.com/add/mrsaqib242',
-  github_url: 'https://github.com/techai342'
+  github_url: 'https://github.com/mrsaqib242',
+  avatar_url: 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90'
 };
 
 const STORAGE_KEY = 'saqib_profile_settings_cache';
@@ -95,6 +97,8 @@ export async function fetchProfileSettingsFromDB(): Promise<{
         facebook_url: data.facebook_url || cached.facebook_url,
         tiktok_url: data.tiktok_url || cached.tiktok_url,
         snapchat_url: data.snapchat_url || cached.snapchat_url,
+        github_url: data.github_url || cached.github_url || DEFAULT_PROFILE_SETTINGS.github_url,
+        avatar_url: data.avatar_url || cached.avatar_url || DEFAULT_PROFILE_SETTINGS.avatar_url,
         updated_at: data.updated_at
       };
 
@@ -179,6 +183,8 @@ export async function saveProfileSettingsToDB(
           facebook_url: mergedPayload.facebook_url,
           tiktok_url: mergedPayload.tiktok_url,
           snapchat_url: mergedPayload.snapchat_url,
+          github_url: mergedPayload.github_url || '',
+          avatar_url: mergedPayload.avatar_url || '',
           updated_at: mergedPayload.updated_at
         },
         { onConflict: 'id' }
