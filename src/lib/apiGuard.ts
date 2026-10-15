@@ -3,7 +3,7 @@ import { supabase, isSupabaseConfigured } from './supabase';
 import { supabaseAdmin, isSupabaseAdminConfigured } from './supabaseServer';
 
 // Helper to extract clean domain/hostname for comparison (removes protocol, port, www, trailing slashes)
-function normalizeDomain(input?: string | null): string | null {
+export function normalizeDomain(input?: string | null): string | null {
   if (!input) return null;
   const raw = String(input).trim().toLowerCase();
   if (!raw || raw === 'null' || raw === 'undefined') return null;
@@ -19,17 +19,16 @@ function normalizeDomain(input?: string | null): string | null {
   }
 }
 
-// Built-in master trusted domains (Saqib's own official portfolio & local dev)
-const MASTER_TRUSTED_DOMAINS = [
-  'mrsaqib242.vercel.app',
-  'localhost',
-  '127.0.0.1'
+// Built-in default trusted domain (Your master portfolio)
+const DEFAULT_WHITELISTED_DOMAINS = [
+  'mrsaqib242.vercel.app'
 ];
 
 export async function apiGuard(
   req: NextApiRequest, 
   res: NextApiResponse, 
-  apiName: 'projects' | 'picks' | 'contact'
+  apiName: 'projects' | 'picks' | 'contact',
+  allowedMethods: ('GET' | 'POST')[] = ['GET']
 ): Promise<boolean> {
   const rawOrigin = req.headers.origin || req.headers.referer;
   const callerDomain = normalizeDomain(rawOrigin);
@@ -41,7 +40,7 @@ export async function apiGuard(
       ? supabase 
       : null;
 
-  // 1. Fetch Global API Settings & Whitelisted Domains
+  // 1. Fetch Global API Settings & Whitelisted Domains from Supabase
   let isEnabled = true;
   let allowedDomainsList: string[] = [];
 
@@ -79,18 +78,22 @@ export async function apiGuard(
   }
 
   // 3. Strict Domain Verification:
-  // Direct access with no origin/referer is strictly blocked
+  // If no origin or referer header is sent (e.g. direct browser visit, curl, unauthorized scraper)
   if (!callerDomain) {
     res.status(403).json({ 
       success: false, 
-      error: 'Direct API access is blocked. Requests must originate from an authorized whitelisted domain.' 
+      error: 'Direct API access blocked. Requests must originate from an authorized whitelisted domain.' 
     });
     return false;
   }
 
-  // Check if callerDomain matches any trusted domain or allowed domain in DB
+  // Development environment only allows localhost
+  const isLocalDev = process.env.NODE_ENV === 'development' && (callerDomain === 'localhost' || callerDomain === '127.0.0.1');
+
+  // Check if callerDomain matches any domain in Supabase whitelist
   const isAuthorized = 
-    MASTER_TRUSTED_DOMAINS.includes(callerDomain) ||
+    isLocalDev ||
+    DEFAULT_WHITELISTED_DOMAINS.includes(callerDomain) ||
     allowedDomainsList.includes(callerDomain);
 
   if (!isAuthorized) {
@@ -114,7 +117,7 @@ export async function apiGuard(
   }
 
   res.setHeader('Access-Control-Allow-Origin', corsOrigin);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', `${allowedMethods.join(', ')}, OPTIONS`);
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   res.setHeader('Vary', 'Origin');
 
@@ -124,11 +127,11 @@ export async function apiGuard(
     return false;
   }
 
-  // 4. Only allow GET requests
-  if (req.method !== 'GET') {
+  // 4. Method validation
+  if (!allowedMethods.includes(req.method as any)) {
     res.status(405).json({ 
       success: false, 
-      error: 'Method Not Allowed. Only GET requests are permitted.' 
+      error: `Method Not Allowed. Only ${allowedMethods.join(', ')} requests are permitted.` 
     });
     return false;
   }
