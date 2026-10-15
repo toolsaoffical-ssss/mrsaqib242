@@ -96,6 +96,11 @@
         // DYNAMIC DATA FROM API
         const data = json.data;
 
+        // Dynamically update document title from API
+        if (data.name) {
+          document.title = `${data.name} | Live Contact & Social Hub`;
+        }
+
         // Build dynamic social cards purely from API keys
         let cardsHtml = '';
         let activeChannelsCount = 0;
