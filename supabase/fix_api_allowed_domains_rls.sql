@@ -27,6 +27,10 @@ CREATE TABLE IF NOT EXISTS public.api_allowed_domains (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Safely add columns if table already existed without them
+ALTER TABLE public.api_allowed_domains ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.api_allowed_domains ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+
 -- =========================================================================
 -- 2. DISABLE ROW-LEVEL SECURITY (Recommended for instant, permanent fix)
 -- This allows both direct frontend anon keys and backend API routes to insert,
