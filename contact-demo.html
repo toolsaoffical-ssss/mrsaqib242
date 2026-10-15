@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Muhammad Saqib | Client Inquiry Portal</title>
+  <meta name="description" content="Connect with Muhammad Saqib (mrsaqib242) for elite Next.js web applications, full-stack systems, and AI chatbot integrations." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-64,h-64,fo-auto,q-90" />
+
+  <!-- Tailwind CSS CDN (Zero build tools required) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #09090b;
+      color: #f4f4f5;
+    }
+    .glass-card {
+      background: rgba(24, 24, 27, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-input {
+      background: rgba(9, 9, 11, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+    .glass-input:focus {
+      outline: none;
+      border-color: #f97316;
+      box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between selection:bg-orange-500 selection:text-white">
+
+  <!-- Background Ambient Glow -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-orange-600/10 rounded-full blur-[140px]"></div>
+    <div class="absolute bottom-0 right-0 w-[500px] h-[400px] bg-blue-600/5 rounded-full blur-[120px]"></div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="w-full border-b border-white/5 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img 
+          src="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-80,h-80,fo-auto,q-90" 
+          alt="Muhammad Saqib" 
+          class="w-9 h-9 rounded-full object-cover ring-2 ring-orange-500/50"
+        />
+        <div>
+          <span class="font-extrabold text-white text-base tracking-tight">Muhammad Saqib</span>
+          <span class="block text-[11px] font-mono text-zinc-400">@mrsaqib242</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div id="api-status-badge" class="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-mono font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>API Connected</span>
+        </div>
+        <a 
+          href="https://wa.me/923478936242?text=Hello%20Saqib,%20I%20want%20to%20discuss%20a%20project" 
+          target="_blank" 
+          class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-900/20"
+        >
+          <i class="fa-brands fa-whatsapp text-sm"></i>
+          <span>Direct WhatsApp</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12 flex-1 w-full">
+    
+    <!-- Hero Heading -->
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-xs font-semibold mb-4">
+        <i class="fa-solid fa-bolt text-[10px]"></i>
+        <span>Central API Hub Integration</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        Let's Build Something <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-300 to-orange-500">Legendary</span>
+      </h1>
+      <p class="text-zinc-400 mt-4 text-sm sm:text-base">
+        Submit your project requirements below. Your inquiry is routed directly to Muhammad Saqib's database via the secure API.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Live Info & Direct Reach (4 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Live Profile Card -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="relative">
+              <img 
+                src="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-150,h-150,fo-auto,q-90" 
+                alt="Muhammad Saqib Avatar" 
+                class="w-16 h-16 rounded-2xl object-cover ring-2 ring-orange-500/30"
+              />
+              <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-zinc-900 rounded-full"></span>
+            </div>
+            <div>
+              <h3 id="dev-name" class="text-lg font-bold text-white">Muhammad Saqib</h3>
+              <p id="dev-bio" class="text-xs text-zinc-400 mt-0.5">Available for elite web & AI engineering</p>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-[11px] px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-300 font-mono">Gojra / Faisalabad, PK</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3 border-t border-white/5 pt-5 text-sm">
+            <!-- Email -->
+            <a id="dev-email-link" href="mailto:saqibsaqqibsaqib@gmail.com" class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 transition-colors group">
+              <div class="w-9 h-9 rounded-lg bg-orange-500/10 text-orange-400 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-envelope"></i>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="text-[11px] text-zinc-500 font-medium">Official Email</div>
+                <div id="dev-email-text" class="text-xs text-zinc-200 font-mono truncate group-hover:text-orange-400 transition-colors">saqibsaqqibsaqib@gmail.com</div>
+              </div>
+            </a>
+
+            <!-- WhatsApp -->
+            <a id="dev-wa-link" href="https://wa.me/923478936242" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 transition-colors group">
+              <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="text-[11px] text-zinc-500 font-medium">Direct WhatsApp</div>
+                <div class="text-xs text-zinc-200 font-mono group-hover:text-emerald-400 transition-colors">+92 347 8936242</div>
+              </div>
+            </a>
+
+            <!-- Official Portfolio -->
+            <a href="https://mrsaqib242.vercel.app" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 transition-colors group">
+              <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-globe"></i>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="text-[11px] text-zinc-500 font-medium">Main Portfolio</div>
+                <div class="text-xs text-zinc-200 font-mono truncate group-hover:text-blue-400 transition-colors">mrsaqib242.vercel.app</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- API Config & Quick Stats -->
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <h4 class="text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-network-wired text-orange-500"></i>
+            Active Endpoints Used
+          </h4>
+          <div class="space-y-2 text-xs font-mono">
+            <div class="p-2.5 rounded-lg bg-black/40 border border-white/5 flex items-center justify-between">
+              <span class="text-zinc-500">GET Info</span>
+              <span class="text-orange-400">/api/public/contact</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-black/40 border border-white/5 flex items-center justify-between">
+              <span class="text-zinc-500">POST Submit</span>
+              <span class="text-emerald-400">/api/contact</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Interactive Contact Form (7 cols) -->
+      <div class="lg:col-span-7">
+        <div class="glass-card rounded-2xl p-6 sm:p-8">
+          
+          <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/5">
+            <div>
+              <h2 class="text-xl font-bold text-white">Project Inquiry Form</h2>
+              <p class="text-xs text-zinc-400 mt-1">Directly saves to Saqib's inquiries database.</p>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center">
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Alert / Toast Container -->
+          <div id="form-alert" class="hidden mb-6 p-4 rounded-xl text-sm font-medium"></div>
+
+          <!-- The Contact Form -->
+          <form id="contact-form" class="space-y-5">
+            
+            <!-- Honeypot anti-bot hidden field -->
+            <input type="text" name="honeypot" id="honeypot" class="hidden" tabindex="-1" autocomplete="off" />
+
+            <!-- Row 1: Name & Email -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="name" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                  Full Name <span class="text-orange-500">*</span>
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">
+                    <i class="fa-regular fa-user"></i>
+                  </span>
+                  <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    required 
+                    placeholder="e.g. John Doe"
+                    class="glass-input w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-zinc-600 font-sans"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="email" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                  Email Address <span class="text-orange-500">*</span>
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">
+                    <i class="fa-regular fa-envelope"></i>
+                  </span>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    placeholder="john@company.com"
+                    class="glass-input w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-zinc-600 font-sans"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2: Phone & Service Type -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="phone" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                  WhatsApp / Phone
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">
+                    <i class="fa-solid fa-phone"></i>
+                  </span>
+                  <input 
+                    type="text" 
+                    id="phone" 
+                    name="phone" 
+                    placeholder="+92 300 1234567"
+                    class="glass-input w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-zinc-600 font-sans"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="service_type" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                  Service Category
+                </label>
+                <select 
+                  id="service_type" 
+                  name="service_type" 
+                  class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm text-white font-sans bg-zinc-900"
+                >
+                  <option value="Custom Web Application">Custom Web Application</option>
+                  <option value="Next.js SaaS Development">Next.js SaaS Development</option>
+                  <option value="AI Chatbot Integration">AI Chatbot Integration</option>
+                  <option value="E-Commerce Platform">E-Commerce Platform</option>
+                  <option value="Mobile App Build">Mobile App Build (Android/iOS)</option>
+                  <option value="Speed & SEO Optimization">Speed & SEO Optimization</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 3: Budget & Timeline -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="budget" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                  Estimated Budget
+                </label>
+                <select 
+                  id="budget" 
+                  name="budget" 
+                  class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm text-white font-sans bg-zinc-900"
+                >
+                  <option value="Flexible">Flexible Budget</option>
+                  <option value="$100 - $300">$100 - $300 (Starter)</option>
+                  <option value="$300 - $700">$300 - $700 (Pro Project)</option>
+                  <option value="$700 - $1500">$700 - $1,500 (Enterprise / AI)</option>
+                  <option value="$1500+">$1,500+ (Full Suite)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="timeline" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                  Project Timeline
+                </label>
+                <select 
+                  id="timeline" 
+                  name="timeline" 
+                  class="glass-input w-full px-3.5 py-2.5 rounded-xl text-sm text-white font-sans bg-zinc-900"
+                >
+                  <option value="1-2 Weeks">1 - 2 Weeks</option>
+                  <option value="Within 1 Month">Within 1 Month</option>
+                  <option value="Urgent (< 1 Week)">Urgent (< 1 Week)</option>
+                  <option value="Flexible">Flexible Schedule</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Subject -->
+            <div>
+              <label for="subject" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                Project Subject
+              </label>
+              <input 
+                type="text" 
+                id="subject" 
+                name="subject" 
+                placeholder="e.g. Build an AI-powered SaaS dashboard"
+                class="glass-input w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-zinc-600 font-sans"
+              />
+            </div>
+
+            <!-- Message -->
+            <div>
+              <label for="message" class="block text-xs font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">
+                Detailed Message <span class="text-orange-500">*</span>
+              </label>
+              <textarea 
+                id="message" 
+                name="message" 
+                required 
+                rows="4" 
+                placeholder="Explain your goals, target audience, preferred technologies, and any reference designs..."
+                class="glass-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-zinc-600 font-sans resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              id="submit-btn" 
+              class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-black font-extrabold text-sm tracking-wide uppercase transition-all duration-200 shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <span id="btn-text">Submit Inquiry Directly</span>
+              <i id="btn-icon" class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+
+            <p class="text-[11px] text-zinc-500 text-center font-mono">
+              🛡️ End-to-end encrypted via Next.js & Supabase Server Protection
+            </p>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full border-t border-white/5 py-8 mt-16 bg-zinc-950">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+      <div>
+        &copy; <span id="year"></span> Muhammad Saqib (mrsaqib242). All rights reserved.
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/mrsaqib242" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+        <a href="https://mrsaqib242.vercel.app/projects" target="_blank" class="hover:text-white transition-colors">Projects</a>
+        <a href="https://mrsaqib242.vercel.app/plans" target="_blank" class="hover:text-white transition-colors">Pricing Plans</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript: Fetch Contact Info & Submit Form -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const isMasterDomain = window.location.hostname.includes('mrsaqib242.vercel.app') || window.location.hostname.includes('localhost');
+    const API_BASE_URL = isMasterDomain ? '' : 'https://mrsaqib242.vercel.app';
+
+    async function fetchLiveContactInfo() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/public/contact`);
+        if (!res.ok) throw new Error('API fetch error');
+        const json = await res.json();
+        
+        if (json.success && json.data) {
+          const profile = json.data;
+          if (profile.name) document.getElementById('dev-name').textContent = profile.name;
+          if (profile.bio) document.getElementById('dev-bio').textContent = profile.bio;
+          if (profile.email) {
+            document.getElementById('dev-email-text').textContent = profile.email;
+            document.getElementById('dev-email-link').href = `mailto:${profile.email}`;
+          }
+          if (profile.whatsapp) {
+            const waUrl = profile.whatsapp.startsWith('http') ? profile.whatsapp : `https://wa.me/${profile.whatsapp.replace(/[^0-9]/g, '')}`;
+            document.getElementById('dev-wa-link').href = waUrl;
+          }
+        }
+      } catch (err) {
+        console.warn('Using default contact info fallback:', err);
+      }
+    }
+
+    fetchLiveContactInfo();
+
+    const form = document.getElementById('contact-form');
+    const alertBox = document.getElementById('form-alert');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+
+    function showAlert(message, isSuccess = true) {
+      alertBox.className = isSuccess 
+        ? 'mb-6 p-4 rounded-xl text-sm font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-3'
+        : 'mb-6 p-4 rounded-xl text-sm font-medium bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-3';
+      
+      const icon = isSuccess ? 'fa-circle-check' : 'fa-triangle-exclamation';
+      alertBox.innerHTML = `<i class="fa-solid ${icon} text-lg shrink-0"></i><div>${message}</div>`;
+      alertBox.classList.remove('hidden');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.classList.add('hidden');
+
+      const honeypot = document.getElementById('honeypot').value;
+      if (honeypot) {
+        showAlert('Inquiry received successfully! Muhammad Saqib will review your proposal.');
+        form.reset();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      btnText.textContent = 'Transmitting to Database...';
+      btnIcon.className = 'fa-solid fa-circle-notch fa-spin text-xs';
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        service_type: document.getElementById('service_type').value,
+        budget: document.getElementById('budget').value,
+        timeline: document.getElementById('timeline').value,
+        subject: document.getElementById('subject').value.trim() || `Inquiry for ${document.getElementById('service_type').value}`,
+        message: document.getElementById('message').value.trim()
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/contact`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.success) {
+          showAlert(`Thank you, <strong>${payload.name}</strong>! Your inquiry has been delivered directly to Muhammad Saqib's database. Reference ID: <code>${result.data?.id || 'INQ_OK'}</code>`);
+          form.reset();
+        } else {
+          showAlert(result.error || `Server error (${response.status}). Please try contacting via WhatsApp directly.`, false);
+        }
+      } catch (error) {
+        console.error('Contact submit error:', error);
+        showAlert('Network or CORS error. Please verify network or contact Muhammad Saqib directly via WhatsApp.', false);
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Submit Inquiry Directly';
+        btnIcon.className = 'fa-solid fa-arrow-right text-xs';
+      }
+    });
+  </script>
+
+</body>
+</html>

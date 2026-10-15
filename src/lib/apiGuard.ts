@@ -2,6 +2,17 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from './supabase';
 
 export async function apiGuard(req: NextApiRequest, res: NextApiResponse, apiName: 'projects' | 'picks' | 'contact') {
+  const origin = req.headers.origin || req.headers.referer;
+
+  // Handle CORS Preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(200).end();
+    return false;
+  }
+
   // 1. Only allow GET requests
   if (req.method !== 'GET') {
     res.status(405).json({ success: false, error: 'Method Not Allowed. Only GET requests are permitted.' });
@@ -31,9 +42,9 @@ export async function apiGuard(req: NextApiRequest, res: NextApiResponse, apiNam
     // 4. CORS Whitelisting Logic
     const origin = req.headers.origin || req.headers.referer;
     
-    // Allow local development (optional, you can remove this later for strict production)
-    if (origin && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
+    // Allow local development and local test files (origin null or localhost)
+    if (!origin || origin === 'null' || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      res.setHeader('Access-Control-Allow-Origin', origin && origin !== 'null' ? origin : '*');
       return true;
     }
 
