@@ -46,6 +46,7 @@ import {
   DEFAULT_TOOL_CATEGORIES,
   DEFAULT_TOOL_PAGE_SETTINGS
 } from '../lib/toolsService';
+import { useProfileSettings } from '../hooks/useProfileSettings';
 
 interface ToolsPageProps {
   onClose: () => void;
@@ -64,6 +65,9 @@ export default function ToolsPage({
   onOpenHacks, 
   onOpenWebsitePlans 
 }: ToolsPageProps) {
+  const { profile } = useProfileSettings();
+  const whatsappLink = profile.whatsapp_url || (profile.phone ? `https://wa.me/${profile.phone.replace(/[^0-9]/g, '')}` : 'https://wa.me/923478936242');
+
   const [tools, setTools] = useState<ToolItem[]>(DEFAULT_TOOLS);
   const [categories, setCategories] = useState<ToolCategory[]>(DEFAULT_TOOL_CATEGORIES);
   const [settings, setSettings] = useState<ToolPageSettings>(DEFAULT_TOOL_PAGE_SETTINGS);
@@ -723,7 +727,7 @@ export default function ToolsPage({
                 <motion.a
                   whileHover={{ scale: 1.15, y: -4 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://wa.me/92343673242"
+                  href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-col items-center cursor-pointer"

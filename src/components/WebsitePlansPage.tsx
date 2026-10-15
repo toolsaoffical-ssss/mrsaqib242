@@ -33,12 +33,16 @@ import {
   fetchPricingPlansFromDB,
   fetchPricingAddOnsFromDB
 } from '../lib/pricingService';
+import { useProfileSettings } from '../hooks/useProfileSettings';
 
 interface WebsitePlansPageProps {
   onBack: () => void;
 }
 
 export default function WebsitePlansPage({ onBack }: WebsitePlansPageProps) {
+  const { profile } = useProfileSettings();
+  const whatsappLink = profile.whatsapp_url || (profile.phone ? `https://wa.me/${profile.phone.replace(/[^0-9]/g, '')}` : 'https://wa.me/923478936242');
+
   const [plans, setPlans] = useState<PricingPlan[]>(DEFAULT_PLANS);
   const [addOns, setAddOns] = useState<PricingAddOn[]>(DEFAULT_ADDONS);
 
@@ -129,7 +133,7 @@ ${addOnText}
 Please let me know how we can get started! Thanks.`;
 
     const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/92343673242?text=${encodedText}`, '_blank');
+    window.open(`${whatsappLink}?text=${encodedText}`, '_blank');
   };
 
   useEffect(() => {
@@ -643,7 +647,7 @@ Please let me know how we can get started! Thanks.`;
 
             <div className="pt-6 border-t border-white/5 mt-8">
               <a 
-                href="https://wa.me/92343673242?text=Hi%20Saqib!%20I%27d%20like%20to%20discuss%20a%20completely%20custom%20website%20development%20project%20with%20you."
+                href={`${whatsappLink}?text=${encodeURIComponent("Hi Saqib! I'd like to discuss a completely custom website development project with you.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(79,70,229,0.25)] hover:scale-102"

@@ -13,13 +13,11 @@ import {
   Sparkles, 
   ShieldCheck, 
   AlertTriangle, 
-  Database, 
   FileText, 
   Eye, 
   MessageSquare, 
   Camera, 
-  Link2,
-  CheckCircle2
+  Link2
 } from 'lucide-react';
 import { 
   ProfileSettings, 
@@ -40,8 +38,7 @@ export default function AdminProfileContactManager({
   const [profile, setProfile] = useState<ProfileSettings>(DEFAULT_PROFILE_SETTINGS);
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
-  const [activeSection, setActiveSection] = useState<'identity' | 'contact' | 'socials' | 'sql'>('identity');
-  const [copiedSql, setCopiedSql] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState<'identity' | 'contact' | 'socials'>('identity');
   const [copiedApiUrl, setCopiedApiUrl] = useState<boolean>(false);
 
   // Load existing profile from backend
@@ -133,37 +130,6 @@ export default function AdminProfileContactManager({
     } finally {
       setSaving(false);
     }
-  };
-
-  const copySqlMigration = () => {
-    const sql = `-- Run this in Supabase SQL Editor: https://supabase.com/dashboard
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS github_url TEXT DEFAULT 'https://github.com/mrsaqib242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS brand_name TEXT DEFAULT 'Saqib Visuals';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS short_name TEXT DEFAULT 'Saqib';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS tagline TEXT DEFAULT 'Full-Stack Engineer & Cyber Security Specialist';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS bio TEXT DEFAULT 'Available for elite web applications, Next.js SaaS engineering, and AI chatbot integrations.';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS phone TEXT DEFAULT '+92 347 8936242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS email TEXT DEFAULT 'saqibsaqqibsaqib@gmail.com';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS location TEXT DEFAULT 'Gojra, Faisalabad, Pakistan';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS portfolio_url TEXT DEFAULT 'https://mrsaqib242.vercel.app';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS resume_url TEXT DEFAULT '/resume.pdf';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS whatsapp_url TEXT DEFAULT 'https://wa.me/923478936242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS instagram_url TEXT DEFAULT 'https://www.instagram.com/mr_saqib242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS facebook_url TEXT DEFAULT 'https://www.facebook.com/profile.php?id=100085188689033';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS tiktok_url TEXT DEFAULT 'https://www.tiktok.com/@mr_saqib_242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS snapchat_url TEXT DEFAULT 'https://www.snapchat.com/add/mrsaqib242';
-
-ALTER TABLE public.profile_settings ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Public read-only profile" ON public.profile_settings;
-CREATE POLICY "Public read-only profile" ON public.profile_settings FOR SELECT TO anon, authenticated USING (true);
-DROP POLICY IF EXISTS "Service role full profile access" ON public.profile_settings;
-CREATE POLICY "Service role full profile access" ON public.profile_settings FOR ALL TO service_role USING (true) WITH CHECK (true);`;
-
-    navigator.clipboard.writeText(sql);
-    setCopiedSql(true);
-    onNotify('SQL Migration copied to clipboard!', 'success');
-    setTimeout(() => setCopiedSql(false), 2500);
   };
 
   const copyPublicApiUrl = () => {
@@ -302,19 +268,6 @@ CREATE POLICY "Service role full profile access" ON public.profile_settings FOR 
           }`}
         >
           <Share2 size={14} />
-          <span>Social Media Channels</span>
-        </button>
-
-        <button
-          onClick={() => setActiveSection('sql')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-            activeSection === 'sql'
-              ? 'bg-orange-500 text-black font-black shadow-lg shadow-orange-500/20'
-              : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <Database size={14} />
-          <span>Supabase SQL Migration</span>
         </button>
       </div>
 
@@ -657,61 +610,6 @@ CREATE POLICY "Service role full profile access" ON public.profile_settings FOR 
                   className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-teal-500 font-mono transition-colors"
                 />
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================== */}
-        {/* SECTION 4: SUPABASE SQL QUERY HELPER */}
-        {/* ============================================================== */}
-        {activeSection === 'sql' && (
-          <div className="bg-[#12131a] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
-              <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Database size={16} className="text-amber-400" />
-                  <span>1-Click Supabase SQL Migration Query</span>
-                </h3>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  Run this once in your Supabase SQL Editor if you ever see <code className="text-orange-400">ERROR 42703 (avatar_url does not exist)</code>.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={copySqlMigration}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-xs uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer shrink-0 shadow-lg shadow-amber-500/20"
-              >
-                {copiedSql ? <Check size={14} /> : <Copy size={14} />}
-                <span>{copiedSql ? 'Copied SQL!' : 'Copy SQL Script'}</span>
-              </button>
-            </div>
-
-            <div className="bg-[#090a0f] border border-white/10 rounded-2xl p-4 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed max-h-96">
-              <pre>{`-- ⚡ SAFE COLUMN ADDITION SCRIPT (WILL NEVER FAIL)
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS avatar_url TEXT DEFAULT 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS github_url TEXT DEFAULT 'https://github.com/mrsaqib242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS brand_name TEXT DEFAULT 'Saqib Visuals';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS short_name TEXT DEFAULT 'Saqib';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS tagline TEXT DEFAULT 'Full-Stack Engineer & Cyber Security Specialist';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS bio TEXT DEFAULT 'Available for elite web applications, Next.js SaaS engineering, and AI chatbot integrations.';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS phone TEXT DEFAULT '+92 347 8936242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS email TEXT DEFAULT 'saqibsaqqibsaqib@gmail.com';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS location TEXT DEFAULT 'Gojra, Faisalabad, Pakistan';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS portfolio_url TEXT DEFAULT 'https://mrsaqib242.vercel.app';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS resume_url TEXT DEFAULT '/resume.pdf';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS whatsapp_url TEXT DEFAULT 'https://wa.me/923478936242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS instagram_url TEXT DEFAULT 'https://www.instagram.com/mr_saqib242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS facebook_url TEXT DEFAULT 'https://www.facebook.com/profile.php?id=100085188689033';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS tiktok_url TEXT DEFAULT 'https://www.tiktok.com/@mr_saqib_242';
-ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS snapchat_url TEXT DEFAULT 'https://www.snapchat.com/add/mrsaqib242';
-
--- RLS Security Policies
-ALTER TABLE public.profile_settings ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Public read-only profile" ON public.profile_settings;
-CREATE POLICY "Public read-only profile" ON public.profile_settings FOR SELECT TO anon, authenticated USING (true);
-DROP POLICY IF EXISTS "Service role full profile access" ON public.profile_settings;
-CREATE POLICY "Service role full profile access" ON public.profile_settings FOR ALL TO service_role USING (true) WITH CHECK (true);`}</pre>
             </div>
           </div>
         )}

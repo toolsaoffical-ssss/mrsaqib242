@@ -229,7 +229,7 @@ ${customFeatures ? `✨ *Custom Features:* ${customFeatures}\n` : ''}${reference
 ${queryDetails || 'Looking to discuss project requirements directly.'}
 ━━━━━━━━━━━━━━━━━━`;
 
-    window.open(`https://wa.me/92343673242?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(getWhatsAppLink(text), '_blank');
   };
 
   const handleResetForm = () => {
@@ -245,9 +245,18 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
     setSubmittedId('');
   };
 
-  const phoneDisplay = profile.phone || '+92 343 673242';
-  const emailDisplay = profile.email || 'mrsaqib242242@gmail.com';
+  const phoneDisplay = profile.phone || '+92 347 8936242';
+  const emailDisplay = profile.email || 'saqibsaqqibsaqib@gmail.com';
   const rawPhone = phoneDisplay.replace(/[\s\-\+]/g, '');
+  const avatarDisplay = profile.avatar_url || 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90';
+  const locationDisplay = profile.location || 'Gojra, Faisalabad, Pakistan';
+  const taglineDisplay = profile.tagline || 'Full-Stack Engineer & Cyber Security Specialist';
+  const whatsappBaseUrl = profile.whatsapp_url || `https://wa.me/${rawPhone || '923478936242'}`;
+  const getWhatsAppLink = (customText?: string) => {
+    const cleanBase = (whatsappBaseUrl || '').split('?')[0] || `https://wa.me/${rawPhone || '923478936242'}`;
+    if (!customText) return cleanBase;
+    return `${cleanBase}?text=${encodeURIComponent(customText)}`;
+  };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] text-zinc-800 selection:bg-pink-300 selection:text-white font-sans relative overflow-x-hidden">
@@ -289,7 +298,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               <Link href="/tools" className="hover:text-black transition-colors">Tools</Link>
             </nav>
             <a
-              href={`https://wa.me/92343673242?text=${encodeURIComponent('Hi Muhammad Saqib! I would like to chat about a new project.')}`}
+              href={getWhatsAppLink('Hi Muhammad Saqib! I would like to chat about a new project.')}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-black uppercase tracking-wider rounded-full shadow-md shadow-emerald-500/25 transition-all hover:scale-105"
@@ -390,16 +399,19 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
               {/* Avatar with White Inset Border */}
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white shadow-[inset_4px_4px_8px_#d9dadc,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center shrink-0 border-2 border-white relative">
                 <img 
-                  src="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png" 
-                  alt="Muhammad Saqib" 
+                  src={avatarDisplay} 
+                  alt={profile.name || "Muhammad Saqib"} 
                   className="w-full h-full object-cover"
+                  onError={(e: any) => {
+                    e.target.src = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90';
+                  }}
                 />
               </div>
 
               <div>
                 <div className="inline-flex items-center gap-1.5 mb-1 text-xs font-bold uppercase tracking-widest text-emerald-700">
                   <Briefcase size={13} className="text-emerald-600" />
-                  <span>Founder • Cyber Security &amp; Full-Stack App Architect</span>
+                  <span>{taglineDisplay}</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-black text-zinc-800 tracking-tight flex items-center gap-2">
                   <span>{profile.name || 'Muhammad Saqib'}</span>
@@ -408,7 +420,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                   </span>
                 </h2>
                 <p className="text-zinc-500 text-xs sm:text-sm font-medium mt-1 max-w-xl">
-                  Based in Faisalabad / Gojra, Pakistan • Available for Remote Worldwide Contracts &amp; Security Audits.
+                  Based in {locationDisplay} • Available for Remote Worldwide Contracts &amp; Security Audits.
                 </p>
               </div>
             </div>
@@ -436,7 +448,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
             <motion.a 
               whileHover={{ y: -4, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 350, damping: 15 }}
-              href={`https://wa.me/92343673242?text=${encodeURIComponent('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a project with you.')}`}
+              href={getWhatsAppLink('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a project with you.')}
               target="_blank"
               rel="noopener noreferrer"
               className="p-5 rounded-2xl bg-[#25D366] text-white shadow-lg shadow-emerald-500/25 flex flex-col justify-between group cursor-pointer transition-all"
@@ -453,7 +465,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                 <div className="text-sm font-black uppercase tracking-wide">WhatsApp Chat</div>
                 <div className="text-[11px] text-white/90 font-medium mt-0.5">Direct priority messaging</div>
                 <div className="text-[10px] font-mono font-bold text-white/80 mt-2 flex items-center gap-1">
-                  <span>+92 343 673242</span>
+                  <span>{phoneDisplay}</span>
                   <ExternalLink size={10} />
                 </div>
               </div>
@@ -591,7 +603,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
             {QUICK_PROMPTS.map((prompt, idx) => (
               <a
                 key={idx}
-                href={`https://wa.me/92343673242?text=${encodeURIComponent(prompt.msg)}`}
+                href={getWhatsAppLink(prompt.msg)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3.5 rounded-2xl bg-white shadow-[4px_4px_8px_#d9dadc,-4px_-4px_8px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white flex items-center justify-between group transition-all cursor-pointer"
@@ -652,9 +664,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                   </div>
                 </div>
                 <a
-                  href={`https://wa.me/92343673242?text=${encodeURIComponent(
-                    `Hi Muhammad Saqib! I came from your portfolio website and want to discuss a new project with you.`
-                  )}`}
+                  href={getWhatsAppLink('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a new project with you.')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md flex items-center gap-1.5 transition-transform hover:scale-105 shrink-0"
@@ -697,9 +707,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
 
                 <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   <a
-                    href={`https://wa.me/92343673242?text=${encodeURIComponent(
-                      `Hi Saqib! I submitted my project query on your website (${submittedId}) for ${serviceType} (Budget: ${budget}). My Name: ${clientName} (${clientPhone || clientEmail}). Let's discuss!`
-                    )}`}
+                    href={getWhatsAppLink(`Hi Saqib! I submitted my project query on your website (${submittedId}) for ${serviceType} (Budget: ${budget}). My Name: ${clientName} (${clientPhone || clientEmail}). Let's discuss!`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-6 py-3.5 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-transform hover:scale-105 cursor-pointer"
@@ -1190,7 +1198,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                   </div>
                   <div>
                     <h4 className="text-[10px] font-black uppercase tracking-widest text-pink-500 mb-0.5">Location</h4>
-                    <p className="text-zinc-800 font-extrabold text-sm">{profile.location || 'Faisalabad, Pakistan'}</p>
+                    <p className="text-zinc-800 font-extrabold text-sm">{locationDisplay}</p>
                   </div>
                 </div>
 
@@ -1353,13 +1361,13 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
             
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {[
-                { name: 'WhatsApp', icon: SiWhatsapp, link: profile.whatsapp_url || "https://wa.me/92343673242", color: "text-[#25D366]" },
+                { name: 'WhatsApp', icon: SiWhatsapp, link: getWhatsAppLink(), color: "text-[#25D366]" },
                 { name: 'Instagram', icon: SiInstagram, link: profile.instagram_url || "https://www.instagram.com/mr_saqib242", color: "text-[#E1306C]" },
                 { name: 'TikTok', icon: SiTiktok, link: profile.tiktok_url || "https://www.tiktok.com/@mr_saqib_242", color: "text-zinc-900" },
-                { name: 'Facebook', icon: SiFacebook, link: profile.facebook_url || "https://web.facebook.com/muhammad.saqib.718278", color: "text-[#1877F2]" },
+                { name: 'Facebook', icon: SiFacebook, link: profile.facebook_url || "https://www.facebook.com/profile.php?id=100085188689033", color: "text-[#1877F2]" },
                 { name: 'Snapchat', icon: SiSnapchat, link: profile.snapchat_url || "https://www.snapchat.com/add/mrsaqib242", color: "text-[#FFFC00] drop-shadow-md" },
-                { name: 'GitHub', icon: SiGithub, link: profile.github_url || "https://github.com/techai342", color: "text-zinc-800" }
-              ].map((social, i) => {
+                { name: 'GitHub', icon: SiGithub, link: profile.github_url || "https://github.com/mrsaqib242", color: "text-zinc-800" }
+              ].filter(item => Boolean(item.link && item.link.trim())).map((social, i) => {
                 const Icon = social.icon;
                 return (
                   <motion.a 

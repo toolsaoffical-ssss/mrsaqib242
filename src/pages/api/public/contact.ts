@@ -1,17 +1,29 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '../../../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
+import { supabaseAdmin, isSupabaseAdminConfigured } from '../../../lib/supabaseServer';
 import { apiGuard } from '../../../lib/apiGuard';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Prevent any CDN / Browser caching so other websites get real-time live data
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+
   const isAllowed = await apiGuard(req, res, 'contact');
   if (!isAllowed) return;
 
   try {
-    const { data: profile } = await supabase
-      .from('profile_settings')
-      .select('*')
-      .eq('id', 'default')
-      .maybeSingle();
+    const client = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
+    let profile: any = null;
+    
+    if (client) {
+      const { data } = await client
+        .from('profile_settings')
+        .select('*')
+        .eq('id', 'default')
+        .maybeSingle();
+      profile = data;
+    }
 
     res.status(200).json({ 
       success: true, 

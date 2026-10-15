@@ -24,7 +24,7 @@ export default function Footer() {
       name: 'WhatsApp',
       icon: FaWhatsapp,
       gradient: 'bg-gradient-to-b from-[#25D366] to-[#128C7E]',
-      href: profile.whatsapp_url || 'https://wa.me/92343673242'
+      href: profile.whatsapp_url || (profile.phone ? `https://wa.me/${profile.phone.replace(/[^0-9]/g, '')}` : 'https://wa.me/923478936242')
     },
     {
       name: 'TikTok',

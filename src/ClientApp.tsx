@@ -37,6 +37,7 @@ import { SiInstagram, SiTiktok, SiFacebook, SiSnapchat, SiWhatsapp } from 'react
 import dynamic from 'next/dynamic';
 import { _0xGlobal as _0xData, _0xGI, useSystemEnforcer, _0xVID } from './core/sys';
 import { fetchGalleryFromDB } from './lib/galleryService';
+import { useProfileSettings } from './hooks/useProfileSettings';
 
 
 const PosterShowcase = dynamic(() => import('./components/PosterShowcase'), { ssr: false });
@@ -75,7 +76,7 @@ const personalInfo = {
 };
 
 const socialLinks = [
-  { name: 'WhatsApp', url: 'https://wa.me/92343673242', icon: MessageCircle },
+  { name: 'WhatsApp', url: 'https://wa.me/923478936242', icon: MessageCircle },
   { name: 'Instagram', url: 'https://www.instagram.com/mr_saqib242', icon: Instagram },
   { name: 'Facebook', url: 'https://www.facebook.com/profile.php?id=100085188689033', icon: Facebook },
   { name: 'TikTok', url: 'https://www.tiktok.com/@mr_saqib_242', icon: Video },
@@ -267,6 +268,11 @@ export default function App() {
 
   const { locked } = useSystemEnforcer();
   const showProtectionMsg = locked;
+
+  const { profile } = useProfileSettings();
+  const phoneDisplay = profile.phone || '+92 347 8936242';
+  const cleanPhone = (profile.phone || '923478936242').replace(/[^0-9]/g, '');
+  const whatsappLink = profile.whatsapp_url || `https://wa.me/${cleanPhone}`;
 
   // Auto-Refresh Logic: Check for new version every 60 seconds when active
   useEffect(() => {
@@ -863,7 +869,7 @@ export default function App() {
           
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-widest mb-6 relative z-10 shadow-inner">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>DIRECT FOUNDER VIP DESK • WHATSAPP: +92 343 673242</span>
+            <span>DIRECT FOUNDER VIP DESK • WHATSAPP: {phoneDisplay}</span>
           </div>
 
           <h2 className="font-display text-3xl sm:text-5xl md:text-6xl uppercase tracking-tighter mb-4 relative z-10 text-white leading-tight">
@@ -906,7 +912,7 @@ export default function App() {
             </motion.button>
 
             <motion.a
-              href={`https://wa.me/92343673242?text=${encodeURIComponent('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a new project with you.')}`}
+              href={`${whatsappLink}?text=${encodeURIComponent('Hi Muhammad Saqib! I came from your portfolio website and want to discuss a new project with you.')}`}
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 10 }}
@@ -1089,7 +1095,7 @@ export default function App() {
 
                 {/* 4th Button: Contact Saqib */}
                 <motion.a 
-                  href="https://wa.me/92343673242?text=hi" 
+                  href={`${whatsappLink}?text=hi`} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
