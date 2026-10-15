@@ -424,7 +424,7 @@ export default function AdminSecurityManager({
     }
 
     if (!securityPin.trim()) {
-      setCredsError('Please enter your Master Security PIN (Default: Ilove4HAD).');
+      setCredsError('Please enter your Master Security PIN.');
       return;
     }
 
@@ -1096,14 +1096,14 @@ export default function AdminSecurityManager({
                 </div>
               </div>
 
-              {/* Master Security PIN Field (Default: Ilove4HAD) */}
+              {/* Master Security PIN Field */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
                     Master Security PIN <span className="text-rose-400">*</span>
                   </label>
-                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
-                    Default: Ilove4HAD
+                  <span className="text-[10px] font-mono text-amber-400/80 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
+                    2FA Root Key
                   </span>
                 </div>
                 <div className="relative">
@@ -1111,7 +1111,7 @@ export default function AdminSecurityManager({
                     type={showSecurityPin ? 'text' : 'password'}
                     value={securityPin}
                     onChange={e => setSecurityPin(e.target.value)}
-                    placeholder="Enter master security PIN (Default: Ilove4HAD)"
+                    placeholder="Enter master security PIN"
                     disabled={isRestricted}
                     className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 transition-colors pr-10 pl-10 disabled:opacity-50"
                     required
@@ -1252,7 +1252,7 @@ export default function AdminSecurityManager({
                   </span>
                 </div>
                 <p className="text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-                  Manage your additional root authorization key. You must first verify your <span className="text-white font-semibold">Current Master PIN</span> (Default: <code className="text-amber-400 font-mono">Ilove4HAD</code>) before setting a new PIN.
+                  Manage your additional root authorization key. You must first verify your <span className="text-white font-semibold">Current Master Security PIN</span> before setting a new PIN.
                 </p>
               </div>
             </div>
@@ -1296,7 +1296,7 @@ export default function AdminSecurityManager({
                     type={showCurrentPin ? 'text' : 'password'}
                     value={currentPin}
                     onChange={e => setCurrentPin(e.target.value)}
-                    placeholder="Enter current PIN (Default: Ilove4HAD)"
+                    placeholder="Enter current master security PIN"
                     disabled={isRestricted}
                     className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 transition-colors pr-10 pl-10 disabled:opacity-50"
                     required
