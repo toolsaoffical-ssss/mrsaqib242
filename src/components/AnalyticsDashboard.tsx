@@ -34,6 +34,8 @@ export function AnalyticsDashboard({
 
   const [analytics, setAnalytics] = useState<SiteAnalyticsEntry[]>([]);
   const [totalClicks, setTotalClicks] = useState<number>(0);
+  const [uniqueVisitors, setUniqueVisitors] = useState<number>(0);
+  const [totalSessions, setTotalSessions] = useState<number>(0);
   const [uniqueIps, setUniqueIps] = useState<number>(0);
   const [totalToolClicks, setTotalToolClicks] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,8 @@ export function AnalyticsDashboard({
       const res = await fetchSiteAnalyticsFromDB();
       setAnalytics(res.entries);
       setTotalClicks(res.totalVisits);
+      setUniqueVisitors(res.uniqueVisitors || res.uniqueIps);
+      setTotalSessions(res.totalSessions || res.totalVisits);
       setUniqueIps(res.uniqueIps);
       setTotalToolClicks(res.totalToolClicks);
     } catch (e) {
@@ -117,12 +121,14 @@ export function AnalyticsDashboard({
 
     return {
       total: totalClicks,
-      uniques: uniqueIps,
+      uniques: uniqueVisitors || uniqueIps,
+      sessions: totalSessions,
+      uniqueIps,
       topBrowser: topB,
       toolClicks: totalToolClicks,
       lastActive: analytics.length > 0 ? timeSince(new Date(analytics[0].created_at)) : '--'
     };
-  }, [analytics, totalClicks, uniqueIps, totalToolClicks]);
+  }, [analytics, totalClicks, uniqueVisitors, totalSessions, uniqueIps, totalToolClicks]);
 
   if (!isAuthenticated) {
     return (
@@ -254,14 +260,14 @@ export function AnalyticsDashboard({
             </div>
           </div>
 
-          <div className="bg-[#1a1a1a] p-4 sm:p-6 rounded-xl md:rounded-2xl flex flex-col justify-between min-h-[120px] md:min-h-[140px] border border-white/5">
+          <div className="bg-[#1a1a1a] p-4 sm:p-6 rounded-xl md:rounded-2xl flex flex-col justify-between min-h-[120px] md:min-h-[140px] border border-emerald-500/20 bg-gradient-to-br from-emerald-950/20 to-[#1a1a1a]">
             <Globe className="text-emerald-500 mb-2 md:mb-4" size={20} />
             <div>
-              <div className="text-3xl sm:text-4xl text-white font-light tracking-tight mb-1 md:mb-2">
+              <div className="text-3xl sm:text-4xl text-emerald-400 font-light tracking-tight mb-1 md:mb-2">
                 {stats.uniques}
               </div>
-              <div className="text-[10px] sm:text-xs font-bold tracking-[0.1em] sm:tracking-[0.2em] text-white/40 uppercase">
-                Uniques
+              <div className="text-[10px] sm:text-xs font-bold tracking-[0.1em] sm:tracking-[0.2em] text-emerald-300/60 uppercase">
+                True Visitors
               </div>
             </div>
           </div>
@@ -314,6 +320,20 @@ export function AnalyticsDashboard({
                   <tr key={row.id || i} className="hover:bg-white/[0.02] transition-colors group">
                     {/* Visitor Details */}
                     <td className="px-6 py-5">
+                      <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                        <span className="font-mono text-[10px] font-bold text-white bg-white/10 px-1.5 py-0.5 rounded border border-white/10">
+                          {row.visitor_id ? `USR-${row.visitor_id.replace(/^usr_/, '').slice(-6).toUpperCase()}` : 'GUEST'}
+                        </span>
+                        {row.is_new_visitor ? (
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            New
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                            Ret
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-center gap-2 mb-1">
                         <Monitor size={14} className="text-white/40" />
                         <span className="font-mono text-white tracking-wide text-xs">{row.ip_address}</span>

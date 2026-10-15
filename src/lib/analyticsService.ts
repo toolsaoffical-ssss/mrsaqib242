@@ -3,6 +3,10 @@ import { supabase, isSupabaseConfigured } from './supabase';
 export interface SiteAnalyticsEntry {
   id: string;
   ip_address: string;
+  visitor_id?: string;
+  session_id?: string;
+  is_new_visitor?: boolean;
+  device_fingerprint?: string;
   city: string;
   country: string;
   country_code?: string;
@@ -86,6 +90,10 @@ export function parseDeviceType(ua: string): 'desktop' | 'mobile' | 'tablet' {
 export const DEFAULT_ANALYTICS: SiteAnalyticsEntry[] = [
   {
     id: 'evt-101',
+    visitor_id: 'usr_f812a0e491',
+    session_id: 'ses_a1b2c3d4',
+    is_new_visitor: false,
+    device_fingerprint: 'dfp_8b71d9a2',
     ip_address: '182.180.142.65',
     city: 'Faisalabad',
     country: 'Pakistan',
@@ -113,6 +121,10 @@ export const DEFAULT_ANALYTICS: SiteAnalyticsEntry[] = [
   },
   {
     id: 'evt-102',
+    visitor_id: 'usr_c3948b2910',
+    session_id: 'ses_e5f6g7h8',
+    is_new_visitor: true,
+    device_fingerprint: 'dfp_3a10e8f1',
     ip_address: '39.45.188.210',
     city: 'Lahore',
     country: 'Pakistan',
@@ -140,6 +152,10 @@ export const DEFAULT_ANALYTICS: SiteAnalyticsEntry[] = [
   },
   {
     id: 'evt-103',
+    visitor_id: 'usr_90fa83bb19',
+    session_id: 'ses_i9j0k1l2',
+    is_new_visitor: false,
+    device_fingerprint: 'dfp_c4199aa5',
     ip_address: '104.28.198.12',
     city: 'San Francisco',
     country: 'United States',
@@ -164,6 +180,10 @@ export const DEFAULT_ANALYTICS: SiteAnalyticsEntry[] = [
   },
   {
     id: 'evt-104',
+    visitor_id: 'usr_761bca8901',
+    session_id: 'ses_m3n4o5p6',
+    is_new_visitor: true,
+    device_fingerprint: 'dfp_5d918ba0',
     ip_address: '194.230.145.8',
     city: 'Dubai',
     country: 'United Arab Emirates',
@@ -188,6 +208,10 @@ export const DEFAULT_ANALYTICS: SiteAnalyticsEntry[] = [
   },
   {
     id: 'evt-105',
+    visitor_id: 'usr_f812a0e491',
+    session_id: 'ses_q7r8s9t0',
+    is_new_visitor: false,
+    device_fingerprint: 'dfp_8b71d9a2',
     ip_address: '111.119.187.44',
     city: 'Karachi',
     country: 'Pakistan',
@@ -245,12 +269,138 @@ export function setLocalAnalytics(data: SiteAnalyticsEntry[]) {
   }
 }
 
+const VID_STORAGE_KEY = 'ms_analytics_vid';
+const SID_STORAGE_KEY = 'ms_analytics_sid';
+const SID_EXPIRY_KEY = 'ms_analytics_sid_expiry';
+const COOKIE_VID_KEY = 'ms_vid';
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes sliding session window
+
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function setCookie(name: string, value: string, days = 365) {
+  if (typeof document === 'undefined') return;
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+/**
+ * Persistent Visitor ID (localStorage + 1-Year Cookie fallback)
+ * Distinguishes unique physical devices even when sharing identical public IP/Wi-Fi
+ */
+export function getOrCreateVisitorId(): { visitorId: string; isNew: boolean } {
+  if (typeof window === 'undefined') {
+    return { visitorId: `usr_${generateUUID().replace(/-/g, '').slice(0, 12)}`, isNew: true };
+  }
+
+  let vid = '';
+  try {
+    vid = localStorage.getItem(VID_STORAGE_KEY) || '';
+  } catch {
+    // storage disabled
+  }
+
+  if (!vid) {
+    vid = getCookie(COOKIE_VID_KEY) || '';
+  }
+
+  let isNew = false;
+  if (!vid) {
+    vid = `usr_${generateUUID().replace(/-/g, '').slice(0, 12)}`;
+    isNew = true;
+  }
+
+  try {
+    localStorage.setItem(VID_STORAGE_KEY, vid);
+    setCookie(COOKIE_VID_KEY, vid, 365);
+  } catch {
+    // ignore
+  }
+
+  return { visitorId: vid, isNew };
+}
+
+/**
+ * Session ID (sessionStorage with 30-min inactivity sliding expiration)
+ */
+export function getOrCreateSessionId(): string {
+  if (typeof window === 'undefined') {
+    return `ses_${generateUUID().replace(/-/g, '').slice(0, 10)}`;
+  }
+
+  const now = Date.now();
+  let sid = '';
+  let expiry = 0;
+  try {
+    sid = sessionStorage.getItem(SID_STORAGE_KEY) || '';
+    expiry = parseInt(sessionStorage.getItem(SID_EXPIRY_KEY) || '0', 10);
+  } catch {
+    // session storage disabled
+  }
+
+  if (!sid || !expiry || now > expiry) {
+    sid = `ses_${generateUUID().replace(/-/g, '').slice(0, 10)}`;
+  }
+
+  try {
+    sessionStorage.setItem(SID_STORAGE_KEY, sid);
+    sessionStorage.setItem(SID_EXPIRY_KEY, String(now + SESSION_TIMEOUT_MS));
+  } catch {
+    // ignore
+  }
+
+  return sid;
+}
+
+/**
+ * Non-invasive hardware fingerprint fallback (for private browsing / cleared storage)
+ */
+export function computeDeviceFingerprint(intel: Partial<SiteAnalyticsEntry>): string {
+  const parts = [
+    intel.screen_resolution || '',
+    intel.timezone || '',
+    intel.language || '',
+    String(intel.hardware_concurrency || ''),
+    String(intel.device_memory || ''),
+    intel.os || '',
+    intel.browser || '',
+    intel.webgl_renderer || ''
+  ].join('|');
+
+  let hash = 2166136261;
+  for (let i = 0; i < parts.length; i++) {
+    hash ^= parts.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return 'dfp_' + (hash >>> 0).toString(16);
+}
+
 /**
  * Collect deep passive intel from browser
  */
 export async function collectDeviceIntel(): Promise<Partial<SiteAnalyticsEntry>> {
   const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+  const { visitorId, isNew } = getOrCreateVisitorId();
+  const sessionId = getOrCreateSessionId();
+
   const intel: Partial<SiteAnalyticsEntry> = {
+    visitor_id: visitorId,
+    session_id: sessionId,
+    is_new_visitor: isNew,
     browser: parseBrowser(ua),
     os: parseOS(ua),
     device_type: parseDeviceType(ua),
@@ -297,6 +447,8 @@ export async function collectDeviceIntel(): Promise<Partial<SiteAnalyticsEntry>>
     }
   }
 
+  intel.device_fingerprint = computeDeviceFingerprint(intel);
+
   // IP & Geolocation fetch
   try {
     const ipRes = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(3000) });
@@ -340,11 +492,22 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
   entries: SiteAnalyticsEntry[];
   fromDatabase: boolean;
   totalVisits: number;
+  uniqueVisitors: number;
+  totalSessions: number;
   uniqueIps: number;
   totalToolClicks: number;
   error?: string | null;
 }> {
   const localData = getLocalAnalytics();
+
+  // Helper to compute metrics
+  const computeMetrics = (data: SiteAnalyticsEntry[]) => {
+    const uniqueVisitors = new Set(data.map((d: any) => d.visitor_id || d.ip_address)).size;
+    const totalSessions = new Set(data.map((d: any) => d.session_id || d.id)).size;
+    const uniqueIps = new Set(data.map((d: any) => d.ip_address)).size;
+    const toolClicks = data.filter((d: any) => d.event_type === 'tool_click').length;
+    return { uniqueVisitors, totalSessions, uniqueIps, toolClicks };
+  };
 
   // 1. Try secure /api/analytics/list endpoint first
   try {
@@ -359,13 +522,14 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
       if (result.success && Array.isArray(result.entries)) {
         if (result.entries.length > 0) {
           setLocalAnalytics(result.entries);
-          const uniques = new Set(result.entries.map((d: any) => d.ip_address)).size;
-          const toolClicks = result.entries.filter((d: any) => d.event_type === 'tool_click').length;
+          const { uniqueVisitors, totalSessions, uniqueIps, toolClicks } = computeMetrics(result.entries);
           return {
             entries: result.entries,
             fromDatabase: true,
             totalVisits: result.entries.length,
-            uniqueIps: uniques,
+            uniqueVisitors,
+            totalSessions,
+            uniqueIps,
             totalToolClicks: toolClicks,
             error: null
           };
@@ -374,6 +538,8 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
             entries: [],
             fromDatabase: true,
             totalVisits: 0,
+            uniqueVisitors: 0,
+            totalSessions: 0,
             uniqueIps: 0,
             totalToolClicks: 0,
             error: null
@@ -397,13 +563,14 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
       if (!error && Array.isArray(data)) {
         if (data.length > 0) {
           setLocalAnalytics(data as SiteAnalyticsEntry[]);
-          const uniques = new Set(data.map((d: any) => d.ip_address)).size;
-          const toolClicks = data.filter((d: any) => d.event_type === 'tool_click').length;
+          const { uniqueVisitors, totalSessions, uniqueIps, toolClicks } = computeMetrics(data as SiteAnalyticsEntry[]);
           return {
             entries: data as SiteAnalyticsEntry[],
             fromDatabase: true,
             totalVisits: data.length,
-            uniqueIps: uniques,
+            uniqueVisitors,
+            totalSessions,
+            uniqueIps,
             totalToolClicks: toolClicks,
             error: null
           };
@@ -412,6 +579,8 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
             entries: [],
             fromDatabase: true,
             totalVisits: 0,
+            uniqueVisitors: 0,
+            totalSessions: 0,
             uniqueIps: 0,
             totalToolClicks: 0,
             error: null
@@ -426,13 +595,14 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
   }
 
   // 3. Fallback to local cache
-  const uniques = new Set(localData.map(d => d.ip_address)).size;
-  const toolClicks = localData.filter(d => d.event_type === 'tool_click').length;
+  const { uniqueVisitors, totalSessions, uniqueIps, toolClicks } = computeMetrics(localData);
   return {
     entries: localData,
     fromDatabase: false,
     totalVisits: localData.length,
-    uniqueIps: uniques,
+    uniqueVisitors,
+    totalSessions,
+    uniqueIps,
     totalToolClicks: toolClicks,
     error: null
   };
@@ -470,6 +640,10 @@ export async function recordVisitToDB(event: Partial<SiteAnalyticsEntry>): Promi
 
     const finalEntry: SiteAnalyticsEntry = serverRecordedEntry || {
       id: payload.id || `vis_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      visitor_id: payload.visitor_id || undefined,
+      session_id: payload.session_id || undefined,
+      is_new_visitor: payload.is_new_visitor !== undefined ? payload.is_new_visitor : true,
+      device_fingerprint: payload.device_fingerprint || undefined,
       ip_address: payload.ip_address || '182.180.142.65',
       city: payload.city || 'Faisalabad',
       country: payload.country || 'Pakistan',
@@ -573,6 +747,10 @@ export const SITE_ANALYTICS_SQL = `-- ==========================================
 
 CREATE TABLE IF NOT EXISTS public.site_analytics (
     id TEXT PRIMARY KEY,
+    visitor_id TEXT,
+    session_id TEXT,
+    is_new_visitor BOOLEAN DEFAULT true,
+    device_fingerprint TEXT,
     ip_address TEXT NOT NULL,
     city TEXT DEFAULT 'Unknown',
     country TEXT DEFAULT 'Pakistan',
@@ -614,7 +792,21 @@ WITH CHECK (true);
 -- Indexes for lightning fast queries and aggregation
 CREATE INDEX IF NOT EXISTS idx_site_analytics_created_at ON public.site_analytics(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_site_analytics_event_type ON public.site_analytics(event_type);
+CREATE INDEX IF NOT EXISTS idx_site_analytics_visitor_id ON public.site_analytics(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_site_analytics_session_id ON public.site_analytics(session_id);
 CREATE INDEX IF NOT EXISTS idx_site_analytics_tool_name ON public.site_analytics(tool_name);
 CREATE INDEX IF NOT EXISTS idx_site_analytics_country ON public.site_analytics(country);
 CREATE INDEX IF NOT EXISTS idx_site_analytics_ip ON public.site_analytics(ip_address);
+
+-- ----------------------------------------------------------
+-- MIGRATION SCRIPT (For existing table in Supabase):
+-- Run this if the table already exists:
+-- ----------------------------------------------------------
+-- ALTER TABLE public.site_analytics 
+-- ADD COLUMN IF NOT EXISTS visitor_id TEXT,
+-- ADD COLUMN IF NOT EXISTS session_id TEXT,
+-- ADD COLUMN IF NOT EXISTS is_new_visitor BOOLEAN DEFAULT true,
+-- ADD COLUMN IF NOT EXISTS device_fingerprint TEXT;
+-- CREATE INDEX IF NOT EXISTS idx_site_analytics_visitor_id ON public.site_analytics(visitor_id);
+-- CREATE INDEX IF NOT EXISTS idx_site_analytics_session_id ON public.site_analytics(session_id);
 `;

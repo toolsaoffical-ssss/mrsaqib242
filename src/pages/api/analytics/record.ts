@@ -135,10 +135,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const os = body.os || parseOS(ua);
   const deviceType = body.device_type || parseDeviceType(ua);
 
-  // 4. Assemble clean analytics entry
+  // 4. Assemble clean analytics entry with persistent visitor identity
   const entryId = body.id || `vis_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  const visitorId = body.visitor_id
+    ? String(body.visitor_id).slice(0, 64)
+    : `usr_${Buffer.from(clientIp + ua).toString('hex').slice(0, 16)}`;
+  const sessionId = body.session_id
+    ? String(body.session_id).slice(0, 64)
+    : `ses_${entryId.slice(4, 16)}`;
+
   const analyticsRecord = {
     id: entryId,
+    visitor_id: visitorId,
+    session_id: sessionId,
+    is_new_visitor: typeof body.is_new_visitor === 'boolean' ? body.is_new_visitor : true,
+    device_fingerprint: body.device_fingerprint ? String(body.device_fingerprint).slice(0, 64) : null,
     ip_address: clientIp || body.ip_address || '127.0.0.1',
     city: city || 'Faisalabad',
     country: country || 'Pakistan',
@@ -171,9 +182,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
 
     if (clientToUse) {
-      const { error } = await clientToUse
+      let { error } = await clientToUse
         .from('site_analytics')
         .insert([analyticsRecord]);
+
+      // Graceful fallback: If columns haven't been added yet via SQL migration, retry with legacy fields
+      if (error && (error.message.includes('column') || error.message.includes('visitor_id'))) {
+        const { visitor_id, session_id, is_new_visitor, device_fingerprint, ...legacyRecord } = analyticsRecord;
+        const retry = await clientToUse.from('site_analytics').insert([legacyRecord]);
+        if (!retry.error) {
+          error = null;
+        }
+      }
 
       if (error) {
         console.warn('Analytics DB insert warning:', error.message);

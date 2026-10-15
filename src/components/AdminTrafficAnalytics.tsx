@@ -132,6 +132,9 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
   const handleExportCSV = () => {
     const headers = [
       'ID',
+      'Visitor ID',
+      'Session ID',
+      'Is New Visitor',
       'IP Address',
       'Event Type',
       'Path / Target',
@@ -144,11 +147,15 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       'Device',
       'Screen',
       'Referrer',
+      'Device Fingerprint',
       'Created At'
     ];
 
     const rows = entries.map(e => [
       `"${e.id}"`,
+      `"${e.visitor_id || ''}"`,
+      `"${e.session_id || ''}"`,
+      `"${e.is_new_visitor ? 'Yes' : 'No'}"`,
       `"${e.ip_address}"`,
       `"${e.event_type}"`,
       `"${e.path}"`,
@@ -161,6 +168,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       `"${e.device_type}"`,
       `"${e.screen_resolution}"`,
       `"${e.referrer}"`,
+      `"${e.device_fingerprint || ''}"`,
       `"${e.created_at}"`
     ]);
 
@@ -178,9 +186,15 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
   // High-level analytics metrics
   const stats = useMemo(() => {
     const total = entries.length;
-    const uniques = new Set(entries.map(e => e.ip_address)).size;
+    // True Unique Visitors: Separates distinct devices/users even if sharing the same Wi-Fi/NAT IP
+    const trueUniques = new Set(entries.map(e => e.visitor_id || e.ip_address)).size;
+    const totalSessions = new Set(entries.map(e => e.session_id || e.id)).size;
+    const uniqueIps = new Set(entries.map(e => e.ip_address)).size;
     const toolClicks = entries.filter(e => e.event_type === 'tool_click').length;
     const pageViews = entries.filter(e => e.event_type === 'page_view').length;
+
+    const newVisitorsCount = entries.filter(e => e.is_new_visitor).length;
+    const returningVisitorsCount = Math.max(0, total - newVisitorsCount);
 
     // Top Country
     const countries: Record<string, { count: number; code?: string }> = {};
@@ -215,8 +229,8 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
     const mobilePercent = total > 0 ? Math.round((mobileCount / total) * 100) : 50;
     const desktopPercent = 100 - mobilePercent;
 
-    // Tool Leaderboard
-    const toolStats: Record<string, { count: number; category: string; lastSeen: string; uniqueIps: Set<string> }> = {};
+    // Tool Leaderboard (Tracks unique human visitors per tool)
+    const toolStats: Record<string, { count: number; category: string; lastSeen: string; uniqueVisitors: Set<string> }> = {};
     entries.filter(e => e.event_type === 'tool_click' && e.tool_name).forEach(e => {
       const name = e.tool_name!;
       if (!toolStats[name]) {
@@ -224,11 +238,11 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
           count: 0,
           category: e.tool_category || 'Utilities',
           lastSeen: e.created_at,
-          uniqueIps: new Set()
+          uniqueVisitors: new Set()
         };
       }
       toolStats[name].count++;
-      toolStats[name].uniqueIps.add(e.ip_address);
+      toolStats[name].uniqueVisitors.add(e.visitor_id || e.ip_address);
       if (new Date(e.created_at) > new Date(toolStats[name].lastSeen)) {
         toolStats[name].lastSeen = e.created_at;
       }
@@ -239,14 +253,18 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
         name,
         category: data.category,
         clicks: data.count,
-        uniques: data.uniqueIps.size,
+        uniques: data.uniqueVisitors.size,
         lastSeen: data.lastSeen
       }))
       .sort((a, b) => b.clicks - a.clicks);
 
     return {
       total,
-      uniques,
+      trueUniques,
+      totalSessions,
+      uniqueIps,
+      newVisitorsCount,
+      returningVisitorsCount,
       toolClicks,
       pageViews,
       topCountry,
@@ -267,6 +285,8 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       const q = searchQuery.toLowerCase();
       const matchesSearch =
         e.ip_address.toLowerCase().includes(q) ||
+        (e.visitor_id && e.visitor_id.toLowerCase().includes(q)) ||
+        (e.session_id && e.session_id.toLowerCase().includes(q)) ||
         (e.city && e.city.toLowerCase().includes(q)) ||
         (e.country && e.country.toLowerCase().includes(q)) ||
         (e.tool_name && e.tool_name.toLowerCase().includes(q)) ||
@@ -296,11 +316,11 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
   return (
     <div className="space-y-6">
       {/* Top Banner KPI Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {/* Total Clicks */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        {/* Total Page Views / Hits */}
         <div className="bg-[#121319] border border-blue-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-black uppercase tracking-wider text-blue-400">Total Visits</span>
+            <span className="text-[11px] font-black uppercase tracking-wider text-blue-400">Total Hits</span>
             <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
               <ArrowUpRight size={18} />
             </div>
@@ -308,22 +328,45 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
           <div>
             <div className="text-3xl sm:text-4xl font-black text-white">{stats.total}</div>
             <div className="text-[11px] text-zinc-400 mt-1 flex items-center gap-1.5">
-              <span className="text-emerald-400 font-bold">{stats.pageViews} Page Views</span>
+              <span className="text-blue-400 font-bold">{stats.pageViews} Pageviews</span>
             </div>
           </div>
         </div>
 
-        {/* Unique Visitors */}
-        <div className="bg-[#121319] border border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
+        {/* True Unique Visitors (Separates shared Wi-Fi / NAT) */}
+        <div className="bg-[#121319] border border-emerald-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-emerald-950/20 to-[#121319] shadow-lg shadow-emerald-500/5 group">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-black uppercase tracking-wider text-emerald-400">Unique Visitors</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <Globe size={18} />
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-400">True Visitors</span>
+              <span className="text-[9px] bg-emerald-500/20 text-emerald-300 font-mono px-1.5 py-0.2 rounded border border-emerald-500/30">
+                UUID
+              </span>
+            </div>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <Eye size={18} />
             </div>
           </div>
           <div>
-            <div className="text-3xl sm:text-4xl font-black text-white">{stats.uniques}</div>
-            <div className="text-[11px] text-zinc-400 mt-1">Unique IP Addresses</div>
+            <div className="text-3xl sm:text-4xl font-black text-emerald-400">{stats.trueUniques}</div>
+            <div className="text-[11px] text-zinc-300 mt-1 flex items-center gap-1 font-semibold">
+              <span>Real People / Devices</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Browsing Sessions */}
+        <div className="bg-[#121319] border border-cyan-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[11px] font-black uppercase tracking-wider text-cyan-400">Sessions</span>
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+              <Activity size={18} />
+            </div>
+          </div>
+          <div>
+            <div className="text-3xl sm:text-4xl font-black text-white">{stats.totalSessions}</div>
+            <div className="text-[10px] text-zinc-400 mt-1 truncate">
+              <span className="text-cyan-400 font-bold">{stats.returningVisitorsCount} Ret</span> • <span className="text-zinc-300">{stats.newVisitorsCount} New</span>
+            </div>
           </div>
         </div>
 
@@ -338,23 +381,23 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
           <div>
             <div className="text-3xl sm:text-4xl font-black text-orange-400">{stats.toolClicks}</div>
             <div className="text-[11px] text-zinc-300 mt-1 font-semibold flex items-center gap-1">
-              <span>{stats.sortedTools.length} Tools Engaged</span>
+              <span>{stats.sortedTools.length} Tools Used</span>
             </div>
           </div>
         </div>
 
-        {/* Top Geo / Last Active */}
-        <div className="bg-[#121319] border border-purple-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden">
+        {/* Networks & Top Geo */}
+        <div className="bg-[#121319] border border-purple-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-black uppercase tracking-wider text-purple-400">Top Geo Location</span>
+            <span className="text-[11px] font-black uppercase tracking-wider text-purple-400">Network IPs</span>
             <div className="text-xl">{getCountryFlag(stats.topCountryCode, stats.topCountry)}</div>
           </div>
           <div>
-            <div className="text-xl sm:text-2xl font-black text-white truncate">{stats.topCountry}</div>
-            <div className="text-[11px] text-zinc-400 mt-1 flex items-center gap-2">
-              <span className="text-purple-400 font-bold">{stats.topBrowser}</span>
-              <span>&bull;</span>
-              <span>{stats.topOS}</span>
+            <div className="text-3xl sm:text-4xl font-black text-white">{stats.uniqueIps}</div>
+            <div className="text-[11px] text-zinc-400 mt-1 flex items-center gap-1.5 truncate">
+              <span className="text-purple-400 font-bold">{stats.topCountry}</span>
+              <span>•</span>
+              <span>{stats.sortedCountries.length} Geo</span>
             </div>
           </div>
         </div>
@@ -631,20 +674,44 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
                   <tr key={row.id} className="hover:bg-white/[0.02] transition-colors group">
                     {/* Visitor & IP */}
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Monitor size={14} className="text-zinc-500 shrink-0" />
-                        <span className="font-mono text-white text-xs font-bold tracking-wide">
-                          {row.ip_address}
+                      {/* Visitor UUID Badge + New/Returning Status */}
+                      <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                        <span 
+                          className="font-mono text-[11px] font-extrabold text-white bg-white/10 px-2 py-0.5 rounded-md flex items-center gap-1 border border-white/10"
+                          title={`Persistent Visitor UUID: ${row.visitor_id || 'Legacy Entry'}`}
+                        >
+                          <Eye size={11} className="text-emerald-400" />
+                          <span>{row.visitor_id ? `USR-${row.visitor_id.replace(/^usr_/, '').slice(-6).toUpperCase()}` : 'GUEST'}</span>
                         </span>
+                        {row.is_new_visitor ? (
+                          <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            New
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                            Ret
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Network IP & Copy */}
+                      <div className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-300">
+                        <Wifi size={11} className="text-zinc-500 shrink-0" />
+                        <span>{row.ip_address}</span>
                         <button
                           onClick={() => handleCopyIp(row.ip_address)}
                           title="Copy IP"
-                          className="opacity-0 group-hover:opacity-100 p-1 text-zinc-500 hover:text-white transition-opacity"
+                          className="opacity-0 group-hover:opacity-100 p-0.5 text-zinc-500 hover:text-white transition-opacity"
                         >
-                          {copiedIp === row.ip_address ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                          {copiedIp === row.ip_address ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
                         </button>
                       </div>
-                      <div className="text-[11px] text-zinc-500 truncate max-w-[180px]">
+
+                      {/* Session & Referrer */}
+                      <div className="text-[10px] text-zinc-500 truncate max-w-[190px] mt-0.5">
+                        {row.session_id ? (
+                          <span className="text-zinc-400 font-mono">SES-{row.session_id.replace(/^ses_/, '').slice(-5)} • </span>
+                        ) : null}
                         Ref: <span className="text-zinc-400">{row.referrer || 'Direct'}</span>
                       </div>
                     </td>
