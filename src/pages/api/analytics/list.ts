@@ -81,6 +81,74 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const totalPageViews = typeof pageViewCountRes.count === 'number' ? pageViewCountRes.count : 0;
     const totalToolClicks = typeof toolClickCountRes.count === 'number' ? toolClickCountRes.count : 0;
 
+    // 1. Try checking RPC summary first (if SQL helper function is installed in Supabase)
+    let dbSummary: {
+      totalHits?: number;
+      totalPageViews?: number;
+      totalToolClicks?: number;
+      totalTrueVisitors?: number;
+      totalSessions?: number;
+      totalUniqueIps?: number;
+    } = {};
+
+    try {
+      const { data: rpcData, error: rpcErr } = await client.rpc('get_analytics_summary');
+      if (!rpcErr && rpcData) {
+        dbSummary = {
+          totalHits: Number(rpcData.total_hits),
+          totalPageViews: Number(rpcData.pageviews),
+          totalToolClicks: Number(rpcData.tool_clicks),
+          totalTrueVisitors: Number(rpcData.true_visitors),
+          totalSessions: Number(rpcData.total_sessions),
+          totalUniqueIps: Number(rpcData.unique_ips)
+        };
+      }
+    } catch {
+      // RPC not yet declared in database, fallback to lightweight query
+    }
+
+    // 2. Fallback: Concurrently query lightweight identifiers to get accurate unique visitors & sessions
+    let trueVisitorsCount = dbSummary.totalTrueVisitors;
+    let sessionsCount = dbSummary.totalSessions;
+    let uniqueIpsCount = dbSummary.totalUniqueIps;
+
+    if (!trueVisitorsCount) {
+      const maxAudit = Math.min(totalCount, 5000);
+      const lightPromises: Promise<any>[] = [];
+      for (let off = 0; off < maxAudit; off += 1000) {
+        lightPromises.push(
+          client
+            .from('site_analytics')
+            .select('visitor_id, session_id, ip_address')
+            .order('created_at', { ascending: false })
+            .range(off, off + 999)
+        );
+      }
+      try {
+        const lightBatches = await Promise.all(lightPromises);
+        const visitorSet = new Set<string>();
+        const sessionSet = new Set<string>();
+        const ipSet = new Set<string>();
+
+        lightBatches.forEach(b => {
+          if (Array.isArray(b.data)) {
+            b.data.forEach((r: any) => {
+              const vid = r.visitor_id || r.ip_address;
+              if (vid) visitorSet.add(vid);
+              if (r.session_id) sessionSet.add(r.session_id);
+              if (r.ip_address) ipSet.add(r.ip_address);
+            });
+          }
+        });
+
+        trueVisitorsCount = visitorSet.size;
+        sessionsCount = sessionSet.size;
+        uniqueIpsCount = ipSet.size;
+      } catch {
+        // Fallback to initial batch counts
+      }
+    }
+
     // If fetchAll is requested and total records exceed 1000, fetch remaining in parallel up to 5,000
     if (fetchAll && totalCount > 1000) {
       const maxToFetch = Math.min(totalCount, 5000);
@@ -110,9 +178,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       fromDatabase: true,
       entries: allEntries,
       count: allEntries.length,
-      totalHits: totalCount,
-      totalPageViews,
-      totalToolClicks,
+      totalHits: dbSummary.totalHits ?? totalCount,
+      totalPageViews: dbSummary.totalPageViews ?? totalPageViews,
+      totalToolClicks: dbSummary.totalToolClicks ?? totalToolClicks,
+      totalTrueVisitors: trueVisitorsCount,
+      totalSessions: sessionsCount,
+      totalUniqueIps: uniqueIpsCount,
       hasMore: totalCount > allEntries.length
     });
   } catch (err: any) {

@@ -542,15 +542,25 @@ export async function fetchSiteAnalyticsFromDB(params?: { fetchAll?: boolean }):
           const realToolClicks = typeof result.totalToolClicks === 'number' 
             ? result.totalToolClicks 
             : toolClicks;
+          const realTrueVisitors = typeof result.totalTrueVisitors === 'number' && result.totalTrueVisitors > 0
+            ? result.totalTrueVisitors
+            : uniqueVisitors;
+          const realSessions = typeof result.totalSessions === 'number' && result.totalSessions > 0
+            ? result.totalSessions
+            : totalSessions;
+          const realUniqueIps = typeof result.totalUniqueIps === 'number' && result.totalUniqueIps > 0
+            ? result.totalUniqueIps
+            : uniqueIps;
+
           return {
             entries: result.entries,
             fromDatabase: true,
             totalVisits: realTotal,
             totalPageViews: result.totalPageViews,
             totalToolClicks: realToolClicks,
-            uniqueVisitors,
-            totalSessions,
-            uniqueIps,
+            uniqueVisitors: realTrueVisitors,
+            totalSessions: realSessions,
+            uniqueIps: realUniqueIps,
             hasMore: Boolean(result.hasMore),
             error: null
           };

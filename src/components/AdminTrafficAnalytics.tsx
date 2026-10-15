@@ -44,6 +44,9 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
   const [totalDatabaseHits, setTotalDatabaseHits] = useState<number>(0);
   const [totalDbPageViews, setTotalDbPageViews] = useState<number | undefined>(undefined);
   const [totalDbToolClicks, setTotalDbToolClicks] = useState<number | undefined>(undefined);
+  const [totalDbTrueVisitors, setTotalDbTrueVisitors] = useState<number | undefined>(undefined);
+  const [totalDbSessions, setTotalDbSessions] = useState<number | undefined>(undefined);
+  const [totalDbUniqueIps, setTotalDbUniqueIps] = useState<number | undefined>(undefined);
   const [hasMoreFromDB, setHasMoreFromDB] = useState<boolean>(false);
   const [displayLimit, setDisplayLimit] = useState<number>(500);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
@@ -62,6 +65,9 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       setTotalDatabaseHits(res.totalVisits);
       setTotalDbPageViews(res.totalPageViews);
       setTotalDbToolClicks(res.totalToolClicks);
+      setTotalDbTrueVisitors(res.uniqueVisitors);
+      setTotalDbSessions(res.totalSessions);
+      setTotalDbUniqueIps(res.uniqueIps);
       setHasMoreFromDB(Boolean(res.hasMore));
       setIsFromDB(res.fromDatabase);
       if (res.error && !isBackground) {
@@ -236,8 +242,10 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
     // True Total Hits from database (never capped at 1000)
     const total = totalDatabaseHits > entries.length ? totalDatabaseHits : entries.length;
 
-    // True Unique Visitors: Separates distinct devices/users even if sharing the same Wi-Fi/NAT IP
-    const trueUniques = new Set(entries.map(e => e.visitor_id || e.ip_address)).size;
+    // True Unique Visitors: database aggregate if available, otherwise sample
+    const trueUniques = totalDbTrueVisitors !== undefined && totalDbTrueVisitors > 0
+      ? totalDbTrueVisitors
+      : new Set(entries.map(e => e.visitor_id || e.ip_address)).size;
 
     // Smart session grouping:
     // If session_id exists, use it. Otherwise, group by visitor + hour slot so 50 pageviews in 1 hour by 1 person don't count as 50 sessions!
@@ -251,8 +259,12 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
         sessionSet.add(`${vid}_${hourSlot}`);
       }
     });
-    const totalSessions = sessionSet.size;
-    const uniqueIps = new Set(entries.map(e => e.ip_address)).size;
+    const totalSessions = totalDbSessions !== undefined && totalDbSessions > 0
+      ? totalDbSessions
+      : sessionSet.size;
+    const uniqueIps = totalDbUniqueIps !== undefined && totalDbUniqueIps > 0
+      ? totalDbUniqueIps
+      : new Set(entries.map(e => e.ip_address)).size;
 
     // Accurate page views & tool clicks (using direct database counts if available)
     const rawToolClicks = entries.filter(e => e.event_type === 'tool_click').length;
@@ -361,7 +373,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       sortedTools,
       lastActive: entries[0] ? new Date(entries[0].created_at) : null
     };
-  }, [entries, totalDatabaseHits, totalDbPageViews, totalDbToolClicks]);
+  }, [entries, totalDatabaseHits, totalDbPageViews, totalDbToolClicks, totalDbTrueVisitors, totalDbSessions, totalDbUniqueIps]);
 
   // Filtered entries
   const filteredEntries = useMemo(() => {
