@@ -30,6 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         tiktok: profile?.tiktok_url || "",
         snapchat: profile?.snapchat_url || "",
         portfolio: profile?.portfolio_url || "https://mrsaqib242.vercel.app",
+        github: profile?.github_url || "https://github.com/mrsaqib242",
         resume: profile?.resume_url || "",
       } 
     });
