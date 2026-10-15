@@ -92,12 +92,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Domain ID is required.' });
       }
 
-      const { data, error } = await client
+      let { data, error } = await client
         .from('api_allowed_domains')
         .update({ is_active: Boolean(is_active), updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
         .single();
+
+      if (error && (error.code === '42703' || error.message?.includes('column') || error.message?.includes('updated_at'))) {
+        const retry = await client
+          .from('api_allowed_domains')
+          .update({ is_active: Boolean(is_active) })
+          .eq('id', id)
+          .select()
+          .single();
+        data = retry.data;
+        error = retry.error;
+      }
 
       if (error) return res.status(500).json({ error: error.message });
       return res.status(200).json({ success: true, data });
