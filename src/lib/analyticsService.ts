@@ -500,10 +500,20 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
 }> {
   const localData = getLocalAnalytics();
 
-  // Helper to compute metrics
+  // Helper to compute metrics with smart session grouping
   const computeMetrics = (data: SiteAnalyticsEntry[]) => {
     const uniqueVisitors = new Set(data.map((d: any) => d.visitor_id || d.ip_address)).size;
-    const totalSessions = new Set(data.map((d: any) => d.session_id || d.id)).size;
+    const sessionSet = new Set<string>();
+    data.forEach((e: any) => {
+      const vid = e.visitor_id || e.ip_address;
+      if (e.session_id) {
+        sessionSet.add(e.session_id);
+      } else {
+        const hourSlot = e.created_at ? e.created_at.slice(0, 13) : e.id;
+        sessionSet.add(`${vid}_${hourSlot}`);
+      }
+    });
+    const totalSessions = sessionSet.size;
     const uniqueIps = new Set(data.map((d: any) => d.ip_address)).size;
     const toolClicks = data.filter((d: any) => d.event_type === 'tool_click').length;
     return { uniqueVisitors, totalSessions, uniqueIps, toolClicks };
@@ -523,10 +533,13 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
         if (result.entries.length > 0) {
           setLocalAnalytics(result.entries);
           const { uniqueVisitors, totalSessions, uniqueIps, toolClicks } = computeMetrics(result.entries);
+          const realTotal = typeof result.totalHits === 'number' && result.totalHits > 0 
+            ? result.totalHits 
+            : result.entries.length;
           return {
             entries: result.entries,
             fromDatabase: true,
-            totalVisits: result.entries.length,
+            totalVisits: realTotal,
             uniqueVisitors,
             totalSessions,
             uniqueIps,
@@ -554,20 +567,21 @@ export async function fetchSiteAnalyticsFromDB(): Promise<{
   // 2. Direct client fallback via Supabase SDK
   if (isSupabaseConfigured()) {
     try {
-      const { data, error } = await supabase
+      const { data, count: totalCount, error } = await supabase
         .from('site_analytics')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
-        .limit(10000);
+        .range(0, 999);
 
       if (!error && Array.isArray(data)) {
         if (data.length > 0) {
           setLocalAnalytics(data as SiteAnalyticsEntry[]);
           const { uniqueVisitors, totalSessions, uniqueIps, toolClicks } = computeMetrics(data as SiteAnalyticsEntry[]);
+          const realTotal = typeof totalCount === 'number' && totalCount > 0 ? totalCount : data.length;
           return {
             entries: data as SiteAnalyticsEntry[],
             fromDatabase: true,
-            totalVisits: data.length,
+            totalVisits: realTotal,
             uniqueVisitors,
             totalSessions,
             uniqueIps,

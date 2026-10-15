@@ -40,6 +40,7 @@ interface AdminTrafficAnalyticsProps {
 
 export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalyticsProps) {
   const [entries, setEntries] = useState<SiteAnalyticsEntry[]>([]);
+  const [totalDatabaseHits, setTotalDatabaseHits] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [isFromDB, setIsFromDB] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,6 +53,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
     try {
       const res = await fetchSiteAnalyticsFromDB();
       setEntries(res.entries);
+      setTotalDatabaseHits(res.totalVisits);
       setIsFromDB(res.fromDatabase);
       if (res.error && !isBackground) {
         onNotify(`Supabase note: ${res.error}. Showing live local cache.`, 'error');
@@ -185,16 +187,48 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
 
   // High-level analytics metrics
   const stats = useMemo(() => {
-    const total = entries.length;
+    // True Total Hits from database (never capped at 1000)
+    const total = totalDatabaseHits > entries.length ? totalDatabaseHits : entries.length;
+
     // True Unique Visitors: Separates distinct devices/users even if sharing the same Wi-Fi/NAT IP
     const trueUniques = new Set(entries.map(e => e.visitor_id || e.ip_address)).size;
-    const totalSessions = new Set(entries.map(e => e.session_id || e.id)).size;
-    const uniqueIps = new Set(entries.map(e => e.ip_address)).size;
-    const toolClicks = entries.filter(e => e.event_type === 'tool_click').length;
-    const pageViews = entries.filter(e => e.event_type === 'page_view').length;
 
-    const newVisitorsCount = entries.filter(e => e.is_new_visitor).length;
-    const returningVisitorsCount = Math.max(0, total - newVisitorsCount);
+    // Smart session grouping:
+    // If session_id exists, use it. Otherwise, group by visitor + hour slot so 50 pageviews in 1 hour by 1 person don't count as 50 sessions!
+    const sessionSet = new Set<string>();
+    entries.forEach(e => {
+      const vid = e.visitor_id || e.ip_address;
+      if (e.session_id) {
+        sessionSet.add(e.session_id);
+      } else {
+        const hourSlot = e.created_at ? e.created_at.slice(0, 13) : e.id;
+        sessionSet.add(`${vid}_${hourSlot}`);
+      }
+    });
+    const totalSessions = sessionSet.size;
+    const uniqueIps = new Set(entries.map(e => e.ip_address)).size;
+
+    // Accurate page views & tool clicks (scaled to true database total if larger than local sample)
+    const rawToolClicks = entries.filter(e => e.event_type === 'tool_click').length;
+    const rawPageViews = entries.filter(e => e.event_type === 'page_view').length;
+    const sampleSize = entries.length || 1;
+    const pageViews = total > sampleSize ? Math.round((rawPageViews / sampleSize) * total) : rawPageViews;
+    const toolClicks = total > sampleSize ? total - pageViews : rawToolClicks;
+
+    // Smart New vs Returning detection across the visitor dataset
+    const seenVisitorIds = new Set<string>();
+    let newVisitorsCount = 0;
+    let returningVisitorsCount = 0;
+    const chronoEntries = [...entries].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    chronoEntries.forEach(e => {
+      const vid = e.visitor_id || e.ip_address;
+      if (!seenVisitorIds.has(vid)) {
+        seenVisitorIds.add(vid);
+        newVisitorsCount++;
+      } else {
+        returningVisitorsCount++;
+      }
+    });
 
     // Top Country
     const countries: Record<string, { count: number; code?: string }> = {};
@@ -277,7 +311,7 @@ export default function AdminTrafficAnalytics({ onNotify }: AdminTrafficAnalytic
       sortedTools,
       lastActive: entries[0] ? new Date(entries[0].created_at) : null
     };
-  }, [entries]);
+  }, [entries, totalDatabaseHits]);
 
   // Filtered entries
   const filteredEntries = useMemo(() => {
