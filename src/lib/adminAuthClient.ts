@@ -358,10 +358,11 @@ export async function generateEmergencyRecoveryCodes(): Promise<{ success: boole
 }
 
 /**
- * Update administrative credentials.
+ * Update administrative credentials (Requires Current Password + Master Security PIN).
  */
 export async function changeAdminCredentials(
   currentPassword: string,
+  securityPin: string,
   newUsername: string,
   newPassword: string
 ): Promise<ChangeCredentialsResponse> {
@@ -372,6 +373,7 @@ export async function changeAdminCredentials(
       credentials: 'include',
       body: JSON.stringify({
         currentPassword,
+        securityPin,
         newUsername,
         newPassword
       })
@@ -394,6 +396,37 @@ export async function changeAdminCredentials(
     return {
       success: false,
       message: 'Network error occurred while updating administrative credentials.'
+    };
+  }
+}
+
+/**
+ * Update the Master Security PIN (Requires Current PIN authorization).
+ */
+export async function changeAdminSecurityPin(
+  currentPin: string,
+  newPin: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch('/api/admin/change-security-pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        currentPin,
+        newPin
+      })
+    });
+
+    const data = await res.json();
+    return {
+      success: Boolean(data.success),
+      message: data.message || data.error || 'Failed to update Master Security PIN.'
+    };
+  } catch {
+    return {
+      success: false,
+      message: 'Network error occurred while updating Master Security PIN.'
     };
   }
 }

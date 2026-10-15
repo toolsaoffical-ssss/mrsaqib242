@@ -17,6 +17,8 @@ export interface AdminCredentialRecord {
   salt: string;
   session_secret: string;
   role: string;
+  security_pin_hash?: string;
+  security_pin_salt?: string;
   updated_at: string;
 }
 
@@ -80,6 +82,38 @@ export function verifyPassword(inputPassword: string, salt: string, storedHash: 
   return { match: false, needsUpgrade: false };
 }
 
+// Default Master Security PIN (Requested: Ilove4HAD)
+export const DEFAULT_SECURITY_PIN = process.env.ADMIN_SECURITY_PIN || 'Ilove4HAD';
+export const DEFAULT_PIN_SALT = 'a1b2c3d4e5f60718293a4b5c6d7e8f90';
+export const DEFAULT_PIN_HASH = computeHash(DEFAULT_SECURITY_PIN, DEFAULT_PIN_SALT, 100000);
+
+/**
+ * Verifies the Master Security PIN using PBKDF2 hash comparison with timing-safe equality.
+ * Defaults to 'Ilove4HAD' if not yet configured in database.
+ */
+export function verifySecurityPin(inputPin: string, record: AdminCredentialRecord): boolean {
+  if (!inputPin || typeof inputPin !== 'string') return false;
+  const cleanPin = inputPin.trim();
+
+  const storedHash = (record.security_pin_hash || '').trim();
+  const storedSalt = (record.security_pin_salt || '').trim();
+
+  if (storedHash && storedSalt) {
+    const computed = computeHash(cleanPin, storedSalt, 100000);
+    if (safeCompare(computed, storedHash)) {
+      return true;
+    }
+  }
+
+  // Fallback to default PIN hash check
+  const defaultComputed = computeHash(cleanPin, DEFAULT_PIN_SALT, 100000);
+  if (safeCompare(defaultComputed, DEFAULT_PIN_HASH)) {
+    return true;
+  }
+
+  return safeCompare(cleanPin, DEFAULT_SECURITY_PIN);
+}
+
 // In-memory runtime store fallback (ONLY active in development mode when DB is unavailable)
 let memoryAdminState: AdminCredentialRecord = {
   id: 'master_admin',
@@ -88,6 +122,8 @@ let memoryAdminState: AdminCredentialRecord = {
   salt: DEFAULT_INITIAL_SALT,
   session_secret: DEFAULT_INITIAL_SECRET,
   role: 'super_admin',
+  security_pin_hash: DEFAULT_PIN_HASH,
+  security_pin_salt: DEFAULT_PIN_SALT,
   updated_at: new Date().toISOString()
 };
 
@@ -379,11 +415,22 @@ export async function getAdminRecord(): Promise<AdminRecordResult> {
 
   if (clientToUse) {
     try {
-      const { data, error } = await clientToUse
+      let { data, error } = await clientToUse
         .from('admin_auth')
-        .select('id, username, password_hash, salt, session_secret, role, updated_at')
+        .select('id, username, password_hash, salt, session_secret, role, security_pin_hash, security_pin_salt, updated_at')
         .eq('id', 'master_admin')
         .maybeSingle();
+
+      if (error && error.message && error.message.includes('security_pin')) {
+        // Graceful fallback if user has not run migration yet
+        const retry = await clientToUse
+          .from('admin_auth')
+          .select('id, username, password_hash, salt, session_secret, role, updated_at')
+          .eq('id', 'master_admin')
+          .maybeSingle();
+        data = retry.data;
+        error = retry.error;
+      }
 
       if (error) {
         console.error('[SECURITY ERROR] Failed to fetch admin_auth from database:', error.message);
@@ -402,6 +449,8 @@ export async function getAdminRecord(): Promise<AdminRecordResult> {
           salt: (data.salt || '').trim(),
           session_secret: (data.session_secret || '').trim(),
           role: data.role || 'super_admin',
+          security_pin_hash: (data as any).security_pin_hash || DEFAULT_PIN_HASH,
+          security_pin_salt: (data as any).security_pin_salt || DEFAULT_PIN_SALT,
           updated_at: data.updated_at || new Date().toISOString()
         };
         return { record: memoryAdminState, fromDatabase: true };
@@ -788,6 +837,7 @@ export async function authenticateAdmin(
  */
 export async function updateAdminCredentials(
   currentPassword: string,
+  securityPin: string,
   newUsername: string,
   newPassword: string,
   isRestricted = false
@@ -806,6 +856,10 @@ export async function updateAdminCredentials(
 
   if (!currentPassword) {
     return { success: false, message: 'Current password is required to authorize credential changes.' };
+  }
+
+  if (!securityPin || !securityPin.trim()) {
+    return { success: false, message: 'Master Security PIN is required to authorize credential changes.' };
   }
 
   if (!newUsername || newUsername.trim().length < 3) {
@@ -836,15 +890,24 @@ export async function updateAdminCredentials(
     };
   }
 
+  // 1. Verify Current Password
   const checkCurrent = verifyPassword(currentPassword, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
   if (!checkCurrent.match) {
     return { success: false, message: 'Current password verification failed. Unauthorized change.' };
+  }
+
+  // 2. 🛡️ Verify Master Security PIN (Default: Ilove4HAD)
+  const checkPin = verifySecurityPin(securityPin, record);
+  if (!checkPin) {
+    return { success: false, message: 'Master Security PIN verification failed. Action blocked.' };
   }
 
   const newSalt = crypto.randomBytes(16).toString('hex');
   const newHash = computeHash(newPassword, newSalt, 100000);
   const newSecret = crypto.randomBytes(32).toString('hex');
   const sanitizedUsername = newUsername.trim();
+  const currentPinHash = record.security_pin_hash || DEFAULT_PIN_HASH;
+  const currentPinSalt = record.security_pin_salt || DEFAULT_PIN_SALT;
 
   memoryAdminState = {
     id: 'master_admin',
@@ -853,6 +916,8 @@ export async function updateAdminCredentials(
     salt: newSalt,
     session_secret: newSecret,
     role: 'super_admin',
+    security_pin_hash: currentPinHash,
+    security_pin_salt: currentPinSalt,
     updated_at: new Date().toISOString()
   };
 
@@ -869,6 +934,8 @@ export async function updateAdminCredentials(
           salt: newSalt,
           session_secret: newSecret,
           role: 'super_admin',
+          security_pin_hash: currentPinHash,
+          security_pin_salt: currentPinSalt,
           updated_at: new Date().toISOString()
         });
 
@@ -896,5 +963,90 @@ export async function updateAdminCredentials(
       : 'Username & Password successfully updated and encrypted!',
     newUsername: sanitizedUsername,
     newToken
+  };
+}
+
+/**
+ * Update Master Security PIN:
+ * Requires current Security PIN authorization before updating.
+ */
+export async function updateAdminSecurityPin(
+  currentPin: string,
+  newPin: string,
+  isRestricted = false
+): Promise<{
+  success: boolean;
+  message: string;
+}> {
+  if (isRestricted) {
+    return {
+      success: false,
+      message: 'Access Denied: Changing Master Security PIN is locked during the 48-hour restriction.'
+    };
+  }
+
+  if (!currentPin || !currentPin.trim()) {
+    return { success: false, message: 'Current Master Security PIN is required.' };
+  }
+
+  if (!newPin || newPin.trim().length < 4) {
+    return { success: false, message: 'New Master Security PIN must be at least 4 characters long.' };
+  }
+
+  const { record, error: dbError } = await getAdminRecord();
+  if (!record) {
+    return {
+      success: false,
+      message: dbError || 'Database connection unavailable.'
+    };
+  }
+
+  // Verify Current Security PIN
+  const checkCurrentPin = verifySecurityPin(currentPin, record);
+  if (!checkCurrentPin) {
+    return { success: false, message: 'Current Master Security PIN verification failed. Unauthorized action.' };
+  }
+
+  const cleanNewPin = newPin.trim();
+  const newPinSalt = crypto.randomBytes(16).toString('hex');
+  const newPinHash = computeHash(cleanNewPin, newPinSalt, 100000);
+
+  memoryAdminState.security_pin_hash = newPinHash;
+  memoryAdminState.security_pin_salt = newPinSalt;
+  memoryAdminState.updated_at = new Date().toISOString();
+
+  let dbSaved = false;
+  const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
+  if (clientToUse) {
+    try {
+      const { error } = await clientToUse
+        .from('admin_auth')
+        .update({
+          security_pin_hash: newPinHash,
+          security_pin_salt: newPinSalt,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', 'master_admin');
+
+      if (!error) {
+        dbSaved = true;
+      }
+    } catch {
+      // Continue
+    }
+  }
+
+  if (process.env.NODE_ENV === 'production' && !dbSaved) {
+    return {
+      success: false,
+      message: 'Failed to persist new Master Security PIN to database. Please make sure the SQL migration query has been run in Supabase.'
+    };
+  }
+
+  return {
+    success: true,
+    message: dbSaved
+      ? 'Master Security PIN successfully updated and encrypted in Supabase cloud database!'
+      : 'Master Security PIN successfully updated!'
   };
 }

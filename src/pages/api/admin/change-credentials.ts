@@ -32,11 +32,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
-  const { currentPassword, newUsername, newPassword } = req.body || {};
+  const { currentPassword, securityPin, newUsername, newPassword } = req.body || {};
 
   try {
     const result = await updateAdminCredentials(
       currentPassword || '',
+      securityPin || '',
       newUsername || '',
       newPassword || '',
       auth.isRestricted

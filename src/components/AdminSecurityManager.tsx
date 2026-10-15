@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { 
   changeAdminCredentials, 
+  changeAdminSecurityPin,
   getCachedAdminUsername, 
   logoutAdmin,
   fetchSecurityOverview,
@@ -104,6 +105,8 @@ export default function AdminSecurityManager({
 
   // Credentials form states
   const [currentPassword, setCurrentPassword] = useState('');
+  const [securityPin, setSecurityPin] = useState('');
+  const [showSecurityPin, setShowSecurityPin] = useState(false);
   const [newUsername, setNewUsername] = useState(currentUsername || 'saqib');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -113,6 +116,17 @@ export default function AdminSecurityManager({
   const [isSubmittingCreds, setIsSubmittingCreds] = useState(false);
   const [credsError, setCredsError] = useState('');
   const [credsSuccess, setCredsSuccess] = useState('');
+
+  // Master Security PIN Management states
+  const [currentPin, setCurrentPin] = useState('');
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const [showCurrentPin, setShowCurrentPin] = useState(false);
+  const [showNewPin, setShowNewPin] = useState(false);
+  const [showConfirmPin, setShowConfirmPin] = useState(false);
+  const [isSubmittingPin, setIsSubmittingPin] = useState(false);
+  const [pinError, setPinError] = useState('');
+  const [pinSuccess, setPinSuccess] = useState('');
 
   // Mirage Config state
   const [miragePin, setMiragePin] = useState('');
@@ -409,6 +423,11 @@ export default function AdminSecurityManager({
       return;
     }
 
+    if (!securityPin.trim()) {
+      setCredsError('Please enter your Master Security PIN (Default: Ilove4HAD).');
+      return;
+    }
+
     if (!newUsername.trim() || newUsername.trim().length < 3) {
       setCredsError('New Username must be at least 3 characters long.');
       return;
@@ -428,6 +447,7 @@ export default function AdminSecurityManager({
     try {
       const res = await changeAdminCredentials(
         currentPassword.trim(),
+        securityPin.trim(),
         newUsername.trim(),
         newPassword
       );
@@ -437,6 +457,7 @@ export default function AdminSecurityManager({
         showToast('Admin Credentials updated successfully!', 'success');
         onCredentialsUpdated(res.newUsername || newUsername.trim());
         setCurrentPassword('');
+        setSecurityPin('');
         setNewPassword('');
         setConfirmPassword('');
       } else {
@@ -446,6 +467,51 @@ export default function AdminSecurityManager({
       setCredsError('Network error while saving credentials.');
     } finally {
       setIsSubmittingCreds(false);
+    }
+  };
+
+  // Master Security PIN update submission
+  const handleSecurityPinSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPinError('');
+    setPinSuccess('');
+
+    if (isRestricted) {
+      setPinError('Action Locked: Changing Master Security PIN is forbidden during 48-hour restriction.');
+      return;
+    }
+
+    if (!currentPin.trim()) {
+      setPinError('Please enter your Current Master Security PIN to authorize this change.');
+      return;
+    }
+
+    if (!newPin.trim() || newPin.trim().length < 4) {
+      setPinError('New Master Security PIN must be at least 4 characters long.');
+      return;
+    }
+
+    if (newPin.trim() !== confirmPin.trim()) {
+      setPinError('New Master Security PIN and Confirm PIN do not match.');
+      return;
+    }
+
+    setIsSubmittingPin(true);
+    try {
+      const res = await changeAdminSecurityPin(currentPin.trim(), newPin.trim());
+      if (res.success) {
+        setPinSuccess(res.message);
+        showToast('Master Security PIN updated successfully!', 'success');
+        setCurrentPin('');
+        setNewPin('');
+        setConfirmPin('');
+      } else {
+        setPinError(res.message || 'Failed to update Master Security PIN.');
+      }
+    } catch {
+      setPinError('Network error while saving Master Security PIN.');
+    } finally {
+      setIsSubmittingPin(false);
     }
   };
 
@@ -1030,6 +1096,40 @@ export default function AdminSecurityManager({
                 </div>
               </div>
 
+              {/* Master Security PIN Field (Default: Ilove4HAD) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                    Master Security PIN <span className="text-rose-400">*</span>
+                  </label>
+                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
+                    Default: Ilove4HAD
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showSecurityPin ? 'text' : 'password'}
+                    value={securityPin}
+                    onChange={e => setSecurityPin(e.target.value)}
+                    placeholder="Enter master security PIN (Default: Ilove4HAD)"
+                    disabled={isRestricted}
+                    className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 transition-colors pr-10 pl-10 disabled:opacity-50"
+                    required
+                  />
+                  <Shield size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-amber-500" />
+                  <button
+                    type="button"
+                    onClick={() => setShowSecurityPin(!showSecurityPin)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                  >
+                    {showSecurityPin ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                <p className="text-[11px] text-zinc-500">
+                  Mandatory 2FA root security key required before modifying admin username or password.
+                </p>
+              </div>
+
               {/* New Username Field */}
               <div className="space-y-2">
                 <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
@@ -1128,6 +1228,157 @@ export default function AdminSecurityManager({
                   <>
                     <Lock size={16} />
                     <span>Update Admin Credentials</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Master Security PIN Management Card */}
+          <div className="bg-[#13141a] border border-white/5 rounded-2xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
+              <Shield size={120} />
+            </div>
+
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                <Shield size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-black tracking-tight text-white uppercase">Master Security PIN Management</h3>
+                  <span className="text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full">
+                    2FA Root Key
+                  </span>
+                </div>
+                <p className="text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
+                  Manage your additional root authorization key. You must first verify your <span className="text-white font-semibold">Current Master PIN</span> (Default: <code className="text-amber-400 font-mono">Ilove4HAD</code>) before setting a new PIN.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSecurityPinSubmit} className="space-y-5">
+              <AnimatePresence>
+                {pinError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2.5 font-mono"
+                  >
+                    <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+                    <span>{pinError}</span>
+                  </motion.div>
+                )}
+                {pinSuccess && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2.5 font-mono"
+                  >
+                    <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
+                    <span>{pinSuccess}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Current Master PIN (Mandatory check!) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                    Current Master Security PIN <span className="text-rose-400">*</span>
+                  </label>
+                  <span className="text-[10px] text-zinc-500">Required to authorize change</span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showCurrentPin ? 'text' : 'password'}
+                    value={currentPin}
+                    onChange={e => setCurrentPin(e.target.value)}
+                    placeholder="Enter current PIN (Default: Ilove4HAD)"
+                    disabled={isRestricted}
+                    className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 transition-colors pr-10 pl-10 disabled:opacity-50"
+                    required
+                  />
+                  <Shield size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPin(!showCurrentPin)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                  >
+                    {showCurrentPin ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Master PIN */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                  New Master Security PIN <span className="text-rose-400">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNewPin ? 'text' : 'password'}
+                    value={newPin}
+                    onChange={e => setNewPin(e.target.value)}
+                    placeholder="Enter new master PIN (min. 4 chars)"
+                    disabled={isRestricted}
+                    className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 transition-colors pr-10 pl-10 disabled:opacity-50"
+                    required
+                  />
+                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPin(!showNewPin)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                  >
+                    {showNewPin ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm New Master PIN */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                  Confirm New Master PIN <span className="text-rose-400">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPin ? 'text' : 'password'}
+                    value={confirmPin}
+                    onChange={e => setConfirmPin(e.target.value)}
+                    placeholder="Repeat new master PIN"
+                    disabled={isRestricted}
+                    className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 transition-colors pr-10 pl-10 disabled:opacity-50"
+                    required
+                  />
+                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPin(!showConfirmPin)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                  >
+                    {showConfirmPin ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Update PIN Button */}
+              <button
+                type="submit"
+                disabled={isSubmittingPin || isRestricted}
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(245,158,11,0.3)] transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isSubmittingPin ? (
+                  <>
+                    <RefreshCw size={16} className="animate-spin" />
+                    <span>Encrypting &amp; Updating PIN...</span>
+                  </>
+                ) : (
+                  <>
+                    <Shield size={16} />
+                    <span>Update Master Security PIN</span>
                   </>
                 )}
               </button>
