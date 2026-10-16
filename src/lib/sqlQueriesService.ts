@@ -823,7 +823,45 @@ WHERE schemaname = 'public'
 ORDER BY tablename, policyname;
 `;
 
+export const LOGOUT_ALL_OTHER_DEVICES_SQL = `-- =========================================================================
+-- 🚪 LOGOUT & BLOCK ALL OTHER ADMIN SESSIONS & DEVICES
+-- Run this in your Supabase SQL Editor: https://supabase.com/dashboard
+-- Current Trusted Device IP: 223.123.100.41 (Islamabad, Pakistan)
+-- =========================================================================
+
+-- Step 1: View all registered devices:
+SELECT id, device_name, ip_address, status, last_seen_at 
+FROM public.admin_devices 
+ORDER BY last_seen_at DESC;
+
+-- Step 2: Instant Kickout & Block all devices EXCEPT your current IP (223.123.100.41)
+-- Any other logged-in device will instantly get a 403 Forbidden error and be kicked out to login:
+UPDATE public.admin_devices
+SET status = 'blocked', updated_at = NOW()
+WHERE ip_address != '223.123.100.41';
+
+-- Step 3: Mark their security alerts as blocked/resolved too:
+UPDATE public.admin_security_alerts
+SET status = 'blocked', resolved_at = NOW()
+WHERE ip_address != '223.123.100.41';
+
+-- Step 4 (OPTIONAL NUCLEAR RESET): Invalidate ALL session cookies worldwide!
+-- If you suspect session hijacking, run this line. Every device in the world
+-- will be logged out immediately. You simply log in once on your trusted PC:
+-- UPDATE public.admin_auth 
+-- SET session_secret = encode(gen_random_bytes(32), 'hex'), updated_at = NOW()
+-- WHERE id = 'master_admin';
+`;
+
 export const SQL_SCRIPTS_CATALOG: SqlScriptItem[] = [
+  {
+    id: 'logout_all_other_devices',
+    title: '🚪 Logout & Block All Other Admin Devices',
+    tableName: 'admin_devices, admin_auth',
+    badge: 'Device Security',
+    description: 'Instantly kicks out and blocks all admin sessions and devices except your current verified IP (223.123.100.41).',
+    sql: LOGOUT_ALL_OTHER_DEVICES_SQL
+  },
   {
     id: 'zero_trust_security_lockdown',
     title: '🛡️ Zero-Trust Security Lockdown & Policy Hardening',
