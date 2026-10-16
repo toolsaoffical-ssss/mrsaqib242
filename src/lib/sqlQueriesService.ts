@@ -216,6 +216,8 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
     salt TEXT NOT NULL,
     session_secret TEXT NOT NULL,
     role TEXT DEFAULT 'super_admin',
+    security_pin_hash TEXT,
+    security_pin_salt TEXT,
     failed_attempts INTEGER DEFAULT 0,
     locked_until TIMESTAMPTZ,
     last_login_at TIMESTAMPTZ,
@@ -493,6 +495,8 @@ CREATE TABLE IF NOT EXISTS public.admin_auth (
     salt TEXT NOT NULL,
     session_secret TEXT NOT NULL,
     role TEXT DEFAULT 'super_admin',
+    security_pin_hash TEXT,
+    security_pin_salt TEXT,
     failed_attempts INTEGER DEFAULT 0,
     locked_until TIMESTAMPTZ,
     last_login_at TIMESTAMPTZ,
@@ -853,7 +857,38 @@ WHERE ip_address != '223.123.100.41';
 -- WHERE id = 'master_admin';
 `;
 
+export const RESET_SECURITY_PIN_SQL = `-- =========================================================================
+-- 🔑 RESET / SET MASTER 2FA SECURITY PIN TO 'ilove4HAD'
+-- Run this in your Supabase SQL Editor: https://supabase.com/dashboard
+-- Master Security PIN: ilove4HAD (Accepts both 'ilove4HAD' and 'Ilove4HAD')
+-- =========================================================================
+
+-- 1. Ensure security_pin columns exist in admin_auth table
+ALTER TABLE IF EXISTS public.admin_auth 
+ADD COLUMN IF NOT EXISTS security_pin_hash TEXT,
+ADD COLUMN IF NOT EXISTS security_pin_salt TEXT;
+
+-- 2. Update the PIN hash and salt in database for master_admin
+UPDATE public.admin_auth 
+SET 
+    security_pin_hash = '5e98c05cea2f9cfbbe47119ad3560396f58b648c4254b2ba248b059e9db3dd47',
+    security_pin_salt = 'a1b2c3d4e5f60718293a4b5c6d7e8f90',
+    updated_at = NOW()
+WHERE id = 'master_admin';
+
+-- 3. Verify the updated credentials record:
+SELECT id, username, role, security_pin_hash, updated_at FROM public.admin_auth WHERE id = 'master_admin';
+`;
+
 export const SQL_SCRIPTS_CATALOG: SqlScriptItem[] = [
+  {
+    id: 'reset_security_pin',
+    title: '🔑 Set / Reset Master 2FA PIN (ilove4HAD)',
+    tableName: 'admin_auth',
+    badge: 'Master Security PIN',
+    description: 'Ensures security PIN columns exist and configures the Master 2FA Root Key PIN to ilove4HAD / Ilove4HAD.',
+    sql: RESET_SECURITY_PIN_SQL
+  },
   {
     id: 'logout_all_other_devices',
     title: '🚪 Logout & Block All Other Admin Devices',
