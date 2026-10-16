@@ -238,91 +238,147 @@ CREATE TABLE IF NOT EXISTS public.admin_rate_limits (
 -- ROW LEVEL SECURITY (RLS) POLICIES (Enables safe anonymous read/write access)
 -- =========================================================================
 
-ALTER TABLE public.site_analytics ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.client_inquiries ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.gallery ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.profile_settings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pricing_plans ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pricing_addons ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tool_categories ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tools ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tool_settings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
+-- =========================================================================
+-- 🛡️ ZERO-TRUST ROW LEVEL SECURITY (RLS) POLICIES (ALL 17 TABLES PROTECTED)
+-- =========================================================================
 
--- Secure Row Level Security Policies
+-- 1. FORCE ROW LEVEL SECURITY ON ALL PUBLIC & ADMIN TABLES
+ALTER TABLE IF EXISTS public.site_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.site_analytics FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.client_inquiries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.client_inquiries FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.projects FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.gallery ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.gallery FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.profile_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.profile_settings FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.pricing_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.pricing_plans FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.pricing_addons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.pricing_addons FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.tool_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.tool_categories FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.tools ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.tools FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.tool_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.tool_settings FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_auth ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_auth FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_rate_limits FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_devices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_devices FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_security_alerts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_security_alerts FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_recovery_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_recovery_codes FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_hack_attempts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_hack_attempts FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_banned_ips ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_banned_ips FORCE ROW LEVEL SECURITY;
+
+-- 2. DROP ALL LEGACY / RISKY POLICIES
+DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
+DROP POLICY IF EXISTS "Public admin_auth access" ON public.admin_auth;
+DROP POLICY IF EXISTS "Strict deny anon admin_auth" ON public.admin_auth;
+DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
+DROP POLICY IF EXISTS "Enable read for all" ON public.admin_auth;
+DROP POLICY IF EXISTS "Strict lockdown admin_auth" ON public.admin_auth;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
+DROP POLICY IF EXISTS "Strict lockdown admin_rate_limits" ON public.admin_rate_limits;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_devices" ON public.admin_devices;
+DROP POLICY IF EXISTS "Strict lockdown admin_devices" ON public.admin_devices;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_security_alerts" ON public.admin_security_alerts;
+DROP POLICY IF EXISTS "Strict lockdown admin_security_alerts" ON public.admin_security_alerts;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_recovery_codes" ON public.admin_recovery_codes;
+DROP POLICY IF EXISTS "Strict lockdown admin_recovery_codes" ON public.admin_recovery_codes;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_hack_attempts" ON public.admin_hack_attempts;
+DROP POLICY IF EXISTS "Strict lockdown admin_hack_attempts" ON public.admin_hack_attempts;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_banned_ips" ON public.admin_banned_ips;
+DROP POLICY IF EXISTS "Strict lockdown admin_banned_ips" ON public.admin_banned_ips;
+
 DROP POLICY IF EXISTS "Public site analytics access" ON public.site_analytics;
 DROP POLICY IF EXISTS "Public can record analytics" ON public.site_analytics;
 DROP POLICY IF EXISTS "Public can view analytics" ON public.site_analytics;
 DROP POLICY IF EXISTS "Public can only record analytics" ON public.site_analytics;
-CREATE POLICY "Public can record analytics" ON public.site_analytics FOR INSERT TO anon, authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "Public write-only analytics" ON public.site_analytics;
 
 DROP POLICY IF EXISTS "Public inquiries access" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can submit inquiries" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can view inquiries" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can only submit inquiries" ON public.client_inquiries;
 DROP POLICY IF EXISTS "Public can view and manage inquiries" ON public.client_inquiries;
-CREATE POLICY "Public can submit inquiries" ON public.client_inquiries FOR INSERT TO anon, authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "Public write-only inquiries" ON public.client_inquiries;
 
 DROP POLICY IF EXISTS "Public projects access" ON public.projects;
 DROP POLICY IF EXISTS "Public read-only projects" ON public.projects;
-CREATE POLICY "Public read-only projects" ON public.projects FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public gallery access" ON public.gallery;
 DROP POLICY IF EXISTS "Public read-only gallery" ON public.gallery;
-CREATE POLICY "Public read-only gallery" ON public.gallery FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public profile access" ON public.profile_settings;
 DROP POLICY IF EXISTS "Public read-only profile" ON public.profile_settings;
-CREATE POLICY "Public read-only profile" ON public.profile_settings FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public pricing plans access" ON public.pricing_plans;
 DROP POLICY IF EXISTS "Public read-only pricing plans" ON public.pricing_plans;
-CREATE POLICY "Public read-only pricing plans" ON public.pricing_plans FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public pricing addons access" ON public.pricing_addons;
 DROP POLICY IF EXISTS "Public read-only pricing addons" ON public.pricing_addons;
-CREATE POLICY "Public read-only pricing addons" ON public.pricing_addons FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public tool categories access" ON public.tool_categories;
 DROP POLICY IF EXISTS "Public can view tool categories" ON public.tool_categories;
 DROP POLICY IF EXISTS "Public can manage tool categories" ON public.tool_categories;
 DROP POLICY IF EXISTS "Public read-only tool categories" ON public.tool_categories;
-CREATE POLICY "Public read-only tool categories" ON public.tool_categories FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public tools access" ON public.tools;
 DROP POLICY IF EXISTS "Public can view tools" ON public.tools;
 DROP POLICY IF EXISTS "Public can manage tools" ON public.tools;
 DROP POLICY IF EXISTS "Public read-only tools" ON public.tools;
-CREATE POLICY "Public read-only tools" ON public.tools FOR SELECT TO anon, authenticated USING (true);
-
 DROP POLICY IF EXISTS "Public tool settings access" ON public.tool_settings;
 DROP POLICY IF EXISTS "Public can view tool settings" ON public.tool_settings;
 DROP POLICY IF EXISTS "Public can manage tool settings" ON public.tool_settings;
 DROP POLICY IF EXISTS "Public read-only tool settings" ON public.tool_settings;
-CREATE POLICY "Public read-only tool settings" ON public.tool_settings FOR SELECT TO anon, authenticated USING (true);
 
--- 🛡️ SECURITY SHIELD: Strictly deny public anonymous access to admin_auth
--- Supabase Service Role Key automatically bypasses RLS safely from the Next.js server backend.
-DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
-DROP POLICY IF EXISTS "Public admin_auth access" ON public.admin_auth;
-DROP POLICY IF EXISTS "Strict deny anon admin_auth" ON public.admin_auth;
-DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
-CREATE POLICY "Deny anonymous access to admin_auth" 
-ON public.admin_auth 
-FOR ALL 
-TO anon 
-USING (false) 
-WITH CHECK (false);
+-- 3. STRICT 100% LOCKDOWN POLICIES FOR ADMIN & SECURITY TABLES
+-- (Only server backend using service_role key can read/write)
+CREATE POLICY "Strict lockdown admin_auth" ON public.admin_auth FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_rate_limits" ON public.admin_rate_limits FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_devices" ON public.admin_devices FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_security_alerts" ON public.admin_security_alerts FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_recovery_codes" ON public.admin_recovery_codes FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_hack_attempts" ON public.admin_hack_attempts FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_banned_ips" ON public.admin_banned_ips FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
 
-DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
-CREATE POLICY "Deny anonymous access to admin_rate_limits" 
-ON public.admin_rate_limits 
-FOR ALL 
-TO anon 
-USING (false) 
-WITH CHECK (false);
+-- 4. PUBLIC WRITE-ONLY POLICIES (Cannot read or delete other visitors' records)
+CREATE POLICY "Public write-only inquiries" ON public.client_inquiries FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Public write-only analytics" ON public.site_analytics FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+-- 5. PUBLIC READ-ONLY POLICIES (Cannot modify, update or deface content)
+CREATE POLICY "Public read-only projects" ON public.projects FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only gallery" ON public.gallery FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only profile" ON public.profile_settings FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only pricing_plans" ON public.pricing_plans FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only pricing_addons" ON public.pricing_addons FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only tool_categories" ON public.tool_categories FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only tools" ON public.tools FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only tool_settings" ON public.tool_settings FOR SELECT TO anon, authenticated USING (true);
 
 -- Insert default row for master_admin using ENV variables (handled via Next.js backend)
 -- (Initial seeding should happen via the backend application code on startup to avoid hardcoded credentials in SQL)
@@ -572,7 +628,226 @@ REVOKE EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) FR
 GRANT EXECUTE ON FUNCTION public.record_failed_login_attempt(TEXT, INT, INT) TO service_role;
 `;
 
+export const ZERO_TRUST_LOCKDOWN_SQL = `-- =========================================================================
+-- 🛡️ ZERO-TRUST DATABASE SECURITY LOCKDOWN & RLS POLICY HARDENING
+-- Run this in your Supabase SQL Editor: https://supabase.com/dashboard
+-- 
+-- WHAT THIS SCRIPT DOES:
+-- 1. ENABLES & FORCES Row Level Security on ALL 17 system tables.
+-- 2. DROPS all legacy, overly-permissive, or default open policies.
+-- 3. LOCKS 7 Admin & Security tables completely (0% access to anon/authenticated;
+--    only Next.js server backend with service_role key can read/write).
+-- 4. RESTRICTS Client Inquiries & Analytics to WRITE-ONLY (INSERT only; public
+--    cannot view other visitors' inquiries or analytics).
+-- 5. RESTRICTS Projects, Gallery, Pricing, Tools, Profile to READ-ONLY (SELECT only;
+--    public cannot modify, deface, or delete portfolio content).
+-- =========================================================================
+
+-- 1. FORCE ROW LEVEL SECURITY ON ALL 17 SYSTEM TABLES
+ALTER TABLE IF EXISTS public.admin_auth ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_auth FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_rate_limits FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_devices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_devices FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_security_alerts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_security_alerts FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_recovery_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_recovery_codes FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_hack_attempts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_hack_attempts FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.admin_banned_ips ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.admin_banned_ips FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.client_inquiries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.client_inquiries FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.site_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.site_analytics FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.projects FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.gallery ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.gallery FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.profile_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.profile_settings FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.pricing_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.pricing_plans FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.pricing_addons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.pricing_addons FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.tool_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.tool_categories FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.tools ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.tools FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE IF EXISTS public.tool_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.tool_settings FORCE ROW LEVEL SECURITY;
+
+-- 2. DROP ALL POTENTIAL RISKY / LEGACY POLICIES
+DROP POLICY IF EXISTS "Public backend auth access" ON public.admin_auth;
+DROP POLICY IF EXISTS "Strict deny anon admin_auth" ON public.admin_auth;
+DROP POLICY IF EXISTS "Deny anonymous access to admin_auth" ON public.admin_auth;
+DROP POLICY IF EXISTS "Enable read for all" ON public.admin_auth;
+DROP POLICY IF EXISTS "Strict lockdown admin_auth" ON public.admin_auth;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_rate_limits" ON public.admin_rate_limits;
+DROP POLICY IF EXISTS "Strict lockdown admin_rate_limits" ON public.admin_rate_limits;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_devices" ON public.admin_devices;
+DROP POLICY IF EXISTS "Strict lockdown admin_devices" ON public.admin_devices;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_security_alerts" ON public.admin_security_alerts;
+DROP POLICY IF EXISTS "Strict lockdown admin_security_alerts" ON public.admin_security_alerts;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_recovery_codes" ON public.admin_recovery_codes;
+DROP POLICY IF EXISTS "Strict lockdown admin_recovery_codes" ON public.admin_recovery_codes;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_hack_attempts" ON public.admin_hack_attempts;
+DROP POLICY IF EXISTS "Strict lockdown admin_hack_attempts" ON public.admin_hack_attempts;
+
+DROP POLICY IF EXISTS "Deny anonymous access to admin_banned_ips" ON public.admin_banned_ips;
+DROP POLICY IF EXISTS "Strict lockdown admin_banned_ips" ON public.admin_banned_ips;
+
+DROP POLICY IF EXISTS "Public site analytics access" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public can record analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public can view analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public can only record analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public write-only analytics" ON public.site_analytics;
+
+DROP POLICY IF EXISTS "Public inquiries access" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public can submit inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public can view inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public can only submit inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public can view and manage inquiries" ON public.client_inquiries;
+DROP POLICY IF EXISTS "Public write-only inquiries" ON public.client_inquiries;
+
+DROP POLICY IF EXISTS "Public projects access" ON public.projects;
+DROP POLICY IF EXISTS "Public read-only projects" ON public.projects;
+DROP POLICY IF EXISTS "Public gallery access" ON public.gallery;
+DROP POLICY IF EXISTS "Public read-only gallery" ON public.gallery;
+DROP POLICY IF EXISTS "Public profile access" ON public.profile_settings;
+DROP POLICY IF EXISTS "Public read-only profile" ON public.profile_settings;
+DROP POLICY IF EXISTS "Public pricing plans access" ON public.pricing_plans;
+DROP POLICY IF EXISTS "Public read-only pricing plans" ON public.pricing_plans;
+DROP POLICY IF EXISTS "Public pricing addons access" ON public.pricing_addons;
+DROP POLICY IF EXISTS "Public read-only pricing addons" ON public.pricing_addons;
+DROP POLICY IF EXISTS "Public tool categories access" ON public.tool_categories;
+DROP POLICY IF EXISTS "Public can view tool categories" ON public.tool_categories;
+DROP POLICY IF EXISTS "Public can manage tool categories" ON public.tool_categories;
+DROP POLICY IF EXISTS "Public read-only tool categories" ON public.tool_categories;
+DROP POLICY IF EXISTS "Public tools access" ON public.tools;
+DROP POLICY IF EXISTS "Public can view tools" ON public.tools;
+DROP POLICY IF EXISTS "Public can manage tools" ON public.tools;
+DROP POLICY IF EXISTS "Public read-only tools" ON public.tools;
+DROP POLICY IF EXISTS "Public tool settings access" ON public.tool_settings;
+DROP POLICY IF EXISTS "Public can view tool settings" ON public.tool_settings;
+DROP POLICY IF EXISTS "Public can manage tool settings" ON public.tool_settings;
+DROP POLICY IF EXISTS "Public read-only tool settings" ON public.tool_settings;
+
+-- 3. STRICT 100% LOCKDOWN POLICIES FOR ADMIN & SECURITY TABLES
+-- (Only server backend using service_role key can read/write)
+CREATE POLICY "Strict lockdown admin_auth" ON public.admin_auth FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_rate_limits" ON public.admin_rate_limits FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_devices" ON public.admin_devices FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_security_alerts" ON public.admin_security_alerts FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_recovery_codes" ON public.admin_recovery_codes FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_hack_attempts" ON public.admin_hack_attempts FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+CREATE POLICY "Strict lockdown admin_banned_ips" ON public.admin_banned_ips FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
+
+-- 4. PUBLIC WRITE-ONLY POLICIES (Visitors can submit but cannot read or delete records)
+CREATE POLICY "Public write-only inquiries" ON public.client_inquiries FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Public write-only analytics" ON public.site_analytics FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+-- 5. PUBLIC READ-ONLY POLICIES (Visitors can view but cannot edit, insert or delete)
+CREATE POLICY "Public read-only projects" ON public.projects FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only gallery" ON public.gallery FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only profile" ON public.profile_settings FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only pricing_plans" ON public.pricing_plans FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only pricing_addons" ON public.pricing_addons FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only tool_categories" ON public.tool_categories FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only tools" ON public.tools FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public read-only tool_settings" ON public.tool_settings FOR SELECT TO anon, authenticated USING (true);
+`;
+
+export const SECURITY_AUDIT_SQL = `-- =========================================================================
+-- 🔍 SECURITY AUDIT & BREACH INVESTIGATION QUERIES
+-- Run these queries in Supabase SQL Editor to check for any unauthorized access:
+-- =========================================================================
+
+-- 1. Check if any hack attempts or exploit payloads were caught:
+SELECT * FROM public.admin_hack_attempts ORDER BY created_at DESC LIMIT 50;
+
+-- 2. Check all currently banned malicious IPs:
+SELECT * FROM public.admin_banned_ips ORDER BY banned_at DESC LIMIT 50;
+
+-- 3. Check brute force and rate limit lockouts:
+SELECT * FROM public.admin_rate_limits WHERE failed_attempts > 0 OR locked_until IS NOT NULL ORDER BY updated_at DESC LIMIT 50;
+
+-- 4. Check registered admin devices (verify only YOUR devices are listed):
+SELECT * FROM public.admin_devices ORDER BY last_active_at DESC;
+
+-- 5. Check security alerts logged by the system:
+SELECT * FROM public.admin_security_alerts ORDER BY created_at DESC LIMIT 50;
+
+-- 6. Check last admin login IP and timestamp:
+SELECT id, username, role, failed_attempts, locked_until, last_login_at, last_login_ip FROM public.admin_auth;
+`;
+
+export const INSPECT_POLICIES_SQL = `-- =========================================================================
+-- 🛡️ INSPECT ACTIVE ROW LEVEL SECURITY POLICIES
+-- Run this to view every policy active on your tables:
+-- =========================================================================
+SELECT 
+    schemaname,
+    tablename,
+    policyname,
+    permissive,
+    roles,
+    cmd,
+    qual,
+    with_check
+FROM pg_policies
+WHERE schemaname = 'public'
+ORDER BY tablename, policyname;
+`;
+
 export const SQL_SCRIPTS_CATALOG: SqlScriptItem[] = [
+  {
+    id: 'zero_trust_security_lockdown',
+    title: '🛡️ Zero-Trust Security Lockdown & Policy Hardening',
+    tableName: 'ALL 17 TABLES',
+    badge: 'Critical Security',
+    description: 'Enforces strict zero-trust RLS policies across all 17 tables: locks admin & security tables to server-only, makes client inquiries/analytics write-only, and restricts portfolio to read-only.',
+    sql: ZERO_TRUST_LOCKDOWN_SQL
+  },
+  {
+    id: 'security_audit_breach_check',
+    title: '🔍 Security Audit & Breach Investigation Queries',
+    tableName: 'admin_hack_attempts, admin_banned_ips, admin_devices',
+    badge: 'Audit & Forensics',
+    description: 'Audits hack attempts, banned malicious IPs, failed login rate limits, authorized admin devices, and recent login timestamps to verify system integrity.',
+    sql: SECURITY_AUDIT_SQL
+  },
+  {
+    id: 'inspect_rls_policies',
+    title: '📋 Inspect Active Row Level Security Policies',
+    tableName: 'pg_policies',
+    badge: 'RLS Inspector',
+    description: 'Queries pg_policies to list all active policies, permissions, roles, and conditions across all public tables in Supabase.',
+    sql: INSPECT_POLICIES_SQL
+  },
   {
     id: 'master',
     title: '⚡ Master All-In-One Database Setup',
