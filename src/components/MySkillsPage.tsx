@@ -335,13 +335,26 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
 
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const isFirstChatMount = useRef(true);
 
   // Active chatbot config
   const bot = chatbots.find(c => c.id === selectedChatbot) || chatbots[3];
 
+  // Always force page to open from the top
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, []);
+
+  // Scroll ONLY inner chat box when chatting, NEVER the window
+  useEffect(() => {
+    if (isFirstChatMount.current) {
+      isFirstChatMount.current = false;
+      return;
+    }
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages, isTyping, selectedChatbot]);
 
   const handleSendMessage = (e?: React.FormEvent) => {
@@ -1023,7 +1036,7 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
           </div>
 
           {/* Chat message thread */}
-          <div className="flex-1 p-4 sm:p-5 space-y-4 overflow-y-auto max-h-[290px] min-h-[260px] bg-zinc-950/40">
+          <div ref={chatContainerRef} className="flex-1 p-4 sm:p-5 space-y-4 overflow-y-auto max-h-[290px] min-h-[260px] bg-zinc-950/40">
             {messages[selectedChatbot]?.map((msg, i) => (
               <div key={i} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                 
@@ -1063,7 +1076,7 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
                 </div>
               </div>
             )}
-            <div ref={chatEndRef} />
+            <div />
           </div>
 
           {/* Quick suggestion chips */}

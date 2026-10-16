@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import Script from 'next/script';
@@ -36,6 +37,26 @@ const bodoniModa = Bodoni_Moda({
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
+
+  // Ensure every page always opens strictly from the top (0, 0)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+
+      const handleRouteChange = () => {
+        window.scrollTo(0, 0);
+      };
+
+      router.events.on('routeChangeComplete', handleRouteChange);
+      return () => {
+        router.events.off('routeChangeComplete', handleRouteChange);
+      };
+    }
+  }, [router.events]);
+
   const cleanPath = router.asPath.split('?')[0].split('#')[0];
   const canonicalUrl = `https://mrsaqib242.vercel.app${cleanPath === '/' ? '' : cleanPath}`;
 
