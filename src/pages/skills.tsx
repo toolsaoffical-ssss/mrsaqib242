@@ -63,14 +63,15 @@ export default function Skills() {
         <meta key="og:title" property="og:title" content="Mr Saqib Skills | Cyber Security Expert, Backend, Frontend &amp; App Developer" />
         <meta key="og:description" property="og:description" content="Explore Mr Saqib (mrsaqib242) engineering skills: Zero-Trust Cyber Security, Node.js Backends, Supabase RLS, Next.js Frontend, and Cross-Platform App Development." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/skills" />
-        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/19imy4f1u/lite_1791955994422_-jhmpCKzP.webp?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
+        <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
         <meta key="twitter:title" name="twitter:title" content="Mr Saqib Skills | Cyber Security Expert, Backend, Frontend &amp; App Developer" />
         <meta key="twitter:description" name="twitter:description" content="Explore Mr Saqib (mrsaqib242) engineering skills: Zero-Trust Cyber Security, Node.js Backends, Supabase RLS, Next.js Frontend, and Cross-Platform App Development." />
-        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/19imy4f1u/lite_1791955994422_-jhmpCKzP.webp?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
 
         {/* JSON-LD Schema */}
         <script

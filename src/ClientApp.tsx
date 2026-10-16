@@ -452,7 +452,12 @@ export default function App() {
         {/* Navigation / Header */}
         <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-black/80 backdrop-blur-md border border-white/10 rounded-[2rem] px-6 md:px-8 py-4 flex flex-col w-[90%] max-w-5xl shadow-2xl transition-all duration-300">
           <div className="flex items-center justify-between w-full">
-          <div className="font-serif text-lg md:text-xl tracking-[0.2em] uppercase text-white font-medium">
+          <div className="font-serif text-lg md:text-xl tracking-[0.2em] uppercase text-white font-medium flex items-center gap-2.5">
+            <img 
+              src="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png?tr=w-50,h-50,fo-auto,q-90" 
+              alt="Saqib Visuals" 
+              className="w-7 h-7 rounded-full object-cover border border-white/20 shadow-md ring-1 ring-white/10"
+            />
             SAQIB VISUALS
           </div>
           <div className="hidden md:flex items-center gap-8 text-xs font-bold tracking-widest uppercase text-white/70">

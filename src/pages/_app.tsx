@@ -169,23 +169,28 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <meta name="geo.position" content="31.1481;72.6841" />
         <meta name="ICBM" content="31.1481, 72.6841" />
 
-        {/* Favicons */}
-        <link rel="icon" type="image/png" sizes="32x32" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-32,h-32,fo-auto,q-90" />
-        <link rel="apple-touch-icon" sizes="180x180" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-180,h-180,fo-auto,q-90" />
+        {/* Favicons / Title Bar Icon */}
+        <link rel="icon" type="image/png" sizes="32x32" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png?tr=w-32,h-32,fo-auto,q-90" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png?tr=w-180,h-180,fo-auto,q-90" />
+        <link rel="shortcut icon" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
 
-        {/* OpenGraph */}
+        {/* OpenGraph & WhatsApp Preview */}
         <meta key="og:type" property="og:type" content="website" />
         <meta key="og:title" property="og:title" content="Mr Saqib (Saqib 242) | Web Developer & SEO Expert" />
         <meta key="og:description" property="og:description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
         <meta key="og:url" property="og:url" content={canonicalUrl} />
-        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
+        <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
+        <meta key="og:image:type" property="og:image:type" content="image/png" />
+        <meta key="og:image:width" property="og:image:width" content="1200" />
+        <meta key="og:image:height" property="og:image:height" content="630" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
         <meta key="twitter:title" name="twitter:title" content="Mr Saqib (Saqib 242) | Web Developer & SEO Expert" />
         <meta key="twitter:description" name="twitter:description" content="Transform your digital presence. Muhammad Saqib (mrsaqib242) engineers elite Next.js web apps & custom AI chatbots in Pakistan. Scale globally today." />
-        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="keywords" name="keywords" content="saqib gojra, gojra developer, mr saqib, mr saqib developer, saqib 242, web developer Faisalabad, website designer Gojra, freelance developer Lahore, software engineer Karachi" />
         
         {/* Unified Schema Graph */}

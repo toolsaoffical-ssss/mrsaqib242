@@ -77,14 +77,15 @@ export default function ContactRoute() {
         <meta key="og:title" property="og:title" content="Mr Saqib Contact &amp; WhatsApp Number (03478936242) | Hire Web Developer (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Contact Mr Saqib (mr saqib contact / saqib 242). Official Phone &amp; WhatsApp: 03478936242 (+92 347 8936242), Email: mrsaqib242242@gmail.com, office location in Gojra, Faisalabad, and instant project quotes." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/contact" />
-        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
+        <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
         <meta key="twitter:title" name="twitter:title" content="Mr Saqib Contact &amp; WhatsApp Number (03478936242) | Hire Web Developer (Saqib 242)" />
         <meta key="twitter:description" name="twitter:description" content="Contact Mr Saqib (mr saqib contact / saqib 242). Official Phone &amp; WhatsApp: 03478936242 (+92 347 8936242), Email: mrsaqib242242@gmail.com, office location in Gojra, Faisalabad, and instant project quotes." />
-        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
 
         {/* JSON-LD Schema */}
         <script

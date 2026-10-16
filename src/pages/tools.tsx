@@ -70,14 +70,15 @@ export default function ToolsRoute() {
         <meta key="og:title" property="og:title" content="Mr Saqib Tools | Free AI Web Utilities &amp; Software (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Explore Mr Saqib Tools (mr saqib tool) — an all-in-one mobile-styled OS featuring free web utilities, AI tools, developer software, calculators, and verified web resources by Muhammad Saqib." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/tools" />
-        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
+        <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
         <meta key="twitter:title" name="twitter:title" content="Mr Saqib Tools | Free AI Web Utilities &amp; Software (Saqib 242)" />
         <meta key="twitter:description" name="twitter:description" content="Explore Mr Saqib Tools (mr saqib tool) — an all-in-one mobile-styled OS featuring free web utilities, AI tools, developer software, calculators, and verified web resources by Muhammad Saqib." />
-        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
 
         {/* JSON-LD Schema */}
         <script

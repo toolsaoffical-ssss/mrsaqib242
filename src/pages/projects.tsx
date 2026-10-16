@@ -62,14 +62,15 @@ export default function ProjectsRoute() {
         <meta key="og:title" property="og:title" content="Mr Saqib Projects &amp; Portfolio | Saqib Web Apps (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Explore all Mr Saqib projects (saqib projects portfolio). High-performance Next.js web applications, e-commerce stores, custom AI systems, and SaaS tools built by Mr Saqib (Saqib 242)." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/projects" />
-        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
+        <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
 
         {/* Twitter */}
         <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
         <meta key="twitter:title" name="twitter:title" content="Mr Saqib Projects &amp; Portfolio | Saqib Web Apps (Saqib 242)" />
         <meta key="twitter:description" name="twitter:description" content="Explore all Mr Saqib projects (saqib projects portfolio). High-performance Next.js web applications, e-commerce stores, custom AI systems, and SaaS tools built by Mr Saqib (Saqib 242)." />
-        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-1200,h-630,fo-auto,q-90" />
+        <meta key="twitter:image" name="twitter:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
 
         {/* JSON-LD Schema */}
         <script
