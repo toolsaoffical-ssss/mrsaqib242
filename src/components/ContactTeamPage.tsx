@@ -245,8 +245,8 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
     setSubmittedId('');
   };
 
-  const phoneDisplay = profile.phone || '+92 347 8936242';
-  const emailDisplay = profile.email || 'saqibsaqqibsaqib@gmail.com';
+  const phoneDisplay = profile.phone || '03478936242';
+  const emailDisplay = profile.email || 'mrsaqib242242@gmail.com';
   const rawPhone = phoneDisplay.replace(/[\s\-\+]/g, '');
   const avatarDisplay = profile.avatar_url || 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90';
   const locationDisplay = profile.location || 'Gojra, Faisalabad, Pakistan';

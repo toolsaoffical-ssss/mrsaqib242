@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
     brand_name TEXT DEFAULT 'Saqib Visuals',
     tagline TEXT DEFAULT 'Creative Visual Artist | Content Creator | Tech Enthusiast',
     bio TEXT DEFAULT 'I am a passionate Full-Stack Web Developer, App Developer, AI Enthusiast, and Creative Content Creator with a strong focus on building modern, fast, and scalable digital solutions.',
-    phone TEXT DEFAULT '+92 343 673242',
+    phone TEXT DEFAULT '03478936242',
     email TEXT DEFAULT 'mrsaqib242242@gmail.com',
     location TEXT DEFAULT 'Faisalabad, Pakistan',
     portfolio_url TEXT DEFAULT 'https://mrsaqib242.vercel.app',
@@ -392,7 +392,7 @@ VALUES (
   'Saqib Visuals', 
   'Creative Visual Artist | Content Creator | Tech Enthusiast', 
   'I am a passionate Full-Stack Web Developer, App Developer, AI Enthusiast, and Creative Content Creator.',
-  '+92 343 673242', 
+  '03478936242', 
   'mrsaqib242242@gmail.com', 
   'Faisalabad, Pakistan'
 )
@@ -938,7 +938,7 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
     brand_name TEXT DEFAULT 'Saqib Visuals',
     tagline TEXT,
     bio TEXT,
-    phone TEXT DEFAULT '+92 343 673242',
+    phone TEXT DEFAULT '03478936242',
     email TEXT DEFAULT 'mrsaqib242242@gmail.com',
     location TEXT DEFAULT 'Faisalabad, Pakistan',
     portfolio_url TEXT DEFAULT 'https://mrsaqib.vercel.app/',

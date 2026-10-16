@@ -75,6 +75,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         "@id": "https://mrsaqib242.vercel.app/#person",
         "name": "Muhammad Saqib",
         "alternateName": ["Mr Saqib", "mrsaqib242", "Saqib 242", "Saqib Dev"],
+        "telephone": "03478936242",
+        "email": "mrsaqib242242@gmail.com",
         "jobTitle": "Cyber Security Expert & Full-Stack App Developer",
         "url": "https://mrsaqib242.vercel.app",
         "description": "Muhammad Saqib (Mr Saqib) is an elite cyber security specialist, full-stack engineer, and cross-platform app architect recognized for building impenetrable digital systems.",
@@ -94,6 +96,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         "@id": "https://mrsaqib242.vercel.app/#service",
         "name": "Mr Saqib Web Development & Local SEO Services",
         "url": "https://mrsaqib242.vercel.app",
+        "telephone": "03478936242",
+        "email": "mrsaqib242242@gmail.com",
         "founder": { "@id": "https://mrsaqib242.vercel.app/#person" },
         "areaServed": ["Gojra", "Faisalabad", "Lahore", "Islamabad", "Karachi"],
         "priceRange": "$$"

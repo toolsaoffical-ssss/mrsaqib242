@@ -495,7 +495,7 @@ export default function AdminProfileContactManager({
                     type="text"
                     value={profile.phone || ''}
                     onChange={e => handleChange('phone', e.target.value)}
-                    placeholder="+92 347 8936242"
+                    placeholder="03478936242"
                     className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono transition-colors"
                   />
                   <div className="absolute right-3 top-3.5 text-zinc-500">
@@ -514,7 +514,7 @@ export default function AdminProfileContactManager({
                     type="email"
                     value={profile.email || ''}
                     onChange={e => handleChange('email', e.target.value)}
-                    placeholder="saqibsaqqibsaqib@gmail.com"
+                    placeholder="mrsaqib242242@gmail.com"
                     className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-mono transition-colors"
                   />
                   <div className="absolute right-3 top-3.5 text-zinc-500">

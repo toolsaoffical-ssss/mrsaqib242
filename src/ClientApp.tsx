@@ -270,7 +270,7 @@ export default function App() {
   const showProtectionMsg = locked;
 
   const { profile } = useProfileSettings();
-  const phoneDisplay = profile.phone || '+92 347 8936242';
+  const phoneDisplay = profile.phone || '03478936242';
   const cleanPhone = (profile.phone || '923478936242').replace(/[^0-9]/g, '');
   const whatsappLink = profile.whatsapp_url || `https://wa.me/${cleanPhone}`;
 
@@ -374,9 +374,9 @@ export default function App() {
     seoDesc = 'Deep-dive into the technical expertise of Mr Saqib (Saqib 242): React, Next.js, MERN Stack, WordPress, Shopify, and Generative AI chatbot automation. Servicing Gojra and Faisalabad businesses.';
     seoKeywords = 'saqib gojra, gojra developer, mr saqib skills, saqib 242 tech stack, mr saqib ai expert, full stack developer skills, react engineer expertise Pakistan, MERN stack Faisalabad, AI chatbot developer, WordPress designer Punjab';
   } else if (isContactTeamPageOpen) {
-    seoTitle = 'Hire Mr Saqib | Top Freelance Web Developer in Gojra, Faisalabad, Pakistan';
-    seoDesc = 'Get in touch with Mr Saqib (Saqib 242) for cutting-edge web design, custom software development, and expert Google ranking campaigns in Pakistan.';
-    seoKeywords = 'saqib gojra, gojra developer, hire mr saqib, contact mr saqib, contact saqib 242, hire web developer Faisalabad, contact web designer Gojra, freelance developer Lahore, software engineer Karachi, contact Saqib Dev';
+    seoTitle = 'Contact Mr Saqib (03478936242) | Hire Web Developer (Saqib 242)';
+    seoDesc = 'Contact Mr Saqib (Saqib 242). Official Phone & WhatsApp: 03478936242 (+92 347 8936242), Email: mrsaqib242242@gmail.com, office in Gojra, Faisalabad, and instant project quotes.';
+    seoKeywords = 'mr saqib contact, 03478936242, mrsaqib242242@gmail.com, saqib gojra, gojra developer, hire mr saqib, contact mr saqib, contact saqib 242, hire web developer Faisalabad, contact web designer Gojra, freelance developer Lahore, software engineer Karachi, contact Saqib Dev';
   }
 
   useSEO({ title: seoTitle, description: seoDesc, keywords: seoKeywords });

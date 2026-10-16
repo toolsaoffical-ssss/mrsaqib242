@@ -213,12 +213,12 @@ export default function AboutSaqib() {
                 <motion.a 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  href={`mailto:${profile.email || 'saqibsaqqibsaqib@gmail.com'}`} 
+                  href={`mailto:${profile.email || 'mrsaqib242242@gmail.com'}`} 
                   className="relative p-[2px] rounded-full overflow-hidden group w-full sm:w-auto"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 animate-[spin_3s_linear_infinite] opacity-70 group-hover:opacity-100"></div>
                   <div className="relative flex items-center justify-center gap-3 bg-zinc-950 px-6 py-3 sm:py-4 rounded-full text-white font-bold h-full w-full transition-colors group-hover:bg-zinc-900">
-                    <Mail size={20} className="text-cyan-400" /> {profile.email || 'saqibsaqqibsaqib@gmail.com'}
+                    <Mail size={20} className="text-cyan-400" /> {profile.email || 'mrsaqib242242@gmail.com'}
                   </div>
                 </motion.a>
 
