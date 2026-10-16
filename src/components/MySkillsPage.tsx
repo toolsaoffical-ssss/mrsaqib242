@@ -54,6 +54,7 @@ import {
   SiNextdotjs
 } from 'react-icons/si';
 import { FaMicrosoft } from 'react-icons/fa6';
+import DeveloperCoreCircuit from './DeveloperCoreCircuit';
 
 interface MySkillsPageProps {
   onBack: () => void;
@@ -521,6 +522,11 @@ export default function MySkillsPage({ onBack }: MySkillsPageProps) {
           <div>COORDINATES: 30.3753° N, 69.3451° E</div>
           <div className="text-zinc-400 font-bold">PAKISTAN STANDARD TIME ZONE</div>
         </div>
+      </div>
+
+      {/* Interactive Sci-Fi Developer Core Circuit Animation */}
+      <div className="mb-12">
+        <DeveloperCoreCircuit />
       </div>
 
       {/* The Master Bento Grid */}
