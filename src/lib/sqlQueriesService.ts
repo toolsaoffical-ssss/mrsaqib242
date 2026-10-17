@@ -857,6 +857,82 @@ WHERE ip_address != '223.123.100.41';
 -- WHERE id = 'master_admin';
 `;
 
+export const RESET_ADMIN_CREDENTIALS_SQL = `-- =========================================================================
+-- 🔐 RESET ADMIN PANEL USERNAME & PASSWORD TO 'password123'
+-- Run this in your Supabase SQL Editor: https://supabase.com/dashboard
+-- 
+-- Credentials after running this:
+--   👉 Username: admin  (or saqib_visuals / saqib)
+--   👉 Password: password123
+--   👉 Master Security PIN: ilove4HAD
+-- =========================================================================
+
+-- 1. Ensure admin_auth table and columns exist
+CREATE TABLE IF NOT EXISTS public.admin_auth (
+    id TEXT PRIMARY KEY DEFAULT 'master_admin',
+    username TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+    salt TEXT NOT NULL,
+    session_secret TEXT NOT NULL,
+    role TEXT DEFAULT 'super_admin',
+    failed_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMPTZ,
+    last_login_at TIMESTAMPTZ,
+    last_login_ip TEXT,
+    security_pin_hash TEXT,
+    security_pin_salt TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Clear any rate limit lockouts and banned IPs so you can log in immediately
+DELETE FROM public.admin_rate_limits;
+DELETE FROM public.admin_banned_ips;
+
+-- 3. Upsert master_admin record with password 'password123' and PIN 'ilove4HAD'
+INSERT INTO public.admin_auth (
+    id, 
+    username, 
+    password_hash, 
+    salt, 
+    security_pin_hash, 
+    security_pin_salt, 
+    session_secret, 
+    role, 
+    failed_attempts, 
+    locked_until, 
+    updated_at
+)
+VALUES (
+    'master_admin',
+    'admin',
+    '76f31f5cc5130027d46bf0ede788ce87487e9816d2cfdd6fde6815237e9dafcc77772223f3a23a27a134e9e36b7980ca96e89fa56e79f7235f5409a83a6043dd',
+    'a1b2c3d4e5f60718293a4b5c6d7e8f90',
+    '5e98c05cea2f9cfbbe47119ad3560396f58b648c4254b2ba248b059e9db3dd47',
+    'a1b2c3d4e5f60718293a4b5c6d7e8f90',
+    'c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3',
+    'super_admin',
+    0,
+    NULL,
+    NOW()
+)
+ON CONFLICT (id) DO UPDATE SET
+    username = EXCLUDED.username,
+    password_hash = EXCLUDED.password_hash,
+    salt = EXCLUDED.salt,
+    security_pin_hash = EXCLUDED.security_pin_hash,
+    security_pin_salt = EXCLUDED.security_pin_salt,
+    session_secret = EXCLUDED.session_secret,
+    failed_attempts = 0,
+    locked_until = NULL,
+    updated_at = NOW();
+
+-- 4. Verify updated admin credentials
+SELECT id, username, role, failed_attempts, locked_until, updated_at 
+FROM public.admin_auth 
+WHERE id = 'master_admin';
+`;
+
 export const RESET_SECURITY_PIN_SQL = `-- =========================================================================
 -- 🔑 RESET / SET MASTER 2FA SECURITY PIN TO 'ilove4HAD'
 -- Run this in your Supabase SQL Editor: https://supabase.com/dashboard
@@ -881,6 +957,14 @@ SELECT id, username, role, security_pin_hash, updated_at FROM public.admin_auth 
 `;
 
 export const SQL_SCRIPTS_CATALOG: SqlScriptItem[] = [
+  {
+    id: 'reset_admin_credentials',
+    title: '🔐 Reset Admin Password (password123)',
+    tableName: 'admin_auth, admin_rate_limits, admin_banned_ips',
+    badge: 'Admin Credentials Reset',
+    description: 'Resets Admin password to password123, unlocks rate limits/banned IPs, and sets Master 2FA PIN to ilove4HAD.',
+    sql: RESET_ADMIN_CREDENTIALS_SQL
+  },
   {
     id: 'reset_security_pin',
     title: '🔑 Set / Reset Master 2FA PIN (ilove4HAD)',

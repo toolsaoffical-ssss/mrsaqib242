@@ -747,8 +747,16 @@ export async function authenticateAdmin(
   const cleanUser = (usernameInput || '').trim().toLowerCase();
   const cleanPass = passwordInput || '';
 
-  // 3. Username Match
-  const isUserMatch = safeCompare(record.username.toLowerCase(), cleanUser);
+  // 3. Username Match (Accepts configured username and verified admin aliases)
+  const allowedUsernames = [
+    record.username.toLowerCase(),
+    'admin',
+    'saqib',
+    'saqib_visuals',
+    'mrsaqib',
+    'mrsaqib242'
+  ];
+  const isUserMatch = allowedUsernames.some(u => safeCompare(u, cleanUser));
 
   // 4. Password Verification (Strictly PBKDF2 Hashes)
   const passwordCheck = verifyPassword(cleanPass, record.salt || DEFAULT_INITIAL_SALT, record.password_hash);
