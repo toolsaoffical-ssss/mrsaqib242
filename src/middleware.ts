@@ -58,20 +58,24 @@ export function middleware(request: NextRequest) {
   }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // LAYER 1.5: ULTRA-FAST EDGE REDIRECTS FOR WHATSAPP & CHANNEL
-  // Real human visitors get instantaneous 308 redirect (< 2ms).
-  // Bots / preview scrapers above bypassed this to get full OpenGraph cards!
+  // LAYER 1.5: SHORT URL ALIAS ROUTING FOR DYNAMIC SOCIAL REDIRECTS
+  // Clean, zero-compute edge rewrites for short link aliases.
+  // Dynamic targets are fetched in real-time from Supabase database.
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  if (pathname === '/whatsapp') {
-    const redirectRes = NextResponse.redirect('https://wa.me/923478936242', 308);
-    redirectRes.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
-    return redirectRes;
+  if (pathname === '/snap') {
+    return NextResponse.rewrite(new URL('/snapchat', request.url));
   }
-
-  if (pathname === '/channel') {
-    const redirectRes = NextResponse.redirect('https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I', 308);
-    redirectRes.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
-    return redirectRes;
+  if (pathname === '/fb') {
+    return NextResponse.rewrite(new URL('/facebook', request.url));
+  }
+  if (pathname === '/tt') {
+    return NextResponse.rewrite(new URL('/tiktok', request.url));
+  }
+  if (pathname === '/insta' || pathname === '/ig') {
+    return NextResponse.rewrite(new URL('/instagram', request.url));
+  }
+  if (pathname === '/wa') {
+    return NextResponse.rewrite(new URL('/whatsapp', request.url));
   }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

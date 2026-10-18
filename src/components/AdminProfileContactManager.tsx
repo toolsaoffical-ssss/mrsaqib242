@@ -551,7 +551,19 @@ export default function AdminProfileContactManager({
                   <MessageSquare size={15} />
                 </div>
               </div>
-              <p className="text-[11px] text-zinc-500 mt-1 font-mono">Format: https://wa.me/923478936242 (include country code without + sign)</p>
+              <div className="flex items-center justify-between text-[11px] text-zinc-400 mt-2 font-mono bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                <span>⚡ Live short redirect: <strong className="text-emerald-400">/whatsapp</strong> (or /wa)</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText('https://mrsaqib242.vercel.app/whatsapp');
+                    onNotify('Copied /whatsapp short redirect link!', 'success');
+                  }}
+                  className="text-emerald-400 hover:text-emerald-300 hover:underline cursor-pointer"
+                >
+                  Copy Short Link
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -585,6 +597,19 @@ export default function AdminProfileContactManager({
                   placeholder="https://www.instagram.com/mr_saqib242"
                   className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-pink-500 font-mono transition-colors"
                 />
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5 font-mono bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span>Redirects from: <strong className="text-pink-400">/instagram</strong></span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/instagram');
+                      onNotify('Copied /instagram short link!', 'success');
+                    }}
+                    className="text-pink-400 hover:underline cursor-pointer"
+                  >
+                    Copy Link
+                  </button>
+                </div>
               </div>
 
               {/* Facebook */}
@@ -600,6 +625,19 @@ export default function AdminProfileContactManager({
                   placeholder="https://www.facebook.com/profile.php?id=100085188689033"
                   className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 font-mono transition-colors"
                 />
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5 font-mono bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span>Redirects from: <strong className="text-blue-400">/facebook</strong> (or /fb)</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/facebook');
+                      onNotify('Copied /facebook short link!', 'success');
+                    }}
+                    className="text-blue-400 hover:underline cursor-pointer"
+                  >
+                    Copy Link
+                  </button>
+                </div>
               </div>
 
               {/* TikTok */}
@@ -615,6 +653,19 @@ export default function AdminProfileContactManager({
                   placeholder="https://www.tiktok.com/@mr_saqib_242"
                   className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-rose-500 font-mono transition-colors"
                 />
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5 font-mono bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span>Redirects from: <strong className="text-rose-400">/tiktok</strong> (or /tt)</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/tiktok');
+                      onNotify('Copied /tiktok short link!', 'success');
+                    }}
+                    className="text-rose-400 hover:underline cursor-pointer"
+                  >
+                    Copy Link
+                  </button>
+                </div>
               </div>
 
               {/* Snapchat */}
@@ -630,6 +681,19 @@ export default function AdminProfileContactManager({
                   placeholder="https://www.snapchat.com/add/mrsaqib242"
                   className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-400 font-mono transition-colors"
                 />
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5 font-mono bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span>Redirects from: <strong className="text-yellow-300">/snapchat</strong> (or /snap)</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/snapchat');
+                      onNotify('Copied /snapchat short link!', 'success');
+                    }}
+                    className="text-yellow-300 hover:underline cursor-pointer"
+                  >
+                    Copy Link
+                  </button>
+                </div>
               </div>
 
               {/* GitHub */}

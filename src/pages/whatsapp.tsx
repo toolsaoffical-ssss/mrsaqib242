@@ -1,8 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { FaWhatsapp, FaExternalLinkAlt, FaCheckCircle, FaComments, FaBolt, FaShieldAlt } from 'react-icons/fa';
+import { supabase } from '../lib/supabase';
+import { DEFAULT_PROFILE_SETTINGS } from '../lib/profileSettingsService';
 
-const WHATSAPP_DIRECT_URL = 'https://wa.me/923478936242';
+const FALLBACK_WHATSAPP_URL = DEFAULT_PROFILE_SETTINGS.whatsapp_url || 'https://wa.me/923478936242';
 const PREVIEW_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png';
 
 const schemaData = {
@@ -44,7 +46,7 @@ const schemaData = {
         addressCountry: 'PK'
       },
       sameAs: [
-        WHATSAPP_DIRECT_URL,
+        FALLBACK_WHATSAPP_URL,
         'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
         'https://github.com/techai342',
         'https://instagram.com/mr_saqib242'
@@ -72,20 +74,57 @@ const schemaData = {
 };
 
 export default function WhatsAppRedirectPage() {
+  const [targetUrl, setTargetUrl] = useState(FALLBACK_WHATSAPP_URL);
+
   useEffect(() => {
-    // Immediate client-side redirection
-    if (typeof window !== 'undefined') {
-      window.location.replace(WHATSAPP_DIRECT_URL);
+    let isMounted = true;
+
+    async function resolveAndRedirect() {
+      // 1. Try local storage cache first for instant redirect
+      if (typeof window !== 'undefined') {
+        try {
+          const cached = localStorage.getItem('saqib_profile_settings_cache');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (parsed.whatsapp_url && parsed.whatsapp_url.trim()) {
+              const url = parsed.whatsapp_url.trim();
+              if (isMounted) setTargetUrl(url);
+              window.location.replace(url);
+              return;
+            }
+          }
+        } catch {}
+      }
+
+      // 2. Fetch fresh dynamic URL from Supabase in real-time
+      try {
+        const { data } = await supabase
+          .from('profile_settings')
+          .select('whatsapp_url')
+          .eq('id', 'default')
+          .maybeSingle();
+
+        const liveUrl = (data?.whatsapp_url && data.whatsapp_url.trim()) ? data.whatsapp_url.trim() : FALLBACK_WHATSAPP_URL;
+        if (isMounted) {
+          setTargetUrl(liveUrl);
+          window.location.replace(liveUrl);
+        }
+      } catch {
+        window.location.replace(FALLBACK_WHATSAPP_URL);
+      }
     }
+
+    resolveAndRedirect();
+    return () => { isMounted = false; };
   }, []);
 
   return (
     <div className="min-h-screen bg-[#070b12] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
       <Head>
-        {/* Instant 0ms Redirect Script: executes before hydration */}
+        {/* Instant 0ms LocalCache Script: executes before React hydration */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `if(typeof window!=="undefined"){window.location.replace("${WHATSAPP_DIRECT_URL}");}`
+            __html: `try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.whatsapp_url){window.location.replace(d.whatsapp_url);}}}catch(e){}`
           }}
         />
 
@@ -118,7 +157,7 @@ export default function WhatsAppRedirectPage() {
         <meta name="ICBM" content="31.1494, 72.6842" />
 
         {/* Fallback Refresh Meta */}
-        <meta httpEquiv="refresh" content={`0; url=${WHATSAPP_DIRECT_URL}`} />
+        <meta httpEquiv="refresh" content={`1; url=${targetUrl}`} />
 
         {/* OpenGraph / WhatsApp Rich Preview Card */}
         <meta property="og:type" content="profile" />
@@ -204,7 +243,7 @@ export default function WhatsAppRedirectPage() {
         </div>
 
         <a
-          href={WHATSAPP_DIRECT_URL}
+          href={targetUrl}
           className="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-600/30 active:scale-[0.98]"
         >
           <FaWhatsapp className="w-4 h-4" />
