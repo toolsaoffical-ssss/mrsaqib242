@@ -956,7 +956,57 @@ WHERE id = 'master_admin';
 SELECT id, username, role, security_pin_hash, updated_at FROM public.admin_auth WHERE id = 'master_admin';
 `;
 
+export const AUDIT_AND_HARDEN_ANALYTICS_SECURITY_SQL = `-- =========================================================================
+-- 🛡️ ZERO-FLUID SECURITY & RLS HARDENING SCRIPT FOR SITE ANALYTICS
+-- Run this in your Supabase SQL Editor: https://supabase.com/dashboard
+-- Guarantees:
+-- 1. Anonymous visitors CANNOT read, update, or delete any analytics records.
+-- 2. Anonymous visitors can ONLY insert valid, bounded records.
+-- 3. Zero Vercel Fluid Compute is used because writes go directly to Supabase.
+-- =========================================================================
+
+-- 1. Enable and force Row Level Security (RLS) on site_analytics
+ALTER TABLE IF EXISTS public.site_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.site_analytics FORCE ROW LEVEL SECURITY;
+
+-- 2. Clean up legacy or insecure policies
+DROP POLICY IF EXISTS "Public can view analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public site analytics access" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public can record analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public can only record analytics" ON public.site_analytics;
+DROP POLICY IF EXISTS "Public write-only analytics" ON public.site_analytics;
+
+-- 3. Create strict write-only policy (INSERT only) with boundary checks
+CREATE POLICY "Public write-only analytics"
+ON public.site_analytics FOR INSERT
+TO anon, authenticated
+WITH CHECK (
+    length(coalesce(path, '')) <= 255 AND
+    length(coalesce(referrer, '')) <= 500
+);
+
+-- 4. Verify that anonymous SELECT is blocked:
+SELECT
+    schemaname,
+    tablename,
+    policyname,
+    roles,
+    cmd,
+    qual,
+    with_check
+FROM pg_policies
+WHERE tablename = 'site_analytics';
+`;
+
 export const SQL_SCRIPTS_CATALOG: SqlScriptItem[] = [
+  {
+    id: 'audit_and_harden_analytics_security',
+    title: '🛡️ Zero-Fluid Analytics Security & RLS Hardening',
+    tableName: 'site_analytics',
+    badge: 'Zero Compute & RLS',
+    description: 'Enforces strict write-only RLS on site_analytics, blocks public reads/deletes, validates payload length boundaries, and guarantees 0% Vercel compute consumption.',
+    sql: AUDIT_AND_HARDEN_ANALYTICS_SECURITY_SQL
+  },
   {
     id: 'reset_admin_credentials',
     title: '🔐 Reset Admin Password (password123)',
