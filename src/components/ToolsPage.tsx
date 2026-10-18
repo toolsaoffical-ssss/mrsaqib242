@@ -29,7 +29,13 @@ import {
   Sliders,
   Maximize2,
   Minimize2,
-  Info
+  Info,
+  ChevronDown,
+  HelpCircle,
+  Phone,
+  Mail,
+  MapPin,
+  Code2
 } from 'lucide-react';
 import { SiWhatsapp, SiTiktok, SiYoutube, SiTelegram, SiInstagram } from 'react-icons/si';
 import Link from 'next/link';
@@ -58,6 +64,29 @@ interface ToolsPageProps {
 
 const FAVORITES_STORAGE_KEY = 'saqib_tool_favorites_v1';
 
+const TOOLS_FAQS = [
+  {
+    q: "What is Mr Saqib Tools (Saqib 242) and are these web tools 100% free?",
+    a: "Mr Saqib Tools is an all-in-one web utilities suite and mobile-styled developer OS built by Muhammad Saqib (Saqib 242). It provides 100% free access to developer APIs, coding vaults, AI tools, educational courses, and web building platforms without any subscription or hidden fees."
+  },
+  {
+    q: "Can I request custom automation, bespoke web tools, or APIs from Muhammad Saqib?",
+    a: "Yes, absolutely! Muhammad Saqib designs and engineers custom high-performance web applications, specialized scrapers, calculation engines, and private REST APIs for businesses across Pakistan (Gojra, Faisalabad, Lahore, Karachi, Islamabad) and worldwide. You can request a custom tool directly via WhatsApp at 03478936242 or email mrsaqib242242@gmail.com."
+  },
+  {
+    q: "Does Mr Saqib Tools OS work on mobile devices without installing any software or apps?",
+    a: "Yes! The entire Tools OS operates directly in any modern mobile or desktop web browser (Chrome, Safari, Edge, Firefox). It features an interactive mobile-styled UI with zero installation, zero downloads, and instantaneous loading speeds."
+  },
+  {
+    q: "How do I access free source code repositories, Next.js templates, and programming courses?",
+    a: "You can open the Source Code Vault or Free Courses Hub directly inside the Mr Saqib Tools interface to download production-tested React, Next.js, and Node.js templates, or start free web development and cyber security masterclasses."
+  },
+  {
+    q: "How can I contact Muhammad Saqib for web development or SEO consultation in Pakistan?",
+    a: "You can connect directly with Muhammad Saqib via official WhatsApp at 03478936242 (+92 347 8936242) or via email at mrsaqib242242@gmail.com. In-person consultations are available in Gojra and Faisalabad, Punjab, as well as global remote consultations."
+  }
+];
+
 export default function ToolsPage({ 
   onClose, 
   onOpenSourceCode, 
@@ -81,6 +110,17 @@ export default function ToolsPage({
   const [showAnnouncement, setShowAnnouncement] = useState<boolean>(true);
   const [copiedToast, setCopiedToast] = useState<string | null>(null);
   const [showWhatsappPopup, setShowWhatsappPopup] = useState<boolean>(false);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+  const handleCopyContact = (text: string, label: string) => {
+    try {
+      navigator.clipboard.writeText(text);
+      setCopiedToast(`Copied ${label}: ${text}`);
+      setTimeout(() => setCopiedToast(null), 2500);
+    } catch {
+      // fallback
+    }
+  };
   
     useEffect(() => {
     if (settings.whatsapp_popup_enabled && settings.whatsapp_channel_link) {
@@ -859,6 +899,169 @@ export default function ToolsPage({
           ))}
         </div>
       )}
+
+      {/* ========================================================================= */}
+      {/* SEO & COMMUNITY HUB: FAQ ACCORDION + DIRECT CONSULTATION CTA BANNER */}
+      {/* ========================================================================= */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-28 space-y-12">
+        
+        {/* DIRECT CONSULTATION & CUSTOM TOOLS CTA BANNER */}
+        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#121422] via-[#0d0e18] to-[#08090f] border border-orange-500/20 p-6 sm:p-10 shadow-2xl">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-orange-500/10 rounded-full blur-[90px] pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-purple-500/10 rounded-full blur-[90px] pointer-events-none" />
+
+          <div className="relative z-10 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-[11px] font-black uppercase tracking-wider">
+                <Sparkles size={12} />
+                Bespoke Engineering &amp; Custom Tools
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-zinc-400 text-xs font-medium">
+                <MapPin size={13} className="text-orange-400" />
+                Gojra &amp; Faisalabad, Punjab, PK | Global Remote
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+                Need a Custom Web Tool, API Engine, or Web App?
+              </h2>
+              <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed max-w-3xl">
+                Looking for specialized scrapers, calculators, AI chat bots, or full-stack web platforms? 
+                <strong> Muhammad Saqib (Saqib 242)</strong> engineers high-speed, zero-trust web architectures tailored for businesses in Pakistan and worldwide.
+              </p>
+            </div>
+
+            {/* Quick Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <a
+                href="https://wa.me/923478936242?text=Hi%20Mr%20Saqib,%20I%20am%20interested%20in%20a%20custom%20web%20tool%20or%20development%20project."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-wider text-xs flex items-center gap-2 shadow-xl shadow-emerald-500/20 transition-all hover:scale-102 cursor-pointer"
+              >
+                <SiWhatsapp size={16} />
+                <span>WhatsApp: 03478936242</span>
+              </a>
+
+              <a
+                href="mailto:mrsaqib242242@gmail.com?subject=Custom%20Web%20Tool%20Inquiry"
+                className="px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-bold text-xs flex items-center gap-2 transition-all hover:scale-102 cursor-pointer"
+              >
+                <Mail size={15} className="text-orange-400" />
+                <span>mrsaqib242242@gmail.com</span>
+              </a>
+
+              <button
+                onClick={() => handleCopyContact('03478936242', 'Phone')}
+                className="px-4 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white font-mono text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Copy Phone Number"
+              >
+                <Copy size={13} />
+                <span>Copy 03478936242</span>
+              </button>
+            </div>
+
+            {/* Features Pill Tags */}
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+              {[
+                'Next.js 15 & React 19',
+                'High-Speed REST & GraphQL APIs',
+                'Zero-Trust Supabase RLS Security',
+                'Custom Web Scrapers & Automation',
+                'SEO & GEO Optimized Delivery'
+              ].map((feat, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1 rounded-lg bg-black/40 border border-white/5 text-[11px] text-zinc-400 font-medium"
+                >
+                  ✓ {feat}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* INTERACTIVE FAQ ACCORDION */}
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-orange-400 font-bold text-xs uppercase tracking-widest">
+              <HelpCircle size={15} />
+              <span>Frequently Asked Questions</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white">
+              Mr Saqib Tools &amp; Web Utilities FAQ
+            </h2>
+            <p className="text-zinc-400 text-xs sm:text-sm">
+              Instant answers about our free developer utilities, live sandbox tools, privacy standards, and custom tool engineering.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {TOOLS_FAQS.map((faq, idx) => {
+              const isOpen = expandedFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className="rounded-2xl border border-white/10 bg-[#12131d]/90 hover:border-orange-500/30 transition-colors overflow-hidden"
+                >
+                  <button
+                    onClick={() => setExpandedFaq(isOpen ? null : idx)}
+                    className="w-full text-left p-5 flex items-center justify-between gap-4 cursor-pointer select-none"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="text-sm sm:text-base font-bold text-white group-hover:text-orange-400 flex items-center gap-3">
+                      <span className="w-6 h-6 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs flex items-center justify-center font-mono shrink-0">
+                        0{idx + 1}
+                      </span>
+                      {faq.q}
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-zinc-400 shrink-0 transition-transform duration-200 ${
+                        isOpen ? 'rotate-180 text-orange-400' : ''
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-zinc-300 leading-relaxed border-t border-white/5">
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* REGIONAL SEO & FOOTPRINT CRAWLER ANCHORS */}
+        <div className="p-6 rounded-2xl bg-black/40 border border-white/5 text-zinc-500 text-xs space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-3">
+            <span className="font-bold text-zinc-400 uppercase tracking-wider text-[11px]">
+              Verified Authority: Muhammad Saqib (Saqib 242)
+            </span>
+            <span className="text-[11px] font-mono text-zinc-500">
+              Gojra, Faisalabad, Punjab, Pakistan
+            </span>
+          </div>
+          <p className="leading-relaxed">
+            Mr Saqib Tools (mr saqib tool) is a high-speed developer utilities suite and online cloud workspace engineered by Muhammad Saqib. 
+            Providing verified tools, live coding sandboxes, AI utilities, and developer services for developers, entrepreneurs, 
+            and tech enthusiasts across Pakistan (Faisalabad, Gojra, Lahore, Karachi, Islamabad) and international clients. 
+            For custom tool development or technical inquiries, contact via WhatsApp: <strong className="text-zinc-300">03478936242</strong> or email: <strong className="text-zinc-300">mrsaqib242242@gmail.com</strong>.
+          </p>
+        </div>
+      </section>
 
       {/* ========================================================================= */}
       {/* APP PREVIEW SHEET (iOS Style App Card Modal when clicked in Phone Mode) */}
