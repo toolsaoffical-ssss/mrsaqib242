@@ -389,6 +389,52 @@ export function computeDeviceFingerprint(intel: Partial<SiteAnalyticsEntry>): st
   return 'dfp_' + (hash >>> 0).toString(16);
 }
 
+// Cached GPU renderer string to completely eliminate repeated WebGL context creation and GPU thread spikes
+let cachedGpuRenderer: string | null = null;
+
+export function getCachedGpuRenderer(): string {
+  if (cachedGpuRenderer) return cachedGpuRenderer;
+  if (typeof window === 'undefined') return 'Integrated Display';
+
+  try {
+    const stored = sessionStorage.getItem('saqib_gpu_cache');
+    if (stored) {
+      cachedGpuRenderer = stored;
+      return stored;
+    }
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl', { powerPreference: 'low-power' }) || canvas.getContext('experimental-webgl');
+    if (gl) {
+      const debugInfo = (gl as any).getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        const detected = (gl as any).getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        const gpuName: string = typeof detected === 'string' && detected ? detected : 'Integrated GPU';
+        cachedGpuRenderer = gpuName;
+        try {
+          sessionStorage.setItem('saqib_gpu_cache', gpuName);
+        } catch {
+          // ignore sessionStorage restrictions
+        }
+        return gpuName;
+      }
+    }
+  } catch {
+    // Graceful fallback without GPU pressure
+  }
+  cachedGpuRenderer = 'Integrated Graphics';
+  return cachedGpuRenderer;
+}
+
+/**
+ * Detect bots, scrapers, and headless crawlers
+ */
+export function isBotUser(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  if (navigator.webdriver) return true;
+  const ua = navigator.userAgent || '';
+  return /Googlebot|bingbot|Baiduspider|YandexBot|DuckDuckBot|AhrefsBot|SemrushBot|DotBot|MJ12bot|PetalBot|crawler|spider|curl|wget|python|headless|phantom|scrapy|bot/i.test(ua);
+}
+
 /**
  * Collect deep passive intel from browser
  */
@@ -431,53 +477,17 @@ export async function collectDeviceIntel(): Promise<Partial<SiteAnalyticsEntry>>
     }
   }
 
-  // WebGL GPU
-  if (typeof document !== 'undefined') {
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if (gl) {
-        const debugInfo = (gl as any).getExtension('WEBGL_debug_renderer_info');
-        if (debugInfo) {
-          intel.webgl_renderer = (gl as any).getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-        }
-      }
-    } catch (e) {
-      // ignore
-    }
-  }
+  // WebGL GPU - Uses cached string to eliminate GPU thread lag and repeated hardware context spins
+  intel.webgl_renderer = getCachedGpuRenderer();
 
   intel.device_fingerprint = computeDeviceFingerprint(intel);
 
-  // IP & Geolocation fetch
-  try {
-    const ipRes = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(3000) });
-    if (ipRes.ok) {
-      const ipData = await ipRes.json();
-      intel.ip_address = ipData.ip;
-
-      // Fetch Geo details using ipapi.co
-      try {
-        const geoRes = await fetch(`https://ipapi.co/${intel.ip_address}/json/`, { signal: AbortSignal.timeout(3000) });
-        if (geoRes.ok) {
-          const geoData = await geoRes.json();
-          intel.city = geoData.city || 'Unknown';
-          intel.country = geoData.country_name || 'Pakistan';
-          intel.country_code = geoData.country_code || 'PK';
-          intel.region = geoData.region || '';
-        }
-      } catch (e) {
-        // geo fallback
-      }
-    }
-  } catch (e) {
-    // ip fallback
-  }
-
-  intel.ip_address = intel.ip_address || '182.180.142.65';
-  intel.city = intel.city || 'Faisalabad';
-  intel.country = intel.country || 'Pakistan';
-  intel.country_code = intel.country_code || 'PK';
+  // Fast client-side defaults.
+  // The first-party serverless route (/api/analytics/record) augments real Vercel Edge IP and Geolocation instantly with zero latency
+  intel.ip_address = intel.ip_address || '';
+  intel.city = intel.city || '';
+  intel.country = intel.country || '';
+  intel.country_code = intel.country_code || '';
 
   return intel;
 }
@@ -646,6 +656,11 @@ export async function fetchSiteAnalyticsFromDB(params?: { fetchAll?: boolean }):
  * Record a page visit or tool click into /api/analytics/record and Supabase
  */
 export async function recordVisitToDB(event: Partial<SiteAnalyticsEntry>): Promise<{ success: boolean; entry?: SiteAnalyticsEntry }> {
+  // 0. Skip automated bots and scrapers immediately to avoid unnecessary CPU/network churn
+  if (isBotUser()) {
+    return { success: true };
+  }
+
   try {
     const intel = await collectDeviceIntel();
     const payload = {
@@ -660,9 +675,10 @@ export async function recordVisitToDB(event: Partial<SiteAnalyticsEntry>): Promi
       const res = await fetch('/api/analytics/record', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        keepalive: true
       });
-      if (res.ok) {
+      if (res.ok && res.status !== 204) {
         const data = await res.json();
         if (data.entry) {
           serverRecordedEntry = data.entry;

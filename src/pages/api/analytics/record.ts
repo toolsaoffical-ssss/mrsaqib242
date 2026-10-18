@@ -52,19 +52,31 @@ function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
   if (!entry || now > entry.resetAt) {
+    // Keep map bounded to prevent memory growth
+    if (rateLimitMap.size > 2000) {
+      rateLimitMap.clear();
+    }
     rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 1000 });
     return false;
   }
-  if (entry.count >= 60) {
+  if (entry.count >= 15) {
     return true;
   }
   entry.count++;
   return false;
 }
 
+const BOT_REGEX = /Googlebot|bingbot|Baiduspider|YandexBot|DuckDuckBot|AhrefsBot|SemrushBot|DotBot|MJ12bot|PetalBot|crawler|spider|curl|wget|python|headless|phantom|scrapy|bot/i;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+  }
+
+  // 0. Instant Bot / Crawler Rejection (< 1ms, 0 CPU, 0 DB calls)
+  const ua = (req.headers['user-agent'] as string) || '';
+  if (!ua || BOT_REGEX.test(ua)) {
+    return res.status(204).end();
   }
 
   // 1. Extract Real Client IP
@@ -83,9 +95,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     clientIp = clientIp.substring(7);
   }
 
-  // Rate Limiting
+  // Rate Limiting: drop silently with 204 to prevent CPU consumption
   if (isRateLimited(clientIp)) {
-    return res.status(429).json({ error: 'Too many analytics events. Throttled.' });
+    return res.status(204).end();
   }
 
   let body: any = {};
@@ -98,6 +110,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (req.body && typeof req.body === 'object') {
     body = req.body;
   }
+
+  // 1.5 Filter out admin dashboard paths from recorded analytics
+  const targetPath = String(body.path || '/');
+  if (
+    targetPath.startsWith('/mradmin') ||
+    targetPath.startsWith('/admin') ||
+    targetPath.startsWith('/yourareadmin') ||
+    targetPath.startsWith('/api')
+  ) {
+    return res.status(204).end();
+  }
+
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
 
   // 2. Extract Geolocation from Vercel Edge Headers
   const vercelCountry = (req.headers['x-vercel-ip-country'] as string)?.toUpperCase();
@@ -129,8 +154,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const countryCode = vercelCountry || body.country_code || (clientIp.startsWith('103.') || clientIp.startsWith('182.') || clientIp.startsWith('39.') ? 'PK' : 'PK');
   const country = COUNTRY_NAMES[countryCode] || body.country || 'Pakistan';
 
-  // 3. User Agent parsing
-  const ua = (req.headers['user-agent'] as string) || '';
+  // 3. User Agent parsing (ua was extracted at top of handler)
   const browser = body.browser || parseBrowser(ua);
   const os = body.os || parseOS(ua);
   const deviceType = body.device_type || parseDeviceType(ua);
