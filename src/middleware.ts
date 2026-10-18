@@ -58,6 +58,17 @@ export function middleware(request: NextRequest) {
   }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // LAYER 1.5: ULTRA-FAST EDGE REDIRECT FOR WHATSAPP CHANNEL
+  // Real human visitors get instantaneous 308 redirect (< 2ms) to WhatsApp.
+  // Bots / preview scrapers above bypassed this to get full OpenGraph cards!
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  if (pathname === '/channel' || pathname === '/whatsapp') {
+    const redirectRes = NextResponse.redirect('https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I', 308);
+    redirectRes.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+    return redirectRes;
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // LAYER 2: TERMINAL HACKING & EXPLOIT SCANNER PROTECTION
   // Block known penetration testing scanners and exploit tools
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -22,12 +22,12 @@ const nextConfig = {
       {
         source: '/channel',
         destination: 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/whatsapp',
         destination: 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
-        permanent: false,
+        permanent: true,
       },
     ];
   },
