@@ -121,10 +121,10 @@ export default function WhatsAppRedirectPage() {
   return (
     <div className="min-h-screen bg-[#070b12] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
       <Head>
-        {/* Instant 0ms LocalCache Script: executes before React hydration */}
+        {/* Instant 0ms Script: executes before React hydration */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.whatsapp_url){window.location.replace(d.whatsapp_url);}}}catch(e){}`
+            __html: `if(typeof window!=="undefined"){try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.whatsapp_url){window.location.replace(d.whatsapp_url);return;}}}catch(e){}window.location.replace("${FALLBACK_WHATSAPP_URL}");}`
           }}
         />
 
@@ -157,7 +157,7 @@ export default function WhatsAppRedirectPage() {
         <meta name="ICBM" content="31.1494, 72.6842" />
 
         {/* Fallback Refresh Meta */}
-        <meta httpEquiv="refresh" content={`1; url=${targetUrl}`} />
+        <meta httpEquiv="refresh" content={`0; url=${FALLBACK_WHATSAPP_URL}`} />
 
         {/* OpenGraph / WhatsApp Rich Preview Card */}
         <meta property="og:type" content="profile" />

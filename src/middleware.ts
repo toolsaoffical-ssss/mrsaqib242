@@ -58,24 +58,30 @@ export function middleware(request: NextRequest) {
   }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // LAYER 1.5: SHORT URL ALIAS ROUTING FOR DYNAMIC SOCIAL REDIRECTS
-  // Clean, zero-compute edge rewrites for short link aliases.
-  // Dynamic targets are fetched in real-time from Supabase database.
+  // LAYER 1.5: ULTRA-FAST EDGE REDIRECTS (< 2ms) FOR SOCIAL HUBS & CHANNELS
+  // Real human visitors get instantaneous 308 redirect (< 2ms) to the target app/profile.
+  // Bots / preview scrapers above bypassed this to get full OpenGraph cards & JSON-LD!
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  if (pathname === '/snap') {
-    return NextResponse.rewrite(new URL('/snapchat', request.url));
-  }
-  if (pathname === '/fb') {
-    return NextResponse.rewrite(new URL('/facebook', request.url));
-  }
-  if (pathname === '/tt') {
-    return NextResponse.rewrite(new URL('/tiktok', request.url));
-  }
-  if (pathname === '/insta' || pathname === '/ig') {
-    return NextResponse.rewrite(new URL('/instagram', request.url));
-  }
-  if (pathname === '/wa') {
-    return NextResponse.rewrite(new URL('/whatsapp', request.url));
+  const SOCIAL_REDIRECTS: Record<string, string> = {
+    '/channel': 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
+    '/whatsapp': 'https://wa.me/923478936242',
+    '/wa': 'https://wa.me/923478936242',
+    '/tiktok': 'https://www.tiktok.com/@mr_saqib_242',
+    '/tt': 'https://www.tiktok.com/@mr_saqib_242',
+    '/facebook': 'https://www.facebook.com/profile.php?id=100085188689033',
+    '/fb': 'https://www.facebook.com/profile.php?id=100085188689033',
+    '/snapchat': 'https://www.snapchat.com/add/mrsaqib242',
+    '/snap': 'https://www.snapchat.com/add/mrsaqib242',
+    '/instagram': 'https://www.instagram.com/mr_saqib242',
+    '/insta': 'https://www.instagram.com/mr_saqib242',
+    '/ig': 'https://www.instagram.com/mr_saqib242',
+  };
+
+  const redirectTarget = SOCIAL_REDIRECTS[pathname];
+  if (redirectTarget) {
+    const redirectRes = NextResponse.redirect(redirectTarget, 308);
+    redirectRes.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+    return redirectRes;
   }
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
