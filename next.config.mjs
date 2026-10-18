@@ -17,20 +17,7 @@ const nextConfig = {
       },
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: '/channel',
-        destination: 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
-        permanent: true,
-      },
-      {
-        source: '/whatsapp',
-        destination: 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
-        permanent: true,
-      },
-    ];
-  },
+
   async headers() {
     return [
       {
