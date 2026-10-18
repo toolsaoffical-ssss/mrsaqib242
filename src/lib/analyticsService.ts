@@ -435,6 +435,67 @@ export function isBotUser(): boolean {
   return /Googlebot|bingbot|Baiduspider|YandexBot|DuckDuckBot|AhrefsBot|SemrushBot|DotBot|MJ12bot|PetalBot|crawler|spider|curl|wget|python|headless|phantom|scrapy|bot/i.test(ua);
 }
 
+// Timezone to location mapping for 0-latency, 0-compute geolocation
+function inferLocationFromTimezone(tz: string): { country: string; country_code: string; city: string; region: string } {
+  if (!tz) return { country: 'Pakistan', country_code: 'PK', city: 'Faisalabad', region: 'Punjab' };
+  
+  if (tz.includes('Karachi')) return { country: 'Pakistan', country_code: 'PK', city: 'Karachi', region: 'Sindh' };
+  if (tz.includes('Islamabad') || tz.includes('Lahore')) return { country: 'Pakistan', country_code: 'PK', city: 'Lahore', region: 'Punjab' };
+  if (tz.includes('Dubai') || tz.includes('Muscat')) return { country: 'United Arab Emirates', country_code: 'AE', city: 'Dubai', region: 'Dubai' };
+  if (tz.includes('Riyadh')) return { country: 'Saudi Arabia', country_code: 'SA', city: 'Riyadh', region: 'Riyadh' };
+  if (tz.includes('London')) return { country: 'United Kingdom', country_code: 'GB', city: 'London', region: 'England' };
+  if (tz.includes('New_York')) return { country: 'United States', country_code: 'US', city: 'New York', region: 'New York' };
+  if (tz.includes('Chicago')) return { country: 'United States', country_code: 'US', city: 'Chicago', region: 'Illinois' };
+  if (tz.includes('Los_Angeles')) return { country: 'United States', country_code: 'US', city: 'Los Angeles', region: 'California' };
+  if (tz.includes('Toronto')) return { country: 'Canada', country_code: 'CA', city: 'Toronto', region: 'Ontario' };
+  if (tz.includes('Berlin') || tz.includes('Frankfurt')) return { country: 'Germany', country_code: 'DE', city: 'Berlin', region: 'Berlin' };
+  if (tz.includes('Sydney') || tz.includes('Melbourne')) return { country: 'Australia', country_code: 'AU', city: 'Sydney', region: 'NSW' };
+  if (tz.includes('Kolkata') || tz.includes('Delhi') || tz.includes('Mumbai')) return { country: 'India', country_code: 'IN', city: 'New Delhi', region: 'Delhi' };
+  if (tz.includes('Singapore')) return { country: 'Singapore', country_code: 'SG', city: 'Singapore', region: 'Singapore' };
+  if (tz.includes('Tokyo')) return { country: 'Japan', country_code: 'JP', city: 'Tokyo', region: 'Kanto' };
+  if (tz.includes('Doha')) return { country: 'Qatar', country_code: 'QA', city: 'Doha', region: 'Ad Dawhah' };
+  if (tz.includes('Kuwait')) return { country: 'Kuwait', country_code: 'KW', city: 'Kuwait City', region: 'Al Asimah' };
+
+  if (tz.startsWith('America/')) return { country: 'United States', country_code: 'US', city: 'New York', region: 'United States' };
+  if (tz.startsWith('Europe/')) return { country: 'United Kingdom', country_code: 'GB', city: 'London', region: 'Europe' };
+  if (tz.startsWith('Asia/')) return { country: 'Pakistan', country_code: 'PK', city: 'Faisalabad', region: 'Punjab' };
+
+  return { country: 'Pakistan', country_code: 'PK', city: 'Faisalabad', region: 'Punjab' };
+}
+
+let cachedClientIp: string | null = null;
+async function getCachedClientIp(): Promise<string> {
+  if (cachedClientIp) return cachedClientIp;
+  if (typeof window === 'undefined') return 'Direct Visitor';
+
+  try {
+    const stored = sessionStorage.getItem('saqib_client_ip');
+    if (stored) {
+      cachedClientIp = stored;
+      return stored;
+    }
+  } catch {
+    // sessionStorage restrictions
+  }
+
+  try {
+    const res = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(2000) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.ip) {
+        cachedClientIp = String(data.ip);
+        try { sessionStorage.setItem('saqib_client_ip', cachedClientIp); } catch {}
+        return cachedClientIp;
+      }
+    }
+  } catch {
+    // ip fallback
+  }
+
+  cachedClientIp = 'Direct Visitor';
+  return cachedClientIp;
+}
+
 /**
  * Collect deep passive intel from browser
  */
@@ -480,14 +541,17 @@ export async function collectDeviceIntel(): Promise<Partial<SiteAnalyticsEntry>>
   // WebGL GPU - Uses cached string to eliminate GPU thread lag and repeated hardware context spins
   intel.webgl_renderer = getCachedGpuRenderer();
 
-  intel.device_fingerprint = computeDeviceFingerprint(intel);
+  // Instant location inference from browser timezone with zero network calls
+  const loc = inferLocationFromTimezone(intel.timezone || 'Asia/Karachi');
+  intel.country = loc.country;
+  intel.country_code = loc.country_code;
+  intel.city = loc.city;
+  intel.region = loc.region;
 
-  // Fast client-side defaults.
-  // The first-party serverless route (/api/analytics/record) augments real Vercel Edge IP and Geolocation instantly with zero latency
-  intel.ip_address = intel.ip_address || '';
-  intel.city = intel.city || '';
-  intel.country = intel.country || '';
-  intel.country_code = intel.country_code || '';
+  // Real IP cached once in sessionStorage (0 Vercel serverless compute)
+  intel.ip_address = await getCachedClientIp();
+
+  intel.device_fingerprint = computeDeviceFingerprint(intel);
 
   return intel;
 }
@@ -669,32 +733,13 @@ export async function recordVisitToDB(event: Partial<SiteAnalyticsEntry>): Promi
       path: event.path || (typeof window !== 'undefined' ? window.location.pathname + window.location.hash : '/')
     };
 
-    // 1. Send to first-party API endpoint (captures real Vercel edge IP and Geolocation)
-    let serverRecordedEntry: SiteAnalyticsEntry | null = null;
-    try {
-      const res = await fetch('/api/analytics/record', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true
-      });
-      if (res.ok && res.status !== 204) {
-        const data = await res.json();
-        if (data.entry) {
-          serverRecordedEntry = data.entry;
-        }
-      }
-    } catch (apiErr) {
-      // Fallback
-    }
-
-    const finalEntry: SiteAnalyticsEntry = serverRecordedEntry || {
+    const finalEntry: SiteAnalyticsEntry = {
       id: payload.id || `vis_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       visitor_id: payload.visitor_id || undefined,
       session_id: payload.session_id || undefined,
       is_new_visitor: payload.is_new_visitor !== undefined ? payload.is_new_visitor : true,
       device_fingerprint: payload.device_fingerprint || undefined,
-      ip_address: payload.ip_address || '182.180.142.65',
+      ip_address: payload.ip_address || 'Direct Visitor',
       city: payload.city || 'Faisalabad',
       country: payload.country || 'Pakistan',
       country_code: payload.country_code || 'PK',
@@ -725,10 +770,14 @@ export async function recordVisitToDB(event: Partial<SiteAnalyticsEntry>): Promi
     const updated = [finalEntry, ...current.filter(e => e.id !== finalEntry.id).slice(0, 199)];
     setLocalAnalytics(updated);
 
-    // If server API route was not reached, fallback to direct Supabase client
-    if (!serverRecordedEntry && isSupabaseConfigured()) {
+    // Direct Supabase Insert: ZERO Vercel Fluid Compute usage!
+    if (isSupabaseConfigured()) {
       try {
-        await supabase.from('site_analytics').insert([finalEntry]);
+        const { error } = await supabase.from('site_analytics').insert([finalEntry]);
+        if (error && (error.message.includes('column') || error.message.includes('visitor_id'))) {
+          const { visitor_id, session_id, is_new_visitor, device_fingerprint, ...legacyRecord } = finalEntry;
+          await supabase.from('site_analytics').insert([legacyRecord]);
+        }
       } catch (e) {
         console.warn('Could not insert directly into Supabase site_analytics:', e);
       }
