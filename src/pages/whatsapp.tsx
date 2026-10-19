@@ -53,6 +53,36 @@ const schemaData = {
       ]
     },
     {
+      '@type': 'FAQPage',
+      '@id': 'https://mrsaqib242.vercel.app/whatsapp#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I contact Mr Saqib directly on WhatsApp?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'You can chat directly with Muhammad Saqib on WhatsApp at +92 347 8936242 (03478936242) or by visiting https://mrsaqib242.vercel.app/whatsapp or https://wa.me/923478936242.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'What web and software development services does Mr Saqib offer?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Muhammad Saqib offers Next.js & React full-stack application development, Supabase RLS database architecture, cyber security assessments, API integrations, and AI tool development.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Where is Muhammad Saqib located?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Muhammad Saqib is located in Gojra, Punjab, Pakistan, providing high-performance software engineering services for clients globally.'
+          }
+        }
+      ]
+    },
+    {
       '@type': 'BreadcrumbList',
       '@id': 'https://mrsaqib242.vercel.app/whatsapp#breadcrumb',
       itemListElement: [
@@ -80,21 +110,26 @@ export default function WhatsAppRedirectPage() {
     let isMounted = true;
 
     async function resolveAndRedirect() {
+      if (typeof window === 'undefined') return;
+
+      // Never redirect search engine bots or crawlers (Googlebot, Bing, etc.)
+      const ua = (navigator.userAgent || '').toLowerCase();
+      const isBot = /google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(ua);
+      if (isBot) return;
+
       // 1. Try local storage cache first for instant redirect
-      if (typeof window !== 'undefined') {
-        try {
-          const cached = localStorage.getItem('saqib_profile_settings_cache');
-          if (cached) {
-            const parsed = JSON.parse(cached);
-            if (parsed.whatsapp_url && parsed.whatsapp_url.trim()) {
-              const url = parsed.whatsapp_url.trim();
-              if (isMounted) setTargetUrl(url);
-              window.location.replace(url);
-              return;
-            }
+      try {
+        const cached = localStorage.getItem('saqib_profile_settings_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed.whatsapp_url && parsed.whatsapp_url.trim()) {
+            const url = parsed.whatsapp_url.trim();
+            if (isMounted) setTargetUrl(url);
+            window.location.replace(url);
+            return;
           }
-        } catch {}
-      }
+        }
+      } catch {}
 
       // 2. Fetch fresh dynamic URL from Supabase in real-time
       try {
@@ -121,10 +156,10 @@ export default function WhatsAppRedirectPage() {
   return (
     <div className="min-h-screen bg-[#070b12] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
       <Head>
-        {/* Instant 0ms Script: executes before React hydration */}
+        {/* Instant 0ms Script: executes before React hydration only for real human visitors */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `if(typeof window!=="undefined"){try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.whatsapp_url){window.location.replace(d.whatsapp_url);return;}}}catch(e){}window.location.replace("${FALLBACK_WHATSAPP_URL}");}`
+            __html: `if(typeof window!=="undefined"){var u=(navigator.userAgent||"").toLowerCase();var b=/google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(u);if(!b){try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.whatsapp_url){window.location.replace(d.whatsapp_url);}}}catch(e){}window.location.replace("${FALLBACK_WHATSAPP_URL}");}}`
           }}
         />
 
@@ -155,9 +190,6 @@ export default function WhatsAppRedirectPage() {
         <meta name="geo.placename" content="Gojra, Faisalabad, Punjab, Pakistan" />
         <meta name="geo.position" content="31.1494;72.6842" />
         <meta name="ICBM" content="31.1494, 72.6842" />
-
-        {/* Fallback Refresh Meta */}
-        <meta httpEquiv="refresh" content={`0; url=${FALLBACK_WHATSAPP_URL}`} />
 
         {/* OpenGraph / WhatsApp Rich Preview Card */}
         <meta property="og:type" content="profile" />
@@ -215,7 +247,7 @@ export default function WhatsAppRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Opening WhatsApp Chat...
+          Chat with Mr Saqib on WhatsApp
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Connecting directly with <span className="text-emerald-400 font-semibold">Muhammad Saqib (03478936242)</span> for consultations, custom software quotes, and project discussions.
@@ -247,7 +279,7 @@ export default function WhatsAppRedirectPage() {
           className="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-600/30 active:scale-[0.98]"
         >
           <FaWhatsapp className="w-4 h-4" />
-          <span>Click to Chat: 03478936242</span>
+          <span>Open WhatsApp Chat (+92 347 8936242)</span>
           <FaExternalLinkAlt className="w-3 h-3 opacity-70 ml-1" />
         </a>
 

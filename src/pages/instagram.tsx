@@ -72,21 +72,26 @@ export default function InstagramRedirectPage() {
     let isMounted = true;
 
     async function resolveAndRedirect() {
+      if (typeof window === 'undefined') return;
+
+      // Never redirect search engine bots or crawlers (Googlebot, Bing, etc.)
+      const ua = (navigator.userAgent || '').toLowerCase();
+      const isBot = /google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(ua);
+      if (isBot) return;
+
       // 1. Try local storage cache first for instant redirect
-      if (typeof window !== 'undefined') {
-        try {
-          const cached = localStorage.getItem('saqib_profile_settings_cache');
-          if (cached) {
-            const parsed = JSON.parse(cached);
-            if (parsed.instagram_url && parsed.instagram_url.trim()) {
-              const url = parsed.instagram_url.trim();
-              if (isMounted) setTargetUrl(url);
-              window.location.replace(url);
-              return;
-            }
+      try {
+        const cached = localStorage.getItem('saqib_profile_settings_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed.instagram_url && parsed.instagram_url.trim()) {
+            const url = parsed.instagram_url.trim();
+            if (isMounted) setTargetUrl(url);
+            window.location.replace(url);
+            return;
           }
-        } catch {}
-      }
+        }
+      } catch {}
 
       // 2. Fetch fresh dynamic URL from Supabase in real-time
       try {
@@ -113,10 +118,10 @@ export default function InstagramRedirectPage() {
   return (
     <div className="min-h-screen bg-[#06080e] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
       <Head>
-        {/* Instant 0ms Script: executes before React hydration */}
+        {/* Instant 0ms Script: executes before React hydration only for real human visitors */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `if(typeof window!=="undefined"){try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.instagram_url){window.location.replace(d.instagram_url);return;}}}catch(e){}window.location.replace("${FALLBACK_INSTAGRAM_URL}");}`
+            __html: `if(typeof window!=="undefined"){var u=(navigator.userAgent||"").toLowerCase();var b=/google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(u);if(!b){try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.instagram_url){window.location.replace(d.instagram_url);}}}catch(e){}window.location.replace("${FALLBACK_INSTAGRAM_URL}");}}`
           }}
         />
 
@@ -139,9 +144,6 @@ export default function InstagramRedirectPage() {
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <link rel="canonical" href="https://mrsaqib242.vercel.app/instagram" />
-
-        {/* Fallback Refresh Meta */}
-        <meta httpEquiv="refresh" content={`0; url=${FALLBACK_INSTAGRAM_URL}`} />
 
         {/* OpenGraph / Social Rich Preview Card */}
         <meta property="og:type" content="profile" />
