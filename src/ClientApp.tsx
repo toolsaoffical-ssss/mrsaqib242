@@ -377,6 +377,10 @@ export default function App() {
     seoTitle = 'Contact Mr Saqib (03478936242) | Hire Web Developer (Saqib 242)';
     seoDesc = 'Contact Mr Saqib (Saqib 242). Official Phone & WhatsApp: 03478936242 (+92 347 8936242), Email: mrsaqib242242@gmail.com, office in Gojra, Faisalabad, and instant project quotes.';
     seoKeywords = 'mr saqib contact, 03478936242, mrsaqib242242@gmail.com, saqib gojra, gojra developer, hire mr saqib, contact mr saqib, contact saqib 242, hire web developer Faisalabad, contact web designer Gojra, freelance developer Lahore, software engineer Karachi, contact Saqib Dev';
+  } else if (isToolsPageOpen) {
+    seoTitle = 'Mr Saqib Tools (mr saqib tool) | Free Web Developer Utilities & AI Tools OS';
+    seoDesc = 'Access Mr Saqib Tools (mr saqib tool) — official all-in-one developer OS featuring free web utilities, AI tools, live code sandboxes, and APIs by Muhammad Saqib (Saqib 242). WhatsApp: 03478936242.';
+    seoKeywords = 'mr saqib tool, mr saqib tools, saqib tool, saqib tools, mr saqib, saqib 242 tools, saqib dev tools, saqib developer utilities, free online tools pakistan, ai tools mr saqib, web utilities saqib, saqib visual tools, online developer tools pakistan, web tools faisalabad, seo tools gojra, 03478936242';
   }
 
   useSEO({ title: seoTitle, description: seoDesc, keywords: seoKeywords });

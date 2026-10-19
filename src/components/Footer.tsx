@@ -96,7 +96,7 @@ export default function Footer() {
         <span className="text-zinc-700 hidden sm:inline">•</span>
         <Link href="/skills" className="hover:text-white transition-colors" title="Mr Saqib Skills &amp; Tech Stack">Mr Saqib Skills</Link>
         <span className="text-zinc-700 hidden sm:inline">•</span>
-        <Link href="/tools" className="hover:text-white transition-colors" title="Mr Saqib Tools &amp; Dev Utilities">Mr Saqib Tools</Link>
+        <Link href="/tools" className="hover:text-white transition-colors" title="Mr Saqib Tools (mr saqib tool) | Free Developer Utilities OS">Mr Saqib Tools</Link>
         <span className="text-zinc-700 hidden sm:inline">•</span>
         <Link href="/contact" className="hover:text-white transition-colors" title="Mr Saqib Contacts &amp; Hire Developer">Mr Saqib Contacts</Link>
       </nav>

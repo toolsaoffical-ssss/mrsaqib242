@@ -519,16 +519,19 @@ export default function ToolsPage({
       {/* ========================================================================= */}
       {viewMode === 'phone' && (
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-4 pb-32">
-          {/* SEO-only: hidden from UI, readable by Googlebot */}
-          <div className="sr-only">
-            <h1>Mr Saqib Tools &amp; Web Utilities OS (Saqib 242)</h1>
-            <h2>Free Developer Apps, AI Bots &amp; Online Utilities by Muhammad Saqib</h2>
-            <p>
-              Welcome to the official Mr Saqib tools suite (mr saqib tool). Access {tools.length} verified cloud applications, 
-              developer utilities, AI chatbot models, free coding templates, network testers, and system tools created 
-              by Muhammad Saqib (mrsaqib242) for engineers and businesses in Pakistan and worldwide.
+          {/* Visible Semantic Heading for Googlebot Ranking & Users */}
+          <header className="mb-4 sm:mb-6 px-1 sm:px-2 text-center sm:text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[11px] font-black uppercase tracking-wider mb-2">
+              <Sparkles size={12} />
+              <span>Mr Saqib Tools OS • 100% Free Web Utilities</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Mr Saqib Tools (mr saqib tool)
+            </h1>
+            <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
+              Official suite of {tools.length}+ free developer utilities, live sandbox runners, AI prediction models, and web building platforms engineered by Muhammad Saqib (Saqib 242).
             </p>
-          </div>
+          </header>
 
           {/* Main Mobile Screen — no outer border/frame on mobile */}
           <div className="relative p-4 sm:bg-gradient-to-b sm:from-[#131525]/90 sm:via-[#0e101c]/95 sm:to-[#08090f] sm:rounded-[48px] sm:border sm:border-white/20 sm:p-7 sm:shadow-[0_25px_70px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] sm:overflow-hidden">
@@ -799,10 +802,10 @@ export default function ToolsPage({
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-8">
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-2">
-              Mr Saqib Tools &amp; Web Utilities
+              Mr Saqib Tools &amp; Web Utilities (mr saqib tool)
             </h2>
             <p className="text-zinc-400 text-sm">
-              Instant access to Mr Saqib's AI tools, developer software, code repositories, and online web utilities.
+              Instant access to Mr Saqib's AI tools, developer software, code repositories, and online web utilities by Muhammad Saqib (Saqib 242).
             </p>
           </div>
 
@@ -869,6 +872,14 @@ export default function ToolsPage({
       {/* ========================================================================= */}
       {viewMode === 'compact' && (
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-28 space-y-2.5">
+          <div className="text-center max-w-xl mx-auto mb-6">
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              All Developer Tools &amp; Web Utilities List (mr saqib tool)
+            </h2>
+            <p className="text-zinc-400 text-xs sm:text-sm mt-1">
+              Curated catalog of free online tools, live code builders, and AI utilities by Muhammad Saqib (Saqib 242).
+            </p>
+          </div>
           {filteredTools.map(tool => (
             <div
               key={tool.id}

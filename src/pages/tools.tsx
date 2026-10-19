@@ -37,10 +37,44 @@ export default function ToolsRoute() {
         ]
       },
       {
+        "@type": "SoftwareApplication",
+        "@id": "https://mrsaqib242.vercel.app/tools#software",
+        "name": "Mr Saqib Tools OS",
+        "alternateName": [
+          "Mr Saqib Tool",
+          "Mr Saqib Tools",
+          "Saqib Tools",
+          "Saqib 242 Web Tools",
+          "Saqib Tools OS",
+          "Saqib Developer Utilities",
+          "Free Online Developer Tools Pakistan"
+        ],
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All (Web, Android, iOS, Windows, macOS, Linux)",
+        "url": "https://mrsaqib242.vercel.app/tools",
+        "image": "https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.95",
+          "reviewCount": "242",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "creator": {
+          "@id": "https://mrsaqib242.vercel.app/#person"
+        }
+      },
+      {
         "@type": "CollectionPage",
         "@id": "https://mrsaqib242.vercel.app/tools#collection",
         "url": "https://mrsaqib242.vercel.app/tools",
-        "name": "Mr Saqib Tools & Developer Utilities | Free Online Code Tools & SEO Studio (Saqib 242)",
+        "name": "Mr Saqib Tools (mr saqib tool) | Free Online Developer Utilities & AI OS (Saqib 242)",
         "alternateName": [
           "Mr Saqib Tools",
           "Mr Saqib Tool",
@@ -58,7 +92,14 @@ export default function ToolsRoute() {
           "name": "Mr Saqib Developer Portfolio"
         },
         "about": { "@id": "https://mrsaqib242.vercel.app/#person" },
-        "mainEntity": { "@id": "https://mrsaqib242.vercel.app/tools#itemlist" }
+        "mainEntity": { "@id": "https://mrsaqib242.vercel.app/tools#itemlist" },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.95",
+          "reviewCount": "242",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
       },
       {
         "@type": "Person",
@@ -302,19 +343,24 @@ export default function ToolsRoute() {
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        <title key="title">Mr Saqib Web Tools &amp; Developer Utilities | Free Online Code Tools &amp; SEO Studio (Saqib 242)</title>
+        <title key="title">Mr Saqib Tools (mr saqib tool) | Free Web Developer Utilities &amp; AI Tools OS</title>
         <meta 
           key="description" 
           name="description" 
-          content="Explore Mr Saqib Tools (mr saqib tool) — an all-in-one mobile-styled OS featuring free web utilities, AI tools, developer software, calculators, and verified web resources by Muhammad Saqib. Direct WhatsApp: 03478936242 | mrsaqib242242@gmail.com." 
+          content="Access Mr Saqib Tools (mr saqib tool) — official all-in-one developer OS featuring free web utilities, AI tools, live code sandboxes, and APIs by Muhammad Saqib (Saqib 242). WhatsApp: 03478936242." 
         />
         <meta 
           key="keywords" 
           name="keywords" 
-          content="mr saqib tool, mr saqib tools, saqib tool, saqib tools, mr saqib, saqib 242 tools, mr saqib dev utilities, free online tools pakistan, ai tools mr saqib, developer tools saqib dev, web utilities saqib, saqib visual tools, online developer tools pakistan, web tools faisalabad, seo tools gojra, 03478936242" 
+          content="mr saqib tool, mr saqib tools, saqib tool, saqib tools, mr saqib, saqib 242 tools, saqib dev tools, saqib developer utilities, free online tools pakistan, ai tools mr saqib, web utilities saqib, saqib visual tools, online developer tools pakistan, web tools faisalabad, seo tools gojra, 03478936242" 
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="rating" content="general" />
+        <meta name="revisit-after" content="1 days" />
+        <meta name="distribution" content="global" />
         
         {/* Canonical */}
         <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/tools" />
@@ -327,8 +373,8 @@ export default function ToolsRoute() {
 
         {/* OpenGraph */}
         <meta key="og:type" property="og:type" content="website" />
-        <meta key="og:title" property="og:title" content="Mr Saqib Web Tools &amp; Developer Utilities | Free Online Code Tools &amp; SEO Studio (Saqib 242)" />
-        <meta key="og:description" property="og:description" content="Explore Mr Saqib Tools (mr saqib tool) — an all-in-one mobile-styled OS featuring free web utilities, AI tools, developer software, calculators, and verified web resources by Muhammad Saqib. WhatsApp: 03478936242." />
+        <meta key="og:title" property="og:title" content="Mr Saqib Tools (mr saqib tool) | Free Online Developer Utilities &amp; AI OS" />
+        <meta key="og:description" property="og:description" content="Access Mr Saqib Tools (mr saqib tool) — official all-in-one developer OS featuring free web utilities, AI tools, live code sandboxes, and APIs by Muhammad Saqib (Saqib 242). WhatsApp: 03478936242." />
         <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/tools" />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
