@@ -52,6 +52,7 @@ export default function ToolsRoute() {
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "All (Web, Android, iOS, Windows, macOS, Linux)",
         "url": "https://mrsaqib242.vercel.app/tools",
+        "description": "Free online web developer utilities suite, live coding sandbox runners, AI tools, modded packages, and source code vault engineered by Muhammad Saqib (Saqib 242).",
         "image": "https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png",
         "offers": {
           "@type": "Offer",
@@ -62,6 +63,7 @@ export default function ToolsRoute() {
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "4.95",
+          "ratingCount": "242",
           "reviewCount": "242",
           "bestRating": "5",
           "worstRating": "1"
@@ -92,14 +94,7 @@ export default function ToolsRoute() {
           "name": "Mr Saqib Developer Portfolio"
         },
         "about": { "@id": "https://mrsaqib242.vercel.app/#person" },
-        "mainEntity": { "@id": "https://mrsaqib242.vercel.app/tools#itemlist" },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.95",
-          "reviewCount": "242",
-          "bestRating": "5",
-          "worstRating": "1"
-        }
+        "mainEntity": { "@id": "https://mrsaqib242.vercel.app/tools#itemlist" }
       },
       {
         "@type": "Person",
