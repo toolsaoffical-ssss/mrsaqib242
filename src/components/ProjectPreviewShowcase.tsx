@@ -35,7 +35,14 @@ function PreviewCard({ project, idx }: { project: any, idx: number, key?: any })
           </div>
         </div>
 
-        {project.restricted ? (
+        {project.image_url ? (
+          <img 
+            src={project.image_url} 
+            alt={project.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : project.restricted ? (
           <div className="restricted-preview">
             <div className="mb-4 p-4 rounded-full bg-white/10">
               <Lock className="w-12 h-12 text-white" />

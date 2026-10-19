@@ -20,7 +20,9 @@ import {
   Grid,
   FolderOpen,
   Tag,
-  Star
+  Star,
+  Upload,
+  Image as ImageIcon
 } from 'lucide-react';
 import { 
   ProjectItem, 
@@ -86,6 +88,7 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
   const [formData, setFormData] = useState({
     name: '',
     url: '',
+    image_url: '',
     description: '',
     category: 'Portfolio',
     tags: 'Portfolio, Web App',
@@ -94,6 +97,23 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
     is_active: true,
     display_order: 1
   });
+
+  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      onNotify('Image too large. Please select an image under 5MB', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setFormData(prev => ({ ...prev, image_url: String(event.target?.result) }));
+        onNotify('Project preview image loaded! Save to apply.', 'success');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const getCategoryEmoji = (cat: string) => {
     const found = KNOWN_CATEGORIES.find(c => c.name.toLowerCase() === (cat || '').toLowerCase());
@@ -138,6 +158,7 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
     setFormData({
       name: '',
       url: '',
+      image_url: '',
       description: '',
       category: targetCat,
       tags: `${targetCat}, Web App`,
@@ -156,6 +177,7 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
     setFormData({
       name: p.name || '',
       url: p.url || '',
+      image_url: p.image_url || '',
       description: p.description || '',
       category: cat,
       tags: Array.isArray(p.tags) ? p.tags.join(', ') : cat,
@@ -206,6 +228,7 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
       const payload = {
         name: formData.name.trim(),
         url: formData.url.trim(),
+        image_url: formData.image_url.trim(),
         description: formData.description.trim(),
         category: selectedCategory,
         tags: tagsArray,
@@ -714,6 +737,88 @@ export default function AdminProjectsManager({ onNotify }: AdminProjectsManagerP
                 />
               </div>
 
+              {/* Custom Preview Image (Upload from PC/Mobile or Paste Image URL) */}
+              <div className="p-3.5 bg-zinc-950 rounded-2xl border border-white/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-zinc-200 font-bold flex items-center gap-1.5">
+                    <ImageIcon size={14} className="text-orange-400" />
+                    <span>Project Preview Image (Custom Upload)</span>
+                  </label>
+                  {formData.image_url ? (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      ✓ Custom Image Active
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-zinc-500 font-mono">
+                      Fallback: Auto Screenshot
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                  Apne project ki preview image khud upload karein ya direct image link paste karein taakay AI screenshot ki jagah aap ki real HD image show ho.
+                </p>
+
+                {/* Upload Button + Image URL input */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <label className="px-4 py-2.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shrink-0">
+                    <Upload size={14} />
+                    <span>Upload from Device</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handleImageFileUpload}
+                    />
+                  </label>
+
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      placeholder="Or paste direct image URL (https://... png/jpg)"
+                      value={formData.image_url}
+                      onChange={e => setFormData({ ...formData, image_url: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-zinc-900 border border-white/10 rounded-xl text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-orange-500/60"
+                    />
+                    {formData.image_url && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, image_url: '' })}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white"
+                        title="Clear custom image"
+                      >
+                        <X size={13} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Live Preview of Uploaded/Selected Image */}
+                {formData.image_url ? (
+                  <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video bg-black/60 max-h-44 group">
+                    <img 
+                      src={formData.image_url} 
+                      alt="Project Preview" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, image_url: '' })}
+                        className="px-3 py-1.5 rounded-lg bg-rose-600/90 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg cursor-pointer"
+                      >
+                        <Trash2 size={13} />
+                        <span>Remove Image</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-xl bg-white/[0.02] border border-dashed border-white/10 text-center text-[11px] text-zinc-500">
+                    No custom image uploaded. Website will show automatic preview screenshot of <span className="text-zinc-400 font-mono">{formData.url || 'project URL'}</span>.
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-zinc-400 font-semibold mb-1">Tags (Comma-separated)</label>
@@ -867,6 +972,35 @@ function ProjectCard({
     >
       {/* Accent top gradient */}
       <div className={`h-1.5 w-full rounded-full bg-gradient-to-r ${project.gradient || 'from-orange-500 to-amber-500'} mb-3.5`} />
+
+      {/* Project Thumbnail Preview */}
+      <div className="relative w-full h-36 rounded-xl overflow-hidden bg-black/60 border border-white/10 mb-3">
+        {project.image_url ? (
+          <img 
+            src={project.image_url} 
+            alt={project.name} 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy" 
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950/80 p-3 text-center">
+            <Globe size={24} className="text-zinc-600 mb-1.5" />
+            <span className="text-[10px] font-mono text-zinc-500">Auto Screenshot Preview</span>
+            <span className="text-[9px] text-zinc-600 truncate max-w-[180px]">{project.url}</span>
+          </div>
+        )}
+        <div className="absolute top-2 right-2">
+          {project.image_url ? (
+            <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-emerald-500/90 text-black shadow-md flex items-center gap-1">
+              <Check size={10} /> Custom Image
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-md text-[9px] font-medium bg-black/70 text-zinc-400 border border-white/10 backdrop-blur-sm">
+              Auto Screenshot
+            </span>
+          )}
+        </div>
+      </div>
 
       <div>
         <div className="flex items-start justify-between gap-2">

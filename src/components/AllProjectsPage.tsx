@@ -120,6 +120,14 @@ function ProjectCard({ project }: { project: Project; key?: any }) {
               <h4 className="text-[10px] md:text-sm font-bold mb-0.5">Security Sandbox</h4>
               <p className="text-[8px] md:text-[10px] text-zinc-500 max-w-[140px] md:max-w-[200px] line-clamp-2">Hosting sandbox restricts embed. Tap card to view safely.</p>
             </div>
+          ) : project.image_url ? (
+            <img 
+              src={project.image_url} 
+              alt={project.name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              style={{ objectPosition: 'top' }}
+              loading="lazy"
+            />
           ) : inView ? (
             <img 
               src={`https://image.thum.io/get/width/600/crop/800/${project.url}`} 

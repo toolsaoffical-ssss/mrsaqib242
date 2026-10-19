@@ -5,6 +5,7 @@ export interface ProjectItem {
   name: string;
   url: string;
   tags: string[];
+  image_url?: string;
   restricted?: boolean;
   description: string;
   gradient?: string;
@@ -494,19 +495,31 @@ export async function fetchProjectsFromDB(): Promise<{ projects: ProjectItem[]; 
     }
 
     if (data && data.length > 0) {
-      const parsed: ProjectItem[] = data.map((item: any, idx: number) => ({
-        id: item.id,
-        name: item.name || 'Untitled Project',
-        url: item.url || '#',
-        tags: Array.isArray(item.tags) ? item.tags : (typeof item.tags === 'string' ? item.tags.split(',').map((t: string) => t.trim()) : [item.category || 'Portfolio']),
-        restricted: Boolean(item.restricted),
-        description: item.description || '',
-        gradient: item.gradient || 'from-blue-600 via-indigo-500 to-purple-600',
-        category: item.category || (Array.isArray(item.tags) && item.tags[0]) || 'Portfolio',
-        is_active: item.is_active !== undefined ? Boolean(item.is_active) : true,
-        display_order: item.display_order ?? (idx + 1),
-        created_at: item.created_at
-      }));
+      const parsed: ProjectItem[] = data.map((item: any, idx: number) => {
+        const rawTags = Array.isArray(item.tags)
+          ? item.tags
+          : (typeof item.tags === 'string' ? item.tags.split(',').map((t: string) => t.trim()) : [item.category || 'Portfolio']);
+        
+        const imgTag = rawTags.find((t: any) => typeof t === 'string' && t.startsWith('__img__:'));
+        const imageUrl = item.image_url || (imgTag ? imgTag.replace('__img__:', '') : '');
+        const cleanTags = rawTags.filter((t: any) => typeof t === 'string' && !t.startsWith('__img__:'));
+
+        return {
+          id: item.id,
+          name: item.name || 'Untitled Project',
+          url: item.url || '#',
+          tags: cleanTags,
+          image_url: imageUrl,
+          restricted: Boolean(item.restricted),
+          description: item.description || '',
+          gradient: item.gradient || 'from-blue-600 via-indigo-500 to-purple-600',
+          category: item.category || cleanTags[0] || 'Portfolio',
+          is_active: item.is_active !== undefined ? Boolean(item.is_active) : true,
+          is_pick: Boolean(item.is_pick),
+          display_order: item.display_order ?? (idx + 1),
+          created_at: item.created_at
+        };
+      });
       return { projects: parsed, fromDatabase: true };
     }
 
@@ -537,23 +550,33 @@ export async function createProjectInDB(project: Omit<ProjectItem, 'id' | 'creat
   } catch (err: any) {
     // Direct client fallback if API route unreachable
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .insert([
-          {
-            name: project.name,
-            url: project.url,
-            description: project.description,
-            category: project.category || (project.tags && project.tags[0]) || 'Portfolio',
-            tags: project.tags,
-            gradient: project.gradient || 'from-blue-600 via-indigo-500 to-purple-600',
-            restricted: project.restricted || false,
-            is_active: project.is_active !== undefined ? project.is_active : true,
-            display_order: project.display_order || 0
-          }
-        ])
-        .select()
-        .single();
+      const payload: any = {
+        name: project.name,
+        url: project.url,
+        description: project.description,
+        category: project.category || (project.tags && project.tags[0]) || 'Portfolio',
+        tags: Array.isArray(project.tags) ? [...project.tags] : [],
+        gradient: project.gradient || 'from-blue-600 via-indigo-500 to-purple-600',
+        restricted: project.restricted || false,
+        is_active: project.is_active !== undefined ? project.is_active : true,
+        display_order: project.display_order || 0
+      };
+
+      if (project.image_url) {
+        payload.image_url = project.image_url;
+      }
+
+      let { data, error } = await supabase.from('projects').insert([payload]).select().single();
+
+      if (error && (error.code === '42703' || error.message?.includes('image_url'))) {
+        delete payload.image_url;
+        if (project.image_url) {
+          payload.tags = [...payload.tags.filter((t: string) => !t.startsWith('__img__:')), `__img__:${project.image_url}`];
+        }
+        const retry = await supabase.from('projects').insert([payload]).select().single();
+        data = retry.data;
+        error = retry.error;
+      }
 
       if (error) return { data: null, error: error.message };
       return { data, error: null };
@@ -582,7 +605,22 @@ export async function updateProjectInDB(id: string, updates: Partial<ProjectItem
     return { success: false, error: errJson.error || `Server error: ${res.status}` };
   } catch (err: any) {
     try {
-      const { error } = await supabase.from('projects').update(updates).eq('id', id);
+      const payload: any = { ...updates };
+      let { error } = await supabase.from('projects').update(payload).eq('id', id);
+
+      if (error && (error.code === '42703' || error.message?.includes('image_url'))) {
+        delete payload.image_url;
+        if (updates.image_url !== undefined) {
+          const currentTags = Array.isArray(payload.tags) ? payload.tags : [];
+          payload.tags = [
+            ...currentTags.filter((t: string) => !t.startsWith('__img__:')),
+            ...(updates.image_url ? [`__img__:${updates.image_url}`] : [])
+          ];
+        }
+        const retry = await supabase.from('projects').update(payload).eq('id', id);
+        error = retry.error;
+      }
+
       if (error) return { success: false, error: error.message };
       return { success: true, error: null };
     } catch (fallbackErr: any) {

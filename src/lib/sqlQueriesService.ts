@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     url TEXT NOT NULL,
+    image_url TEXT,
     description TEXT,
     category TEXT DEFAULT 'Portfolio',
     tags TEXT[] DEFAULT ARRAY[]::TEXT[],
@@ -78,6 +79,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS image_url TEXT;
 
 -- 3. GALLERY / VISUALS TABLE
 CREATE TABLE IF NOT EXISTS public.gallery (
