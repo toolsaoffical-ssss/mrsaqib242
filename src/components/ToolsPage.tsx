@@ -48,6 +48,9 @@ import {
   fetchToolsFromDB, 
   fetchToolCategoriesFromDB,
   fetchToolPageSettingsFromDB,
+  getLocalTools,
+  getLocalCategories,
+  getLocalPageSettings,
   DEFAULT_TOOLS,
   DEFAULT_TOOL_CATEGORIES,
   DEFAULT_TOOL_PAGE_SETTINGS
@@ -63,6 +66,30 @@ interface ToolsPageProps {
 }
 
 const FAVORITES_STORAGE_KEY = 'saqib_tool_favorites_v1';
+
+// Memoized Phone Clock to prevent entire ToolsPage from re-rendering every 10 seconds
+const PhoneClock = React.memo(function PhoneClock() {
+  const [time, setTime] = useState<string>('09:41');
+  const [date, setDate] = useState<string>('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
+      setDate(now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="font-mono text-sm font-black tracking-tight text-white">{time}</span>
+      <span className="text-[10px] text-zinc-400 font-medium">{date}</span>
+    </div>
+  );
+});
 
 const TOOLS_FAQS = [
   {
@@ -97,12 +124,13 @@ export default function ToolsPage({
   const { profile } = useProfileSettings();
   const whatsappLink = profile.whatsapp_url || (profile.phone ? `https://wa.me/${profile.phone.replace(/[^0-9]/g, '')}` : 'https://wa.me/923478936242');
 
-  const [tools, setTools] = useState<ToolItem[]>(DEFAULT_TOOLS);
-  const [categories, setCategories] = useState<ToolCategory[]>(DEFAULT_TOOL_CATEGORIES);
-  const [settings, setSettings] = useState<ToolPageSettings>(DEFAULT_TOOL_PAGE_SETTINGS);
+  // Ultra-fast 0ms instant hydration from LocalStorage cache!
+  const [tools, setTools] = useState<ToolItem[]>(() => getLocalTools());
+  const [categories, setCategories] = useState<ToolCategory[]>(() => getLocalCategories());
+  const [settings, setSettings] = useState<ToolPageSettings>(() => getLocalPageSettings());
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  
   // Default view is the requested mobile phone home screen!
   const [viewMode, setViewMode] = useState<'phone' | 'grid' | 'compact'>('phone');
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -122,7 +150,7 @@ export default function ToolsPage({
     }
   };
   
-    useEffect(() => {
+  useEffect(() => {
     if (settings.whatsapp_popup_enabled && settings.whatsapp_channel_link) {
       const timer = setTimeout(() => {
         setShowWhatsappPopup(true);
@@ -136,22 +164,8 @@ export default function ToolsPage({
   };
   
   // Mobile home screen states
-  const [currentTime, setCurrentTime] = useState<string>('09:41');
-  const [currentDate, setCurrentDate] = useState<string>('');
   const [selectedAppForSheet, setSelectedAppForSheet] = useState<ToolItem | null>(null);
   const [isPhoneFrameCentered, setIsPhoneFrameCentered] = useState<boolean>(false);
-
-  // Live Clock for Mobile Home Screen
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
-      setCurrentDate(now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 10000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Load favorites from local storage on client
   useEffect(() => {
@@ -165,12 +179,12 @@ export default function ToolsPage({
     }
   }, []);
 
-  // Scroll to top and fetch data on mount
+  // Scroll to top and fetch data silently in background on mount
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
     
+    let isMounted = true;
     async function loadData() {
-      setLoading(true);
       try {
         const [toolsRes, catRes, settingsRes] = await Promise.all([
           fetchToolsFromDB(),
@@ -178,6 +192,7 @@ export default function ToolsPage({
           fetchToolPageSettingsFromDB()
         ]);
 
+        if (!isMounted) return;
         if (toolsRes.tools && toolsRes.tools.length > 0) {
           setTools(toolsRes.tools.filter(t => t.is_active !== false));
         }
@@ -189,11 +204,10 @@ export default function ToolsPage({
         }
       } catch (err) {
         console.warn('Failed to load tools dynamically:', err);
-      } finally {
-        setLoading(false);
       }
     }
     loadData();
+    return () => { isMounted = false; };
   }, []);
 
   // Toggle favorite
@@ -340,12 +354,12 @@ export default function ToolsPage({
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-50 bg-[#08090e] text-white overflow-y-auto selection:bg-orange-500 selection:text-black"
     >
-      {/* Dynamic Background Ambient Light Gradients */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[550px] bg-gradient-to-b from-orange-500/15 via-purple-600/10 to-transparent blur-[140px] opacity-70" />
-        <div className="absolute top-1/4 -right-40 w-[600px] h-[600px] bg-blue-600/10 blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-10 -left-40 w-[600px] h-[600px] bg-orange-600/10 blur-[150px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
+      {/* Hardware-Accelerated Dynamic Background Ambient Light */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 contain-paint transform-gpu">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-gradient-to-b from-orange-500/15 via-purple-600/10 to-transparent blur-[80px] opacity-70 will-change-transform" />
+        <div className="absolute top-1/4 -right-20 w-[450px] h-[450px] bg-blue-600/10 blur-[90px] pointer-events-none will-change-transform" />
+        <div className="absolute bottom-10 -left-20 w-[450px] h-[450px] bg-orange-600/10 blur-[90px] pointer-events-none will-change-transform" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-35 pointer-events-none" />
       </div>
 
       {/* Floating Copied Toast Alert */}
@@ -521,11 +535,8 @@ export default function ToolsPage({
             
             {/* Top Status Bar — hidden on mobile to save space */}
             <div className="hidden sm:flex items-center justify-between text-xs font-semibold px-2 sm:px-4 pt-1 pb-4 border-b border-white/5">
-              {/* Left: Clock */}
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-sm font-black tracking-tight text-white">{currentTime}</span>
-                <span className="text-[10px] text-zinc-400 font-medium">{currentDate}</span>
-              </div>
+              {/* Left: Isolated Ultra-Fast Clock */}
+              <PhoneClock />
 
               {/* Center: Dynamic Island Pill */}
               <div className="group relative flex items-center gap-2 px-3 py-1 bg-black/90 border border-white/15 rounded-full shadow-inner cursor-pointer transition-transform hover:scale-105">
@@ -649,20 +660,17 @@ export default function ToolsPage({
                   const isInternal = tool.action_type === 'internal_route';
 
                   return (
-                    <motion.div
+                    <div
                       key={tool.id}
-                      whileHover={{ scale: 1.08, y: -4 }}
-                      whileTap={{ scale: 0.90 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                       onClick={(e) => handleToolClick(tool, e)}
-                      className="group flex flex-col items-center cursor-pointer select-none"
+                      className="group flex flex-col items-center cursor-pointer select-none transform transition-transform duration-150 active:scale-90 hover:scale-105 hover:-translate-y-1 will-change-transform"
                     >
                       {/* Squircle App Icon Container */}
                       <div className="relative">
                         {/* App Icon Body */}
                         <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-[22px] sm:rounded-[26px] bg-gradient-to-tr ${
                           tool.gradient || 'from-orange-500 to-amber-500'
-                        } flex items-center justify-center text-white shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.4)] border border-white/25 relative overflow-hidden transition-all duration-300 group-hover:shadow-[0_15px_30px_rgba(249,115,22,0.35)]`}>
+                        } flex items-center justify-center text-white shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.4)] border border-white/25 relative overflow-hidden transition-all duration-200 group-hover:shadow-[0_15px_30px_rgba(249,115,22,0.35)]`}>
                           
                           {/* Glossy Glass Highlight on Top Half (Realistic iOS Look) */}
                           <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent rounded-t-[22px] sm:rounded-t-[26px] pointer-events-none z-20" />
@@ -671,6 +679,8 @@ export default function ToolsPage({
                             <img
                               src={tool.logo_url}
                               alt={tool.title}
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-cover object-center relative z-10 select-none"
                               onError={(e) => {
                                 (e.target as HTMLElement).style.display = 'none';
@@ -678,7 +688,7 @@ export default function ToolsPage({
                             />
                           ) : (
                             /* Lucide Tool Icon */
-                            <ToolIcon name={tool.icon} size={28} className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] relative z-10 transition-transform group-hover:scale-110" />
+                            <ToolIcon name={tool.icon} size={28} className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] relative z-10 transition-transform duration-150 group-hover:scale-110" />
                           )}
                         </div>
 
@@ -704,7 +714,7 @@ export default function ToolsPage({
                       <span className="text-[9px] text-zinc-400 text-center truncate w-full px-1 font-normal">
                         {tool.category_name}
                       </span>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
@@ -716,11 +726,9 @@ export default function ToolsPage({
             <div className="mt-10 pt-4 border-t border-white/10">
               <div className="max-w-md mx-auto bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[32px] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-center justify-around">
                 {/* Dock App 1: Website Plans */}
-                <motion.button
-                  whileHover={{ scale: 1.15, y: -4 }}
-                  whileTap={{ scale: 0.9 }}
+                <button
                   onClick={onOpenWebsitePlans}
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer transform transition-transform duration-150 active:scale-90 hover:scale-110 hover:-translate-y-1 will-change-transform"
                   title="Website Plans & Packages"
                 >
                   <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-[20px] bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg border border-white/20 relative">
@@ -729,14 +737,12 @@ export default function ToolsPage({
                     <span className="absolute -top-1 -right-1 px-1 rounded-full bg-rose-600 text-white text-[8px] font-black">VIP</span>
                   </div>
                   <span className="text-[10px] font-bold text-white/90 mt-1">Plans</span>
-                </motion.button>
+                </button>
 
                 {/* Dock App 2: Free Courses */}
-                <motion.button
-                  whileHover={{ scale: 1.15, y: -4 }}
-                  whileTap={{ scale: 0.9 }}
+                <button
                   onClick={onOpenFreeCourses}
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer transform transition-transform duration-150 active:scale-90 hover:scale-110 hover:-translate-y-1 will-change-transform"
                   title="Free Development Courses"
                 >
                   <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-[20px] bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg border border-white/20 relative">
@@ -745,14 +751,12 @@ export default function ToolsPage({
                     <span className="absolute -top-1 -right-1 px-1 rounded-full bg-emerald-500 text-black text-[8px] font-black">FREE</span>
                   </div>
                   <span className="text-[10px] font-bold text-white/90 mt-1">Courses</span>
-                </motion.button>
+                </button>
 
                 {/* Dock App 3: Source Code Repos */}
-                <motion.button
-                  whileHover={{ scale: 1.15, y: -4 }}
-                  whileTap={{ scale: 0.9 }}
+                <button
                   onClick={onOpenSourceCode}
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer transform transition-transform duration-150 active:scale-90 hover:scale-110 hover:-translate-y-1 will-change-transform"
                   title="Open Source Repositories"
                 >
                   <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-[20px] bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg border border-white/20 relative">
@@ -761,16 +765,14 @@ export default function ToolsPage({
                     <span className="absolute -top-1 -right-1 px-1 rounded-full bg-blue-500 text-white text-[8px] font-black">GIT</span>
                   </div>
                   <span className="text-[10px] font-bold text-white/90 mt-1">Code</span>
-                </motion.button>
+                </button>
 
                 {/* Dock App 4: Direct WhatsApp */}
-                <motion.a
-                  whileHover={{ scale: 1.15, y: -4 }}
-                  whileTap={{ scale: 0.9 }}
+                <a
                   href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer transform transition-transform duration-150 active:scale-90 hover:scale-110 hover:-translate-y-1 will-change-transform"
                   title="Direct WhatsApp with Saqib"
                 >
                   <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-[20px] bg-gradient-to-tr from-[#25D366] to-[#128C7E] flex items-center justify-center text-white shadow-lg border border-white/20 relative">
@@ -779,7 +781,7 @@ export default function ToolsPage({
                     <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
                   </div>
                   <span className="text-[10px] font-bold text-white/90 mt-1">WhatsApp</span>
-                </motion.a>
+                </a>
               </div>
 
               {/* iPhone Home Swipe Bar Pill Indicator */}
@@ -820,7 +822,7 @@ export default function ToolsPage({
                     <div className="flex items-start justify-between mb-4">
                       <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${tool.gradient || 'from-orange-500 to-amber-500'} flex items-center justify-center text-white shadow-lg relative overflow-hidden`}>
                         {tool.logo_url ? (
-                          <img src={tool.logo_url} alt={tool.title} className="w-full h-full object-cover" />
+                          <img src={tool.logo_url} alt={tool.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         ) : (
                           <ToolIcon name={tool.icon} size={24} />
                         )}
@@ -876,7 +878,7 @@ export default function ToolsPage({
               <div className="flex items-center gap-4">
                 <div className={`w-9 h-9 rounded-[10px] bg-gradient-to-tr ${tool.gradient || 'from-orange-500 to-amber-500'} flex items-center justify-center text-white shrink-0 relative overflow-hidden`}>
                   {tool.logo_url ? (
-                    <img src={tool.logo_url} alt={tool.title} className="w-full h-full object-cover" />
+                    <img src={tool.logo_url} alt={tool.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   ) : (
                     <ToolIcon name={tool.icon} size={16} />
                   )}
@@ -1088,7 +1090,7 @@ export default function ToolsPage({
                   selectedAppForSheet.gradient || 'from-orange-500 to-amber-500'
                 } flex items-center justify-center text-white shadow-xl border border-white/25 shrink-0 relative overflow-hidden`}>
                   {selectedAppForSheet.logo_url ? (
-                    <img src={selectedAppForSheet.logo_url} alt={selectedAppForSheet.title} className="w-full h-full object-cover" />
+                    <img src={selectedAppForSheet.logo_url} alt={selectedAppForSheet.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   ) : (
                     <ToolIcon name={selectedAppForSheet.icon} size={32} />
                   )}

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import ToolsPage from '../components/ToolsPage';
-import WebsitePlansPage from '../components/WebsitePlansPage';
-import FreeCoursesModal from '../components/FreeCoursesModal';
-import SourceCodeModal from '../components/SourceCodeModal';
+
+// Code-split heavy modals to keep initial Tools JS bundle ultra-lean & fast
+const WebsitePlansPage = dynamic(() => import('../components/WebsitePlansPage'), { ssr: false });
+const FreeCoursesModal = dynamic(() => import('../components/FreeCoursesModal'), { ssr: false });
+const SourceCodeModal = dynamic(() => import('../components/SourceCodeModal'), { ssr: false });
 
 export default function ToolsRoute() {
   const router = useRouter();
@@ -293,6 +296,12 @@ export default function ToolsRoute() {
   return (
     <>
       <Head>
+        {/* Network Preconnect & DNS-Prefetch for Ultra-Fast Asset Delivery */}
+        <link rel="dns-prefetch" href="https://ik.imagekit.io" />
+        <link rel="preconnect" href="https://ik.imagekit.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
         <title key="title">Mr Saqib Web Tools &amp; Developer Utilities | Free Online Code Tools &amp; SEO Studio (Saqib 242)</title>
         <meta 
           key="description" 

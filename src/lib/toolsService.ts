@@ -404,7 +404,7 @@ const LOCAL_STORAGE_CATEGORIES_KEY = 'saqib_tool_categories_data_v1';
 const LOCAL_STORAGE_SETTINGS_KEY = 'saqib_tool_page_settings_v1';
 
 // Helper to get local cache
-function getLocalTools(): ToolItem[] {
+export function getLocalTools(): ToolItem[] {
   if (typeof window === 'undefined') return DEFAULT_TOOLS;
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_TOOLS_KEY);
@@ -415,7 +415,7 @@ function getLocalTools(): ToolItem[] {
   return DEFAULT_TOOLS;
 }
 
-function setLocalTools(tools: ToolItem[]) {
+export function setLocalTools(tools: ToolItem[]) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(LOCAL_STORAGE_TOOLS_KEY, JSON.stringify(tools));
@@ -424,7 +424,7 @@ function setLocalTools(tools: ToolItem[]) {
   }
 }
 
-function getLocalCategories(): ToolCategory[] {
+export function getLocalCategories(): ToolCategory[] {
   if (typeof window === 'undefined') return DEFAULT_TOOL_CATEGORIES;
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY);
@@ -435,7 +435,7 @@ function getLocalCategories(): ToolCategory[] {
   return DEFAULT_TOOL_CATEGORIES;
 }
 
-function setLocalCategories(categories: ToolCategory[]) {
+export function setLocalCategories(categories: ToolCategory[]) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(LOCAL_STORAGE_CATEGORIES_KEY, JSON.stringify(categories));
@@ -444,7 +444,7 @@ function setLocalCategories(categories: ToolCategory[]) {
   }
 }
 
-function getLocalPageSettings(): ToolPageSettings {
+export function getLocalPageSettings(): ToolPageSettings {
   if (typeof window === 'undefined') return DEFAULT_TOOL_PAGE_SETTINGS;
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY);
@@ -455,7 +455,7 @@ function getLocalPageSettings(): ToolPageSettings {
   return DEFAULT_TOOL_PAGE_SETTINGS;
 }
 
-function setLocalPageSettings(settings: ToolPageSettings) {
+export function setLocalPageSettings(settings: ToolPageSettings) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(LOCAL_STORAGE_SETTINGS_KEY, JSON.stringify(settings));
