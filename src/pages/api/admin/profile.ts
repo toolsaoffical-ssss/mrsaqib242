@@ -91,6 +91,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .single();
 
         if (!fallbackRes.error) {
+          const cookieHeaders = [
+            `ms_tg_url=${encodeURIComponent(payload.telegram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+            `ms_wa_url=${encodeURIComponent(payload.whatsapp_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+            `ms_tt_url=${encodeURIComponent(payload.tiktok_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+            `ms_fb_url=${encodeURIComponent(payload.facebook_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+            `ms_sc_url=${encodeURIComponent(payload.snapchat_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+            `ms_ig_url=${encodeURIComponent(payload.instagram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+          ];
+          res.setHeader('Set-Cookie', cookieHeaders);
           return res.status(200).json({ 
             success: true, 
             data: { ...fallbackRes.data, avatar_url, github_url, telegram_url },
@@ -102,6 +111,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (error) {
         return res.status(500).json({ error: error.message });
       }
+
+      const cookieHeaders = [
+        `ms_tg_url=${encodeURIComponent(payload.telegram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+        `ms_wa_url=${encodeURIComponent(payload.whatsapp_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+        `ms_tt_url=${encodeURIComponent(payload.tiktok_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+        `ms_fb_url=${encodeURIComponent(payload.facebook_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+        `ms_sc_url=${encodeURIComponent(payload.snapchat_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+        `ms_ig_url=${encodeURIComponent(payload.instagram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+      ];
+      res.setHeader('Set-Cookie', cookieHeaders);
 
       return res.status(200).json({ success: true, data });
     }

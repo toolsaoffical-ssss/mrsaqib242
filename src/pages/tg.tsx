@@ -15,8 +15,8 @@ const schemaData = {
       '@type': 'ContactPage',
       '@id': 'https://mrsaqib242.vercel.app/tg#webpage',
       url: 'https://mrsaqib242.vercel.app/tg',
-      name: 'Mr Saqib Official Telegram Channel & Direct Chat (@mrsaqib242)',
-      description: 'Official verified Telegram channel and priority chat for Muhammad Saqib (Mr Saqib / Saqib 242). Connect for high-speed Next.js web application development, custom software, cyber security audits, and client consultation in Pakistan (@mrsaqib242).',
+      name: 'Mr Saqib Official Telegram (@mrsaqib242) | Direct Chat & Developer Channel',
+      description: 'Official verified Telegram channel and priority direct chat for Muhammad Saqib (Mr Saqib / Saqib 242). Connect at https://t.me/mrsaqib242 for high-speed Next.js web application development, custom software, cyber security audits, and client consultation in Pakistan (@mrsaqib242).',
       inLanguage: ['en-US', 'ur-PK'],
       isPartOf: {
         '@type': 'WebSite',
@@ -35,14 +35,47 @@ const schemaData = {
       '@type': 'Person',
       '@id': 'https://mrsaqib242.vercel.app/#person',
       name: 'Muhammad Saqib',
-      alternateName: ['Mr Saqib', 'Saqib 242', 'mrsaqib242', 'Saqib Visuals'],
-      jobTitle: 'Lead Full-Stack Web Architect & Tech Creator',
+      alternateName: ['Mr Saqib', 'Saqib 242', 'mrsaqib242', 'Saqib Visuals', 'Saqib Dev'],
+      jobTitle: 'Lead Full-Stack Web Architect & Cyber Security Specialist',
+      telephone: '+923478936242',
+      email: 'mrsaqib242242@gmail.com',
       url: 'https://mrsaqib242.vercel.app',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Gojra',
+        addressRegion: 'Punjab',
+        addressCountry: 'PK'
+      },
+      knowsAbout: ['Next.js', 'React', 'Cyber Security', 'Full-Stack Web Development', 'Supabase', 'Generative AI API'],
       sameAs: [
         FALLBACK_TELEGRAM_URL,
         'https://wa.me/923478936242',
-        'https://github.com/techai342',
-        'https://instagram.com/mr_saqib242'
+        'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
+        'https://github.com/mrsaqib242',
+        'https://instagram.com/mr_saqib242',
+        'https://www.tiktok.com/@mr_saqib_242'
+      ]
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://mrsaqib242.vercel.app/tg#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How can I chat directly with Mr Saqib on Telegram?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'You can start a priority conversation with Muhammad Saqib on Telegram via https://t.me/mrsaqib242 or handle @mrsaqib242 for direct client inquiries and web engineering consultations.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'What services does Mr Saqib provide on Telegram?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Full-stack Next.js web application development, Supabase RLS cyber security audits, custom tools/APIs, and Google Gemini AI integrations.'
+          }
+        }
       ]
     },
     {
@@ -59,7 +92,7 @@ const schemaData = {
           '@type': 'ListItem',
           position: 2,
           name: 'Telegram Profile',
-          item: 'https://mrsaqib242.vercel.app/telegram'
+          item: 'https://mrsaqib242.vercel.app/tg'
         }
       ]
     }
@@ -134,19 +167,19 @@ export default function TelegramShortRedirectPage() {
         <link rel="preload" as="image" href={PREVIEW_IMAGE} />
 
         {/* Primary Search Engine Meta Tags */}
-        <title>Mr Saqib Official Telegram Channel &amp; Direct Chat (@mrsaqib242)</title>
-        <meta name="title" content="Mr Saqib Official Telegram Channel & Direct Chat (@mrsaqib242)" />
+        <title>Mr Saqib Official Telegram (@mrsaqib242) | Direct Chat &amp; Developer Channel</title>
+        <meta name="title" content="Mr Saqib Official Telegram (@mrsaqib242) | Direct Chat & Developer Channel" />
         <meta
           name="description"
-          content="Connect with Muhammad Saqib (Mr Saqib / Saqib 242) on Telegram (@mrsaqib242). Get priority developer support, Next.js code updates, cyber security alerts, and direct project consultations."
+          content="Connect with Muhammad Saqib (Mr Saqib / Saqib 242) on Telegram (@mrsaqib242). Get priority developer support, Next.js code updates, cyber security alerts, and direct project consultations (https://t.me/mrsaqib242)."
         />
         <meta
           name="keywords"
-          content="mr saqib tg, saqib tg, mr saqib telegram, saqib telegram, mrsaqib242 telegram, saqib 242 telegram, t.me/mrsaqib242, muhammad saqib telegram"
+          content="mr saqib telegram, saqib telegram, mr saqib tg, saqib tg, mrsaqib242 telegram, saqib 242 telegram, t.me/mrsaqib242, muhammad saqib telegram, saqib telegram channel, mr saqib, saqib 242, full stack developer telegram pakistan, hire saqib telegram, saqib visuals telegram, telegram web developer, 03478936242"
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://mrsaqib242.vercel.app/telegram" />
+        <link rel="canonical" href="https://mrsaqib242.vercel.app/tg" />
 
         {/* Fallback Refresh Meta */}
         <meta httpEquiv="refresh" content={`0; url=${FALLBACK_TELEGRAM_URL}`} />

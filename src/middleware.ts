@@ -75,12 +75,36 @@ export function middleware(request: NextRequest) {
     '/instagram': 'https://www.instagram.com/mr_saqib242',
     '/insta': 'https://www.instagram.com/mr_saqib242',
     '/ig': 'https://www.instagram.com/mr_saqib242',
+    '/telegram': 'https://t.me/mrsaqib242',
+    '/tg': 'https://t.me/mrsaqib242',
+    '/tele': 'https://t.me/mrsaqib242',
   };
 
-  const redirectTarget = SOCIAL_REDIRECTS[pathname];
+  const COOKIE_MAP: Record<string, string> = {
+    '/channel': 'ms_channel_url',
+    '/whatsapp': 'ms_wa_url',
+    '/wa': 'ms_wa_url',
+    '/tiktok': 'ms_tt_url',
+    '/tt': 'ms_tt_url',
+    '/facebook': 'ms_fb_url',
+    '/fb': 'ms_fb_url',
+    '/snapchat': 'ms_sc_url',
+    '/snap': 'ms_sc_url',
+    '/instagram': 'ms_ig_url',
+    '/insta': 'ms_ig_url',
+    '/ig': 'ms_ig_url',
+    '/telegram': 'ms_tg_url',
+    '/tg': 'ms_tg_url',
+    '/tele': 'ms_tg_url',
+  };
+
+  const cookieKey = COOKIE_MAP[pathname];
+  const dynamicFromCookie = cookieKey ? request.cookies.get(cookieKey)?.value : null;
+  const redirectTarget = dynamicFromCookie ? decodeURIComponent(dynamicFromCookie) : SOCIAL_REDIRECTS[pathname];
+
   if (redirectTarget) {
-    const redirectRes = NextResponse.redirect(redirectTarget, 308);
-    redirectRes.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+    const redirectRes = NextResponse.redirect(redirectTarget, 307);
+    redirectRes.headers.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=60');
     return redirectRes;
   }
 

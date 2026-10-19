@@ -149,6 +149,16 @@ export async function saveProfileSettingsToDB(
       localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedPayload));
       // Dispatch custom event so components listening can update instantly
       window.dispatchEvent(new CustomEvent('profile-settings-updated', { detail: mergedPayload }));
+
+      // Set cookies for Edge middleware instant redirects (<2ms)
+      if (typeof document !== 'undefined') {
+        if (mergedPayload.telegram_url) document.cookie = `ms_tg_url=${encodeURIComponent(mergedPayload.telegram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        if (mergedPayload.whatsapp_url) document.cookie = `ms_wa_url=${encodeURIComponent(mergedPayload.whatsapp_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        if (mergedPayload.tiktok_url) document.cookie = `ms_tt_url=${encodeURIComponent(mergedPayload.tiktok_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        if (mergedPayload.facebook_url) document.cookie = `ms_fb_url=${encodeURIComponent(mergedPayload.facebook_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        if (mergedPayload.snapchat_url) document.cookie = `ms_sc_url=${encodeURIComponent(mergedPayload.snapchat_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        if (mergedPayload.instagram_url) document.cookie = `ms_ig_url=${encodeURIComponent(mergedPayload.instagram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+      }
     } catch (e) {
       // ignore
     }
