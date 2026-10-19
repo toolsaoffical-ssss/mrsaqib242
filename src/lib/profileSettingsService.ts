@@ -17,6 +17,7 @@ export interface ProfileSettings {
   facebook_url: string;
   tiktok_url: string;
   snapchat_url: string;
+  telegram_url?: string;
   github_url?: string;
   avatar_url?: string;
   contract_status?: string;
@@ -40,6 +41,7 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   portfolio_url: 'https://mrsaqib242.vercel.app',
   resume_url: '/resume.pdf',
   whatsapp_url: 'https://wa.me/923478936242',
+  telegram_url: 'https://t.me/mrsaqib242',
   instagram_url: 'https://www.instagram.com/mr_saqib242',
   facebook_url: 'https://www.facebook.com/profile.php?id=100085188689033',
   tiktok_url: 'https://www.tiktok.com/@mr_saqib_242',
@@ -107,6 +109,7 @@ export async function fetchProfileSettingsFromDB(): Promise<{
         facebook_url: data.facebook_url || cached.facebook_url,
         tiktok_url: data.tiktok_url || cached.tiktok_url,
         snapchat_url: data.snapchat_url || cached.snapchat_url,
+        telegram_url: data.telegram_url || cached.telegram_url || DEFAULT_PROFILE_SETTINGS.telegram_url,
         github_url: data.github_url || cached.github_url || DEFAULT_PROFILE_SETTINGS.github_url,
         avatar_url: data.avatar_url || cached.avatar_url || DEFAULT_PROFILE_SETTINGS.avatar_url,
         contract_status: data.contract_status || cached.contract_status || DEFAULT_PROFILE_SETTINGS.contract_status,
@@ -178,34 +181,46 @@ export async function saveProfileSettingsToDB(
   }
 
   try {
-    const { data, error } = await supabase
+    const upsertData: any = {
+      id: 'default',
+      name: mergedPayload.name,
+      short_name: mergedPayload.short_name,
+      brand_name: mergedPayload.brand_name,
+      tagline: mergedPayload.tagline,
+      bio: mergedPayload.bio,
+      phone: mergedPayload.phone,
+      email: mergedPayload.email,
+      location: mergedPayload.location,
+      portfolio_url: mergedPayload.portfolio_url,
+      resume_url: mergedPayload.resume_url,
+      whatsapp_url: mergedPayload.whatsapp_url,
+      instagram_url: mergedPayload.instagram_url,
+      facebook_url: mergedPayload.facebook_url,
+      tiktok_url: mergedPayload.tiktok_url,
+      snapchat_url: mergedPayload.snapchat_url,
+      telegram_url: mergedPayload.telegram_url || 'https://t.me/mrsaqib242',
+      github_url: mergedPayload.github_url || '',
+      avatar_url: mergedPayload.avatar_url || '',
+      updated_at: mergedPayload.updated_at
+    };
+
+    let { data, error } = await supabase
       .from('profile_settings')
-      .upsert(
-        {
-          id: 'default',
-          name: mergedPayload.name,
-          short_name: mergedPayload.short_name,
-          brand_name: mergedPayload.brand_name,
-          tagline: mergedPayload.tagline,
-          bio: mergedPayload.bio,
-          phone: mergedPayload.phone,
-          email: mergedPayload.email,
-          location: mergedPayload.location,
-          portfolio_url: mergedPayload.portfolio_url,
-          resume_url: mergedPayload.resume_url,
-          whatsapp_url: mergedPayload.whatsapp_url,
-          instagram_url: mergedPayload.instagram_url,
-          facebook_url: mergedPayload.facebook_url,
-          tiktok_url: mergedPayload.tiktok_url,
-          snapchat_url: mergedPayload.snapchat_url,
-          github_url: mergedPayload.github_url || '',
-          avatar_url: mergedPayload.avatar_url || '',
-          updated_at: mergedPayload.updated_at
-        },
-        { onConflict: 'id' }
-      )
+      .upsert(upsertData, { onConflict: 'id' })
       .select()
       .single();
+
+    if (error && (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist'))) {
+      const { telegram_url, github_url, avatar_url, ...fallbackData } = upsertData;
+      const retry = await supabase
+        .from('profile_settings')
+        .upsert(fallbackData, { onConflict: 'id' })
+        .select()
+        .single();
+      if (!retry.error) {
+        return { success: true, data: (retry.data as ProfileSettings) || mergedPayload };
+      }
+    }
 
     if (error) {
       console.error('Supabase profile_settings upsert error:', error.message);

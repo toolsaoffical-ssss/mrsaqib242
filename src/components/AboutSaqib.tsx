@@ -253,6 +253,9 @@ export default function AboutSaqib() {
                   <a href={profile.snapchat_url || "https://www.snapchat.com/add/mrsaqib242"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-lg">
                     <span className="text-yellow-400">👻</span> Snapchat
                   </a>
+                  <a href={profile.telegram_url || "https://t.me/mrsaqib242"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-lg">
+                    <span className="text-sky-400">✈️</span> Telegram
+                  </a>
                 </div>
               </div>
             </div>

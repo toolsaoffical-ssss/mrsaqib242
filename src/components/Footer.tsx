@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { FaFacebookF, FaInstagram, FaWhatsapp, FaTiktok, FaSnapchatGhost } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaWhatsapp, FaTiktok, FaSnapchatGhost, FaTelegramPlane } from 'react-icons/fa';
 import { useProfileSettings } from '../hooks/useProfileSettings';
 
 export default function Footer() {
@@ -25,6 +25,12 @@ export default function Footer() {
       icon: FaWhatsapp,
       gradient: 'bg-gradient-to-b from-[#25D366] to-[#128C7E]',
       href: profile.whatsapp_url || (profile.phone ? `https://wa.me/${profile.phone.replace(/[^0-9]/g, '')}` : 'https://wa.me/923478936242')
+    },
+    {
+      name: 'Telegram',
+      icon: FaTelegramPlane,
+      gradient: 'bg-gradient-to-b from-[#2AABEE] to-[#229ED9]',
+      href: profile.telegram_url || 'https://t.me/mrsaqib242'
     },
     {
       name: 'TikTok',

@@ -21,6 +21,7 @@ ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS instagram_url TEXT 
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS facebook_url TEXT DEFAULT 'https://www.facebook.com/profile.php?id=100085188689033';
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS tiktok_url TEXT DEFAULT 'https://www.tiktok.com/@mr_saqib_242';
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS snapchat_url TEXT DEFAULT 'https://www.snapchat.com/add/mrsaqib242';
+ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS telegram_url TEXT DEFAULT 'https://t.me/mrsaqib242';
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS contract_status TEXT DEFAULT 'Open for New Projects';
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS contract_subtitle TEXT DEFAULT 'Remote Worldwide • NDA Protected';
 ALTER TABLE public.profile_settings ADD COLUMN IF NOT EXISTS availability_note TEXT DEFAULT 'Available for Remote Worldwide Contracts & Security Audits.';
@@ -46,7 +47,8 @@ INSERT INTO public.profile_settings (
   instagram_url,
   facebook_url,
   tiktok_url,
-  snapchat_url
+  snapchat_url,
+  telegram_url
 ) VALUES (
   'default',
   'Muhammad Saqib',
@@ -65,7 +67,8 @@ INSERT INTO public.profile_settings (
   'https://www.instagram.com/mr_saqib242',
   'https://www.facebook.com/profile.php?id=100085188689033',
   'https://www.tiktok.com/@mr_saqib_242',
-  'https://www.snapchat.com/add/mrsaqib242'
+  'https://www.snapchat.com/add/mrsaqib242',
+  'https://t.me/mrsaqib242'
 )
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
@@ -85,6 +88,7 @@ ON CONFLICT (id) DO UPDATE SET
   facebook_url = EXCLUDED.facebook_url,
   tiktok_url = EXCLUDED.tiktok_url,
   snapchat_url = EXCLUDED.snapchat_url,
+  telegram_url = EXCLUDED.telegram_url,
   updated_at = NOW();
 
 -- 3. Row Level Security: Allow public read, and allow admin/service role full control

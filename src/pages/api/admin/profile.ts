@@ -64,6 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         facebook_url: raw.facebook_url !== undefined ? String(raw.facebook_url).trim() : DEFAULT_PROFILE_SETTINGS.facebook_url,
         tiktok_url: raw.tiktok_url !== undefined ? String(raw.tiktok_url).trim() : DEFAULT_PROFILE_SETTINGS.tiktok_url,
         snapchat_url: raw.snapchat_url !== undefined ? String(raw.snapchat_url).trim() : DEFAULT_PROFILE_SETTINGS.snapchat_url,
+        telegram_url: raw.telegram_url !== undefined ? String(raw.telegram_url).trim() : (DEFAULT_PROFILE_SETTINGS.telegram_url || 'https://t.me/mrsaqib242'),
         github_url: raw.github_url !== undefined ? String(raw.github_url).trim() : (DEFAULT_PROFILE_SETTINGS.github_url || ''),
         contract_status: raw.contract_status !== undefined ? String(raw.contract_status).trim() : DEFAULT_PROFILE_SETTINGS.contract_status,
         contract_subtitle: raw.contract_subtitle !== undefined ? String(raw.contract_subtitle).trim() : DEFAULT_PROFILE_SETTINGS.contract_subtitle,
@@ -82,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // If database is missing newly added columns (error 42703), retry without those columns
       if (error && (error.code === '42703' || error.message?.includes('column') || error.message?.includes('does not exist'))) {
         console.warn('Profile settings column missing, attempting fallback without new columns:', error.message);
-        const { avatar_url, github_url, ...fallbackPayload } = payload;
+        const { avatar_url, github_url, telegram_url, ...fallbackPayload } = payload;
         const fallbackRes = await client
           .from('profile_settings')
           .upsert(fallbackPayload, { onConflict: 'id' })
@@ -92,8 +93,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!fallbackRes.error) {
           return res.status(200).json({ 
             success: true, 
-            data: { ...fallbackRes.data, avatar_url, github_url },
-            warning: 'Saved partially: avatar_url or github_url column is missing in Supabase. Please run the SQL migration query provided in the admin panel.'
+            data: { ...fallbackRes.data, avatar_url, github_url, telegram_url },
+            warning: 'Saved partially: telegram_url, avatar_url, or github_url column is missing in Supabase. Please run the SQL migration query provided in the admin panel.'
           });
         }
       }

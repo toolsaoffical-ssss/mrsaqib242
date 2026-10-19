@@ -343,6 +343,23 @@
         </div>
       </a>
 
+      <!-- Telegram Card (Conditional) -->
+      <a id="card-telegram" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group hidden">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-brands fa-telegram"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[10px] uppercase font-bold text-sky-400/80 tracking-wider">Direct Chat & Channel</div>
+            <div class="text-sm font-bold text-white group-hover:text-sky-400 transition-colors">Telegram</div>
+            <div class="text-xs text-zinc-400 font-mono truncate">@mrsaqib242</div>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-sky-500/20 text-zinc-400 group-hover:text-sky-400 flex items-center justify-center transition-colors shrink-0">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </div>
+      </a>
+
       <!-- 10. Resume / CV Download (Conditional) -->
       <a id="card-resume" href="#" target="_blank" class="glass-card rounded-2xl p-4 flex items-center justify-between group hidden">
         <div class="flex items-center gap-3.5 min-w-0">
@@ -468,6 +485,11 @@
             const sc = document.getElementById('card-snapchat');
             sc.href = p.snapchat;
             sc.classList.remove('hidden');
+          }
+          if (p.telegram && p.telegram.trim() !== '') {
+            const tg = document.getElementById('card-telegram');
+            tg.href = p.telegram;
+            tg.classList.remove('hidden');
           }
           if (p.resume && p.resume.trim() !== '') {
             const cv = document.getElementById('card-resume');

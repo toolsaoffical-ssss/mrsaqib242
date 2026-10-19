@@ -41,6 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         facebook: profile?.facebook_url || "",
         tiktok: profile?.tiktok_url || "",
         snapchat: profile?.snapchat_url || "",
+        telegram: profile?.telegram_url || "https://t.me/mrsaqib242",
         portfolio: profile?.portfolio_url || "https://mrsaqib242.vercel.app",
         github: profile?.github_url || "https://github.com/mrsaqib242",
         resume: profile?.resume_url || "/resume.pdf",

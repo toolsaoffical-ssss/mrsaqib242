@@ -19,6 +19,7 @@ import {
   Camera, 
   Link2
 } from 'lucide-react';
+import { FaTelegramPlane } from 'react-icons/fa';
 import { 
   ProfileSettings, 
   DEFAULT_PROFILE_SETTINGS, 
@@ -690,6 +691,34 @@ export default function AdminProfileContactManager({
                       onNotify('Copied /snapchat short link!', 'success');
                     }}
                     className="text-yellow-300 hover:underline cursor-pointer"
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+
+              {/* Telegram */}
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-sky-400 mb-2 flex items-center gap-1.5">
+                  <FaTelegramPlane size={13} />
+                  <span>Telegram Profile / Channel URL (@mrsaqib242)</span>
+                </label>
+                <input
+                  type="url"
+                  value={profile.telegram_url || ''}
+                  onChange={e => handleChange('telegram_url', e.target.value)}
+                  placeholder="https://t.me/mrsaqib242"
+                  className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-sky-400 font-mono transition-colors"
+                />
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5 font-mono bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span>Redirects from: <strong className="text-sky-400">/telegram</strong> (or /tg)</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/telegram');
+                      onNotify('Copied /telegram short link!', 'success');
+                    }}
+                    className="text-sky-400 hover:underline cursor-pointer"
                   >
                     Copy Link
                   </button>

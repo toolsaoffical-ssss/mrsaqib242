@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
     facebook_url TEXT DEFAULT 'https://www.facebook.com/profile.php?id=100085188689033',
     tiktok_url TEXT DEFAULT 'https://www.tiktok.com/@mr_saqib_242',
     snapchat_url TEXT DEFAULT 'https://www.snapchat.com/add/mrsaqib242',
+    telegram_url TEXT DEFAULT 'https://t.me/mrsaqib242',
     avatar_url TEXT DEFAULT 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
     github_url TEXT DEFAULT 'https://github.com/mrsaqib242',
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -1157,6 +1158,7 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
     facebook_url TEXT,
     tiktok_url TEXT,
     snapchat_url TEXT,
+    telegram_url TEXT DEFAULT 'https://t.me/mrsaqib242',
     avatar_url TEXT DEFAULT 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
     github_url TEXT DEFAULT 'https://github.com/mrsaqib242',
     updated_at TIMESTAMPTZ DEFAULT NOW()

@@ -45,7 +45,8 @@ import {
   SiTiktok, 
   SiFacebook, 
   SiSnapchat, 
-  SiGithub 
+  SiGithub,
+  SiTelegram
 } from 'react-icons/si';
 import { useProfileSettings } from '../hooks/useProfileSettings';
 
@@ -1232,6 +1233,22 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                   </div>
                 </a>
 
+                {/* Telegram */}
+                <a 
+                  href={profile.telegram_url || "https://t.me/mrsaqib242"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3.5 bg-white/50 p-3.5 rounded-2xl shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white hover:bg-white transition-all group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600 shrink-0 group-hover:scale-110 transition-transform">
+                    <SiTelegram size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-sky-500 mb-0.5">Telegram</h4>
+                    <p className="text-zinc-800 font-extrabold text-sm">@mrsaqib242</p>
+                  </div>
+                </a>
+
                 {/* Resume Download */}
                 <a 
                   href={profile.resume_url || '/resume.pdf'}
@@ -1366,6 +1383,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {[
                 { name: 'WhatsApp', icon: SiWhatsapp, link: getWhatsAppLink(), color: "text-[#25D366]" },
+                { name: 'Telegram', icon: SiTelegram, link: profile.telegram_url || "https://t.me/mrsaqib242", color: "text-[#229ED9]" },
                 { name: 'Instagram', icon: SiInstagram, link: profile.instagram_url || "https://www.instagram.com/mr_saqib242", color: "text-[#E1306C]" },
                 { name: 'TikTok', icon: SiTiktok, link: profile.tiktok_url || "https://www.tiktok.com/@mr_saqib_242", color: "text-zinc-900" },
                 { name: 'Facebook', icon: SiFacebook, link: profile.facebook_url || "https://www.facebook.com/profile.php?id=100085188689033", color: "text-[#1877F2]" },
