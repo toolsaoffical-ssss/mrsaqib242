@@ -160,8 +160,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <link rel="alternate" type="text/markdown" href="https://mrsaqib242.vercel.app/llms.txt" title="LLM Summary Index" />
 
         {/* Google Verification */}
-        <meta name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />
-        <meta name="google-site-verification" content="pD9l-_LAF1RsTG4Rnm9PoxzFPDBZ2epWCg8kJ8Vjgu4" />
+        <meta key="gsv-1" name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />
+        <meta key="gsv-2" name="google-site-verification" content="pD9l-_LAF1RsTG4Rnm9PoxzFPDBZ2epWCg8kJ8Vjgu4" />
 
         {/* Geographic Targeting */}
         <meta name="geo.region" content="PK-PB" />

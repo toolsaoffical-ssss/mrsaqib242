@@ -11,6 +11,10 @@ export default function Home() {
         <meta key="keywords" name="keywords" content="mr saqib, mrsaqib242, cyber security expert, backend developer, frontend developer, app developer, supabase rls security, next.js security, web developer pakistan, saqib visuals" />
         <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/" />
 
+        {/* Google Search Console Verification */}
+        <meta key="gsv-home-1" name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />
+        <meta key="gsv-home-2" name="google-site-verification" content="pD9l-_LAF1RsTG4Rnm9PoxzFPDBZ2epWCg8kJ8Vjgu4" />
+
         {/* Title Bar Icon & Favicons */}
         <link key="icon" rel="icon" type="image/png" sizes="32x32" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png?tr=w-32,h-32,fo-auto,q-90" />
         <link key="apple-icon" rel="apple-touch-icon" sizes="180x180" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png?tr=w-180,h-180,fo-auto,q-90" />
