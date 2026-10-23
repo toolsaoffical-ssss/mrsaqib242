@@ -7,6 +7,7 @@ export default function Document() {
         {/* Google Search Console Verification Tags */}
         <meta name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />
         <meta name="google-site-verification" content="pD9l-_LAF1RsTG4Rnm9PoxzFPDBZ2epWCg8kJ8Vjgu4" />
+        <meta name="google-site-verification" content="JYF7qpcKCtA-hnnj4QrK1cAxy2cVOs61nLSLANTRkDM" />
 
         {/* Preconnect for external media CDN */}
         <link rel="preconnect" href="https://ik.imagekit.io" />

@@ -14,6 +14,7 @@ export default function Home() {
         {/* Google Search Console Verification */}
         <meta key="gsv-home-1" name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />
         <meta key="gsv-home-2" name="google-site-verification" content="pD9l-_LAF1RsTG4Rnm9PoxzFPDBZ2epWCg8kJ8Vjgu4" />
+        <meta key="gsv-home-3" name="google-site-verification" content="JYF7qpcKCtA-hnnj4QrK1cAxy2cVOs61nLSLANTRkDM" />
 
         {/* Title Bar Icon & Favicons */}
         <link key="icon" rel="icon" type="image/png" sizes="32x32" href="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png?tr=w-32,h-32,fo-auto,q-90" />

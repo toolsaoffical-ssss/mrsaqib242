@@ -162,6 +162,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         {/* Google Verification */}
         <meta key="gsv-1" name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />
         <meta key="gsv-2" name="google-site-verification" content="pD9l-_LAF1RsTG4Rnm9PoxzFPDBZ2epWCg8kJ8Vjgu4" />
+        <meta key="gsv-3" name="google-site-verification" content="JYF7qpcKCtA-hnnj4QrK1cAxy2cVOs61nLSLANTRkDM" />
 
         {/* Geographic Targeting */}
         <meta name="geo.region" content="PK-PB" />
