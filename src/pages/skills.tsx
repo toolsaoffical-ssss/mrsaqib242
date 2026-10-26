@@ -8,26 +8,26 @@ export default function Skills() {
     "@graph": [
       {
         "@type": "BreadcrumbList",
-        "@id": "https://mrsaqib242.vercel.app/skills#breadcrumb",
+        "@id": "https://www.mrsaqib.me/skills#breadcrumb",
         "itemListElement": [
           {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://mrsaqib242.vercel.app/"
+            "item": "https://www.mrsaqib.me/"
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Skills & Tech Stack",
-            "item": "https://mrsaqib242.vercel.app/skills"
+            "item": "https://www.mrsaqib.me/skills"
           }
         ]
       },
       {
         "@type": "ProfilePage",
-        "@id": "https://mrsaqib242.vercel.app/skills#profile",
-        "url": "https://mrsaqib242.vercel.app/skills",
+        "@id": "https://www.mrsaqib.me/skills#profile",
+        "url": "https://www.mrsaqib.me/skills",
         "name": "Mr Saqib Skills | Full-Stack Developer & Cyber Security Expert Pakistan",
         "alternateName": [
           "Mr Saqib Skills",
@@ -40,22 +40,22 @@ export default function Skills() {
         "description": "Deep-dive into the technical expertise of Mr Saqib (mrsaqib242): Zero-Trust Cyber Security, Supabase RLS, Node.js Backends, Next.js 15 Frontend, and Cross-Platform Mobile Applications in Pakistan.",
         "isPartOf": {
           "@type": "WebSite",
-          "@id": "https://mrsaqib242.vercel.app/#website",
-          "url": "https://mrsaqib242.vercel.app",
+          "@id": "https://www.mrsaqib.me/#website",
+          "url": "https://www.mrsaqib.me",
           "name": "Mr Saqib Developer Portfolio"
         },
-        "about": { "@id": "https://mrsaqib242.vercel.app/#person" },
-        "mainEntity": { "@id": "https://mrsaqib242.vercel.app/#person" }
+        "about": { "@id": "https://www.mrsaqib.me/#person" },
+        "mainEntity": { "@id": "https://www.mrsaqib.me/#person" }
       },
       {
         "@type": "Person",
-        "@id": "https://mrsaqib242.vercel.app/#person",
+        "@id": "https://www.mrsaqib.me/#person",
         "name": "Muhammad Saqib",
         "alternateName": ["Mr Saqib", "Saqib 242", "mrsaqib242", "Saqib Dev"],
         "telephone": "03478936242",
         "email": "mrsaqib242242@gmail.com",
         "jobTitle": "Cyber Security Expert & Full-Stack App Developer",
-        "url": "https://mrsaqib242.vercel.app",
+        "url": "https://www.mrsaqib.me",
         "image": "https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png",
         "address": {
           "@type": "PostalAddress",
@@ -112,7 +112,7 @@ export default function Skills() {
                 "@type": "Service",
                 "name": "Full-Stack Next.js & React Web Application Development",
                 "description": "Custom high-performance web applications built with Next.js 15, TypeScript, Tailwind CSS, and scalable backends.",
-                "provider": { "@id": "https://mrsaqib242.vercel.app/#person" },
+                "provider": { "@id": "https://www.mrsaqib.me/#person" },
                 "areaServed": ["Pakistan", "Worldwide"]
               }
             },
@@ -122,7 +122,7 @@ export default function Skills() {
                 "@type": "Service",
                 "name": "Cyber Security Hardening & Penetration Testing",
                 "description": "Supabase Row-Level Security (RLS) enforcement, OWASP Top 10 vulnerability remediation, and API defense.",
-                "provider": { "@id": "https://mrsaqib242.vercel.app/#person" },
+                "provider": { "@id": "https://www.mrsaqib.me/#person" },
                 "areaServed": ["Pakistan", "Worldwide"]
               }
             }
@@ -131,7 +131,7 @@ export default function Skills() {
       },
       {
         "@type": "ItemList",
-        "@id": "https://mrsaqib242.vercel.app/skills#skillset",
+        "@id": "https://www.mrsaqib.me/skills#skillset",
         "name": "Mr Saqib Technical Skills Inventory",
         "description": "Verified production competencies across Frontend, Backend, Cyber Security, and Mobile App engineering.",
         "itemListElement": [
@@ -169,7 +169,7 @@ export default function Skills() {
       },
       {
         "@type": "FAQPage",
-        "@id": "https://mrsaqib242.vercel.app/skills#faq",
+        "@id": "https://www.mrsaqib.me/skills#faq",
         "mainEntity": [
           {
             "@type": "Question",
@@ -224,13 +224,13 @@ export default function Skills() {
         />
         
         {/* Canonical */}
-        <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/skills" />
+        <link key="canonical" rel="canonical" href="https://www.mrsaqib.me/skills" />
 
         {/* OpenGraph & WhatsApp Preview */}
         <meta key="og:type" property="og:type" content="website" />
         <meta key="og:title" property="og:title" content="Mr Saqib Skills | Full-Stack Developer &amp; Cyber Security Expert Pakistan (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Explore Mr Saqib's (Saqib 242) technical skills: Full-Stack Next.js 15 &amp; React 19 web development, Zero-Trust Cyber Security &amp; Supabase RLS, Node.js backends, and Mobile PWAs in Pakistan. Contact: 03478936242." />
-        <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/skills" />
+        <meta key="og:url" property="og:url" content="https://www.mrsaqib.me/skills" />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:image:type" property="og:image:type" content="image/png" />

@@ -195,7 +195,7 @@ export const DEFAULT_PROJECTS: ProjectItem[] = [
   },
   { 
     name: "MrSaqib242 Hub", 
-    url: "https://mrsaqib242.vercel.app/", 
+    url: "https://www.mrsaqib.me/", 
     tags: ["Portfolio"], 
     restricted: false,
     description: "The ultimate showcase of custom web widgets, high-conversion landing pages, and API microservices.",
@@ -206,7 +206,7 @@ export const DEFAULT_PROJECTS: ProjectItem[] = [
   },
   { 
     name: "Saqib Space", 
-    url: "https://mrsaqib242.vercel.app/", 
+    url: "https://www.mrsaqib.me/", 
     tags: ["Portfolio"], 
     restricted: false,
     description: "An elegant, bespoke shared creative space designed with dynamic visual typography and fluid mechanics.",

@@ -13,16 +13,16 @@ const schemaData = {
   '@graph': [
     {
       '@type': 'WebPage',
-      '@id': 'https://mrsaqib242.vercel.app/snapchat#webpage',
-      url: 'https://mrsaqib242.vercel.app/snapchat',
+      '@id': 'https://www.mrsaqib.me/snapchat#webpage',
+      url: 'https://www.mrsaqib.me/snapchat',
       name: 'Muhammad Saqib Official Snapchat | Add on Snap (@mrsaqib242)',
       description: 'Official verified Snapchat profile of Muhammad Saqib (Mr Saqib / Saqib 242). Behind-the-scenes developer stories, coding life in Pakistan, and instant snaps.',
       inLanguage: ['en-US', 'ur-PK'],
       isPartOf: {
         '@type': 'WebSite',
-        '@id': 'https://mrsaqib242.vercel.app/#website',
+        '@id': 'https://www.mrsaqib.me/#website',
         name: 'Mr Saqib Developer Portfolio',
-        url: 'https://mrsaqib242.vercel.app'
+        url: 'https://www.mrsaqib.me'
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
@@ -33,11 +33,11 @@ const schemaData = {
     },
     {
       '@type': 'Person',
-      '@id': 'https://mrsaqib242.vercel.app/#person',
+      '@id': 'https://www.mrsaqib.me/#person',
       name: 'Muhammad Saqib',
       alternateName: ['Mr Saqib', 'Saqib 242', 'mrsaqib242'],
       jobTitle: 'Lead Full-Stack Web Architect',
-      url: 'https://mrsaqib242.vercel.app',
+      url: 'https://www.mrsaqib.me',
       sameAs: [
         FALLBACK_SNAPCHAT_URL,
         'https://wa.me/923478936242',
@@ -47,19 +47,19 @@ const schemaData = {
     },
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://mrsaqib242.vercel.app/snapchat#breadcrumb',
+      '@id': 'https://www.mrsaqib.me/snapchat#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://mrsaqib242.vercel.app'
+          item: 'https://www.mrsaqib.me'
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Snapchat Profile',
-          item: 'https://mrsaqib242.vercel.app/snapchat'
+          item: 'https://www.mrsaqib.me/snapchat'
         }
       ]
     }
@@ -144,11 +144,11 @@ export default function SnapchatRedirectPage() {
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://mrsaqib242.vercel.app/snapchat" />
+        <link rel="canonical" href="https://www.mrsaqib.me/snapchat" />
 
         {/* OpenGraph / Social Rich Preview Card */}
         <meta property="og:type" content="profile" />
-        <meta property="og:url" content="https://mrsaqib242.vercel.app/snapchat" />
+        <meta property="og:url" content="https://www.mrsaqib.me/snapchat" />
         <meta property="og:site_name" content="Mr Saqib Developer Showcase" />
         <meta property="og:title" content="Add Muhammad Saqib on Snapchat (@mrsaqib242)" />
         <meta
@@ -164,7 +164,7 @@ export default function SnapchatRedirectPage() {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://mrsaqib242.vercel.app/snapchat" />
+        <meta name="twitter:url" content="https://www.mrsaqib.me/snapchat" />
         <meta name="twitter:title" content="Add Muhammad Saqib on Snapchat (@mrsaqib242)" />
         <meta
           name="twitter:description"

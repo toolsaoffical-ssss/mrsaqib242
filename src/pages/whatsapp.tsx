@@ -12,16 +12,16 @@ const schemaData = {
   '@graph': [
     {
       '@type': 'ContactPage',
-      '@id': 'https://mrsaqib242.vercel.app/whatsapp#webpage',
-      url: 'https://mrsaqib242.vercel.app/whatsapp',
+      '@id': 'https://www.mrsaqib.me/whatsapp#webpage',
+      url: 'https://www.mrsaqib.me/whatsapp',
       name: 'Chat with Mr Saqib on WhatsApp | Direct Contact & Consultation (03478936242)',
       description: 'Direct verified WhatsApp contact channel of Muhammad Saqib (Mr Saqib / Saqib 242). Connect for high-speed web application development, custom software, security audits, and client consultation in Pakistan (+92 347 8936242).',
       inLanguage: ['en-US', 'ur-PK'],
       isPartOf: {
         '@type': 'WebSite',
-        '@id': 'https://mrsaqib242.vercel.app/#website',
+        '@id': 'https://www.mrsaqib.me/#website',
         name: 'Mr Saqib Developer Portfolio',
-        url: 'https://mrsaqib242.vercel.app'
+        url: 'https://www.mrsaqib.me'
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
@@ -32,13 +32,13 @@ const schemaData = {
     },
     {
       '@type': 'Person',
-      '@id': 'https://mrsaqib242.vercel.app/#person',
+      '@id': 'https://www.mrsaqib.me/#person',
       name: 'Muhammad Saqib',
       alternateName: ['Mr Saqib', 'Saqib 242', 'Saqib Visuals', 'Saqib Dev'],
       jobTitle: 'Lead Full-Stack Web Architect & Cyber Security Specialist',
       telephone: '+923478936242',
       email: 'mrsaqib242242@gmail.com',
-      url: 'https://mrsaqib242.vercel.app',
+      url: 'https://www.mrsaqib.me',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Gojra',
@@ -54,14 +54,14 @@ const schemaData = {
     },
     {
       '@type': 'FAQPage',
-      '@id': 'https://mrsaqib242.vercel.app/whatsapp#faq',
+      '@id': 'https://www.mrsaqib.me/whatsapp#faq',
       mainEntity: [
         {
           '@type': 'Question',
           name: 'How do I contact Mr Saqib directly on WhatsApp?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'You can chat directly with Muhammad Saqib on WhatsApp at +92 347 8936242 (03478936242) or by visiting https://mrsaqib242.vercel.app/whatsapp or https://wa.me/923478936242.'
+            text: 'You can chat directly with Muhammad Saqib on WhatsApp at +92 347 8936242 (03478936242) or by visiting https://www.mrsaqib.me/whatsapp or https://wa.me/923478936242.'
           }
         },
         {
@@ -84,19 +84,19 @@ const schemaData = {
     },
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://mrsaqib242.vercel.app/whatsapp#breadcrumb',
+      '@id': 'https://www.mrsaqib.me/whatsapp#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://mrsaqib242.vercel.app'
+          item: 'https://www.mrsaqib.me'
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Direct WhatsApp Chat',
-          item: 'https://mrsaqib242.vercel.app/whatsapp'
+          item: 'https://www.mrsaqib.me/whatsapp'
         }
       ]
     }
@@ -183,7 +183,7 @@ export default function WhatsAppRedirectPage() {
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://mrsaqib242.vercel.app/whatsapp" />
+        <link rel="canonical" href="https://www.mrsaqib.me/whatsapp" />
 
         {/* Geographic / Regional SEO Tags */}
         <meta name="geo.region" content="PK-PB" />
@@ -193,7 +193,7 @@ export default function WhatsAppRedirectPage() {
 
         {/* OpenGraph / WhatsApp Rich Preview Card */}
         <meta property="og:type" content="profile" />
-        <meta property="og:url" content="https://mrsaqib242.vercel.app/whatsapp" />
+        <meta property="og:url" content="https://www.mrsaqib.me/whatsapp" />
         <meta property="og:site_name" content="Mr Saqib Developer Showcase" />
         <meta property="og:title" content="Chat with Mr Saqib on WhatsApp (+92 347 8936242)" />
         <meta
@@ -209,7 +209,7 @@ export default function WhatsAppRedirectPage() {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://mrsaqib242.vercel.app/whatsapp" />
+        <meta name="twitter:url" content="https://www.mrsaqib.me/whatsapp" />
         <meta name="twitter:title" content="Chat with Mr Saqib on WhatsApp (+92 347 8936242)" />
         <meta
           name="twitter:description"

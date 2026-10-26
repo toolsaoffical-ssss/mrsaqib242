@@ -153,8 +153,8 @@ export default function AboutSaqib() {
               <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-6">
                 Saqib242 is active across different platforms where he shares his work, ideas, and creative projects. His official portfolio website showcases his latest work, skills, and contact details.
               </p>
-              <a href="https://mrsaqib242.vercel.app/" className="inline-flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors break-all">
-                🔗 mrsaqib242.vercel.app
+              <a href="https://www.mrsaqib.me/" className="inline-flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors break-all">
+                🔗 www.mrsaqib.me
               </a>
             </motion.div>
 

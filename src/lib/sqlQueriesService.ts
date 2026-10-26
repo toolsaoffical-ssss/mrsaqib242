@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS public.profile_settings (
     phone TEXT DEFAULT '03478936242',
     email TEXT DEFAULT 'mrsaqib242242@gmail.com',
     location TEXT DEFAULT 'Faisalabad, Pakistan',
-    portfolio_url TEXT DEFAULT 'https://mrsaqib242.vercel.app',
+    portfolio_url TEXT DEFAULT 'https://www.mrsaqib.me',
     resume_url TEXT DEFAULT '/resume.pdf',
     whatsapp_url TEXT DEFAULT 'https://wa.me/923478936242',
     instagram_url TEXT DEFAULT 'https://www.instagram.com/mr_saqib242',

@@ -13,16 +13,16 @@ const schemaData = {
   '@graph': [
     {
       '@type': 'ContactPage',
-      '@id': 'https://mrsaqib242.vercel.app/telegram#webpage',
-      url: 'https://mrsaqib242.vercel.app/telegram',
+      '@id': 'https://www.mrsaqib.me/telegram#webpage',
+      url: 'https://www.mrsaqib.me/telegram',
       name: 'Mr Saqib Official Telegram (@mrsaqib242) | Direct Chat & Developer Channel',
       description: 'Official verified Telegram channel and priority direct chat for Muhammad Saqib (Mr Saqib / Saqib 242). Connect at https://t.me/mrsaqib242 for high-speed Next.js web application development, custom software, cyber security audits, and client consultation in Pakistan (@mrsaqib242).',
       inLanguage: ['en-US', 'ur-PK'],
       isPartOf: {
         '@type': 'WebSite',
-        '@id': 'https://mrsaqib242.vercel.app/#website',
+        '@id': 'https://www.mrsaqib.me/#website',
         name: 'Mr Saqib Developer Portfolio',
-        url: 'https://mrsaqib242.vercel.app'
+        url: 'https://www.mrsaqib.me'
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
@@ -33,13 +33,13 @@ const schemaData = {
     },
     {
       '@type': 'Person',
-      '@id': 'https://mrsaqib242.vercel.app/#person',
+      '@id': 'https://www.mrsaqib.me/#person',
       name: 'Muhammad Saqib',
       alternateName: ['Mr Saqib', 'Saqib 242', 'mrsaqib242', 'Saqib Visuals', 'Saqib Dev'],
       jobTitle: 'Lead Full-Stack Web Architect & Cyber Security Specialist',
       telephone: '+923478936242',
       email: 'mrsaqib242242@gmail.com',
-      url: 'https://mrsaqib242.vercel.app',
+      url: 'https://www.mrsaqib.me',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Gojra',
@@ -58,7 +58,7 @@ const schemaData = {
     },
     {
       '@type': 'FAQPage',
-      '@id': 'https://mrsaqib242.vercel.app/telegram#faq',
+      '@id': 'https://www.mrsaqib.me/telegram#faq',
       mainEntity: [
         {
           '@type': 'Question',
@@ -80,19 +80,19 @@ const schemaData = {
     },
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://mrsaqib242.vercel.app/telegram#breadcrumb',
+      '@id': 'https://www.mrsaqib.me/telegram#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://mrsaqib242.vercel.app'
+          item: 'https://www.mrsaqib.me'
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Telegram Profile',
-          item: 'https://mrsaqib242.vercel.app/telegram'
+          item: 'https://www.mrsaqib.me/telegram'
         }
       ]
     }
@@ -184,11 +184,11 @@ export default function TelegramRedirectPage() {
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://mrsaqib242.vercel.app/telegram" />
+        <link rel="canonical" href="https://www.mrsaqib.me/telegram" />
 
         {/* OpenGraph / Social Rich Preview Card */}
         <meta property="og:type" content="profile" />
-        <meta property="og:url" content="https://mrsaqib242.vercel.app/telegram" />
+        <meta property="og:url" content="https://www.mrsaqib.me/telegram" />
         <meta property="og:site_name" content="Mr Saqib Developer Showcase" />
         <meta property="og:title" content="Connect with Mr Saqib on Telegram (@mrsaqib242)" />
         <meta
@@ -204,7 +204,7 @@ export default function TelegramRedirectPage() {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://mrsaqib242.vercel.app/telegram" />
+        <meta name="twitter:url" content="https://www.mrsaqib.me/telegram" />
         <meta name="twitter:title" content="Connect with Mr Saqib on Telegram (@mrsaqib242)" />
         <meta
           name="twitter:description"

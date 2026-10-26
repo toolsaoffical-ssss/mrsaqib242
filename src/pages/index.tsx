@@ -9,7 +9,7 @@ export default function Home() {
         <title key="title">Mr Saqib | Cyber Security Expert &amp; Full-Stack App Developer</title>
         <meta key="description" name="description" content="Hire Muhammad Saqib (Mr Saqib): Elite Cyber Security Expert &amp; Full-Stack App Developer building hardened Next.js, Node.js, and mobile architectures." />
         <meta key="keywords" name="keywords" content="mr saqib, mrsaqib242, cyber security expert, backend developer, frontend developer, app developer, supabase rls security, next.js security, web developer pakistan, saqib visuals" />
-        <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/" />
+        <link key="canonical" rel="canonical" href="https://www.mrsaqib.me/" />
 
         {/* Google Search Console Verification */}
         <meta key="gsv-home-1" name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />
@@ -25,7 +25,7 @@ export default function Home() {
         <meta key="og:type" property="og:type" content="website" />
         <meta key="og:title" property="og:title" content="Mr Saqib | Cyber Security Expert &amp; Full-Stack App Developer" />
         <meta key="og:description" property="og:description" content="Hire Muhammad Saqib (Mr Saqib): Elite Cyber Security Expert &amp; Full-Stack App Developer building hardened Next.js, Node.js, and mobile architectures." />
-        <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/" />
+        <meta key="og:url" property="og:url" content="https://www.mrsaqib.me/" />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:image:type" property="og:image:type" content="image/png" />

@@ -170,13 +170,13 @@
             </a>
 
             <!-- Official Portfolio -->
-            <a href="https://mrsaqib242.vercel.app" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 transition-colors group">
+            <a href="https://www.mrsaqib.me" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 transition-colors group">
               <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-globe"></i>
               </div>
               <div class="min-w-0 flex-1">
                 <div class="text-[11px] text-zinc-500 font-medium">Main Portfolio</div>
-                <div class="text-xs text-zinc-200 font-mono truncate group-hover:text-blue-400 transition-colors">mrsaqib242.vercel.app</div>
+                <div class="text-xs text-zinc-200 font-mono truncate group-hover:text-blue-400 transition-colors">www.mrsaqib.me</div>
               </div>
             </a>
           </div>
@@ -401,8 +401,8 @@
       </div>
       <div class="flex items-center gap-4">
         <a href="https://github.com/mrsaqib242" target="_blank" class="hover:text-white transition-colors">GitHub</a>
-        <a href="https://mrsaqib242.vercel.app/projects" target="_blank" class="hover:text-white transition-colors">Projects</a>
-        <a href="https://mrsaqib242.vercel.app/plans" target="_blank" class="hover:text-white transition-colors">Pricing Plans</a>
+        <a href="https://www.mrsaqib.me/projects" target="_blank" class="hover:text-white transition-colors">Projects</a>
+        <a href="https://www.mrsaqib.me/plans" target="_blank" class="hover:text-white transition-colors">Pricing Plans</a>
       </div>
     </div>
   </footer>
@@ -412,10 +412,10 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // 1. Determine Backend Base URL
-    // If run on same domain (e.g. mrsaqib242.vercel.app), use relative path.
+    // If run on same domain (e.g. www.mrsaqib.me), use relative path.
     // If opened as local file (file://) or separate host, point to master Vercel production API:
-    const isMasterDomain = window.location.hostname.includes('mrsaqib242.vercel.app') || window.location.hostname.includes('localhost');
-    const API_BASE_URL = isMasterDomain ? '' : 'https://mrsaqib242.vercel.app';
+    const isMasterDomain = window.location.hostname.includes('www.mrsaqib.me') || window.location.hostname.includes('localhost');
+    const API_BASE_URL = isMasterDomain ? '' : 'https://www.mrsaqib.me';
 
     // 2. Fetch Live Contact Details from GET /api/public/contact
     async function fetchLiveContactInfo() {

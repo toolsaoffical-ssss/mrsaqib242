@@ -12,16 +12,16 @@ const schemaData = {
   '@graph': [
     {
       '@type': 'WebPage',
-      '@id': 'https://mrsaqib242.vercel.app/facebook#webpage',
-      url: 'https://mrsaqib242.vercel.app/facebook',
+      '@id': 'https://www.mrsaqib.me/facebook#webpage',
+      url: 'https://www.mrsaqib.me/facebook',
       name: 'Muhammad Saqib Official Facebook Profile | Web Developer & Tech Lead',
       description: 'Official verified Facebook profile of Muhammad Saqib (Mr Saqib / Saqib 242). Connect for web development services, project showcases, and tech updates in Pakistan.',
       inLanguage: ['en-US', 'ur-PK'],
       isPartOf: {
         '@type': 'WebSite',
-        '@id': 'https://mrsaqib242.vercel.app/#website',
+        '@id': 'https://www.mrsaqib.me/#website',
         name: 'Mr Saqib Developer Portfolio',
-        url: 'https://mrsaqib242.vercel.app'
+        url: 'https://www.mrsaqib.me'
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
@@ -32,11 +32,11 @@ const schemaData = {
     },
     {
       '@type': 'Person',
-      '@id': 'https://mrsaqib242.vercel.app/#person',
+      '@id': 'https://www.mrsaqib.me/#person',
       name: 'Muhammad Saqib',
       alternateName: ['Mr Saqib', 'Saqib 242', 'Saqib Visuals'],
       jobTitle: 'Lead Full-Stack Web Architect',
-      url: 'https://mrsaqib242.vercel.app',
+      url: 'https://www.mrsaqib.me',
       sameAs: [
         FALLBACK_FACEBOOK_URL,
         'https://wa.me/923478936242',
@@ -46,19 +46,19 @@ const schemaData = {
     },
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://mrsaqib242.vercel.app/facebook#breadcrumb',
+      '@id': 'https://www.mrsaqib.me/facebook#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://mrsaqib242.vercel.app'
+          item: 'https://www.mrsaqib.me'
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Facebook Profile',
-          item: 'https://mrsaqib242.vercel.app/facebook'
+          item: 'https://www.mrsaqib.me/facebook'
         }
       ]
     }
@@ -143,11 +143,11 @@ export default function FacebookRedirectPage() {
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://mrsaqib242.vercel.app/facebook" />
+        <link rel="canonical" href="https://www.mrsaqib.me/facebook" />
 
         {/* OpenGraph / Social Rich Preview Card */}
         <meta property="og:type" content="profile" />
-        <meta property="og:url" content="https://mrsaqib242.vercel.app/facebook" />
+        <meta property="og:url" content="https://www.mrsaqib.me/facebook" />
         <meta property="og:site_name" content="Mr Saqib Developer Showcase" />
         <meta property="og:title" content="Connect with Muhammad Saqib on Facebook" />
         <meta
@@ -163,7 +163,7 @@ export default function FacebookRedirectPage() {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://mrsaqib242.vercel.app/facebook" />
+        <meta name="twitter:url" content="https://www.mrsaqib.me/facebook" />
         <meta name="twitter:title" content="Connect with Muhammad Saqib on Facebook" />
         <meta
           name="twitter:description"

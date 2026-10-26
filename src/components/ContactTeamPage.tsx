@@ -217,7 +217,7 @@ export default function ContactTeamPage({ onBack }: ContactTeamPageProps) {
   };
 
   const handleWhatsAppDispatch = () => {
-    const text = `*New Project Inquiry via mrsaqib242.vercel.app*
+    const text = `*New Project Inquiry via www.mrsaqib.me*
 ━━━━━━━━━━━━━━━━━━
 👤 *Client Name:* ${clientName || 'Not provided'}
 📞 *Phone/WhatsApp:* ${clientPhone || 'Not provided'}

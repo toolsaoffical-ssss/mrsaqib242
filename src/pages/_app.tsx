@@ -58,27 +58,27 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router.events]);
 
   const cleanPath = router.asPath.split('?')[0].split('#')[0];
-  const canonicalUrl = `https://mrsaqib242.vercel.app${cleanPath === '/' ? '' : cleanPath}`;
+  const canonicalUrl = `https://www.mrsaqib.me${cleanPath === '/' ? '' : cleanPath}`;
 
   const unifiedSchema = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://mrsaqib242.vercel.app/#website",
-        "url": "https://mrsaqib242.vercel.app",
+        "@id": "https://www.mrsaqib.me/#website",
+        "url": "https://www.mrsaqib.me",
         "name": "Mr Saqib Developer Portfolio",
-        "publisher": { "@id": "https://mrsaqib242.vercel.app/#person" }
+        "publisher": { "@id": "https://www.mrsaqib.me/#person" }
       },
       {
         "@type": "Person",
-        "@id": "https://mrsaqib242.vercel.app/#person",
+        "@id": "https://www.mrsaqib.me/#person",
         "name": "Muhammad Saqib",
         "alternateName": ["Mr Saqib", "mrsaqib242", "Saqib 242", "Saqib Dev"],
         "telephone": "03478936242",
         "email": "mrsaqib242242@gmail.com",
         "jobTitle": "Cyber Security Expert & Full-Stack App Developer",
-        "url": "https://mrsaqib242.vercel.app",
+        "url": "https://www.mrsaqib.me",
         "description": "Muhammad Saqib (Mr Saqib) is an elite cyber security specialist, full-stack engineer, and cross-platform app architect recognized for building impenetrable digital systems.",
         "sameAs": [
           "https://github.com/mrsaqib242",
@@ -93,18 +93,18 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       },
       {
         "@type": "ProfessionalService",
-        "@id": "https://mrsaqib242.vercel.app/#service",
+        "@id": "https://www.mrsaqib.me/#service",
         "name": "Mr Saqib Web Development & Local SEO Services",
-        "url": "https://mrsaqib242.vercel.app",
+        "url": "https://www.mrsaqib.me",
         "telephone": "03478936242",
         "email": "mrsaqib242242@gmail.com",
-        "founder": { "@id": "https://mrsaqib242.vercel.app/#person" },
+        "founder": { "@id": "https://www.mrsaqib.me/#person" },
         "areaServed": ["Gojra", "Faisalabad", "Lahore", "Islamabad", "Karachi"],
         "priceRange": "$$"
       },
             {
         "@type": "FAQPage",
-        "@id": "https://mrsaqib242.vercel.app/#faq",
+        "@id": "https://www.mrsaqib.me/#faq",
         "mainEntity": [
           {
             "@type": "Question",
@@ -157,7 +157,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
 
         {/* AI & LLM Discovery Link */}
-        <link rel="alternate" type="text/markdown" href="https://mrsaqib242.vercel.app/llms.txt" title="LLM Summary Index" />
+        <link rel="alternate" type="text/markdown" href="https://www.mrsaqib.me/llms.txt" title="LLM Summary Index" />
 
         {/* Google Verification */}
         <meta key="gsv-1" name="google-site-verification" content="QBTbRBfM4UaFb99KTDYjmhcWqdv6owEV0e-apSLn-Yg" />

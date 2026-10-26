@@ -21,6 +21,8 @@ export function normalizeDomain(input?: string | null): string | null {
 
 // Built-in default trusted domain (Your master portfolio)
 const DEFAULT_WHITELISTED_DOMAINS = [
+  'www.mrsaqib.me',
+  'mrsaqib.me',
   'mrsaqib242.vercel.app'
 ];
 

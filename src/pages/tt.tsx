@@ -13,16 +13,16 @@ const schemaData = {
   '@graph': [
     {
       '@type': 'WebPage',
-      '@id': 'https://mrsaqib242.vercel.app/tt#webpage',
-      url: 'https://mrsaqib242.vercel.app/tt',
+      '@id': 'https://www.mrsaqib.me/tt#webpage',
+      url: 'https://www.mrsaqib.me/tt',
       name: 'Mr Saqib Official TikTok Profile | Tech Drops & Web Tutorials (@mr_saqib_242)',
       description: 'Official verified TikTok account of Muhammad Saqib (Mr Saqib / Saqib 242). Short-form coding tips, Next.js tricks, cyber security alerts, and tech highlights.',
       inLanguage: ['en-US', 'ur-PK'],
       isPartOf: {
         '@type': 'WebSite',
-        '@id': 'https://mrsaqib242.vercel.app/#website',
+        '@id': 'https://www.mrsaqib.me/#website',
         name: 'Mr Saqib Developer Portfolio',
-        url: 'https://mrsaqib242.vercel.app'
+        url: 'https://www.mrsaqib.me'
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
@@ -33,11 +33,11 @@ const schemaData = {
     },
     {
       '@type': 'Person',
-      '@id': 'https://mrsaqib242.vercel.app/#person',
+      '@id': 'https://www.mrsaqib.me/#person',
       name: 'Muhammad Saqib',
       alternateName: ['Mr Saqib', 'Saqib 242', 'mr_saqib_242', 'Saqib Visuals'],
       jobTitle: 'Lead Full-Stack Web Architect & Tech Creator',
-      url: 'https://mrsaqib242.vercel.app',
+      url: 'https://www.mrsaqib.me',
       sameAs: [
         FALLBACK_TIKTOK_URL,
         'https://wa.me/923478936242',
@@ -47,19 +47,19 @@ const schemaData = {
     },
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://mrsaqib242.vercel.app/tt#breadcrumb',
+      '@id': 'https://www.mrsaqib.me/tt#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://mrsaqib242.vercel.app'
+          item: 'https://www.mrsaqib.me'
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'TikTok Profile',
-          item: 'https://mrsaqib242.vercel.app/tiktok'
+          item: 'https://www.mrsaqib.me/tiktok'
         }
       ]
     }
@@ -144,11 +144,11 @@ export default function TikTokShortRedirectPage() {
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://mrsaqib242.vercel.app/tiktok" />
+        <link rel="canonical" href="https://www.mrsaqib.me/tiktok" />
 
         {/* OpenGraph / Social Rich Preview Card */}
         <meta property="og:type" content="profile" />
-        <meta property="og:url" content="https://mrsaqib242.vercel.app/tt" />
+        <meta property="og:url" content="https://www.mrsaqib.me/tt" />
         <meta property="og:site_name" content="Mr Saqib Developer Showcase" />
         <meta property="og:title" content="Follow Mr Saqib on TikTok (@mr_saqib_242)" />
         <meta
@@ -164,7 +164,7 @@ export default function TikTokShortRedirectPage() {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://mrsaqib242.vercel.app/tt" />
+        <meta name="twitter:url" content="https://www.mrsaqib.me/tt" />
         <meta name="twitter:title" content="Follow Mr Saqib on TikTok (@mr_saqib_242)" />
         <meta
           name="twitter:description"

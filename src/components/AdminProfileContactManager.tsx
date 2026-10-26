@@ -134,7 +134,7 @@ export default function AdminProfileContactManager({
   };
 
   const copyPublicApiUrl = () => {
-    navigator.clipboard.writeText('https://mrsaqib242.vercel.app/api/public/contact');
+    navigator.clipboard.writeText('https://www.mrsaqib.me/api/public/contact');
     setCopiedApiUrl(true);
     onNotify('Public API URL copied!', 'success');
     setTimeout(() => setCopiedApiUrl(false), 2500);
@@ -557,7 +557,7 @@ export default function AdminProfileContactManager({
                 <button
                   type="button"
                   onClick={() => {
-                    navigator.clipboard.writeText('https://mrsaqib242.vercel.app/whatsapp');
+                    navigator.clipboard.writeText('https://www.mrsaqib.me/whatsapp');
                     onNotify('Copied /whatsapp short redirect link!', 'success');
                   }}
                   className="text-emerald-400 hover:text-emerald-300 hover:underline cursor-pointer"
@@ -603,7 +603,7 @@ export default function AdminProfileContactManager({
                   <button
                     type="button"
                     onClick={() => {
-                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/instagram');
+                      navigator.clipboard.writeText('https://www.mrsaqib.me/instagram');
                       onNotify('Copied /instagram short link!', 'success');
                     }}
                     className="text-pink-400 hover:underline cursor-pointer"
@@ -631,7 +631,7 @@ export default function AdminProfileContactManager({
                   <button
                     type="button"
                     onClick={() => {
-                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/facebook');
+                      navigator.clipboard.writeText('https://www.mrsaqib.me/facebook');
                       onNotify('Copied /facebook short link!', 'success');
                     }}
                     className="text-blue-400 hover:underline cursor-pointer"
@@ -659,7 +659,7 @@ export default function AdminProfileContactManager({
                   <button
                     type="button"
                     onClick={() => {
-                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/tiktok');
+                      navigator.clipboard.writeText('https://www.mrsaqib.me/tiktok');
                       onNotify('Copied /tiktok short link!', 'success');
                     }}
                     className="text-rose-400 hover:underline cursor-pointer"
@@ -687,7 +687,7 @@ export default function AdminProfileContactManager({
                   <button
                     type="button"
                     onClick={() => {
-                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/snapchat');
+                      navigator.clipboard.writeText('https://www.mrsaqib.me/snapchat');
                       onNotify('Copied /snapchat short link!', 'success');
                     }}
                     className="text-yellow-300 hover:underline cursor-pointer"
@@ -715,7 +715,7 @@ export default function AdminProfileContactManager({
                   <button
                     type="button"
                     onClick={() => {
-                      navigator.clipboard.writeText('https://mrsaqib242.vercel.app/telegram');
+                      navigator.clipboard.writeText('https://www.mrsaqib.me/telegram');
                       onNotify('Copied /telegram short link!', 'success');
                     }}
                     className="text-sky-400 hover:underline cursor-pointer"
@@ -750,7 +750,7 @@ export default function AdminProfileContactManager({
                   type="url"
                   value={profile.portfolio_url || ''}
                   onChange={e => handleChange('portfolio_url', e.target.value)}
-                  placeholder="https://mrsaqib242.vercel.app"
+                  placeholder="https://www.mrsaqib.me"
                   className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 font-mono transition-colors"
                 />
               </div>

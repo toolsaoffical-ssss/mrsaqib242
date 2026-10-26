@@ -256,7 +256,7 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
     if (typeof window !== 'undefined' && window.location.origin) {
       return window.location.origin;
     }
-    return 'https://mrsaqib242.vercel.app';
+    return 'https://www.mrsaqib.me';
   };
 
   // API Catalog Definitions with Code, Sample JSON & AI Prompts
@@ -278,7 +278,7 @@ export default function AdminApiHub({ onNotify }: { onNotify: (message: string, 
             category: 'Web Development',
             description: 'Ultra-fast Next.js 15 portfolio with Gemini AI integration.',
             image_url: 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png',
-            live_url: 'https://mrsaqib242.vercel.app',
+            live_url: 'https://www.mrsaqib.me',
             github_url: 'https://github.com/mrsaqib242',
             tags: ['React', 'Next.js', 'Tailwind CSS'],
             display_order: 1,
@@ -509,7 +509,7 @@ export default function GalleryShowcase() {
           facebook: "https://www.facebook.com/profile.php?id=100085188689033",
           tiktok: "https://www.tiktok.com/@mr_saqib_242",
           snapchat: "https://www.snapchat.com/add/mrsaqib242",
-          portfolio: "https://mrsaqib242.vercel.app",
+          portfolio: "https://www.mrsaqib.me",
           github: "https://github.com/mrsaqib242",
           contract_status: "Open for New Projects",
           availability_note: "Available for Remote Worldwide Contracts & Security Audits."

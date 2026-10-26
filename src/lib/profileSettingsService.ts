@@ -38,7 +38,7 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   phone: '03478936242',
   email: 'mrsaqib242242@gmail.com',
   location: 'Gojra, Faisalabad, Pakistan',
-  portfolio_url: 'https://mrsaqib242.vercel.app',
+  portfolio_url: 'https://www.mrsaqib.me',
   resume_url: '/resume.pdf',
   whatsapp_url: 'https://wa.me/923478936242',
   telegram_url: 'https://t.me/mrsaqib242',

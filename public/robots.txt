@@ -71,5 +71,5 @@ User-agent: Applebot-Extended
 Allow: /
 
 # Sitemap & Direct LLM Documentation
-Sitemap: https://mrsaqib242.vercel.app/sitemap.xml
-Markdown-Index: https://mrsaqib242.vercel.app/llms.txt
+Sitemap: https://www.mrsaqib.me/sitemap.xml
+Markdown-Index: https://www.mrsaqib.me/llms.txt

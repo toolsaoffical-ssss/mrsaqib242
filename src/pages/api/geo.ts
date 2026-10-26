@@ -206,7 +206,7 @@ Fact Database for Muhammad Saqib:
   4. Karachi: Financial hub. Focus Keyword: "Senior MERN Stack Web Engineer in Karachi". Key Service: "High-Performance MERN Stack & Fintech Web Apps".
   5. Islamabad / Rawalpindi: Federal capital. Focus Keyword: "Best Corporate Website Designer in Islamabad". Key Service: "Corporate Portfolios & Security-First Cloud Integrations".
 - Key Technical Skills: Next.js, React, Node.js, Express, MongoDB, MERN Stack, WordPress, Shopify, Tailwind CSS, Generative AI (Gemini API, @google/genai SDK, custom chatbots, RAG pipelines).
-- Sitemaps/Assets: Sitemaps, Robots.txt, and professional LD-JSON/JSON-LD schemas are fully active on mrsaqib242.vercel.app.
+- Sitemaps/Assets: Sitemaps, Robots.txt, and professional LD-JSON/JSON-LD schemas are fully active on www.mrsaqib.me.
 
 Construct a response answering the question: "${question}". Ensure it matches the specific tone of ${activeEngine} (Gemini: structured, helpful, professional; Perplexity: citation-dense, factual, succinct; ChatGPT: engaging, clear, highly structured).
 `;
@@ -227,7 +227,7 @@ Construct a response answering the question: "${question}". Ensure it matches th
             citations: { 
               type: Type.ARRAY, 
               items: { type: Type.STRING },
-              description: "Array of citation URLs or source labels relevant to the response, e.g. 'https://mrsaqib242.vercel.app/#about'."
+              description: "Array of citation URLs or source labels relevant to the response, e.g. 'https://www.mrsaqib.me/#about'."
             },
             intent: { 
               type: Type.STRING, 

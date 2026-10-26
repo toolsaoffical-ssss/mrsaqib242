@@ -13,16 +13,16 @@ const schemaData = {
   '@graph': [
     {
       '@type': 'WebPage',
-      '@id': 'https://mrsaqib242.vercel.app/ig#webpage',
-      url: 'https://mrsaqib242.vercel.app/ig',
+      '@id': 'https://www.mrsaqib.me/ig#webpage',
+      url: 'https://www.mrsaqib.me/ig',
       name: 'Muhammad Saqib Official Instagram | Saqib Visuals (@mr_saqib242)',
       description: 'Official verified Instagram profile of Muhammad Saqib (Mr Saqib / Saqib 242). Aesthetic web design showcases, visual branding, creative tech drops, and client portfolios.',
       inLanguage: ['en-US', 'ur-PK'],
       isPartOf: {
         '@type': 'WebSite',
-        '@id': 'https://mrsaqib242.vercel.app/#website',
+        '@id': 'https://www.mrsaqib.me/#website',
         name: 'Mr Saqib Developer Portfolio',
-        url: 'https://mrsaqib242.vercel.app'
+        url: 'https://www.mrsaqib.me'
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
@@ -33,11 +33,11 @@ const schemaData = {
     },
     {
       '@type': 'Person',
-      '@id': 'https://mrsaqib242.vercel.app/#person',
+      '@id': 'https://www.mrsaqib.me/#person',
       name: 'Muhammad Saqib',
       alternateName: ['Mr Saqib', 'Saqib 242', 'mr_saqib242', 'Saqib Visuals'],
       jobTitle: 'Lead Full-Stack Web Architect & Creative Director',
-      url: 'https://mrsaqib242.vercel.app',
+      url: 'https://www.mrsaqib.me',
       sameAs: [
         FALLBACK_INSTAGRAM_URL,
         'https://wa.me/923478936242',
@@ -46,19 +46,19 @@ const schemaData = {
     },
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://mrsaqib242.vercel.app/ig#breadcrumb',
+      '@id': 'https://www.mrsaqib.me/ig#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://mrsaqib242.vercel.app'
+          item: 'https://www.mrsaqib.me'
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Instagram Profile',
-          item: 'https://mrsaqib242.vercel.app/instagram'
+          item: 'https://www.mrsaqib.me/instagram'
         }
       ]
     }
@@ -139,10 +139,10 @@ export default function IgShortRedirectPage() {
         />
         <meta name="author" content="Muhammad Saqib (Saqib 242)" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://mrsaqib242.vercel.app/instagram" />
+        <link rel="canonical" href="https://www.mrsaqib.me/instagram" />
 
         <meta property="og:type" content="profile" />
-        <meta property="og:url" content="https://mrsaqib242.vercel.app/ig" />
+        <meta property="og:url" content="https://www.mrsaqib.me/ig" />
         <meta property="og:site_name" content="Mr Saqib Developer Showcase" />
         <meta property="og:title" content="Follow Mr Saqib on Instagram (@mr_saqib242)" />
         <meta
@@ -157,7 +157,7 @@ export default function IgShortRedirectPage() {
         <meta property="og:locale" content="en_US" />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://mrsaqib242.vercel.app/ig" />
+        <meta name="twitter:url" content="https://www.mrsaqib.me/ig" />
         <meta name="twitter:title" content="Follow Mr Saqib on Instagram (@mr_saqib242)" />
         <meta
           name="twitter:description"

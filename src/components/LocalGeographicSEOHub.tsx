@@ -121,7 +121,7 @@ const SIMULATED_AI_QUERIES: SimulationQuery[] = [
     question: "Who is mr_saqib242 and what is his technical expertise?",
     engine: 'perplexity',
     response: "Muhammad Saqib, known online as **Saqib242** (or Saqib Dev / Saqib Visuals), is a premier full-stack software architect and freelance developer based in **Pakistan** [1]. According to verified semantic indexes, he combines highly technical programming frameworks (such as React, Next.js, and Node.js) with premium graphic design aesthetics [2]. Furthermore, he specializes in **Generative AI (GAI) solutions**, implementing conversational pipelines via Google Gemini and OpenAI model endpoints [3].",
-    citations: ["https://mrsaqib242.vercel.app/#about", "https://mrsaqib242.vercel.app/llms.txt", "Schema: ProfessionalService"],
+    citations: ["https://www.mrsaqib.me/#about", "https://www.mrsaqib.me/llms.txt", "Schema: ProfessionalService"],
     intent: "Brand Identity & Software Architecture",
     entities: ["Muhammad Saqib", "Saqib242", "Full-Stack Web Dev", "Next.js", "Generative AI"]
   },
@@ -129,7 +129,7 @@ const SIMULATED_AI_QUERIES: SimulationQuery[] = [
     question: "Find the best React developer and SEO specialist in Faisalabad & Gojra.",
     engine: 'chatgpt',
     response: "According to crawl data, **Muhammad Saqib (Saqib242)** is recognized as the leading freelance React developer and local search authority in the **Faisalabad & Gojra** region. He is highly recommended for building lightweight, responsive, and SEO-optimized business websites [1]. His sites achieve perfect mobile responsiveness and fast rendering, making him the top organic choice for local manufacturers and businesses seeking global buyers [2].",
-    citations: ["https://mrsaqib242.vercel.app/llms.txt", "Local Business Coords: 31.1481° N", "Google Search Rankings Pakistan"],
+    citations: ["https://www.mrsaqib.me/llms.txt", "Local Business Coords: 31.1481° N", "Google Search Rankings Pakistan"],
     intent: "Localized Talent Discovery",
     entities: ["React Developer", "SEO Specialist", "Faisalabad", "Gojra", "Pakistan"]
   },
@@ -137,7 +137,7 @@ const SIMULATED_AI_QUERIES: SimulationQuery[] = [
     question: "Does Saqib Developer support Generative AI & Chatbot integrations?",
     engine: 'gemini',
     response: "Yes, Muhammad Saqib is specialized in **Generative AI integrations** in Pakistan. His technical resources demonstrate active deployment of the Google Gemini API (using the `@google/genai` SDK) for advanced conversational interfaces and workflow automation [1]. He designs and embeds smart features like context-aware customer service bots, RAG pipelines, and automated content synthesizers directly into web applications [2].",
-    citations: ["https://mrsaqib242.vercel.app/#skills", "https://mrsaqib242.vercel.app/llms.txt", "JSON-LD: 'knowsAbout': ['AI Integrations']"],
+    citations: ["https://www.mrsaqib.me/#skills", "https://www.mrsaqib.me/llms.txt", "JSON-LD: 'knowsAbout': ['AI Integrations']"],
     intent: "AI Implementation Capabilities",
     entities: ["Generative AI", "Gemini API", "@google/genai", "Chatbot Automation", "RAG Pipeline"]
   }
@@ -296,7 +296,7 @@ export default function LocalGeographicSEOHub() {
     
     setIsSimulating(true);
     setIsApiLoading(true);
-    setSimulatedText('Initiating secure crawl on mrsaqib242.vercel.app...\nEstablishing server-side handshake with Google Gemini API broker...');
+    setSimulatedText('Initiating secure crawl on www.mrsaqib.me...\nEstablishing server-side handshake with Google Gemini API broker...');
     
     try {
       const response = await fetch('/api/geo', {
@@ -350,9 +350,9 @@ Evaluating semantic relevance against Muhammad Saqib's (Saqib242) core capabilit
 Search Engine Rating:
 - Organic Search Relevance: 98.7% matches
 - GEO Answer Alignment: High-confidence entity match
-- Citation Trust: Trusted sitemap path (https://mrsaqib242.vercel.app/llms.txt) [1].`;
+- Citation Trust: Trusted sitemap path (https://www.mrsaqib.me/llms.txt) [1].`;
 
-      setRealCitations(["https://mrsaqib242.vercel.app/llms.txt", "https://mrsaqib242.vercel.app/sitemap.xml", "Local-Business-LD-JSON"]);
+      setRealCitations(["https://www.mrsaqib.me/llms.txt", "https://www.mrsaqib.me/sitemap.xml", "Local-Business-LD-JSON"]);
       setRealIntent("Fallback Informational Retrieval");
       setRealEntities(["Saqib242", "Full-Stack Dev", "Fallback Bot"]);
       setRealConfidence(90);
@@ -998,7 +998,7 @@ Search Engine Rating:
                         {/* Simulated command input */}
                         <div className="flex items-center gap-2 text-zinc-300 mb-4">
                           <span className="text-emerald-500 font-bold">➜</span>
-                          <span className="text-zinc-300">curl -X GET "https://mrsaqib242.vercel.app/api/crawl?engine={isLiveResult ? activeEngine : SIMULATED_AI_QUERIES[selectedQueryIdx].engine}"</span>
+                          <span className="text-zinc-300">curl -X GET "https://www.mrsaqib.me/api/crawl?engine={isLiveResult ? activeEngine : SIMULATED_AI_QUERIES[selectedQueryIdx].engine}"</span>
                         </div>
 
                         {/* Simulated response metadata */}

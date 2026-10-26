@@ -20,23 +20,23 @@ export default function PlansRoute() {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://mrsaqib242.vercel.app/"
+            "item": "https://www.mrsaqib.me/"
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Mr Saqib Website Plans & Pricing",
-            "item": "https://mrsaqib242.vercel.app/plans"
+            "item": "https://www.mrsaqib.me/plans"
           }
         ]
       },
       {
         "@type": "Product",
-        "@id": "https://mrsaqib242.vercel.app/plans#pricing",
+        "@id": "https://www.mrsaqib.me/plans#pricing",
         "name": "Mr Saqib Website Plans & Pricing Packages",
         "alternateName": ["Mr Saqib Plans", "Saqib Plans", "Saqib Mr Saqib Plans", "Saqib 242 Packages", "Saqib Pricing"],
         "description": "Premium, low-cost website design and custom full-stack development plans by Mr Saqib (Saqib 242) for startups, businesses, and e-commerce stores in Pakistan.",
-        "url": "https://mrsaqib242.vercel.app/plans",
+        "url": "https://www.mrsaqib.me/plans",
         "brand": {
           "@type": "Brand",
           "name": "Saqib Visuals"
@@ -61,13 +61,13 @@ export default function PlansRoute() {
         <meta key="keywords" name="keywords" content="mr saqib plans, saqib plans, saqib mr saqib plans, mr saqib website plans, mr saqib pricing, saqib 242 pricing, website design packages pakistan, affordable web development gojra, web designer faisalabad pricing, cheap website cost pakistan" />
         
         {/* Canonical */}
-        <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/plans" />
+        <link key="canonical" rel="canonical" href="https://www.mrsaqib.me/plans" />
 
         {/* OpenGraph */}
         <meta key="og:type" property="og:type" content="website" />
         <meta key="og:title" property="og:title" content="Mr Saqib Plans &amp; Pricing | Web Packages (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Explore Mr Saqib plans and website pricing packages (saqib plans). Affordable custom web design, Next.js eCommerce, business landing pages, and AI chatbots by Saqib 242." />
-        <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/plans" />
+        <meta key="og:url" property="og:url" content="https://www.mrsaqib.me/plans" />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />

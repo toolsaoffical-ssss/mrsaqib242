@@ -59,7 +59,7 @@
     <div class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
       <div class="w-14 h-14 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-4"></div>
       <div class="text-white font-bold text-lg">Fetching All Data From Live API...</div>
-      <div class="text-xs font-mono text-zinc-500 mt-1 select-all">GET https://mrsaqib242.vercel.app/api/public/contact</div>
+      <div class="text-xs font-mono text-zinc-500 mt-1 select-all">GET https://www.mrsaqib.me/api/public/contact</div>
     </div>
   </div>
 
@@ -67,7 +67,7 @@
   <!-- JAVASCRIPT: 100% DYNAMIC - ZERO HARDCODED STRINGS -->
   <!-- ========================================================================= -->
   <script>
-    const API_ENDPOINT = "https://mrsaqib242.vercel.app/api/public/contact";
+    const API_ENDPOINT = "https://www.mrsaqib.me/api/public/contact";
 
     // Platform metadata for styling & icons only (values come 100% from API)
     const PLATFORMS = {
@@ -116,7 +116,7 @@
           if (config.isEmail) targetHref = `mailto:${rawValue}`;
           else if (config.isPhone) targetHref = `tel:${rawValue.replace(/[^0-9+]/g, '')}`;
           else if (key === 'resume' && !rawValue.startsWith('http')) {
-            targetHref = `https://mrsaqib242.vercel.app${rawValue.startsWith('/') ? '' : '/'}${rawValue}`;
+            targetHref = `https://www.mrsaqib.me${rawValue.startsWith('/') ? '' : '/'}${rawValue}`;
           }
 
           cardsHtml += `

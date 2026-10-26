@@ -20,28 +20,28 @@ export default function ProjectsRoute() {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://mrsaqib242.vercel.app/"
+            "item": "https://www.mrsaqib.me/"
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Mr Saqib Projects",
-            "item": "https://mrsaqib242.vercel.app/projects"
+            "item": "https://www.mrsaqib.me/projects"
           }
         ]
       },
       {
         "@type": "CollectionPage",
-        "@id": "https://mrsaqib242.vercel.app/projects#collection",
+        "@id": "https://www.mrsaqib.me/projects#collection",
         "name": "Mr Saqib Projects & Portfolio Showcase",
         "alternateName": ["Mr Saqib Projects", "Saqib Projects", "Saqib Mr Saqib Projects", "Saqib 242 Projects", "Saqib Portfolio"],
         "description": "Showcase of high-performance Next.js web applications, e-commerce stores, and generative AI systems developed by Mr Saqib (Saqib 242).",
-        "url": "https://mrsaqib242.vercel.app/projects",
+        "url": "https://www.mrsaqib.me/projects",
         "creator": {
           "@type": "Person",
           "name": "Muhammad Saqib",
           "alternateName": ["Mr Saqib", "Saqib 242", "mrsaqib242"],
-          "url": "https://mrsaqib242.vercel.app"
+          "url": "https://www.mrsaqib.me"
         }
       }
     ]
@@ -55,13 +55,13 @@ export default function ProjectsRoute() {
         <meta key="keywords" name="keywords" content="mr saqib projects, saqib projects, saqib mr saqib projects, mr saqib portfolio, saqib 242 projects, web development projects pakistan, react apps gojra, nextjs portfolio mr saqib, full stack projects faisalabad" />
         
         {/* Canonical */}
-        <link key="canonical" rel="canonical" href="https://mrsaqib242.vercel.app/projects" />
+        <link key="canonical" rel="canonical" href="https://www.mrsaqib.me/projects" />
 
         {/* OpenGraph */}
         <meta key="og:type" property="og:type" content="website" />
         <meta key="og:title" property="og:title" content="Mr Saqib Projects &amp; Portfolio | Saqib Web Apps (Saqib 242)" />
         <meta key="og:description" property="og:description" content="Explore all Mr Saqib projects (saqib projects portfolio). High-performance Next.js web applications, e-commerce stores, custom AI systems, and SaaS tools built by Mr Saqib (Saqib 242)." />
-        <meta key="og:url" property="og:url" content="https://mrsaqib242.vercel.app/projects" />
+        <meta key="og:url" property="og:url" content="https://www.mrsaqib.me/projects" />
         <meta key="og:image" property="og:image" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:image:secure_url" property="og:image:secure_url" content="https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png" />
         <meta key="og:site_name" property="og:site_name" content="Mr Saqib Portfolio" />
