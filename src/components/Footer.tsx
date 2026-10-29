@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { FaFacebookF, FaInstagram, FaWhatsapp, FaTiktok, FaSnapchatGhost, FaTelegramPlane } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaWhatsapp, FaTiktok, FaSnapchatGhost, FaTelegramPlane, FaGithub } from 'react-icons/fa';
 import { useProfileSettings } from '../hooks/useProfileSettings';
 
 export default function Footer() {
@@ -43,6 +43,12 @@ export default function Footer() {
       icon: FaSnapchatGhost,
       gradient: 'bg-gradient-to-b from-[#FFFC00] to-[#D4D100]',
       href: profile.snapchat_url || 'https://www.snapchat.com/add/mrsaqib242'
+    },
+    {
+      name: 'GitHub',
+      icon: FaGithub,
+      gradient: 'bg-gradient-to-b from-[#333333] to-[#161b22]',
+      href: profile.github_url || 'https://github.com/mr-saqib-242'
     }
   ];
 

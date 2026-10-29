@@ -1249,6 +1249,22 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                   </div>
                 </a>
 
+                {/* GitHub */}
+                <a 
+                  href={profile.github_url || "https://github.com/mr-saqib-242"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3.5 bg-white/50 p-3.5 rounded-2xl shadow-[inset_2px_2px_4px_#d9dadc,inset_-2px_-2px_4px_#ffffff] border border-white hover:bg-white transition-all group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-800 shrink-0 group-hover:scale-110 transition-transform">
+                    <SiGithub size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-0.5">GitHub</h4>
+                    <p className="text-zinc-800 font-extrabold text-sm">@mr-saqib-242</p>
+                  </div>
+                </a>
+
                 {/* Resume Download */}
                 <a 
                   href={profile.resume_url || '/resume.pdf'}
@@ -1388,7 +1404,7 @@ ${queryDetails || 'Looking to discuss project requirements directly.'}
                 { name: 'TikTok', icon: SiTiktok, link: profile.tiktok_url || "https://www.tiktok.com/@mr_saqib_242", color: "text-zinc-900" },
                 { name: 'Facebook', icon: SiFacebook, link: profile.facebook_url || "https://www.facebook.com/profile.php?id=100085188689033", color: "text-[#1877F2]" },
                 { name: 'Snapchat', icon: SiSnapchat, link: profile.snapchat_url || "https://www.snapchat.com/add/mrsaqib242", color: "text-[#FFFC00] drop-shadow-md" },
-                { name: 'GitHub', icon: SiGithub, link: profile.github_url || "https://github.com/mrsaqib242", color: "text-zinc-800" }
+                { name: 'GitHub', icon: SiGithub, link: profile.github_url || "https://github.com/mr-saqib-242", color: "text-zinc-800" }
               ].filter(item => Boolean(item.link && item.link.trim())).map((social, i) => {
                 const Icon = social.icon;
                 return (

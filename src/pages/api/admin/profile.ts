@@ -98,6 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             `ms_fb_url=${encodeURIComponent(payload.facebook_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
             `ms_sc_url=${encodeURIComponent(payload.snapchat_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
             `ms_ig_url=${encodeURIComponent(payload.instagram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+            `ms_gh_url=${encodeURIComponent(payload.github_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
           ];
           res.setHeader('Set-Cookie', cookieHeaders);
           return res.status(200).json({ 
@@ -119,6 +120,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `ms_fb_url=${encodeURIComponent(payload.facebook_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
         `ms_sc_url=${encodeURIComponent(payload.snapchat_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
         `ms_ig_url=${encodeURIComponent(payload.instagram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
+        `ms_gh_url=${encodeURIComponent(payload.github_url)}; Path=/; Max-Age=31536000; SameSite=Lax`,
       ];
       res.setHeader('Set-Cookie', cookieHeaders);
 

@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         snapchat: profile?.snapchat_url || "",
         telegram: profile?.telegram_url || "https://t.me/mrsaqib242",
         portfolio: profile?.portfolio_url || "https://www.mrsaqib.me",
-        github: profile?.github_url || "https://github.com/mrsaqib242",
+        github: profile?.github_url || "https://github.com/mr-saqib-242",
         resume: profile?.resume_url || "/resume.pdf",
         contract_status: profile?.contract_status || "Open for New Projects",
         contract_subtitle: profile?.contract_subtitle || "Remote Worldwide • NDA Protected",

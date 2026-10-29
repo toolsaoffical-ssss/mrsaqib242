@@ -729,15 +729,28 @@ export default function AdminProfileContactManager({
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-2 flex items-center gap-1.5">
                   <Link2 size={13} />
-                  <span>GitHub Profile URL</span>
+                  <span>GitHub Profile URL (@mr-saqib-242)</span>
                 </label>
                 <input
                   type="url"
                   value={profile.github_url || ''}
                   onChange={e => handleChange('github_url', e.target.value)}
-                  placeholder="https://github.com/mrsaqib242"
+                  placeholder="https://github.com/mr-saqib-242"
                   className="w-full bg-[#181922] border border-white/10 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-400 font-mono transition-colors"
                 />
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5 font-mono bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span>Redirects from: <strong className="text-zinc-300">/github</strong> (or /gh)</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://www.mrsaqib.me/github');
+                      onNotify('Copied /github short link!', 'success');
+                    }}
+                    className="text-zinc-300 hover:underline cursor-pointer"
+                  >
+                    Copy Link
+                  </button>
+                </div>
               </div>
 
               {/* Portfolio */}

@@ -78,6 +78,9 @@ export function middleware(request: NextRequest) {
     '/telegram': 'https://t.me/mrsaqib242',
     '/tg': 'https://t.me/mrsaqib242',
     '/tele': 'https://t.me/mrsaqib242',
+    '/github': 'https://github.com/mr-saqib-242',
+    '/gh': 'https://github.com/mr-saqib-242',
+    '/git': 'https://github.com/mr-saqib-242',
   };
 
   const COOKIE_MAP: Record<string, string> = {
@@ -96,6 +99,9 @@ export function middleware(request: NextRequest) {
     '/telegram': 'ms_tg_url',
     '/tg': 'ms_tg_url',
     '/tele': 'ms_tg_url',
+    '/github': 'ms_gh_url',
+    '/gh': 'ms_gh_url',
+    '/git': 'ms_gh_url',
   };
 
   const cookieKey = COOKIE_MAP[pathname];

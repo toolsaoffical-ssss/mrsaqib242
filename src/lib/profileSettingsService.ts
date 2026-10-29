@@ -46,7 +46,7 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   facebook_url: 'https://www.facebook.com/profile.php?id=100085188689033',
   tiktok_url: 'https://www.tiktok.com/@mr_saqib_242',
   snapchat_url: 'https://www.snapchat.com/add/mrsaqib242',
-  github_url: 'https://github.com/mrsaqib242',
+  github_url: 'https://github.com/mr-saqib-242',
   avatar_url: 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
   contract_status: 'Open for New Projects',
   contract_subtitle: 'Remote Worldwide • NDA Protected',
@@ -158,6 +158,7 @@ export async function saveProfileSettingsToDB(
         if (mergedPayload.facebook_url) document.cookie = `ms_fb_url=${encodeURIComponent(mergedPayload.facebook_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
         if (mergedPayload.snapchat_url) document.cookie = `ms_sc_url=${encodeURIComponent(mergedPayload.snapchat_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
         if (mergedPayload.instagram_url) document.cookie = `ms_ig_url=${encodeURIComponent(mergedPayload.instagram_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        if (mergedPayload.github_url) document.cookie = `ms_gh_url=${encodeURIComponent(mergedPayload.github_url)}; Path=/; Max-Age=31536000; SameSite=Lax`;
       }
     } catch (e) {
       // ignore
