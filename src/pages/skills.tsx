@@ -25,7 +25,7 @@ export default function Skills() {
         ]
       },
       {
-        "@type": "ProfilePage",
+        "@type": "WebPage",
         "@id": "https://www.mrsaqib.me/skills#profile",
         "url": "https://www.mrsaqib.me/skills",
         "name": "Mr Saqib Skills | Full-Stack Developer & Cyber Security Expert Pakistan",

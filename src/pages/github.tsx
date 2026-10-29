@@ -17,6 +17,8 @@ const schemaData = {
       name: 'Mr Saqib Official GitHub (@mr-saqib-242) | Open Source Repositories & Developer Code',
       description: 'Official verified GitHub profile and open-source software repositories for Muhammad Saqib (Mr Saqib / Saqib 242). Access high-performance Next.js architectures, AI automations, security tools, and developer codebases at https://github.com/mr-saqib-242.',
       inLanguage: ['en-US', 'ur-PK'],
+      dateCreated: '2024-01-01T00:00:00+05:00',
+      dateModified: '2026-10-29T20:00:00+05:00',
       isPartOf: {
         '@type': 'WebSite',
         '@id': 'https://www.mrsaqib.me/#website',
@@ -28,33 +30,36 @@ const schemaData = {
         url: PREVIEW_IMAGE,
         width: 1200,
         height: 630
-      }
-    },
-    {
-      '@type': 'Person',
-      '@id': 'https://www.mrsaqib.me/#person',
-      name: 'Muhammad Saqib',
-      alternateName: ['Mr Saqib', 'Saqib 242', 'mrsaqib242', 'mr-saqib-242', 'Saqib Visuals', 'Saqib Dev'],
-      jobTitle: 'Lead Full-Stack Web Architect & Cyber Security Specialist',
-      telephone: '+923478936242',
-      email: 'mrsaqib242242@gmail.com',
-      url: 'https://www.mrsaqib.me',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Gojra',
-        addressRegion: 'Punjab',
-        addressCountry: 'PK'
       },
-      knowsAbout: ['Next.js', 'React', 'Cyber Security', 'Full-Stack Web Development', 'Supabase', 'Generative AI API', 'Open Source Software'],
-      sameAs: [
-        FALLBACK_GITHUB_URL,
-        'https://github.com/mrsaqib242',
-        'https://t.me/mrsaqib242',
-        'https://wa.me/923478936242',
-        'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
-        'https://instagram.com/mr_saqib242',
-        'https://www.tiktok.com/@mr_saqib_242'
-      ]
+      mainEntity: {
+        '@type': 'Person',
+        '@id': 'https://www.mrsaqib.me/#person',
+        name: 'Muhammad Saqib',
+        alternateName: ['Mr Saqib', 'Saqib 242', 'mrsaqib242', 'mr-saqib-242', 'Saqib Visuals', 'Saqib Dev'],
+        identifier: 'mr-saqib-242',
+        jobTitle: 'Lead Full-Stack Web Architect & Cyber Security Specialist',
+        description: 'Muhammad Saqib (Mr Saqib) is an elite cyber security specialist, full-stack engineer, and open-source software architect.',
+        telephone: '+923478936242',
+        email: 'mrsaqib242242@gmail.com',
+        url: 'https://www.mrsaqib.me',
+        image: PREVIEW_IMAGE,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Gojra',
+          addressRegion: 'Punjab',
+          addressCountry: 'PK'
+        },
+        knowsAbout: ['Next.js', 'React', 'Cyber Security', 'Full-Stack Web Development', 'Supabase', 'Generative AI API', 'Open Source Software'],
+        sameAs: [
+          FALLBACK_GITHUB_URL,
+          'https://github.com/mrsaqib242',
+          'https://t.me/mrsaqib242',
+          'https://wa.me/923478936242',
+          'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
+          'https://instagram.com/mr_saqib242',
+          'https://www.tiktok.com/@mr_saqib_242'
+        ]
+      }
     },
     {
       '@type': 'FAQPage',
