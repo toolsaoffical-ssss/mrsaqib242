@@ -58,9 +58,9 @@ const DEFAULT_STATS: GitHubStats = {
   user: {
     login: 'mr-saqib-242',
     name: 'Muhammad Saqib',
-    avatar_url: PREVIEW_IMAGE,
+    avatar_url: 'https://avatars.githubusercontent.com/u/349843210?v=4',
     html_url: 'https://github.com/mr-saqib-242',
-    bio: 'Lead Full-Stack Web Architect & Cyber Security Specialist. Building high-performance Next.js architectures.',
+    bio: 'Lead Full-Stack Web Architect & Cyber Security Specialist.',
     public_repos: 3,
     followers: 0,
     following: 0,
@@ -68,14 +68,24 @@ const DEFAULT_STATS: GitHubStats = {
   },
   featuredRepos: [
     {
-      name: 'crptotrading',
-      description: 'TOARK Terminal — Real-Time BTC/USDT Prediction Engine & VIP Trading Signals Architecture.',
-      language: 'TypeScript / Next.js',
+      name: 'mrsaqib3',
+      description: 'Production Next.js Web Architecture & High-Performance Developer Suite.',
+      language: 'TypeScript',
       stars: 0,
       forks: 0,
-      url: 'https://github.com/mr-saqib-242/crptotrading',
-      downloadUrl: 'https://github.com/mr-saqib-242/crptotrading/archive/refs/heads/main.zip',
-      updatedAt: 'Active Today',
+      url: 'https://github.com/mr-saqib-242/mrsaqib3',
+      downloadUrl: 'https://github.com/mr-saqib-242/mrsaqib3/archive/refs/heads/main.zip',
+      updatedAt: 'Updated 16h ago',
+    },
+    {
+      name: 'mrsaqib2',
+      description: 'Full-Stack Developer Portfolio, UI Components & Cloud Integration.',
+      language: 'TypeScript',
+      stars: 0,
+      forks: 0,
+      url: 'https://github.com/mr-saqib-242/mrsaqib2',
+      downloadUrl: 'https://github.com/mr-saqib-242/mrsaqib2/archive/refs/heads/main.zip',
+      updatedAt: 'Updated 17h ago',
     },
     {
       name: 'mrsaqib1',
@@ -85,23 +95,13 @@ const DEFAULT_STATS: GitHubStats = {
       forks: 0,
       url: 'https://github.com/mr-saqib-242/mrsaqib1',
       downloadUrl: 'https://github.com/mr-saqib-242/mrsaqib1/archive/refs/heads/main.zip',
-      updatedAt: 'Verified',
-    },
-    {
-      name: 'mrsaqib3',
-      description: 'Production Next.js Web Application & Realtime Full-Stack Infrastructure.',
-      language: 'TypeScript',
-      stars: 0,
-      forks: 0,
-      url: 'https://github.com/mr-saqib-242/mrsaqib3',
-      downloadUrl: 'https://github.com/mr-saqib-242/mrsaqib3/archive/refs/heads/main.zip',
-      updatedAt: 'Production',
+      updatedAt: 'Updated 17h ago',
     },
   ],
   latestActivity: {
-    title: 'TOARK Terminal BTC/USDT Prediction System',
-    repo: 'crptotrading',
-    timestamp: 'Active today',
+    title: 'Production Next.js Architecture',
+    repo: 'mrsaqib3',
+    timestamp: 'Updated 16h ago',
   },
 };
 
@@ -446,7 +446,7 @@ export default function GitHubPage() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <span className="font-mono text-zinc-300">
-              <strong className="text-white">Active Repository:</strong> crptotrading (TOARK)
+              <strong className="text-white">Active Repository:</strong> {stats.latestActivity?.repo || 'mrsaqib3'}
             </span>
           </div>
           <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px]">
