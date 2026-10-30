@@ -4,22 +4,35 @@ import Link from 'next/link';
 import {
   FaExternalLinkAlt,
   FaCheckCircle,
-  FaShieldAlt,
   FaCopy,
   FaCheck,
   FaGithub,
   FaCode,
-  FaLaptopCode,
   FaArrowLeft,
   FaStar,
-  FaCodeBranch,
-  FaTerminal
+  FaTerminal,
+  FaLock,
+  FaUnlock,
+  FaDownload,
+  FaUserPlus,
+  FaTimes
 } from 'react-icons/fa';
 import { supabase } from '../lib/supabase';
 import { DEFAULT_PROFILE_SETTINGS } from '../lib/profileSettingsService';
 
 const FALLBACK_GITHUB_URL = DEFAULT_PROFILE_SETTINGS.github_url || 'https://github.com/mr-saqib-242';
 const PREVIEW_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png';
+
+interface GitHubRepoItem {
+  name: string;
+  description: string;
+  language: string;
+  stars: number;
+  forks: number;
+  url: string;
+  downloadUrl?: string;
+  updatedAt: string;
+}
 
 interface GitHubStats {
   user: {
@@ -33,15 +46,7 @@ interface GitHubStats {
     following: number;
     location: string;
   };
-  featuredRepos: Array<{
-    name: string;
-    description: string;
-    language: string;
-    stars: number;
-    forks: number;
-    url: string;
-    updatedAt: string;
-  }>;
+  featuredRepos: GitHubRepoItem[];
   latestActivity: {
     title: string;
     repo: string;
@@ -69,6 +74,7 @@ const DEFAULT_STATS: GitHubStats = {
       stars: 0,
       forks: 0,
       url: 'https://github.com/mr-saqib-242/crptotrading',
+      downloadUrl: 'https://github.com/mr-saqib-242/crptotrading/archive/refs/heads/main.zip',
       updatedAt: 'Active Today',
     },
     {
@@ -78,7 +84,18 @@ const DEFAULT_STATS: GitHubStats = {
       stars: 0,
       forks: 0,
       url: 'https://github.com/mr-saqib-242/mrsaqib1',
+      downloadUrl: 'https://github.com/mr-saqib-242/mrsaqib1/archive/refs/heads/main.zip',
       updatedAt: 'Verified',
+    },
+    {
+      name: 'mrsaqib3',
+      description: 'Production Next.js Web Application & Realtime Full-Stack Infrastructure.',
+      language: 'TypeScript',
+      stars: 0,
+      forks: 0,
+      url: 'https://github.com/mr-saqib-242/mrsaqib3',
+      downloadUrl: 'https://github.com/mr-saqib-242/mrsaqib3/archive/refs/heads/main.zip',
+      updatedAt: 'Production',
     },
   ],
   latestActivity: {
@@ -99,7 +116,7 @@ const schemaData = {
       description: 'Official GitHub profile of Muhammad Saqib (@mr-saqib-242). Explore verified open-source software, full-stack Next.js production codebases, and cyber security tools.',
       inLanguage: ['en-US', 'ur-PK'],
       dateCreated: '2024-01-01T00:00:00+05:00',
-      dateModified: '2026-10-30T11:45:00+05:00',
+      dateModified: '2026-10-30T11:55:00+05:00',
       isPartOf: {
         '@type': 'WebSite',
         '@id': 'https://www.mrsaqib.me/#website',
@@ -192,8 +209,23 @@ export default function GitHubPage() {
   const [stats, setStats] = useState<GitHubStats>(DEFAULT_STATS);
   const [showRepos, setShowRepos] = useState(true);
 
+  // Social Unlock State
+  const [selectedRepo, setSelectedRepo] = useState<GitHubRepoItem | null>(null);
+  const [hasStarred, setHasStarred] = useState(false);
+  const [hasFollowed, setHasFollowed] = useState(false);
+  const [unlockSuccess, setUnlockSuccess] = useState(false);
+
   useEffect(() => {
     let isMounted = true;
+
+    // Check if user already unlocked previously
+    try {
+      const storedUnlock = localStorage.getItem('saqib_github_unlocked');
+      if (storedUnlock === 'true') {
+        setHasStarred(true);
+        setHasFollowed(true);
+      }
+    } catch {}
 
     // 1. Fetch dynamic profile URL from cache or Supabase
     async function loadTargetUrl() {
@@ -251,6 +283,54 @@ export default function GitHubPage() {
     setCopiedClone(true);
     setTimeout(() => setCopiedClone(false), 2000);
   };
+
+  // Open Unlock Modal
+  const openDownloadModal = (repo: GitHubRepoItem) => {
+    setSelectedRepo(repo);
+    setUnlockSuccess(false);
+  };
+
+  const closeModal = () => {
+    setSelectedRepo(null);
+  };
+
+  // Step 1: Star Repo Action
+  const handleStarAction = () => {
+    if (!selectedRepo) return;
+    window.open(selectedRepo.url, '_blank', 'noopener,noreferrer');
+    setTimeout(() => {
+      setHasStarred(true);
+      checkFullUnlock(true, hasFollowed);
+    }, 1000);
+  };
+
+  // Step 2: Follow Saqib Action
+  const handleFollowAction = () => {
+    window.open('https://github.com/mr-saqib-242', '_blank', 'noopener,noreferrer');
+    setTimeout(() => {
+      setHasFollowed(true);
+      checkFullUnlock(hasStarred, true);
+    }, 1000);
+  };
+
+  const checkFullUnlock = (starred: boolean, followed: boolean) => {
+    if (starred && followed) {
+      try {
+        localStorage.setItem('saqib_github_unlocked', 'true');
+      } catch {}
+      setUnlockSuccess(true);
+    }
+  };
+
+  // Download Trigger
+  const triggerDownload = () => {
+    if (!selectedRepo) return;
+    const downloadLink = selectedRepo.downloadUrl || `${selectedRepo.url}/archive/refs/heads/main.zip`;
+    window.open(downloadLink, '_blank');
+  };
+
+  const isUnlocked = hasStarred && hasFollowed;
+  const progressPercent = (hasStarred ? 50 : 0) + (hasFollowed ? 50 : 0);
 
   return (
     <div className="min-h-screen bg-[#07090e] text-white flex flex-col items-center justify-center p-4 py-12 relative overflow-hidden font-sans">
@@ -379,7 +459,7 @@ export default function GitHubPage() {
           <div className="flex items-center justify-between mb-2.5">
             <div className="text-xs font-semibold uppercase tracking-wider text-zinc-400 font-mono flex items-center gap-1.5">
               <FaCode className="text-purple-400" />
-              <span>Featured Codebases</span>
+              <span>Download &amp; Access Repositories</span>
             </div>
             <button
               type="button"
@@ -391,11 +471,11 @@ export default function GitHubPage() {
           </div>
 
           {showRepos && (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {stats.featuredRepos.map((repo) => (
                 <div
                   key={repo.name}
-                  className="group bg-zinc-900/70 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-xl p-3.5 transition-all text-left"
+                  className="group bg-zinc-900/80 hover:bg-zinc-900 border border-zinc-800 hover:border-purple-500/40 rounded-xl p-4 transition-all text-left relative overflow-hidden"
                 >
                   <div className="flex items-start justify-between gap-2 mb-1.5">
                     <a
@@ -411,18 +491,28 @@ export default function GitHubPage() {
                       {repo.language}
                     </span>
                   </div>
-                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed mb-2.5">
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed mb-3">
                     {repo.description}
                   </p>
-                  <div className="flex items-center justify-between text-[11px] text-zinc-500 font-mono">
-                    <span className="text-emerald-400/90 font-medium">● Verified Production</span>
+
+                  {/* Action Bar inside Repo Card */}
+                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-zinc-800/80">
+                    <button
+                      type="button"
+                      onClick={() => openDownloadModal(repo)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold shadow-md shadow-emerald-950/40 transition-all cursor-pointer active:scale-95"
+                    >
+                      {isUnlocked ? <FaUnlock className="text-emerald-200 w-3 h-3" /> : <FaLock className="text-emerald-200 w-3 h-3" />}
+                      <span>{isUnlocked ? 'Download Source Code' : 'Unlock & Download Code'}</span>
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => copyCloneCmd(repo.name)}
-                      className="inline-flex items-center gap-1 hover:text-white transition-colors cursor-pointer text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded border border-white/10"
+                      className="inline-flex items-center gap-1 hover:text-white transition-colors cursor-pointer text-[11px] bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/10 text-zinc-400 font-mono"
                     >
                       <FaTerminal className="w-2.5 h-2.5" />
-                      <span>{copiedClone ? 'Copied clone!' : 'Copy Clone URL'}</span>
+                      <span>{copiedClone ? 'Copied!' : 'Clone URL'}</span>
                     </button>
                   </div>
                 </div>
@@ -463,6 +553,150 @@ export default function GitHubPage() {
           <span className="font-mono text-zinc-400">Saqib242 • Gojra, PK</span>
         </div>
       </div>
+
+      {/* ====================================================================== */}
+      {/* 🚀 STAR & FOLLOW TO UNLOCK DOWNLOAD MODAL (VIRAL GATE)                 */}
+      {/* ====================================================================== */}
+      {selectedRepo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="relative max-w-md w-full bg-zinc-950 border border-white/20 rounded-2xl p-6 sm:p-7 text-center shadow-2xl shadow-emerald-500/10">
+            
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <FaTimes className="w-4 h-4" />
+            </button>
+
+            {/* Lock Header Icon */}
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-emerald-500/20 via-zinc-800 to-purple-500/20 p-0.5 flex items-center justify-center">
+              <div className="w-full h-full bg-zinc-900 rounded-[14px] flex items-center justify-center">
+                {isUnlocked ? (
+                  <FaUnlock className="w-7 h-7 text-emerald-400 animate-bounce" />
+                ) : (
+                  <FaLock className="w-7 h-7 text-amber-400" />
+                )}
+              </div>
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-1.5">
+              {isUnlocked ? 'Access Granted!' : 'Unlock Code Download'}
+            </h3>
+            <p className="text-xs text-zinc-400 mb-5 leading-relaxed">
+              To download <strong className="text-white font-mono">{selectedRepo.name}</strong>, please complete the 2 quick verification steps below to support open-source development!
+            </p>
+
+            {/* Unlock Progress Bar */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between text-[11px] font-mono mb-1.5 text-zinc-400">
+                <span>Unlock Progress</span>
+                <span className={isUnlocked ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
+                  {progressPercent}% Complete
+                </span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-purple-500 via-emerald-400 to-teal-400 transition-all duration-500 ease-out"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Step Cards */}
+            <div className="space-y-3 mb-6">
+              {/* Step 1: Star */}
+              <div
+                onClick={handleStarAction}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer text-left ${
+                  hasStarred
+                    ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                    : 'bg-zinc-900/80 hover:bg-zinc-900 border-zinc-800 hover:border-amber-500/40 text-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${hasStarred ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                    <FaStar className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold">Step 1: Star Repository</div>
+                    <div className="text-[11px] text-zinc-400">Star {selectedRepo.name} on GitHub</div>
+                  </div>
+                </div>
+                <div>
+                  {hasStarred ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-mono">
+                      <FaCheck className="w-3 h-3" /> Done
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30">
+                      Star Now
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Step 2: Follow */}
+              <div
+                onClick={handleFollowAction}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer text-left ${
+                  hasFollowed
+                    ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                    : 'bg-zinc-900/80 hover:bg-zinc-900 border-zinc-800 hover:border-purple-500/40 text-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${hasFollowed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-purple-500/10 text-purple-400'}`}>
+                    <FaUserPlus className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold">Step 2: Follow Muhammad Saqib</div>
+                    <div className="text-[11px] text-zinc-400">Follow @mr-saqib-242 on GitHub</div>
+                  </div>
+                </div>
+                <div>
+                  {hasFollowed ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-mono">
+                      <FaCheck className="w-3 h-3" /> Done
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold px-3 py-1 rounded-lg bg-purple-500/20 text-purple-300 hover:bg-purple-500/30">
+                      Follow Now
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Direct Download Button (Unlocked or Locked) */}
+            {isUnlocked ? (
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={triggerDownload}
+                  className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-sm shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+                >
+                  <FaDownload className="w-4 h-4" />
+                  <span>Download Source Code (.ZIP)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => copyCloneCmd(selectedRepo.name)}
+                  className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-mono text-zinc-300 border border-white/10 transition-colors"
+                >
+                  {copiedClone ? 'Copied Clone Command!' : `Copy Clone Command (git clone ...)`}
+                </button>
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 flex items-center justify-center gap-2">
+                <FaLock className="text-amber-400 w-3.5 h-3.5" />
+                <span>Complete both steps above to unlock instant download</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
