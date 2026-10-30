@@ -202,7 +202,7 @@ export default function SnapchatShortRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to Snapchat...
+          Mr Saqib Official Snapchat Profile
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Adding <span className="text-yellow-400 font-semibold">@mrsaqib242</span> on Snapchat for behind-the-scenes engineering and setup stories.

@@ -201,7 +201,7 @@ export default function InstagramShortRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to Instagram...
+          Mr Saqib Official Instagram Profile
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Opening <span className="text-rose-400 font-semibold">@mr_saqib242</span> for modern UI concepts, tech stories, and creative developer logs.

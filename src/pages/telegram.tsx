@@ -238,7 +238,7 @@ export default function TelegramRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to Telegram...
+          Mr Saqib Official Telegram
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Connecting to <span className="text-sky-400 font-semibold">@mrsaqib242</span> on Telegram for priority client chat, tech drops, and rapid project onboarding.

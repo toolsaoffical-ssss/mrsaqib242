@@ -198,7 +198,7 @@ export default function TikTokRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to TikTok...
+          Mr Saqib Official TikTok Profile
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Connecting to <span className="text-rose-400 font-semibold">@mr_saqib_242</span> on TikTok for daily web development tutorials, source code drops, and coding shorts.

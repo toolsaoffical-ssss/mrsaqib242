@@ -202,7 +202,7 @@ export default function TikTokShortRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to TikTok...
+          Mr Saqib Official TikTok Profile
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Taking you directly to <span className="text-pink-400 font-semibold">@mr_saqib_242</span> for dev workflows, full stack tutorials, and tech updates.

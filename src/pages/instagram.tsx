@@ -197,7 +197,7 @@ export default function InstagramRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to Instagram...
+          Mr Saqib Official Instagram Profile
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Opening official Instagram page of <span className="text-pink-400 font-semibold">@mr_saqib242</span> (Saqib Visuals) for web design galleries, reels, and stories.

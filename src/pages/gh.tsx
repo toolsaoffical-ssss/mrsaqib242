@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { FaExternalLinkAlt, FaCheckCircle, FaShieldAlt, FaCopy, FaCheck, FaGithub, FaCode, FaLaptopCode } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaExternalLinkAlt, FaCheckCircle, FaShieldAlt, FaCopy, FaCheck, FaGithub, FaCode, FaLaptopCode, FaArrowLeft } from 'react-icons/fa';
 import { supabase } from '../lib/supabase';
 import { DEFAULT_PROFILE_SETTINGS } from '../lib/profileSettingsService';
 
@@ -14,11 +15,11 @@ const schemaData = {
       '@type': 'ProfilePage',
       '@id': 'https://www.mrsaqib.me/gh#webpage',
       url: 'https://www.mrsaqib.me/gh',
-      name: 'Mr Saqib Official GitHub (@mr-saqib-242) | Open Source Repositories & Developer Code',
-      description: 'Official verified GitHub profile and open-source software repositories for Muhammad Saqib (Mr Saqib / Saqib 242). Access high-performance Next.js architectures, AI automations, security tools, and developer codebases at https://github.com/mr-saqib-242.',
+      name: 'Mr Saqib GitHub (@mr-saqib-242) | Official Developer Profile & Repositories',
+      description: 'Official GitHub profile of Muhammad Saqib (@mr-saqib-242). Explore verified open-source software, full-stack Next.js production codebases, and cyber security tools.',
       inLanguage: ['en-US', 'ur-PK'],
       dateCreated: '2024-01-01T00:00:00+05:00',
-      dateModified: '2026-10-29T20:00:00+05:00',
+      dateModified: '2026-10-30T09:30:00+05:00',
       isPartOf: {
         '@type': 'WebSite',
         '@id': 'https://www.mrsaqib.me/#website',
@@ -38,7 +39,7 @@ const schemaData = {
         alternateName: ['Mr Saqib', 'Saqib 242', 'mrsaqib242', 'mr-saqib-242', 'Saqib Visuals', 'Saqib Dev'],
         identifier: 'mr-saqib-242',
         jobTitle: 'Lead Full-Stack Web Architect & Cyber Security Specialist',
-        description: 'Muhammad Saqib (Mr Saqib) is an elite cyber security specialist, full-stack engineer, and open-source software architect.',
+        description: 'Muhammad Saqib (Mr Saqib / Saqib 242) is an elite cyber security specialist, full-stack engineer, and open-source software architect recognized for building impenetrable digital systems.',
         telephone: '+923478936242',
         email: 'mrsaqib242242@gmail.com',
         url: 'https://www.mrsaqib.me',
@@ -96,7 +97,7 @@ const schemaData = {
         {
           '@type': 'ListItem',
           position: 2,
-          name: 'GitHub Profile',
+          name: 'Mr Saqib GitHub',
           item: 'https://www.mrsaqib.me/gh'
         }
       ]
@@ -104,36 +105,26 @@ const schemaData = {
   ]
 };
 
-export default function GitHubShortRedirectPage() {
+export default function GitHubShortPage() {
   const [targetUrl, setTargetUrl] = useState(FALLBACK_GITHUB_URL);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
-    async function resolveAndRedirect() {
-      if (typeof window === 'undefined') return;
-
-      // Never redirect search engine bots or crawlers (Googlebot, Bing, etc.)
-      const ua = (navigator.userAgent || '').toLowerCase();
-      const isBot = /google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(ua);
-      if (isBot) return;
-
-      // 1. Try local storage cache first for instant redirect
+    async function loadTargetUrl() {
+      // 1. Try local storage cache
       try {
         const cached = localStorage.getItem('saqib_profile_settings_cache');
         if (cached) {
           const parsed = JSON.parse(cached);
           if (parsed.github_url && parsed.github_url.trim()) {
-            const url = parsed.github_url.trim();
-            if (isMounted) setTargetUrl(url);
-            window.location.replace(url);
-            return;
+            if (isMounted) setTargetUrl(parsed.github_url.trim());
           }
         }
       } catch {}
 
-      // 2. Fetch fresh dynamic URL from Supabase in real-time
+      // 2. Fetch fresh dynamic URL from Supabase
       try {
         const { data } = await supabase
           .from('profile_settings')
@@ -141,17 +132,13 @@ export default function GitHubShortRedirectPage() {
           .eq('id', 'default')
           .maybeSingle();
 
-        const liveUrl = (data?.github_url && data.github_url.trim()) ? data.github_url.trim() : FALLBACK_GITHUB_URL;
-        if (isMounted) {
-          setTargetUrl(liveUrl);
-          window.location.replace(liveUrl);
+        if (isMounted && data?.github_url && data.github_url.trim()) {
+          setTargetUrl(data.github_url.trim());
         }
-      } catch {
-        window.location.replace(FALLBACK_GITHUB_URL);
-      }
+      } catch {}
     }
 
-    resolveAndRedirect();
+    loadTargetUrl();
     return () => { isMounted = false; };
   }, []);
 
@@ -164,24 +151,17 @@ export default function GitHubShortRedirectPage() {
   return (
     <div className="min-h-screen bg-[#07090e] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
       <Head>
-        {/* Instant 0ms Script: executes before React hydration only for real human visitors */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `if(typeof window!=="undefined"){var u=(navigator.userAgent||"").toLowerCase();var b=/google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(u);if(!b){try{var c=localStorage.getItem("saqib_profile_settings_cache");if(c){var d=JSON.parse(c);if(d.github_url){window.location.replace(d.github_url);}}}catch(e){}window.location.replace("${FALLBACK_GITHUB_URL}");}}`
-          }}
-        />
-
-        {/* DNS Prefetch & Preconnect for Lightning Fast Network Handshake */}
+        {/* DNS Prefetch & Preconnect for Fast Handshake */}
         <link rel="dns-prefetch" href="https://github.com" />
         <link rel="preconnect" href="https://github.com" crossOrigin="anonymous" />
         <link rel="preload" as="image" href={PREVIEW_IMAGE} />
 
         {/* Primary Search Engine Meta Tags */}
-        <title>Mr Saqib Official GitHub (@mr-saqib-242) | Open Source Repositories &amp; Developer Code</title>
-        <meta name="title" content="Mr Saqib Official GitHub (@mr-saqib-242) | Open Source Repositories & Developer Code" />
+        <title>Mr Saqib GitHub (@mr-saqib-242) | Official Developer Profile &amp; Repositories</title>
+        <meta name="title" content="Mr Saqib GitHub (@mr-saqib-242) | Official Developer Profile & Repositories" />
         <meta
           name="description"
-          content="Explore Muhammad Saqib's official public GitHub profile (@mr-saqib-242). Discover open-source software, high-performance Next.js templates, AI agents, and developer repositories (https://github.com/mr-saqib-242)."
+          content="Official GitHub profile of Muhammad Saqib (@mr-saqib-242). Explore verified open-source software, full-stack Next.js production codebases, and cyber security tools."
         />
         <meta
           name="keywords"
@@ -195,10 +175,10 @@ export default function GitHubShortRedirectPage() {
         <meta property="og:type" content="profile" />
         <meta property="og:url" content="https://www.mrsaqib.me/gh" />
         <meta property="og:site_name" content="Mr Saqib Developer Showcase" />
-        <meta property="og:title" content="Connect with Mr Saqib on GitHub (@mr-saqib-242)" />
+        <meta property="og:title" content="Mr Saqib GitHub (@mr-saqib-242) | Official Developer Profile & Repositories" />
         <meta
           property="og:description"
-          content="Explore open-source repositories, Next.js web applications, and developer tools by Muhammad Saqib on GitHub."
+          content="Official GitHub profile of Muhammad Saqib (@mr-saqib-242). Explore verified open-source software, Next.js production codebases, and developer tools."
         />
         <meta property="og:image" content={PREVIEW_IMAGE} />
         <meta property="og:image:secure_url" content={PREVIEW_IMAGE} />
@@ -210,10 +190,10 @@ export default function GitHubShortRedirectPage() {
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://www.mrsaqib.me/gh" />
-        <meta name="twitter:title" content="Connect with Mr Saqib on GitHub (@mr-saqib-242)" />
+        <meta name="twitter:title" content="Mr Saqib GitHub (@mr-saqib-242) | Official Developer Profile & Repositories" />
         <meta
           name="twitter:description"
-          content="Explore open-source repositories, Next.js web applications, and developer tools by Muhammad Saqib on GitHub."
+          content="Official GitHub profile of Muhammad Saqib (@mr-saqib-242). Explore verified open-source software, Next.js production codebases, and developer tools."
         />
         <meta name="twitter:image" content={PREVIEW_IMAGE} />
         <meta name="twitter:creator" content="@mr_saqib242" />
@@ -231,7 +211,7 @@ export default function GitHubShortRedirectPage() {
 
       {/* Main Glass Card */}
       <div className="relative z-10 max-w-md w-full bg-zinc-950/85 border border-white/15 rounded-2xl p-8 text-center backdrop-blur-xl shadow-2xl shadow-black/80">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-tr from-zinc-700 via-zinc-800 to-zinc-900 p-0.5 shadow-lg shadow-white/10 flex items-center justify-center animate-pulse">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-tr from-zinc-700 via-zinc-800 to-zinc-900 p-0.5 shadow-lg shadow-white/10 flex items-center justify-center">
           <div className="w-full h-full bg-[#0d1117] rounded-[14px] flex items-center justify-center">
             <FaGithub className="w-11 h-11 text-white" />
           </div>
@@ -243,10 +223,10 @@ export default function GitHubShortRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to GitHub...
+          Mr Saqib GitHub
         </h1>
         <p className="text-sm text-zinc-400 mb-5 leading-relaxed">
-          Connecting to <span className="text-white font-semibold font-mono">@mr-saqib-242</span> on GitHub for open-source software, Next.js codebases, and developer tools.
+          Official GitHub profile of <span className="text-white font-semibold font-mono">@mr-saqib-242</span>. Explore open-source software, full-stack Next.js production templates, and developer repositories.
         </p>
 
         {/* Feature badges */}
@@ -266,17 +246,19 @@ export default function GitHubShortRedirectPage() {
         </div>
 
         <div className="flex items-center justify-center gap-2 mb-6">
-          <div className="w-2 h-2 rounded-full bg-white animate-ping" />
-          <span className="text-xs text-zinc-300 font-mono font-medium">Opening GitHub repositories...</span>
+          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs text-zinc-300 font-mono font-medium">Active • Open Source Developer • Pakistan</span>
         </div>
 
         <div className="space-y-3">
           <a
             href={targetUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 hover:from-zinc-700 hover:to-zinc-600 text-white font-semibold text-sm transition-all shadow-lg shadow-black/50 border border-white/20 active:scale-[0.98]"
           >
             <FaGithub className="w-4 h-4" />
-            <span>Open GitHub Now</span>
+            <span>Open GitHub Profile</span>
             <FaExternalLinkAlt className="w-3 h-3 opacity-70 ml-1" />
           </a>
 
@@ -286,12 +268,15 @@ export default function GitHubShortRedirectPage() {
             className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-mono text-zinc-300 border border-white/10 transition-colors cursor-pointer"
           >
             {copied ? <FaCheck className="text-emerald-400" /> : <FaCopy />}
-            <span>{copied ? 'Copied mr-saqib-242 to clipboard!' : 'Copy Username (mr-saqib-242)'}</span>
+            <span>{copied ? 'Copied mr-saqib-242 to clipboard!' : 'Copy Handle (@mr-saqib-242)'}</span>
           </button>
         </div>
 
         <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500">
-          <span>Official Developer Repositories</span>
+          <Link href="/" className="inline-flex items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+            <FaArrowLeft className="w-2.5 h-2.5" />
+            <span>Return to Portfolio</span>
+          </Link>
           <span className="font-mono text-zinc-400">Saqib242 • Gojra, PK</span>
         </div>
       </div>

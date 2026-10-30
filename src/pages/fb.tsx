@@ -201,7 +201,7 @@ export default function FacebookShortRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to Facebook...
+          Mr Saqib Official Facebook Profile
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Opening <span className="text-blue-400 font-semibold">Muhammad Saqib</span>&apos;s Facebook profile for tech articles, portfolio highlights, and community updates.

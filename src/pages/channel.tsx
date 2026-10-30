@@ -204,7 +204,7 @@ export default function ChannelRedirectPage() {
         </div>
 
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Redirecting to WhatsApp Channel...
+          Mr Saqib Official WhatsApp Channel
         </h1>
         <p className="text-sm text-slate-400 mb-5 leading-relaxed">
           Connecting to <span className="text-emerald-400 font-semibold">Mr Saqib VIP Channel</span> for code drops, project source files, and live developer updates.
