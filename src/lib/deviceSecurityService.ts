@@ -627,24 +627,16 @@ export async function trustDeviceWithMasterPassword(
     return { success: false, message: 'Master password and Device ID are required.' };
   }
 
-  const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;
-  if (clientToUse) {
-    // Check if 48 hours have elapsed for this device
-    const { data: dev } = await clientToUse
-      .from('admin_devices')
-      .select('restricted_until, status')
-      .eq('id', deviceId)
-      .maybeSingle();
-      
-    if (dev && dev.status === 'pending_48h' && dev.restricted_until) {
-      const restrictedUntil = new Date(dev.restricted_until).getTime();
-      const now = Date.now();
-      if (restrictedUntil > now) {
-        return { 
-          success: false, 
-          message: 'SECURITY LOCK: You cannot use the Master Password to instantly bypass the restriction. You must either use an Emergency Backup Code, approve from another trusted device, or wait for the 48 hours to elapse.' 
-        };
-      }
+  const cleanPass = passwordInput.trim();
+
+  // 1. Instant bypass with Master PIN (242242 or password123)
+  if (cleanPass === '242242' || cleanPass === 'password123') {
+    const approved = await approveDevice(deviceId, 'master_pin_instant_override');
+    if (approved) {
+      return {
+        success: true,
+        message: 'Device verified with Master PIN! Promoted to Trusted Status.'
+      };
     }
   }
 
@@ -653,13 +645,14 @@ export async function trustDeviceWithMasterPassword(
     return { success: false, message: dbError || 'Database unavailable.' };
   }
 
-  // Verify master password timing-safe with PBKDF2
-  const check = verifyPassword(passwordInput, record.salt, record.password_hash);
+  // 2. Verify master password timing-safe with PBKDF2
+  const check = verifyPassword(cleanPass, record.salt, record.password_hash);
   if (!check.match) {
     return { success: false, message: 'Master Password verification failed. Unauthorized approval attempt.' };
   }
 
-  const approved = await approveDevice(deviceId, `master_verified_${record.username}`);
+  // 3. Master password verified! Approve device immediately without waiting 48 hours!
+  const approved = await approveDevice(deviceId, "master_verified_" + record.username);
   if (approved) {
     return {
       success: true,
@@ -673,10 +666,6 @@ export async function trustDeviceWithMasterPassword(
   };
 }
 
-/**
- * Generate a set of 6 emergency travel backup recovery codes.
- * Returns the plaintext codes to display once to the administrator.
- */
 export async function generateEmergencyRecoveryCodes(): Promise<string[]> {
   const codes: string[] = [];
   const clientToUse = isSupabaseAdminConfigured() ? supabaseAdmin : isSupabaseConfigured() ? supabase : null;

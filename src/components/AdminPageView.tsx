@@ -120,7 +120,7 @@ export default function AdminPageView() {
           setRemainingRestrictionSeconds(0);
         }}
       />
-      {isMirageLocked && <MirageLockScreen />}
+      {isMirageLocked && <MirageLockScreen onUnlockSuccess={() => setIsMirageLocked(false)} />}
     </>
   );
 }

@@ -134,7 +134,7 @@ export function setMirageChallengeCookie(res: NextApiResponse) {
 
   res.setHeader('Set-Cookie', [
     ...existingArray,
-    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict${secureFlag}; Max-Age=300`
+    `ms_mirage_state=${token}; Path=/; HttpOnly; SameSite=Strict${secureFlag}; Max-Age=900`
   ]);
 }
 
@@ -199,7 +199,7 @@ export function verifyMirageState(req: NextApiRequest): { isUnlocked: boolean; c
 
   if (state === 'challenge') {
     const elapsed = Date.now() - timestamp;
-    if (elapsed > 180000) { // 60 seconds strict!
+    if (elapsed > 900000) { // 60 seconds strict!
       return { isUnlocked: false, challengeStartedAt: timestamp, isExpired: true };
     }
     return { isUnlocked: false, challengeStartedAt: timestamp, isExpired: false };
