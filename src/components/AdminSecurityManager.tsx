@@ -1433,7 +1433,7 @@ export default function AdminSecurityManager({
                     type="text"
                     value={miragePin}
                     onChange={e => setMiragePin(e.target.value.replace(/[^0-9]/g, ''))}
-                    placeholder="e.g. 242242"
+                    placeholder="Enter Master PIN (min 4 digits)"
                     disabled={isRestricted}
                     className="w-full bg-[#181920] border border-white/10 rounded-xl px-4 py-3 text-sm font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500 transition-colors pl-10 disabled:opacity-50"
                   />

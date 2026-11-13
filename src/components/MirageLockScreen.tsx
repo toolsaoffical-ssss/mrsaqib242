@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, Timer, Cpu, AlertOctagon, KeyRound, Unlock, Zap, CheckCircle2, RefreshCw } from 'lucide-react';
+import { ShieldCheck, Timer, Cpu, AlertOctagon, KeyRound, Unlock, CheckCircle2, RefreshCw } from 'lucide-react';
 import { logoutAdmin } from '../lib/adminAuthClient';
 
 interface MirageLockScreenProps {
@@ -47,7 +47,7 @@ export default function MirageLockScreen({ onUnlockSuccess }: MirageLockScreenPr
     if (loading) return;
     const clean = codeToVerify.trim();
     if (!clean || clean.length < 4) {
-      setError('Please enter at least 4 digits (OTP or Master PIN 242242).');
+      setError('Please enter at least 4 digits (OTP or Security PIN).');
       return;
     }
 
@@ -79,18 +79,13 @@ export default function MirageLockScreen({ onUnlockSuccess }: MirageLockScreenPr
           window.location.href = '/yourareadmin?reason=mirage_strikes';
           return;
         }
-        setError(data.error || 'Sequence rejected. Try again or use 1-Click Master PIN.');
+        setError(data.error || 'Invalid sequence. Please check credentials and try again.');
       }
     } catch {
       setError('Connection issue. Please verify network and try again.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handle1ClickMasterUnlock = () => {
-    setOtpCode('242242');
-    handleVerify(selectedPort, '242242');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -217,7 +212,7 @@ export default function MirageLockScreen({ onUnlockSuccess }: MirageLockScreenPr
                   setError('');
                 }}
                 disabled={loading}
-                placeholder="4-digit OTP or PIN (242242)"
+                placeholder="Enter 4 to 6 digit OTP / PIN"
                 style={{
                   WebkitTextSecurity: isMasked ? 'disc' : 'none',
                   textSecurity: isMasked ? 'disc' : 'none'
@@ -229,16 +224,16 @@ export default function MirageLockScreen({ onUnlockSuccess }: MirageLockScreenPr
             </div>
             
             <p className="text-[11px] text-zinc-500 font-mono mt-2 text-center">
-              Generate 4 digits from <span className="text-zinc-300">/mradmin2</span> or enter Master Security PIN.
+              Enter the sequence generated from <span className="text-zinc-300">/mradmin2</span> or your Master PIN.
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="pt-2">
             <button
               type="submit"
               disabled={loading || otpCode.length < 4}
-              className="flex-1 py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 hover:from-cyan-400 hover:to-emerald-300 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 hover:from-cyan-400 hover:to-emerald-300 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <>
@@ -251,16 +246,6 @@ export default function MirageLockScreen({ onUnlockSuccess }: MirageLockScreenPr
                   <span>Unlock Admin Dashboard</span>
                 </>
               )}
-            </button>
-
-            <button
-              type="button"
-              disabled={loading}
-              onClick={handle1ClickMasterUnlock}
-              className="py-3.5 px-5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
-            >
-              <Zap size={14} className="text-amber-400" />
-              <span>1-Click Master PIN (242242)</span>
             </button>
           </div>
         </form>
