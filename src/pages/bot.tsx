@@ -4,7 +4,7 @@ import { FaRobot, FaWhatsapp, FaExternalLinkAlt, FaCheckCircle, FaBolt, FaShield
 import { supabase } from '../lib/supabase';
 import { DEFAULT_PROFILE_SETTINGS } from '../lib/profileSettingsService';
 
-const FALLBACK_BOT_URL = DEFAULT_PROFILE_SETTINGS.bot_url || 'https://saqib-md.vercel.app';
+const FALLBACK_BOT_URL = DEFAULT_PROFILE_SETTINGS.bot_url || 'https://saqibmd.vercel.app';
 const PREVIEW_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png';
 
 const schemaData = {
@@ -103,7 +103,7 @@ const schemaData = {
           name: 'How do I connect and launch Saqib MD Bot?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'You can launch Saqib MD Bot directly by opening https://www.mrsaqib.me/bot or https://saqib-md.vercel.app. Click "Open Bot" to generate your pairing code and link your WhatsApp multi-device session securely.'
+            text: 'You can launch Saqib MD Bot directly by opening https://www.mrsaqib.me/bot or https://saqibmd.vercel.app. Click "Open Bot" to generate your pairing code and link your WhatsApp multi-device session securely.'
           }
         },
         {
@@ -206,8 +206,8 @@ export default function BotShortRedirectPage() {
         />
 
         {/* DNS Prefetch & Preconnect for Lightning Fast Network Handshake */}
-        <link rel="dns-prefetch" href="https://saqib-md.vercel.app" />
-        <link rel="preconnect" href="https://saqib-md.vercel.app" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://saqibmd.vercel.app" />
+        <link rel="preconnect" href="https://saqibmd.vercel.app" crossOrigin="anonymous" />
         <link rel="preload" as="image" href={PREVIEW_IMAGE} />
 
         {/* Primary Search Engine Meta Tags */}
