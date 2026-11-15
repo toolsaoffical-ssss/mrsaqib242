@@ -18,6 +18,26 @@ const nextConfig = {
     ],
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/saqibmd',
+        destination: '/bot',
+        permanent: true,
+      },
+      {
+        source: '/saqibbot',
+        destination: '/bot',
+        permanent: true,
+      },
+      {
+        source: '/bot-md',
+        destination: '/bot',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

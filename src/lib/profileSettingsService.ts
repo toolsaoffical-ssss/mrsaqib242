@@ -19,6 +19,7 @@ export interface ProfileSettings {
   snapchat_url: string;
   telegram_url?: string;
   github_url?: string;
+  bot_url?: string;
   avatar_url?: string;
   contract_status?: string;
   contract_subtitle?: string;
@@ -47,6 +48,7 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   tiktok_url: 'https://www.tiktok.com/@mr_saqib_242',
   snapchat_url: 'https://www.snapchat.com/add/mrsaqib242',
   github_url: 'https://github.com/mr-saqib-242',
+  bot_url: 'https://saqib-md.vercel.app',
   avatar_url: 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
   contract_status: 'Open for New Projects',
   contract_subtitle: 'Remote Worldwide • NDA Protected',
