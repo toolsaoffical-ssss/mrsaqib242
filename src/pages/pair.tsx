@@ -107,7 +107,7 @@ export default function PairPage() {
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const activeNodeRef = useRef<string | null>(null);
-  const terminalEndRef = useRef<HTMLDivElement | null>(null);
+  const terminalBoxRef = useRef<HTMLDivElement | null>(null);
 
   const addLog = (text: string, type: 'info' | 'success' | 'error' = 'info') => {
     const time = new Date().toLocaleTimeString();
@@ -115,8 +115,8 @@ export default function PairPage() {
   };
 
   useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (terminalBoxRef.current) {
+      terminalBoxRef.current.scrollTop = terminalBoxRef.current.scrollHeight;
     }
   }, [terminalLogs]);
 
@@ -1367,7 +1367,7 @@ export default function PairPage() {
             </button>
           </div>
 
-          <div className="terminal-console rounded-xl p-3 h-28 overflow-y-auto text-[11px] text-slate-200 space-y-1 bg-slate-950 font-mono shadow-inner">
+          <div ref={terminalBoxRef} className="terminal-console rounded-xl p-3 h-28 overflow-y-auto text-[11px] text-slate-200 space-y-1 bg-slate-950 font-mono shadow-inner">
             {terminalLogs.map((log) => (
               <div
                 key={log.id}
@@ -1382,7 +1382,6 @@ export default function PairPage() {
                 [{log.time}] {log.text}
               </div>
             ))}
-            <div ref={terminalEndRef} />
           </div>
         </section>
 
