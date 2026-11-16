@@ -116,7 +116,11 @@ export default function PairPage() {
 
   useEffect(() => {
     if (terminalBoxRef.current) {
+      const savedScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
       terminalBoxRef.current.scrollTop = terminalBoxRef.current.scrollHeight;
+      if (typeof window !== 'undefined' && window.scrollY !== savedScrollY) {
+        window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+      }
     }
   }, [terminalLogs]);
 
@@ -320,6 +324,10 @@ export default function PairPage() {
 
   const handleGenerateCode = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (typeof document !== 'undefined') {
+      (document.activeElement as HTMLElement)?.blur();
+    }
+    const savedScrollPos = typeof window !== 'undefined' ? window.scrollY : 0;
     setErrorText(null);
     setCopied(false);
 
@@ -402,6 +410,11 @@ export default function PairPage() {
       const formatted = clean.length === 8 ? `${clean.slice(0, 4)}-${clean.slice(4)}` : finalCode;
       setPairingCode(formatted);
       addLog(`🔑 [${successfulNode.short}] Pairing Code Generated: ${formatted}`, 'success');
+      if (typeof window !== 'undefined') {
+        window.requestAnimationFrame(() => {
+          window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
+        });
+      }
     } else if (!errorText) {
       setErrorText('Cluster timed out. Please check your phone number and try again.');
       addLog('❌ Cluster timed out. Retrying recommended.', 'error');
