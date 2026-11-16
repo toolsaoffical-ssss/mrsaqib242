@@ -92,13 +92,18 @@ export default function PairPage() {
     }
   }, [pairingCode, countdown, isConnected]);
 
-  // Polling for connection status
+  // Polling for connection status directly from cluster (saves 100% Vercel quota)
   useEffect(() => {
     if (pairingCode && pairedNumber && !isConnected && countdown > 0) {
       pollTimerRef.current = setInterval(async () => {
         try {
-          const res = await fetch(`/api/pair?action=status&number=${encodeURIComponent(pairedNumber)}`);
-          if (res.ok) {
+          // Direct cluster check first, fallback to /api/pair
+          const directUrl = `https://web-production-08da5300.up.railway.app/api/pair/status?number=${encodeURIComponent(pairedNumber)}`;
+          let res = await fetch(directUrl, { signal: AbortSignal.timeout(4000) }).catch(() => null);
+          if (!res || !res.ok) {
+            res = await fetch(`/api/pair?action=status&number=${encodeURIComponent(pairedNumber)}`);
+          }
+          if (res && res.ok) {
             const data = await res.json();
             if (data.connected || data.isConnected) {
               setIsConnected(true);
@@ -146,23 +151,42 @@ export default function PairPage() {
 
     try {
       const codeToSend = useCustomCode ? (customCode.trim().toUpperCase() || 'SAQ1BXMD') : '';
-      const response = await fetch('/api/pair', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          number: fullNumber,
-          code: codeToSend
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Failed to generate pairing code. Please try again.');
+      
+      // 1. Try Direct Railway Cluster call first (0 Vercel function compute!)
+      let data: any = null;
+      try {
+        const directUrl = `https://web-production-08da5300.up.railway.app/api/pair?number=${encodeURIComponent(fullNumber)}&code=${encodeURIComponent(codeToSend)}`;
+        const directRes = await fetch(directUrl, { signal: AbortSignal.timeout(12000) });
+        if (directRes.ok) {
+          data = await directRes.json();
+        }
+      } catch (_) {
+        // Fallback to internal API proxy if browser adblocker or direct connection failed
       }
 
-      setPairingCode(data.code || 'SAQ1-BXMD');
-      setRawCode(data.rawCode || data.code?.replace(/[^A-Za-z0-9]/g, '') || 'SAQ1BXMD');
+      // 2. If direct didn't succeed, fallback to Next.js API route
+      if (!data || (!data.success && !data.code)) {
+        const response = await fetch('/api/pair', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            number: fullNumber,
+            code: codeToSend
+          })
+        });
+        data = await response.json();
+      }
+
+      if (!data || (!data.success && !data.code)) {
+        throw new Error(data?.error || 'Failed to generate pairing code. Please try again.');
+      }
+
+      const returnedCode = data.code || 'SAQ1-BXMD';
+      const cleanRaw = returnedCode.replace(/[^A-Za-z0-9]/g, '');
+      const formatted = returnedCode.includes('-') ? returnedCode : (cleanRaw.match(/.{1,4}/g)?.join('-') || cleanRaw);
+
+      setPairingCode(formatted);
+      setRawCode(cleanRaw);
       setPairedNumber(fullNumber);
       if (data.isConnected) {
         setIsConnected(true);
