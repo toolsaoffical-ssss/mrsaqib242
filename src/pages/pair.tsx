@@ -21,6 +21,14 @@ import {
 
 const PREVIEW_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png';
 
+// High-Availability Multi-Node Cluster Pool
+const CLUSTER_NODES = [
+  'https://web-production-08da5300.up.railway.app',
+  'https://saqib-bot-v1-d3ecc6f0292e.herokuapp.com',
+  'https://web-production-f30a34e9.up.railway.app',
+  'https://saqib-bot-v2-4c28fce8995a.herokuapp.com'
+];
+
 const schemaData = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -65,6 +73,7 @@ export default function PairPage() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const activeNodeRef = useRef<string | null>(null);
 
   // Clear timers on unmount
   useEffect(() => {
@@ -92,16 +101,17 @@ export default function PairPage() {
     }
   }, [pairingCode, countdown, isConnected]);
 
-  // Polling for connection status directly from cluster (saves 100% Vercel quota)
+  // Polling for connection status with sticky node affinity (Zero Vercel quota used)
   useEffect(() => {
     if (pairingCode && pairedNumber && !isConnected && countdown > 0) {
       pollTimerRef.current = setInterval(async () => {
         try {
-          // Direct cluster check first, fallback to /api/pair
-          const directUrl = `https://web-production-08da5300.up.railway.app/api/pair/status?number=${encodeURIComponent(pairedNumber)}`;
+          // Direct cluster check to the specific node that generated the code
+          const targetNode = activeNodeRef.current || CLUSTER_NODES[0];
+          const directUrl = `${targetNode}/api/pair/status?number=${encodeURIComponent(pairedNumber)}`;
           let res = await fetch(directUrl, { signal: AbortSignal.timeout(4000) }).catch(() => null);
           if (!res || !res.ok) {
-            res = await fetch(`/api/pair?action=status&number=${encodeURIComponent(pairedNumber)}`);
+            res = await fetch(`/api/pair?action=status&number=${encodeURIComponent(pairedNumber)}&node=${encodeURIComponent(targetNode)}`);
           }
           if (res && res.ok) {
             const data = await res.json();
@@ -152,19 +162,29 @@ export default function PairPage() {
     try {
       const codeToSend = useCustomCode ? (customCode.trim().toUpperCase() || 'SAQ1BXMD') : '';
       
-      // 1. Try Direct Railway Cluster call first (0 Vercel function compute!)
+      // 1. Dynamic Load Balancing across 4-Node Cluster (Randomized distribution)
+      const shuffledNodes = [...CLUSTER_NODES].sort(() => Math.random() - 0.5);
       let data: any = null;
-      try {
-        const directUrl = `https://web-production-08da5300.up.railway.app/api/pair?number=${encodeURIComponent(fullNumber)}&code=${encodeURIComponent(codeToSend)}`;
-        const directRes = await fetch(directUrl, { signal: AbortSignal.timeout(12000) });
-        if (directRes.ok) {
-          data = await directRes.json();
+      let matchedNode: string | null = null;
+
+      for (const node of shuffledNodes) {
+        try {
+          const directUrl = `${node}/api/pair?number=${encodeURIComponent(fullNumber)}&code=${encodeURIComponent(codeToSend)}`;
+          const directRes = await fetch(directUrl, { signal: AbortSignal.timeout(9000) });
+          if (directRes.ok) {
+            const json = await directRes.json();
+            if (json && (json.success || json.code)) {
+              data = json;
+              matchedNode = node;
+              break;
+            }
+          }
+        } catch (_) {
+          // If this node is busy or slow, instantly try the next node in the cluster pool!
         }
-      } catch (_) {
-        // Fallback to internal API proxy if browser adblocker or direct connection failed
       }
 
-      // 2. If direct didn't succeed, fallback to Next.js API route
+      // 2. If direct cluster call didn't succeed (e.g. adblocker), fallback to Next.js API route
       if (!data || (!data.success && !data.code)) {
         const response = await fetch('/api/pair', {
           method: 'POST',
@@ -175,12 +195,14 @@ export default function PairPage() {
           })
         });
         data = await response.json();
+        matchedNode = data?.clusterNode || null;
       }
 
       if (!data || (!data.success && !data.code)) {
         throw new Error(data?.error || 'Failed to generate pairing code. Please try again.');
       }
 
+      activeNodeRef.current = matchedNode;
       const returnedCode = data.code || 'SAQ1-BXMD';
       const cleanRaw = returnedCode.replace(/[^A-Za-z0-9]/g, '');
       const formatted = returnedCode.includes('-') ? returnedCode : (cleanRaw.match(/.{1,4}/g)?.join('-') || cleanRaw);

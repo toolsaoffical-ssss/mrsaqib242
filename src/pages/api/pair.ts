@@ -43,6 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const rawNumber = (req.query.number || req.body?.number || '').toString();
   const rawCode = (req.query.code || req.body?.code || '').toString();
   const action = (req.query.action || req.body?.action || 'pair').toString().toLowerCase();
+  const preferredNode = (req.query.node || req.body?.node || '').toString().trim();
 
   const number = sanitizePhoneNumber(rawNumber);
 
@@ -53,16 +54,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
+  // Dynamic Multi-Node Load Balancer (Randomized Round-Robin distribution)
+  const availableNodes = preferredNode && CLUSTER_NODES.includes(preferredNode)
+    ? [preferredNode, ...CLUSTER_NODES.filter(n => n !== preferredNode).sort(() => Math.random() - 0.5)]
+    : [...CLUSTER_NODES].sort(() => Math.random() - 0.5);
+
   // Action: STATUS CHECK
   if (action === 'status') {
-    for (const node of CLUSTER_NODES) {
+    for (const node of availableNodes) {
       try {
         const response = await fetch(`${node}/api/pair/status?number=${number}`, {
           signal: AbortSignal.timeout(6000)
         });
         if (response.ok) {
           const data = await response.json();
-          return res.status(200).json(data);
+          return res.status(200).json({ ...data, clusterNode: node });
         }
       } catch (_) {
         // Continue to next node
@@ -75,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const customCode = sanitizeCode(rawCode);
   let lastError = 'Unable to reach bot cluster. Please try again in a few moments.';
 
-  for (const node of CLUSTER_NODES) {
+  for (const node of availableNodes) {
     try {
       const targetUrl = `${node}/api/pair?number=${encodeURIComponent(number)}&code=${encodeURIComponent(customCode)}`;
       const response = await fetch(targetUrl, {
