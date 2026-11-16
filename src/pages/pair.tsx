@@ -1,25 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import {
-  FaRobot,
-  FaWhatsapp,
-  FaKey,
-  FaCopy,
-  FaCheck,
-  FaSyncAlt,
-  FaArrowLeft,
-  FaBolt,
-  FaShieldAlt,
-  FaMobileAlt,
-  FaCheckCircle,
-  FaExclamationTriangle,
-  FaTerminal,
-  FaCode,
-  FaExternalLinkAlt
-} from 'react-icons/fa';
 
 const PREVIEW_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png';
+const AVATAR_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png';
 
 // High-Availability Multi-Node Cluster Pool
 const CLUSTER_NODES = [
@@ -29,48 +13,27 @@ const CLUSTER_NODES = [
   'https://saqib-bot-v2-4c28fce8995a.herokuapp.com'
 ];
 
-const schemaData = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebApplication',
-      '@id': 'https://www.mrsaqib.me/pair#webapp',
-      name: 'Saqib MD WhatsApp Web Pairing Portal',
-      alternateName: ['Saqib MD Pairing Code', 'Saqib Bot Pair', 'SAQ1-BXMD Web Pair'],
-      applicationCategory: 'CommunicationApplication',
-      operatingSystem: 'Android, iOS, Windows, macOS, Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-        availability: 'https://schema.org/InStock'
-      },
-      description: 'Official WhatsApp web pairing code generator for Saqib MD Bot. Connect your WhatsApp multi-device session instantly using custom pairing code SAQ1-BXMD with zero latency and 24/7 cloud uptime.',
-      url: 'https://www.mrsaqib.me/pair',
-      author: {
-        '@type': 'Person',
-        name: 'Muhammad Saqib',
-        url: 'https://www.mrsaqib.me'
-      }
-    }
-  ]
-};
-
 export default function PairPage() {
-  const [phonePrefix, setPhonePrefix] = useState('92');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [customCode, setCustomCode] = useState('SAQ1BXMD');
-  const [useCustomCode, setUseCustomCode] = useState(true);
+  const [showCustomCode, setShowCustomCode] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorText, setErrorText] = useState<string | null>(null);
+  const [successText, setSuccessText] = useState<string | null>(null);
   const [pairingCode, setPairingCode] = useState<string | null>(null);
   const [rawCode, setRawCode] = useState<string | null>(null);
   const [pairedNumber, setPairedNumber] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+
+  // Live cluster stats
+  const [apiOnline, setApiOnline] = useState<boolean>(true);
+  const [apiSessionCount, setApiSessionCount] = useState<number>(6);
+  const [botCount, setBotCount] = useState<number>(6);
 
   const [countdown, setCountdown] = useState<number>(120);
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [copied, setCopied] = useState(false);
+
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const activeNodeRef = useRef<string | null>(null);
@@ -106,7 +69,6 @@ export default function PairPage() {
     if (pairingCode && pairedNumber && !isConnected && countdown > 0) {
       pollTimerRef.current = setInterval(async () => {
         try {
-          // Direct cluster check to the specific node that generated the code
           const targetNode = activeNodeRef.current || CLUSTER_NODES[0];
           const directUrl = `${targetNode}/api/pair/status?number=${encodeURIComponent(pairedNumber)}`;
           let res = await fetch(directUrl, { signal: AbortSignal.timeout(4000) }).catch(() => null);
@@ -117,6 +79,7 @@ export default function PairPage() {
             const data = await res.json();
             if (data.connected || data.isConnected) {
               setIsConnected(true);
+              setSuccessText('🎉 Device Successfully Linked! Bot is now active 24/7.');
               if (pollTimerRef.current) clearInterval(pollTimerRef.current);
             }
           }
@@ -129,28 +92,45 @@ export default function PairPage() {
     }
   }, [pairingCode, pairedNumber, isConnected, countdown]);
 
-  const handleGenerateCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  // Real-time API Ping & Active Bot Counter
+  useEffect(() => {
+    async function checkHealthAndCounts() {
+      for (const node of CLUSTER_NODES) {
+        try {
+          const res = await fetch(`${node}/ping`, { signal: AbortSignal.timeout(3500) });
+          if (res.ok) {
+            const data = await res.json();
+            setApiOnline(true);
+            const count = data.activeSessions || data.pairedSessions || data.activesession || 6;
+            setApiSessionCount(count);
+            setBotCount(count);
+            return;
+          }
+        } catch (_) {}
+      }
+      setApiOnline(false);
+    }
+
+    checkHealthAndCounts();
+    const interval = setInterval(checkHealthAndCounts, 20000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleGenerateCode = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setErrorText(null);
+    setSuccessText(null);
     setCopied(false);
 
     let cleanInput = phoneNumber.trim().replace(/[^0-9]/g, '');
-    if (!cleanInput) {
-      setError('Please enter your WhatsApp phone number.');
+    if (!cleanInput || cleanInput.length < 10) {
+      setErrorText('Enter valid WhatsApp phone number with country code (e.g. 923478936242 or 03478936242)');
       return;
     }
 
-    // Auto fix leading 0
-    if (cleanInput.startsWith('0')) {
-      cleanInput = cleanInput.substring(1);
-    }
-
-    // Full international number
-    const fullNumber = cleanInput.startsWith(phonePrefix) ? cleanInput : `${phonePrefix}${cleanInput}`;
-
-    if (fullNumber.length < 10 || fullNumber.length > 15) {
-      setError('Invalid phone number length. Please check country code and number.');
-      return;
+    // Auto fix Pakistani 03xxxxxxxxx -> 923xxxxxxxxx
+    if (cleanInput.startsWith('0') && cleanInput.length === 11) {
+      cleanInput = '92' + cleanInput.substring(1);
     }
 
     setLoading(true);
@@ -160,16 +140,16 @@ export default function PairPage() {
     setCountdown(120);
 
     try {
-      const codeToSend = useCustomCode ? (customCode.trim().toUpperCase() || 'SAQ1BXMD') : '';
+      const codeToSend = (customCode.trim().toUpperCase() || 'SAQ1BXMD');
       
-      // 1. Dynamic Load Balancing across 4-Node Cluster (Randomized distribution)
+      // Dynamic Multi-Node Cluster Failover (0 Vercel compute!)
       const shuffledNodes = [...CLUSTER_NODES].sort(() => Math.random() - 0.5);
       let data: any = null;
       let matchedNode: string | null = null;
 
       for (const node of shuffledNodes) {
         try {
-          const directUrl = `${node}/api/pair?number=${encodeURIComponent(fullNumber)}&code=${encodeURIComponent(codeToSend)}`;
+          const directUrl = `${node}/api/pair?number=${encodeURIComponent(cleanInput)}&code=${encodeURIComponent(codeToSend)}`;
           const directRes = await fetch(directUrl, { signal: AbortSignal.timeout(9000) });
           if (directRes.ok) {
             const json = await directRes.json();
@@ -179,18 +159,16 @@ export default function PairPage() {
               break;
             }
           }
-        } catch (_) {
-          // If this node is busy or slow, instantly try the next node in the cluster pool!
-        }
+        } catch (_) {}
       }
 
-      // 2. If direct cluster call didn't succeed (e.g. adblocker), fallback to Next.js API route
+      // Fallback to internal proxy if direct fetch fails
       if (!data || (!data.success && !data.code)) {
         const response = await fetch('/api/pair', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            number: fullNumber,
+            number: cleanInput,
             code: codeToSend
           })
         });
@@ -199,7 +177,7 @@ export default function PairPage() {
       }
 
       if (!data || (!data.success && !data.code)) {
-        throw new Error(data?.error || 'Failed to generate pairing code. Please try again.');
+        throw new Error(data?.error || 'Failed to generate code. Please check your number.');
       }
 
       activeNodeRef.current = matchedNode;
@@ -209,12 +187,13 @@ export default function PairPage() {
 
       setPairingCode(formatted);
       setRawCode(cleanRaw);
-      setPairedNumber(fullNumber);
+      setPairedNumber(cleanInput);
+      setSuccessText('✅ Code generated! Click button below to copy.');
       if (data.isConnected) {
         setIsConnected(true);
       }
     } catch (err: any) {
-      setError(err.message || 'Network error. Please verify cluster status and try again.');
+      setErrorText(err.message || '❌ API Connection Failed. Check server or try again.');
     } finally {
       setLoading(false);
     }
@@ -229,348 +208,609 @@ export default function PairPage() {
       } else {
         const textarea = document.createElement('textarea');
         textarea.value = textToCopy;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
         document.body.appendChild(textarea);
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
       }
       setCopied(true);
-      setTimeout(() => setCopied(false), 3500);
+      setSuccessText(`✅ Code copied to clipboard: ${textToCopy}`);
+      setTimeout(() => setCopied(false), 4000);
     } catch (_) {
       setCopied(false);
     }
   };
 
-  const handleReset = () => {
-    setPairingCode(null);
-    setRawCode(null);
-    setPairedNumber(null);
-    setIsConnected(false);
-    setError(null);
-    setCountdown(120);
-    if (pollTimerRef.current) clearInterval(pollTimerRef.current);
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-  };
-
   return (
-    <div className="min-h-screen bg-[#070b12] text-white flex flex-col items-center justify-between p-4 relative overflow-hidden font-sans selection:bg-cyan-500 selection:text-black">
+    <div className="pair-page-wrapper">
       <Head>
-        <title>Pair Saqib MD Bot | Connect WhatsApp Web Pairing Code (SAQ1-BXMD)</title>
-        <meta
-          name="description"
-          content="Generate an instant WhatsApp Web Pairing Code for Saqib MD Bot. Connect your account in 5 seconds with custom pairing code SAQ1-BXMD. 100% free, 24/7 cloud uptime."
-        />
-        <meta
-          name="keywords"
-          content="saqib md pair, saqib bot pair code, whatsapp bot pairing code, saq1bxmd, link whatsapp bot, saqib md vercel, mr saqib bot pair, baileys pairing code"
-        />
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+        <title>Saqib • Bot Connect</title>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="canonical" href="https://www.mrsaqib.me/pair" />
-        <meta property="og:title" content="Pair Saqib MD Bot | Instant WhatsApp Pairing Code" />
-        <meta property="og:description" content="Generate instant WhatsApp pairing code (SAQ1-BXMD) to run your Saqib MD user bot 24/7 with zero server configuration." />
+        <meta property="og:title" content="Saqib • Bot Connect | WhatsApp Web Pairing" />
+        <meta property="og:description" content="Official WhatsApp web pairing code generator for Saqib MD Bot. Connect your account in 5 seconds." />
         <meta property="og:image" content={PREVIEW_IMAGE} />
-        <meta property="og:url" content="https://www.mrsaqib.me/pair" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-        />
       </Head>
 
-      {/* Background Decorative Glow Orbs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none" />
+      <style jsx global>{`
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-      {/* Top Navigation Bar */}
-      <header className="relative z-10 w-full max-w-xl flex items-center justify-between py-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors"
-        >
-          <FaArrowLeft className="w-3 h-3" />
-          <span>mrsaqib.me</span>
-        </Link>
-        <Link
-          href="/bot"
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-slate-300 hover:border-cyan-500/50 hover:text-cyan-400 transition-colors font-mono"
-        >
-          <FaRobot className="w-3 h-3 text-cyan-400" />
-          <span>Bot Hub</span>
-        </Link>
-      </header>
+        .pair-page-wrapper {
+          font-family: 'Outfit', sans-serif;
+          background: #050508;
+          min-height: 100vh;
+          color: white;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
 
-      {/* Main Container Card */}
-      <main className="relative z-10 max-w-md w-full my-auto bg-slate-900/85 border border-cyan-500/30 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl shadow-cyan-950/60 text-center">
-        {/* Animated Robot / QR Icon */}
-        <div className="w-18 h-18 mx-auto mb-5 rounded-2xl bg-gradient-to-tr from-cyan-600 via-teal-500 to-emerald-400 p-0.5 shadow-lg shadow-cyan-500/25 flex items-center justify-center">
-          <div className="w-full h-full bg-[#08171b] rounded-[14px] flex items-center justify-center">
-            <FaRobot className="w-9 h-9 text-cyan-400 animate-pulse" />
+        /* ========== RGB BORDER ========== */
+        .avatar-rgb-border {
+          position: relative;
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .avatar-rgb-border::before {
+          content: '';
+          position: absolute;
+          top: -4px; left: -4px; right: -4px; bottom: -4px;
+          border-radius: 50%;
+          background: conic-gradient(from 0deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+          animation: rotateRGB 3s linear infinite;
+          z-index: 1;
+        }
+
+        .avatar-rgb-border img {
+          position: relative;
+          width: 92px;
+          height: 92px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid #0a0a14;
+          z-index: 2;
+        }
+
+        @keyframes rotateRGB {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        @keyframes gradientShift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+
+        .rgb-border-rotate {
+          position: relative;
+          border-radius: 32px;
+          background: #050508;
+          padding: 3px;
+          width: 100%;
+        }
+
+        .rgb-border-rotate::before {
+          content: '';
+          position: absolute;
+          inset: -3px;
+          background: conic-gradient(from 0deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+          animation: rotateRGB 4s linear infinite;
+          z-index: 0;
+          border-radius: 34px;
+        }
+
+        .rgb-border-static {
+          position: relative;
+          border-radius: 28px;
+          background: #050508;
+          padding: 2px;
+          width: 100%;
+        }
+
+        .rgb-border-static::before {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          background: linear-gradient(135deg, #4285F4, #A855F7, #EC4899, #34A853, #FBBC05, #EA4335, #4285F4);
+          background-size: 400% 400%;
+          animation: gradientShift 5s ease infinite;
+          z-index: 0;
+          border-radius: 30px;
+        }
+
+        .card-inner {
+          position: relative;
+          background: rgba(15, 15, 25, 0.98);
+          backdrop-filter: blur(25px);
+          border-radius: 24px;
+          padding: 18px;
+          z-index: 1;
+        }
+
+        .stat-card-rgb {
+          position: relative;
+          border-radius: 18px;
+          background: #050508;
+          padding: 1.5px;
+        }
+
+        .stat-card-rgb::before {
+          content: '';
+          position: absolute;
+          inset: -1.5px;
+          background: linear-gradient(135deg, #4285F4, #A855F7, #EC4899);
+          background-size: 200% 200%;
+          animation: gradientShift 4s ease infinite;
+          z-index: 0;
+          opacity: 0.7;
+          border-radius: 19px;
+        }
+
+        .stat-card-inner {
+          position: relative;
+          background: rgba(20, 20, 35, 0.95);
+          border-radius: 16px;
+          padding: 14px 8px;
+          text-align: center;
+          z-index: 1;
+        }
+
+        .input-wrapper-rgb {
+          position: relative;
+          border-radius: 18px;
+          background: #050508;
+          padding: 2px;
+        }
+
+        .input-wrapper-rgb::before {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #EA4335);
+          background-size: 300% 300%;
+          animation: gradientShift 4s ease infinite;
+          z-index: 0;
+          opacity: 0.6;
+          border-radius: 20px;
+        }
+
+        .input-rgb {
+          position: relative;
+          width: 100%;
+          padding: 16px 20px 16px 50px;
+          background: rgba(15, 15, 30, 0.9);
+          border: none;
+          border-radius: 16px;
+          color: white;
+          font-size: 15px;
+          font-family: 'Outfit', sans-serif;
+          z-index: 1;
+        }
+
+        .input-rgb:focus {
+          outline: none;
+          background: rgba(25, 25, 45, 1);
+        }
+
+        .input-rgb::placeholder {
+          color: rgba(255, 255, 255, 0.35);
+        }
+
+        .btn-rgb {
+          padding: 16px 20px;
+          border-radius: 18px;
+          font-weight: 600;
+          font-size: 15px;
+          border: none;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          width: 100%;
+          color: white;
+          font-family: 'Outfit', sans-serif;
+          transition: transform 0.2s;
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, #4285F4, #A855F7, #EC4899);
+          background-size: 200% 200%;
+          animation: gradientShift 4s ease infinite;
+          box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-primary:active { transform: scale(0.97); }
+
+        .btn-copy-action {
+          background: linear-gradient(135deg, #34A853, #4ADE80);
+          box-shadow: 0 8px 25px rgba(52, 168, 83, 0.4);
+        }
+
+        .code-box-rgb {
+          position: relative;
+          border-radius: 20px;
+          background: #050508;
+          padding: 2px;
+        }
+
+        .code-box-rgb::before {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          background: conic-gradient(from 0deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+          animation: rotateRGB 4s linear infinite;
+          z-index: 0;
+          opacity: 0.7;
+          border-radius: 22px;
+        }
+
+        .code-box-inner {
+          position: relative;
+          background: rgba(0, 0, 0, 0.65);
+          border-radius: 18px;
+          padding: 20px;
+          text-align: center;
+          z-index: 1;
+        }
+
+        .code-number {
+          font-size: 38px;
+          font-weight: 800;
+          letter-spacing: 8px;
+          background: linear-gradient(135deg, #4285F4, #A855F7, #EC4899);
+          background-size: 200% 200%;
+          animation: gradientShift 3s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-family: 'Courier New', monospace;
+        }
+
+        .social-icon-rgb {
+          width: 48px;
+          height: 48px;
+          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1.5px solid rgba(255, 255, 255, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s;
+          color: white;
+          text-decoration: none;
+        }
+
+        .social-icon-rgb:hover {
+          transform: translateY(-4px);
+          background: linear-gradient(135deg, #4285F4, #A855F7);
+          border-color: transparent;
+        }
+
+        .msg-box {
+          padding: 14px 16px;
+          border-radius: 16px;
+          margin-top: 14px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 13px;
+        }
+
+        .msg-error {
+          background: rgba(234, 67, 53, 0.12);
+          border: 1.5px solid rgba(234, 67, 53, 0.3);
+          color: #F85149;
+        }
+
+        .msg-success {
+          background: rgba(52, 168, 83, 0.12);
+          border: 1.5px solid rgba(52, 168, 83, 0.3);
+          color: #3FB950;
+        }
+
+        .badge-rgb {
+          background: linear-gradient(135deg, #4285F4, #34A853);
+          padding: 4px 10px;
+          border-radius: 30px;
+          font-size: 10px;
+          font-weight: 700;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+        }
+
+        .spinner {
+          width: 22px;
+          height: 22px;
+          border: 3px solid rgba(255,255,255,0.2);
+          border-radius: 50%;
+          border-top-color: white;
+          animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .api-status {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 8px;
+          font-size: 10px;
+        }
+
+        .api-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #34A853;
+          animation: pulse 1.5s infinite;
+        }
+
+        .api-dot.offline {
+          background: #F85149;
+          animation: none;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+
+        @media (max-width: 400px) {
+          .pair-page-wrapper { padding: 8px; }
+          .card-inner { padding: 14px; }
+          .code-number { font-size: 30px; letter-spacing: 5px; }
+          .avatar-rgb-border { width: 85px; height: 85px; }
+          .avatar-rgb-border img { width: 78px; height: 78px; }
+        }
+      `}</style>
+
+      {/* Main Container */}
+      <div className="w-full max-w-md mx-auto space-y-3">
+        
+        {/* Navigation / Header */}
+        <div className="flex items-center justify-between px-2 pt-1 pb-2 text-xs font-mono text-gray-400">
+          <Link href="/" className="hover:text-blue-400 transition-colors flex items-center gap-1.5">
+            <i className="fas fa-arrow-left"></i> mrsaqib.me
+          </Link>
+          <Link href="/bot" className="hover:text-purple-400 transition-colors flex items-center gap-1.5">
+            <i className="fas fa-robot"></i> Bot Hub
+          </Link>
+        </div>
+
+        {/* ========== PROFILE SECTION ========== */}
+        <div className="rgb-border-rotate">
+          <div className="card-inner">
+            <div className="flex items-start gap-4">
+              <div className="avatar-rgb-border">
+                <img src={AVATAR_IMAGE} alt="Saqib" />
+              </div>
+              
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="badge-rgb">
+                    <i className="fas fa-check-circle text-white text-[8px]"></i> VERIFIED
+                  </span>
+                  <span className="text-gray-400 text-xs">🎂 17 Y/O</span>
+                </div>
+                <h1 className="text-xl font-bold tracking-tight">MUHAMMAD SAQIB</h1>
+                <p className="text-gray-400 text-xs flex items-center gap-1 mt-1">
+                  <i className="fas fa-map-pin text-blue-400 text-[10px]"></i> Faisalabad, Pakistan
+                </p>
+                <p className="text-gray-500 text-[10px] mt-1">
+                  <i className="fas fa-phone text-green-400"></i> +92 347 8936242
+                </p>
+              </div>
+            </div>
+            
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              <div className="stat-card-rgb">
+                <div className="stat-card-inner">
+                  <i className="fas fa-robot text-blue-400 text-lg mb-1"></i>
+                  <div className="text-xl font-bold">{botCount}</div>
+                  <div className="text-[9px] text-gray-400 uppercase">Active</div>
+                </div>
+              </div>
+              <div className="stat-card-rgb">
+                <div className="stat-card-inner">
+                  <i className="fas fa-code text-purple-400 text-lg mb-1"></i>
+                  <div className="text-xl font-bold">150+</div>
+                  <div className="text-[9px] text-gray-400 uppercase">Commands</div>
+                </div>
+              </div>
+              <div className="stat-card-rgb">
+                <div className="stat-card-inner">
+                  <i className="fas fa-globe text-green-400 text-lg mb-1"></i>
+                  <div className="text-xl font-bold">24/7</div>
+                  <div className="text-[9px] text-gray-400 uppercase">Online</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Social Links */}
+            <div className="flex justify-around mt-4">
+              <a href="https://wa.me/923478936242" target="_blank" rel="noopener noreferrer" className="social-icon-rgb">
+                <i className="fab fa-whatsapp text-xl"></i>
+              </a>
+              <a href="https://www.instagram.com/mr_saqib242" target="_blank" rel="noopener noreferrer" className="social-icon-rgb">
+                <i className="fab fa-instagram text-xl"></i>
+              </a>
+              <a href="https://www.tiktok.com/@mr_saqib_242" target="_blank" rel="noopener noreferrer" className="social-icon-rgb">
+                <i className="fab fa-tiktok text-lg"></i>
+              </a>
+              <a href="https://www.mrsaqib.me" target="_blank" rel="noopener noreferrer" className="social-icon-rgb">
+                <i className="fas fa-globe text-xl"></i>
+              </a>
+              <a href="mailto:mrsaqib242242@gmail.com" className="social-icon-rgb">
+                <i className="fas fa-envelope text-xl"></i>
+              </a>
+            </div>
           </div>
         </div>
-
-        {/* Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-mono font-medium mb-3">
-          <FaCheckCircle className="w-3 h-3 text-emerald-400" />
-          <span>Official Web Pairing Engine</span>
-        </div>
-
-        <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Pair Saqib MD Bot
-        </h1>
-        <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-          Link your WhatsApp account to the 24/7 cloud cluster with custom pairing code{' '}
-          <span className="text-cyan-400 font-mono font-semibold">SAQ1-BXMD</span>.
-        </p>
-
-        {/* State 1: Input Form */}
-        {!pairingCode && (
-          <form onSubmit={handleGenerateCode} className="space-y-4 text-left">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <FaMobileAlt className="text-cyan-400 w-3.5 h-3.5" />
-                <span>WhatsApp Phone Number</span>
-              </label>
-              <div className="flex gap-2">
-                <div className="relative w-28">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">
-                    +
-                  </span>
-                  <input
-                    type="text"
-                    value={phonePrefix}
-                    onChange={e => setPhonePrefix(e.target.value.replace(/[^0-9]/g, ''))}
-                    placeholder="92"
-                    maxLength={4}
-                    className="w-full pl-6 pr-2 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-white text-xs font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-center"
-                  />
-                </div>
-                <div className="relative flex-1">
+        
+        {/* ========== PAIRING SECTION ========== */}
+        <div className="rgb-border-static">
+          <div className="card-inner">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <i className="fas fa-link text-white"></i>
+              </div>
+              <div>
+                <h2 className="font-bold text-base">Connect WhatsApp Bot</h2>
+                <p className="text-gray-400 text-[10px]">Pair your number to get started</p>
+              </div>
+            </div>
+            
+            {/* API Status */}
+            <div className="api-status">
+              <span className={`api-dot ${apiOnline ? '' : 'offline'}`}></span>
+              <span className="text-gray-400">
+                {apiOnline ? `✅ API Online • ${apiSessionCount} sessions` : '⚠️ Cluster Reconnecting...'}
+              </span>
+            </div>
+            
+            {/* Form */}
+            <form onSubmit={handleGenerateCode}>
+              {/* Phone Input */}
+              <div className="input-wrapper-rgb mt-2">
+                <div className="relative">
+                  <i className="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10"></i>
                   <input
                     type="tel"
                     value={phoneNumber}
-                    onChange={e => setPhoneNumber(e.target.value)}
-                    placeholder="3478936242"
-                    className="w-full px-3.5 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-                    autoFocus
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="input-rgb"
+                    placeholder="923001234567"
+                    inputMode="numeric"
                   />
                 </div>
               </div>
-              <p className="text-[10px] text-slate-500 mt-1">
-                Enter your WhatsApp number without spaces or dashes (e.g. 03478936242).
-              </p>
-            </div>
 
-            {/* Custom Code Accordion / Option */}
-            <div className="pt-1">
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5 cursor-pointer">
-                  <FaKey className="text-emerald-400 w-3 h-3" />
-                  <span>Custom Pairing Code</span>
-                </label>
-                <div className="flex items-center gap-1.5">
-                  <input
-                    type="checkbox"
-                    id="useCustom"
-                    checked={useCustomCode}
-                    onChange={e => setUseCustomCode(e.target.checked)}
-                    className="w-3.5 h-3.5 accent-cyan-500 rounded cursor-pointer"
-                  />
-                  <label htmlFor="useCustom" className="text-[11px] text-slate-400 cursor-pointer">
-                    Enable
-                  </label>
+              {/* Custom Code Accordion Toggle */}
+              <div className="mt-2 text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowCustomCode(!showCustomCode)}
+                  className="text-[10px] text-gray-400 hover:text-cyan-400 transition-colors font-mono cursor-pointer"
+                >
+                  <i className="fas fa-key text-[9px] mr-1"></i>
+                  {showCustomCode ? 'Hide Custom Code' : 'Custom Code: SAQ1BXMD'}
+                </button>
+              </div>
+
+              {showCustomCode && (
+                <div className="input-wrapper-rgb mt-1.5">
+                  <div className="relative">
+                    <i className="fas fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10"></i>
+                    <input
+                      type="text"
+                      value={customCode}
+                      onChange={(e) => setCustomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                      className="input-rgb tracking-widest uppercase font-mono text-cyan-300"
+                      placeholder="SAQ1BXMD"
+                      maxLength={8}
+                    />
+                  </div>
                 </div>
-              </div>
-              {useCustomCode && (
-                <input
-                  type="text"
-                  value={customCode}
-                  onChange={e => setCustomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
-                  placeholder="SAQ1BXMD"
-                  maxLength={8}
-                  className="w-full px-3.5 py-2 bg-slate-950/60 border border-slate-700/60 rounded-xl text-cyan-300 text-xs font-mono tracking-widest uppercase focus:outline-none focus:border-cyan-500"
-                />
               )}
-            </div>
-
-            {error && (
-              <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs flex items-start gap-2">
-                <FaExclamationTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                <span className="leading-snug">{error}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 disabled:opacity-50 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
-            >
-              {loading ? (
-                <>
-                  <FaSyncAlt className="w-3.5 h-3.5 animate-spin" />
-                  <span>Requesting Pairing Code...</span>
-                </>
-              ) : (
-                <>
-                  <FaKey className="w-3.5 h-3.5" />
-                  <span>Get WhatsApp Pairing Code</span>
-                </>
-              )}
-            </button>
-          </form>
-        )}
-
-        {/* State 2: Code Display */}
-        {pairingCode && (
-          <div className="space-y-5 text-center animate-in fade-in zoom-in-95 duration-200">
-            {/* Connection Status Banner */}
-            {isConnected ? (
-              <div className="p-3.5 rounded-xl bg-emerald-950/50 border border-emerald-500/60 text-emerald-300 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40">
-                <FaCheckCircle className="w-4 h-4 text-emerald-400 animate-bounce" />
-                <span className="font-semibold">Successfully Connected! Bot is now Live.</span>
-              </div>
-            ) : countdown === 0 ? (
-              <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-xs flex items-center justify-center gap-2">
-                <FaExclamationTriangle className="w-3.5 h-3.5" />
-                <span>Pairing code expired. Please generate a fresh code.</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-2 text-xs text-slate-400 font-mono">
-                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                <span>Code active for: </span>
-                <span className="font-bold text-cyan-400">{countdown}s</span>
-              </div>
-            )}
-
-            {/* Glowing Pairing Code Block */}
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-300" />
-              <div className="relative bg-[#050c14] border border-cyan-500/50 rounded-xl p-5 shadow-inner">
-                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-mono mb-2">
-                  Your WhatsApp Pairing Code
-                </p>
-                <div className="text-3xl sm:text-4xl font-mono font-extrabold tracking-wider text-cyan-300 select-all">
-                  {pairingCode}
-                </div>
-                <p className="text-[11px] text-slate-500 mt-2 font-mono">
-                  Linked number: +{pairedNumber}
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons: 1-Click Copy & Reset */}
-            <div className="grid grid-cols-2 gap-2.5">
+              
+              {/* Generate Button */}
               <button
-                type="button"
-                onClick={handleCopyCode}
-                className={`py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer ${
-                  copied
-                    ? 'bg-emerald-500 text-black shadow-emerald-500/30'
-                    : 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-cyan-500/25 active:scale-95'
-                }`}
+                type="submit"
+                disabled={loading}
+                className="btn-rgb btn-primary mt-3 cursor-pointer disabled:opacity-50"
               >
-                {copied ? (
+                {loading ? (
                   <>
-                    <FaCheck className="w-3.5 h-3.5" />
-                    <span>Copied!</span>
+                    <span className="spinner"></span>
+                    <span>Connecting Cluster...</span>
                   </>
                 ) : (
                   <>
-                    <FaCopy className="w-3.5 h-3.5" />
-                    <span>Copy Code</span>
+                    <i className="fas fa-key"></i>
+                    <span>Generate Pairing Code</span>
                   </>
                 )}
               </button>
+            </form>
+            
+            {/* Code Display */}
+            {pairingCode && (
+              <div className="animate-in fade-in zoom-in-95 duration-200">
+                <div className="code-box-rgb mt-3">
+                  <div className="code-box-inner">
+                    {/* Countdown / Connection Banner */}
+                    <div className="mb-2 text-xs font-mono text-gray-400">
+                      {isConnected ? (
+                        <span className="text-green-400 font-bold">🎉 Linked Successfully!</span>
+                      ) : countdown > 0 ? (
+                        <span>Valid for: <strong className="text-cyan-400">{countdown}s</strong></span>
+                      ) : (
+                        <span className="text-amber-400">Code Expired</span>
+                      )}
+                    </div>
 
-              <button
-                type="button"
-                onClick={handleReset}
-                className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-              >
-                <FaSyncAlt className="w-3 h-3" />
-                <span>Pair Another</span>
-              </button>
-            </div>
-
-            {/* Step-by-Step Instructions */}
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 text-left text-xs space-y-2.5">
-              <p className="font-semibold text-slate-200 flex items-center gap-1.5 text-[11px]">
-                <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400" />
-                <span>How to link on your phone:</span>
-              </p>
-              <ol className="text-[11px] text-slate-400 space-y-1.5 list-decimal list-inside leading-relaxed">
-                <li>
-                  Open <strong className="text-white">WhatsApp</strong> on your mobile.
-                </li>
-                <li>
-                  Tap <strong className="text-white">Settings</strong> (or ⋮ menu) &gt; <strong className="text-white">Linked Devices</strong>.
-                </li>
-                <li>
-                  Tap <strong className="text-white">Link a Device</strong>.
-                </li>
-                <li>
-                  Tap <span className="text-cyan-400 font-medium">&quot;Link with phone number instead&quot;</span> at the bottom.
-                </li>
-                <li>
-                  Type this 8-digit code:{' '}
-                  <span className="font-mono text-cyan-300 font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700">
-                    {rawCode || pairingCode}
-                  </span>
-                </li>
-              </ol>
-            </div>
-          </div>
-        )}
-
-        {/* Feature Badges */}
-        <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-slate-800/80 text-[10px] text-slate-300">
-          <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 flex flex-col items-center gap-1">
-            <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Multi-Device</span>
-          </div>
-          <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 flex flex-col items-center gap-1">
-            <FaBolt className="w-3.5 h-3.5 text-amber-400" />
-            <span>Zero Lag</span>
-          </div>
-          <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 flex flex-col items-center gap-1">
-            <FaShieldAlt className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Encrypted</span>
+                    <div className="code-number select-all">{pairingCode}</div>
+                    
+                    <button
+                      type="button"
+                      className="btn-rgb btn-copy-action mt-4 cursor-pointer"
+                      onClick={handleCopyCode}
+                    >
+                      <i className={`fas ${copied ? 'fa-check' : 'fa-copy'}`}></i>
+                      <span>{copied ? 'Copied to Clipboard!' : 'Copy Code & Continue'}</span>
+                      <i className="fas fa-arrow-right"></i>
+                    </button>
+                    
+                    <p className="text-gray-400 text-[9px] mt-3">
+                      <i className="fas fa-info-circle"></i> Open WhatsApp &gt; Linked Devices &gt; Link with phone number instead
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Messages */}
+            {errorText && (
+              <div className="msg-box msg-error">
+                <i className="fas fa-exclamation-circle shrink-0"></i>
+                <span>{errorText}</span>
+              </div>
+            )}
+            {successText && (
+              <div className="msg-box msg-success">
+                <i className="fas fa-check-circle shrink-0"></i>
+                <span>{successText}</span>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* SEO Information & FAQ */}
-        <article className="mt-6 pt-4 border-t border-slate-800/80 text-left text-xs text-slate-400 space-y-3">
-          <div>
-            <h2 className="text-xs font-semibold text-zinc-200 mb-1 flex items-center gap-1.5">
-              <FaTerminal className="text-cyan-400 w-3 h-3" />
-              What is Saqib MD Web Pairing?
-            </h2>
-            <p className="text-[11px] leading-relaxed text-slate-400">
-              Web pairing allows users to connect their WhatsApp account to <strong>Saqib MD Bot</strong> without scanning a QR code from another screen. Using WhatsApp official phone-number linking, your account connects directly to the Baileys cloud cluster.
-            </p>
-          </div>
-          <div>
-            <h2 className="text-xs font-semibold text-zinc-200 mb-1 flex items-center gap-1.5">
-              <FaCode className="text-emerald-400 w-3 h-3" />
-              Also Available in WhatsApp Chat
-            </h2>
-            <p className="text-[11px] leading-relaxed text-slate-400">
-              You can also generate your pairing code directly inside WhatsApp by messaging any bot group or DM with:{' '}
-              <code className="text-cyan-400 font-mono">.pair 0347xxxxxxx</code> or{' '}
-              <code className="text-cyan-400 font-mono">/pair 0347xxxxxxx</code>.
-            </p>
-          </div>
-        </article>
-
-        {/* Footer info */}
-        <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-          <span>Engineered by Muhammad Saqib</span>
-          <span className="font-mono text-cyan-500/80">Saqib 242 • Gojra, PK</span>
+        
+        {/* Footer */}
+        <div className="text-center py-3">
+          <p className="text-gray-500 text-[9px]">
+            <i className="fas fa-heart text-red-400"></i> Developed by{' '}
+            <span className="text-white font-semibold">MUHAMMAD SAQIB</span> •{' '}
+            <a href="https://www.mrsaqib.me" className="text-blue-400 hover:underline">
+              mrsaqib.me
+            </a>
+          </p>
         </div>
-      </main>
-
-      {/* Page Footer */}
-      <footer className="relative z-10 w-full max-w-xl text-center py-4 text-xs text-slate-500 font-mono">
-        © {new Date().getFullYear()} Mr Saqib (mrsaqib.me) • All rights reserved.
-      </footer>
+      </div>
     </div>
   );
 }
