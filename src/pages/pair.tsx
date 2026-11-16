@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 
-const AVATAR_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png';
+const AVATAR_IMAGE = '/avatar.png';
+const AVATAR_FALLBACK = 'https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png';
 const PREVIEW_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png';
 
 interface ClusterNode {
@@ -501,6 +502,7 @@ export default function PairPage() {
               <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-emerald-400 via-teal-500 to-sky-500 shadow-md">
                 <img
                   src={AVATAR_IMAGE}
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = AVATAR_FALLBACK; }}
                   alt="Muhammad Saqib"
                   className="w-full h-full object-cover rounded-full border border-white"
                 />
@@ -1290,6 +1292,7 @@ export default function PairPage() {
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full p-[2px] bg-gradient-to-tr from-orange-400 via-pink-500 to-indigo-500 shadow-md">
                   <img
                     src={AVATAR_IMAGE}
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = AVATAR_FALLBACK; }}
                     alt="Muhammad Saqib"
                     className="w-full h-full object-cover rounded-full border border-white"
                   />
