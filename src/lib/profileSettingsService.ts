@@ -48,7 +48,7 @@ export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   tiktok_url: 'https://www.tiktok.com/@mr_saqib_242',
   snapchat_url: 'https://www.snapchat.com/add/mrsaqib242',
   github_url: 'https://github.com/mr-saqib-242',
-  bot_url: 'https://saqibmd.vercel.app',
+  bot_url: '/pair',
   avatar_url: 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img1_yPzIc8MWvY.png?tr=w-200,h-200,fo-auto,q-90',
   contract_status: 'Open for New Projects',
   contract_subtitle: 'Remote Worldwide • NDA Protected',
