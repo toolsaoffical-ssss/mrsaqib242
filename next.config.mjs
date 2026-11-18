@@ -35,6 +35,16 @@ const nextConfig = {
         destination: '/bot',
         permanent: true,
       },
+      {
+        source: '/facts',
+        destination: '/press',
+        permanent: true,
+      },
+      {
+        source: '/press-kit',
+        destination: '/press',
+        permanent: true,
+      },
     ];
   },
 
