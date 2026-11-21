@@ -55,6 +55,9 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: ClaudeBot
 Allow: /
 
@@ -73,3 +76,4 @@ Allow: /
 # Sitemap & Direct LLM Documentation
 Sitemap: https://www.mrsaqib.me/sitemap.xml
 Markdown-Index: https://www.mrsaqib.me/llms.txt
+Markdown-Full: https://www.mrsaqib.me/llms-full.txt

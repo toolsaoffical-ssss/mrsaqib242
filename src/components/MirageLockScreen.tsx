@@ -224,7 +224,7 @@ export default function MirageLockScreen({ onUnlockSuccess }: MirageLockScreenPr
             </div>
             
             <p className="text-[11px] text-zinc-500 font-mono mt-2 text-center">
-              Enter the sequence generated from <span className="text-zinc-300">/mradmin2</span> or your Master PIN.
+              Enter your OTP sequence or Master PIN.
             </p>
           </div>
 

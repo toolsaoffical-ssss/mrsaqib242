@@ -27,7 +27,23 @@ const CLUSTER_CONFIG: Record<string, ClusterNode> = {
   s8: { id: 's8', name: 'Node 8 (Heroku-8)', short: 'Heroku-8', url: 'https://saqibbot8-f10fafc8b934.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s9: { id: 's9', name: 'Node 9 (Heroku-9)', short: 'Heroku-9', url: 'https://saqibbot9-bebb531508e3.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s10: { id: 's10', name: 'Node 10 (Heroku-10)', short: 'Heroku-10', url: 'https://saqibot10-d27e9f3ad01e.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
-  railway: { id: 'railway', name: 'Node 11 (Railway)', short: 'Railway-11', url: 'https://web-production-08da5300.up.railway.app', type: 'Railway', online: true, active: 0, ping: null }
+  s11: { id: 's11', name: 'Node 11 (Heroku-11)', short: 'Heroku-11', url: 'https://saqibbot11-815563078799.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s12: { id: 's12', name: 'Node 12 (Heroku-12)', short: 'Heroku-12', url: 'https://saqibbot12-2fb338ff529a.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s13: { id: 's13', name: 'Node 13 (Heroku-13)', short: 'Heroku-13', url: 'https://saqibot13-392b066b37a5.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s14: { id: 's14', name: 'Node 14 (Heroku-14)', short: 'Heroku-14', url: 'https://saqibbot14-d84e8d59500a.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s16: { id: 's16', name: 'Node 16 (Heroku-16)', short: 'Heroku-16', url: 'https://saqibbot16-b071c813d801.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s17: { id: 's17', name: 'Node 17 (Heroku-17)', short: 'Heroku-17', url: 'https://saqibot17-a471970ef223.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s18: { id: 's18', name: 'Node 18 (Heroku-18)', short: 'Heroku-18', url: 'https://saqibbot18-45854000f60b.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s19: { id: 's19', name: 'Node 19 (Heroku-19)', short: 'Heroku-19', url: 'https://saqibbot19-bb306a89a5f4.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s20: { id: 's20', name: 'Node 20 (Heroku-20)', short: 'Heroku-20', url: 'https://saqibbot20-317bb68e4db0.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s22: { id: 's22', name: 'Node 22 (Heroku-22)', short: 'Heroku-22', url: 'https://saqibbot22-9318c2de0250.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s23: { id: 's23', name: 'Node 23 (Heroku-23)', short: 'Heroku-23', url: 'https://saqibot23-1f4bec48d0f2.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s25: { id: 's25', name: 'Node 25 (Heroku-25)', short: 'Heroku-25', url: 'https://saqibbot25-46c4cf949a77.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s25b: { id: 's25b', name: 'Node 25B (Heroku-25B)', short: 'Heroku-25B', url: 'https://saqibot25-0974df36edd8.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s26: { id: 's26', name: 'Node 26 (Heroku-26)', short: 'Heroku-26', url: 'https://saqibot26-69a8011cc819.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s27: { id: 's27', name: 'Node 27 (Heroku-27)', short: 'Heroku-27', url: 'https://saqibot27-1c1d295781fa.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s28: { id: 's28', name: 'Node 28 (Heroku-28)', short: 'Heroku-28', url: 'https://saqibbot28-658e7de676c8.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  railway: { id: 'railway', name: 'Railway (Hub)', short: 'Railway', url: 'https://web-production-08da5300.up.railway.app', type: 'Railway', online: true, active: 0, ping: null }
 };
 
 interface CommandItem {
@@ -178,7 +194,7 @@ export default function PairPage() {
     }
   }, [pairingCode, pairedNumber, isConnected, countdown, cluster]);
 
-  // Ping Health & Latency for all 11 Cluster Nodes
+  // Ping Health & Latency for all 27 Cluster Nodes
   useEffect(() => {
     async function pingCluster() {
       const keys = Object.keys(cluster);
@@ -801,7 +817,7 @@ export default function PairPage() {
         </section>
 
         {/* =================================================================== */}
-        {/* 3. 11-NODE CLOUD CLUSTER LOAD BALANCER & ROUTER                    */}
+        {/* 3. 27-NODE CLOUD CLUSTER LOAD BALANCER & ROUTER                    */}
         {/* =================================================================== */}
         <section className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-xl border border-slate-700/80">
           <div className="flex items-center justify-between mb-3 px-1 flex-wrap gap-2">
@@ -811,17 +827,17 @@ export default function PairPage() {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
               <span className="text-xs font-black uppercase tracking-wider text-slate-200">
-                11-Node Mega Cluster
+                27-Node Mega Cluster
               </span>
               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                {onlineNodesCount}/11 Online • {totalPairedCount} Paired
+                {onlineNodesCount}/27 Online • {totalPairedCount} Paired
               </span>
             </div>
             <div className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
               <i className="fa-solid fa-bolt text-[10px]"></i>
               <span>
                 {selectedServerMode === 'auto'
-                  ? 'Smart Auto (11 Nodes Balanced)'
+                  ? 'Smart Auto (27 Nodes Balanced)'
                   : `Dedicated: ${cluster[selectedServerMode]?.short || selectedServerMode}`}
               </span>
             </div>
@@ -832,7 +848,7 @@ export default function PairPage() {
             type="button"
             onClick={() => {
               setSelectedServerMode('auto');
-              addLog('⚡ Smart Load-Balancer activated: Traffic distributed across all 11 Cloud Nodes', 'info');
+              addLog('⚡ Smart Load-Balancer activated: Traffic distributed across all 27 Cloud Nodes (26 Heroku + 1 Railway)', 'info');
             }}
             className={`w-full mb-2.5 p-2.5 sm:p-3 rounded-xl text-left transition relative cursor-pointer shadow-md group ${
               selectedServerMode === 'auto'
@@ -855,7 +871,7 @@ export default function PairPage() {
             </div>
             <div className="flex items-center justify-between text-xs text-slate-200">
               <span className="font-bold text-white text-[11px] sm:text-xs">
-                Dynamic Load-Balance &amp; Instant Failover (10 Heroku + 1 Railway)
+                Dynamic Load-Balance &amp; Instant Failover (26 Heroku + 1 Railway)
               </span>
               <span className="text-[10px] text-emerald-300 font-semibold hidden sm:inline">
                 ⚡ High Speed Routing
@@ -863,7 +879,7 @@ export default function PairPage() {
             </div>
           </button>
 
-          {/* Individual 11 Nodes Grid */}
+          {/* Individual 27 Nodes Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {Object.keys(cluster).map((key) => {
               const node = cluster[key];
@@ -895,7 +911,7 @@ export default function PairPage() {
                       }`}
                     >
                       <i className={`text-[10px] ${isRailway ? 'fa-solid fa-server' : 'fa-brands fa-docker'}`}></i>
-                      <span>{isRailway ? 'Node 11 (Railway Scale)' : `Node ${node.id.replace('s', '')}`}</span>
+                      <span>{isRailway ? 'Railway Hub (Scale Engine)' : `Node ${node.id.replace('s', '')}`}</span>
                     </span>
                     <span
                       className={`w-2 h-2 rounded-full ${

@@ -42,7 +42,7 @@ export function SourceCodeModal({ onClose }: { onClose: () => void }) {
           <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-[0.3em] mb-4">Private Links</p>
           
           <a
-            href="https://whatsapp.com/channel/" 
+            href="https://whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M" 
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-3 bg-[#1a1a1a] border border-[#25D366]/30 hover:bg-[#25D366]/10 text-white px-4 py-2.5 w-[90%] max-w-[260px] mx-auto rounded-full font-bold text-[10px] md:text-[11px] uppercase tracking-wide transition-all duration-300 shadow-lg shadow-[#25D366]/10"

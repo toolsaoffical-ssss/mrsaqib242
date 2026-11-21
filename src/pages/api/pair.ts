@@ -3,8 +3,31 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const CLUSTER_NODES = [
   'https://web-production-08da5300.up.railway.app',
   'https://saqib-bot-v1-d3ecc6f0292e.herokuapp.com',
-  'https://web-production-f30a34e9.up.railway.app',
-  'https://saqib-bot-v2-4c28fce8995a.herokuapp.com'
+  'https://saqib-bot-s2-1cceb03e9698.herokuapp.com',
+  'https://saqibbot3-bb2b46aa1cb4.herokuapp.com',
+  'https://saqibot4-1469f73b3d77.herokuapp.com',
+  'https://saqibbot5-5ffa090fe31f.herokuapp.com',
+  'https://saqibot6-061b6d17645d.herokuapp.com',
+  'https://saqibot7-b9d00e67a587.herokuapp.com',
+  'https://saqibbot8-f10fafc8b934.herokuapp.com',
+  'https://saqibbot9-bebb531508e3.herokuapp.com',
+  'https://saqibot10-d27e9f3ad01e.herokuapp.com',
+  'https://saqibbot11-815563078799.herokuapp.com',
+  'https://saqibbot12-2fb338ff529a.herokuapp.com',
+  'https://saqibot13-392b066b37a5.herokuapp.com',
+  'https://saqibbot14-d84e8d59500a.herokuapp.com',
+  'https://saqibbot16-b071c813d801.herokuapp.com',
+  'https://saqibot17-a471970ef223.herokuapp.com',
+  'https://saqibbot18-45854000f60b.herokuapp.com',
+  'https://saqibbot19-bb306a89a5f4.herokuapp.com',
+  'https://saqibbot20-317bb68e4db0.herokuapp.com',
+  'https://saqibbot22-9318c2de0250.herokuapp.com',
+  'https://saqibot23-1f4bec48d0f2.herokuapp.com',
+  'https://saqibbot25-46c4cf949a77.herokuapp.com',
+  'https://saqibot25-0974df36edd8.herokuapp.com',
+  'https://saqibot26-69a8011cc819.herokuapp.com',
+  'https://saqibot27-1c1d295781fa.herokuapp.com',
+  'https://saqibbot28-658e7de676c8.herokuapp.com'
 ];
 
 function sanitizePhoneNumber(input: string): string {

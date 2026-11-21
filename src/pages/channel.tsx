@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { FaWhatsapp, FaExternalLinkAlt, FaCheckCircle, FaBell, FaCode, FaShieldAlt } from 'react-icons/fa';
 import { supabase } from '../lib/supabase';
 
-const FALLBACK_CHANNEL_URL = 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I';
+const FALLBACK_CHANNEL_URL = 'https://www.whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M';
 const PREVIEW_IMAGE = 'https://ik.imagekit.io/mrsaqib/mrsaqib242-img25_7oG52NZUY.png';
 
 const schemaData = {
@@ -77,16 +77,21 @@ export default function ChannelRedirectPage() {
 
       // Never redirect search engine bots or crawlers (Googlebot, Bing, etc.)
       const ua = (navigator.userAgent || '').toLowerCase();
-      const isBot = /google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(ua);
+      const isBot = /googlebot|google-inspectiontool|googleother|google-extended|bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|lighthouse/i.test(ua);
       if (isBot) return;
 
-      // 1. Try local cache
+      // 1. Try local cache (purge any old banned channel ID)
       try {
         const cached = localStorage.getItem('saqib_tool_page_settings');
         if (cached) {
           const parsed = JSON.parse(cached);
           if (parsed.whatsapp_channel_link && parsed.whatsapp_channel_link.trim()) {
-            const url = parsed.whatsapp_channel_link.trim();
+            let url = parsed.whatsapp_channel_link.trim();
+            if (url.includes('0029VbBTSK1EquiWrUt5uV1I')) {
+              url = FALLBACK_CHANNEL_URL;
+              parsed.whatsapp_channel_link = url;
+              localStorage.setItem('saqib_tool_page_settings', JSON.stringify(parsed));
+            }
             if (isMounted) setTargetUrl(url);
             window.location.replace(url);
             return;
@@ -124,9 +129,12 @@ export default function ChannelRedirectPage() {
         {/* Instant 0ms LocalCache Script: executes before hydration only for real human visitors */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `if(typeof window!=="undefined"){var u=(navigator.userAgent||"").toLowerCase();var b=/google|bot|crawler|spider|inspection|slurp|facebookexternalhit|whatsapp|telegram|discord|preview|lighthouse/i.test(u);if(!b){try{var c=localStorage.getItem("saqib_tool_page_settings");if(c){var d=JSON.parse(c);if(d.whatsapp_channel_link){window.location.replace(d.whatsapp_channel_link);}}}catch(e){}}}`
+            __html: `if(typeof window!=="undefined"){var u=(navigator.userAgent||"").toLowerCase();var b=/googlebot|google-inspectiontool|googleother|google-extended|bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|lighthouse/i.test(u);if(!b){var target="https://whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M";try{var c=localStorage.getItem("saqib_tool_page_settings");if(c){var d=JSON.parse(c);if(d.whatsapp_channel_link&&!d.whatsapp_channel_link.includes("0029VbBTSK1EquiWrUt5uV1I")){target=d.whatsapp_channel_link;}else{d.whatsapp_channel_link=target;localStorage.setItem("saqib_tool_page_settings",JSON.stringify(d));}}}catch(e){}window.location.replace(target);}}`
           }}
         />
+
+        {/* Automatic fallback redirect for visitors when JavaScript is delayed/throttled */}
+        <meta http-equiv="refresh" content="2; url=https://whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M" />
 
         {/* DNS Prefetch & Preconnect for Lightning Fast Network Handshake */}
         <link rel="dns-prefetch" href="https://www.whatsapp.com" />

@@ -153,7 +153,7 @@ const schemaData = {
           'https://github.com/mrsaqib242',
           'https://t.me/mrsaqib242',
           'https://wa.me/923478936242',
-          'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
+          'https://www.whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M',
           'https://instagram.com/mr_saqib242',
           'https://www.tiktok.com/@mr_saqib_242'
         ]

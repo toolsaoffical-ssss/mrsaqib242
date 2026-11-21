@@ -47,7 +47,7 @@ const schemaData = {
       },
       sameAs: [
         FALLBACK_WHATSAPP_URL,
-        'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
+        'https://www.whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M',
         'https://github.com/techai342',
         'https://instagram.com/mr_saqib242'
       ]

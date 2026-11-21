@@ -1439,7 +1439,7 @@ export default function AdminSecurityManager({
                   />
                   <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
                 </div>
-                <p className="text-xs text-zinc-500 mt-1">Numbers only. Used in /mradmin2 to generate the true OTP.</p>
+                <p className="text-xs text-zinc-500 mt-1">Numbers only. Used in the Authenticator to generate the true OTP.</p>
               </div>
 
               <div className="space-y-2">

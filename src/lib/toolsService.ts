@@ -82,7 +82,7 @@ export const DEFAULT_TOOL_PAGE_SETTINGS: ToolPageSettings = {
   popup_platform: 'whatsapp',
   whatsapp_popup_title: 'Join Our WhatsApp Community! 🚀',
   whatsapp_popup_description: 'Get early access to leaked source codes, premium modded APKs, AI tools, and secret hacks directly on your phone.',
-  whatsapp_channel_link: 'https://whatsapp.com/channel/your_channel_id',
+  whatsapp_channel_link: 'https://whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M',
   featured_section_title: 'Featured & Staff Picks',
   show_featured_section: true,
   default_view_mode: 'grid',
@@ -215,7 +215,7 @@ export const DEFAULT_TOOLS: ToolItem[] = [
     id: 'whatsapp-channel',
     title: 'VIP WhatsApp Channel',
     description: 'Join Saqib official WhatsApp channel for instant drops and updates.',
-    url: 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
+    url: 'https://www.whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M',
     category_id: 'community-channels',
     category_name: 'Community & VIP',
     icon: 'MessageSquare',
@@ -1006,7 +1006,7 @@ ON CONFLICT (id) DO UPDATE SET
 INSERT INTO public.tools (id, title, description, url, category_id, category_name, icon, badge, gradient, action_type, modal_target, display_order, is_active, is_featured)
 VALUES
 ('pricing-plans', 'Pricing & Packages', 'Explore web development packages, pricing tiers, and custom quotes.', '#website-plans', 'services-plans', 'Services & Plans', 'DollarSign', 'POPULAR', 'from-purple-600 via-indigo-600 to-blue-600', 'modal_action', 'website_plans', 1, true, true),
-('whatsapp-channel', 'VIP WhatsApp Channel', 'Join Saqib official WhatsApp channel for instant drops and updates.', 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I', 'community-channels', 'Community & VIP', 'MessageSquare', 'ACTIVE', 'from-[#25D366] to-[#128C7E]', 'external_url', '', 3, true, true),
+('whatsapp-channel', 'VIP WhatsApp Channel', 'Join Saqib official WhatsApp channel for instant drops and updates.', 'https://www.whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M', 'community-channels', 'Community & VIP', 'MessageSquare', 'ACTIVE', 'from-[#25D366] to-[#128C7E]', 'external_url', '', 3, true, true),
 ('explore-hacks', 'Explore Dev Hacks', 'Curated developer tricks, coding shortcuts, and productivity tips.', '#hacks', 'developer-tools', 'Developer Tools', 'Zap', 'HOT', 'from-amber-500 via-orange-500 to-red-500', 'modal_action', 'hacks', 4, true, false),
 ('saqib-api', 'Saqib API Services', 'High-performance cloud endpoints and programmatic REST APIs.', 'https://apisaqib.vercel.app', 'developer-tools', 'Developer Tools', 'Globe', 'FAST', 'from-blue-600 to-indigo-600', 'external_url', '', 5, true, false),
 ('make-own-tools', 'Make Your Own Tools', 'Interactive builder to craft web utilities and tool pages without code.', 'https://protool.zone.id', 'developer-tools', 'Developer Tools', 'Wrench', 'CREATOR', 'from-emerald-600 to-green-600', 'external_url', '', 6, true, false),

@@ -1127,7 +1127,7 @@ export default function App() {
 
                 {/* 5th Button: WhatsApp Channel */}
                 <motion.a 
-                  href="https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I" 
+                  href="https://www.whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}

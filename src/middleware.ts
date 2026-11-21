@@ -51,7 +51,7 @@ export function middleware(request: NextRequest) {
   // Explicitly allow all legitimate search engines, SEO tools,
   // social bots, and AI agents so SEO & indexing are 100% flawless.
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  const searchEngineRegex = /(google|googlebot|google-inspectiontool|googleother|google-extended|googleweblight|adsbot|mediapartners|feedfetcher|apis-google|bingbot|bingpreview|msnbot|adidxbot|microsoft-inspectiontool|slurp|duckduckbot|baiduspider|yandex|sogou|exabot|applebot|facebookexternalhit|facebot|twitterbot|linkedinbot|whatsapp|telegrambot|discordbot|pinterest|slackbot|skypeuripreview|vkshare|redditbot|gptbot|chatgpt|claudebot|claude-web|perplexitybot|anthropic|cohere|lighthouse|chrome-lighthouse|screaming\s*frog|ahrefsbot|semrushbot)/i;
+  const searchEngineRegex = /(googlebot|google-inspectiontool|googleother|google-extended|googleweblight|adsbot-google|mediapartners-google|feedfetcher-google|apis-google|bingbot|bingpreview|msnbot|adidxbot|microsoft-inspectiontool|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|applebot|facebookexternalhit|facebot|twitterbot|linkedinbot|whatsapp|telegrambot|discordbot|pinterest|slackbot|skypeuripreview|vkshare|redditbot|gptbot|chatgpt|claudebot|claude-web|perplexitybot|anthropic|cohere|lighthouse|chrome-lighthouse|screaming\s*frog|ahrefsbot|semrushbot)/i;
 
   if (searchEngineRegex.test(userAgent)) {
     return NextResponse.next();
@@ -63,7 +63,7 @@ export function middleware(request: NextRequest) {
   // Bots / preview scrapers above bypassed this to get full OpenGraph cards & JSON-LD!
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   const SOCIAL_REDIRECTS: Record<string, string> = {
-    '/channel': 'https://www.whatsapp.com/channel/0029VbBTSK1EquiWrUt5uV1I',
+    '/channel': 'https://www.whatsapp.com/channel/0029VbDzLTD1iUxe8Hsv1D0M',
     '/whatsapp': 'https://wa.me/923478936242',
     '/wa': 'https://wa.me/923478936242',
     '/tiktok': 'https://www.tiktok.com/@mr_saqib_242',
