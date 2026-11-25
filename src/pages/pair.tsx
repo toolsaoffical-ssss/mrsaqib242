@@ -13,6 +13,8 @@ interface ClusterNode {
   type: 'Heroku' | 'Railway';
   online: boolean;
   active: number;
+  maxSessions?: number;
+  mem?: number;
   ping: number | null;
 }
 
@@ -36,6 +38,7 @@ const CLUSTER_CONFIG: Record<string, ClusterNode> = {
   s18: { id: 's18', name: 'Node 18 (Heroku-18)', short: 'Heroku-18', url: 'https://saqibbot18-45854000f60b.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s19: { id: 's19', name: 'Node 19 (Heroku-19)', short: 'Heroku-19', url: 'https://saqibbot19-bb306a89a5f4.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s20: { id: 's20', name: 'Node 20 (Heroku-20)', short: 'Heroku-20', url: 'https://saqibbot20-317bb68e4db0.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s21: { id: 's21', name: 'Node 21 (Heroku-21)', short: 'Heroku-21', url: 'https://saqibbot21-ac7859f5f0fb.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s22: { id: 's22', name: 'Node 22 (Heroku-22)', short: 'Heroku-22', url: 'https://saqibbot22-9318c2de0250.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s23: { id: 's23', name: 'Node 23 (Heroku-23)', short: 'Heroku-23', url: 'https://saqibot23-1f4bec48d0f2.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s25: { id: 's25', name: 'Node 25 (Heroku-25)', short: 'Heroku-25', url: 'https://saqibbot25-46c4cf949a77.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
@@ -43,6 +46,27 @@ const CLUSTER_CONFIG: Record<string, ClusterNode> = {
   s26: { id: 's26', name: 'Node 26 (Heroku-26)', short: 'Heroku-26', url: 'https://saqibot26-69a8011cc819.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s27: { id: 's27', name: 'Node 27 (Heroku-27)', short: 'Heroku-27', url: 'https://saqibot27-1c1d295781fa.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   s28: { id: 's28', name: 'Node 28 (Heroku-28)', short: 'Heroku-28', url: 'https://saqibbot28-658e7de676c8.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s29: { id: 's29', name: 'Node 29 (Heroku-29)', short: 'Heroku-29', url: 'https://saqibot29-94eae3596692.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s30: { id: 's30', name: 'Node 30 (Heroku-30)', short: 'Heroku-30', url: 'https://saqibot30-e89854c3fef2.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s32: { id: 's32', name: 'Node 32 (Heroku-32)', short: 'Heroku-32', url: 'https://saqibot32-daa98fd51f65.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s33: { id: 's33', name: 'Node 33 (Heroku-33)', short: 'Heroku-33', url: 'https://saqibot33-454998cdc49b.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s34: { id: 's34', name: 'Node 34 (Heroku-34)', short: 'Heroku-34', url: 'https://saqibot34-88b9afd45ae5.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s35: { id: 's35', name: 'Node 35 (Heroku-35)', short: 'Heroku-35', url: 'https://saqibot35-b5a65594dc78.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s36: { id: 's36', name: 'Node 36 (Heroku-36)', short: 'Heroku-36', url: 'https://saqibot36-822da6a7cddd.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s37: { id: 's37', name: 'Node 37 (Heroku-37)', short: 'Heroku-37', url: 'https://saqibot37-46d3819a472c.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s38: { id: 's38', name: 'Node 38 (Heroku-38)', short: 'Heroku-38', url: 'https://saqibot38-520caade1fd3.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s39: { id: 's39', name: 'Node 39 (Heroku-39)', short: 'Heroku-39', url: 'https://saqibot39-6fa296b89e98.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s40: { id: 's40', name: 'Node 40 (Heroku-40)', short: 'Heroku-40', url: 'https://saqibot40-d19a79bf6170.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s41: { id: 's41', name: 'Node 41 (Heroku-41)', short: 'Heroku-41', url: 'https://saqibbot41-fd5991fd6038.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s42: { id: 's42', name: 'Node 42 (Heroku-42)', short: 'Heroku-42', url: 'https://saqibbot42-18e1d04afef3.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s43: { id: 's43', name: 'Node 43 (Heroku-43)', short: 'Heroku-43', url: 'https://saqibot43-4ac9ae252f6b.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s44: { id: 's44', name: 'Node 44 (Heroku-44)', short: 'Heroku-44', url: 'https://saqibobot44-6379b396e027.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s45: { id: 's45', name: 'Node 45 (Heroku-45)', short: 'Heroku-45', url: 'https://saqibot45-4fee2ad8369c.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s46: { id: 's46', name: 'Node 46 (Heroku-46)', short: 'Heroku-46', url: 'https://saqibbt46-3c399938d5a6.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s47: { id: 's47', name: 'Node 47 (Heroku-47)', short: 'Heroku-47', url: 'https://saqibot47-6f2e03e874fc.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s48: { id: 's48', name: 'Node 48 (Heroku-48)', short: 'Heroku-48', url: 'https://saqibot48-ac004fb8d44b.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s49: { id: 's49', name: 'Node 49 (Heroku-49)', short: 'Heroku-49', url: 'https://saqibot49-e792da7c6864.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
+  s50: { id: 's50', name: 'Node 50 (Heroku-50)', short: 'Heroku-50', url: 'https://saqibot50-d29d71852e9a.herokuapp.com', type: 'Heroku', online: true, active: 0, ping: null },
   railway: { id: 'railway', name: 'Railway (Hub)', short: 'Railway', url: 'https://web-production-08da5300.up.railway.app', type: 'Railway', online: true, active: 0, ping: null }
 };
 
@@ -194,7 +218,7 @@ export default function PairPage() {
     }
   }, [pairingCode, pairedNumber, isConnected, countdown, cluster]);
 
-  // Ping Health & Latency for all 27 Cluster Nodes
+  // Ping Health & Latency for all 49 Cluster Nodes
   useEffect(() => {
     async function pingCluster() {
       const keys = Object.keys(cluster);
@@ -202,22 +226,25 @@ export default function PairPage() {
 
       await Promise.allSettled(
         keys.map(async (k) => {
-          const node = updated[k];
+          const node = { ...updated[k] };
           const t0 = performance.now();
           try {
-            const res = await fetch(`${node.url}/health`, { signal: AbortSignal.timeout(4000) });
+            const res = await fetch(`${node.url}/health`, { signal: AbortSignal.timeout(5000) });
             const lat = Math.round(performance.now() - t0);
             if (res.ok) {
               const data = await res.json();
               node.online = true;
               node.ping = lat;
               node.active = typeof data.activeSessions === 'number' ? data.activeSessions : (data.pairedSessions || 0);
+              node.maxSessions = typeof data.maxSessions === 'number' ? data.maxSessions : 10;
+              node.mem = typeof data.memoryUsageMb === 'number' ? data.memoryUsageMb : 0;
             } else {
               node.online = false;
             }
           } catch (_) {
             node.online = false;
           }
+          updated[k] = node;
         })
       );
 
@@ -325,17 +352,25 @@ export default function PairPage() {
   const getTargetNode = (): ClusterNode => {
     if (selectedServerMode !== 'auto' && cluster[selectedServerMode]) {
       const node = cluster[selectedServerMode];
-      if (node.online) return node;
-      addLog(`⚠️ ${node.short} is offline, falling back to smart auto...`, 'error');
+      if (node.online && (node.active || 0) < (node.maxSessions || 10) && (node.mem || 0) < 475) return node;
+      if (node.online) {
+        addLog(`⚠️ ${node.short} is at full capacity (${node.active}/${node.maxSessions || 10} bots), smart-routing to a lighter node...`, 'info');
+      } else {
+        addLog(`⚠️ ${node.short} is offline, falling back to smart auto...`, 'error');
+      }
     }
 
     const all = Object.values(cluster);
     const online = all.filter((n) => n.online);
     if (online.length === 0) return cluster.s1;
 
-    online.sort((a, b) => a.active - b.active);
+    const underCap = online.filter((n) => (n.active || 0) < (n.maxSessions || 10) && (n.mem || 0) < 475);
+    const pool = underCap.length > 0 ? underCap : online;
+    pool.sort((a, b) => (a.active - b.active) || ((a.mem || 0) - (b.mem || 0)));
+    const minActive = pool[0].active;
+    const candidates = pool.filter((n) => n.active <= minActive);
     autoCounterRef.current++;
-    return online[autoCounterRef.current % online.length];
+    return candidates[autoCounterRef.current % candidates.length];
   };
 
   const handleGenerateCode = async (e?: React.FormEvent) => {
@@ -384,8 +419,10 @@ export default function PairPage() {
         }
       }
     } catch (_) {
-      // Failover to Railway Node 11 or Heroku 1
-      const backupNode = target.id === 'railway' ? cluster.s1 : cluster.railway;
+      const backupCandidates = Object.values(cluster)
+        .filter((n) => n.id !== target.id && n.online)
+        .sort((a, b) => (a.active - b.active) || ((a.mem || 0) - (b.mem || 0)));
+      const backupNode = backupCandidates[0] || cluster.s1;
       addLog(`⚠️ ${target.short} busy, switching to ${backupNode.name}...`, 'info');
       try {
         const customParam = showCustomCode && customCode.trim() ? `&custom=${encodeURIComponent(customCode.trim().toUpperCase())}` : '';
@@ -817,7 +854,7 @@ export default function PairPage() {
         </section>
 
         {/* =================================================================== */}
-        {/* 3. 27-NODE CLOUD CLUSTER LOAD BALANCER & ROUTER                    */}
+        {/* 3. 49-NODE CLOUD CLUSTER LOAD BALANCER & ROUTER                    */}
         {/* =================================================================== */}
         <section className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-xl border border-slate-700/80">
           <div className="flex items-center justify-between mb-3 px-1 flex-wrap gap-2">
@@ -827,17 +864,17 @@ export default function PairPage() {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
               <span className="text-xs font-black uppercase tracking-wider text-slate-200">
-                27-Node Mega Cluster
+                49-Node Mega Cluster
               </span>
               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                {onlineNodesCount}/27 Online • {totalPairedCount} Paired
+                {onlineNodesCount}/{Object.keys(cluster).length} Online • {totalPairedCount} Paired
               </span>
             </div>
             <div className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
               <i className="fa-solid fa-bolt text-[10px]"></i>
               <span>
                 {selectedServerMode === 'auto'
-                  ? 'Smart Auto (27 Nodes Balanced)'
+                  ? 'Smart Auto (49 Nodes Balanced)'
                   : `Dedicated: ${cluster[selectedServerMode]?.short || selectedServerMode}`}
               </span>
             </div>
@@ -848,7 +885,7 @@ export default function PairPage() {
             type="button"
             onClick={() => {
               setSelectedServerMode('auto');
-              addLog('⚡ Smart Load-Balancer activated: Traffic distributed across all 27 Cloud Nodes (26 Heroku + 1 Railway)', 'info');
+              addLog('⚡ Smart Load-Balancer activated: Traffic distributed across all 49 Cloud Nodes (48 Heroku + 1 Railway)', 'info');
             }}
             className={`w-full mb-2.5 p-2.5 sm:p-3 rounded-xl text-left transition relative cursor-pointer shadow-md group ${
               selectedServerMode === 'auto'
@@ -871,7 +908,7 @@ export default function PairPage() {
             </div>
             <div className="flex items-center justify-between text-xs text-slate-200">
               <span className="font-bold text-white text-[11px] sm:text-xs">
-                Dynamic Load-Balance &amp; Instant Failover (26 Heroku + 1 Railway)
+                Dynamic Load-Balance &amp; Instant Failover (48 Heroku + 1 Railway)
               </span>
               <span className="text-[10px] text-emerald-300 font-semibold hidden sm:inline">
                 ⚡ High Speed Routing
@@ -879,7 +916,7 @@ export default function PairPage() {
             </div>
           </button>
 
-          {/* Individual 27 Nodes Grid */}
+          {/* Individual 49 Nodes Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {Object.keys(cluster).map((key) => {
               const node = cluster[key];
