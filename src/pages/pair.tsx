@@ -114,6 +114,7 @@ export default function PairPage() {
   // Multi-Node Cluster State
   const [cluster, setCluster] = useState<Record<string, ClusterNode>>(CLUSTER_CONFIG);
   const [selectedServerMode, setSelectedServerMode] = useState<string>('auto');
+  const [showServersGrid, setShowServersGrid] = useState<boolean>(false);
   const autoCounterRef = useRef<number>(0);
 
   // Telemetry & Device State
@@ -916,8 +917,31 @@ export default function PairPage() {
             </div>
           </button>
 
-          {/* Individual 49 Nodes Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {/* Toggle Button to Show/Hide 49-Node Server Grid */}
+          <button
+            type="button"
+            onClick={() => setShowServersGrid((prev) => !prev)}
+            aria-expanded={showServersGrid}
+            className="w-full py-2.5 px-3.5 rounded-xl border border-slate-700/80 bg-slate-800/75 hover:bg-slate-700/75 text-xs font-bold text-slate-100 flex items-center justify-between transition cursor-pointer shadow-sm"
+          >
+            <span className="flex items-center gap-2">
+              <i className="fa-solid fa-server text-sky-400 text-[11px]"></i>
+              <span>{showServersGrid ? 'Hide Servers' : `See Servers (${Object.keys(cluster).length} Nodes)`}</span>
+              {!showServersGrid && selectedServerMode !== 'auto' && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  Selected: {cluster[selectedServerMode]?.short || selectedServerMode}
+                </span>
+              )}
+            </span>
+            <span className="flex items-center gap-2 text-[11px] text-emerald-300 font-semibold">
+              <span>{onlineNodesCount}/{Object.keys(cluster).length} Online</span>
+              <i className={`fa-solid ${showServersGrid ? 'fa-chevron-up' : 'fa-chevron-down'} text-[10px]`}></i>
+            </span>
+          </button>
+
+          {/* Individual 49 Nodes Grid (Collapsed by default) */}
+          {showServersGrid && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5">
             {Object.keys(cluster).map((key) => {
               const node = cluster[key];
               const isSelected = selectedServerMode === key;
@@ -994,7 +1018,8 @@ export default function PairPage() {
                 </button>
               );
             })}
-          </div>
+            </div>
+          )}
         </section>
 
         {/* =================================================================== */}
