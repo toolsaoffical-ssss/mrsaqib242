@@ -87,7 +87,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const rawNumber = (req.query.number || req.body?.number || '').toString();
   const rawCode = (req.query.code || req.body?.code || '').toString();
-  const rawRef = (req.query.refq || req.query.ref || req.body?.refq || req.body?.ref || '')
+  const rawRef = (
+    req.query.refq ||
+    req.query.ref ||
+    req.body?.refq ||
+    req.body?.ref ||
+    req.cookies?.sigma_ref ||
+    ''
+  )
     .toString()
     .trim()
     .toLowerCase()

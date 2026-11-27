@@ -152,8 +152,20 @@ Admin: Saqib242\x1b[0m
     });
   }
 
-  // Allow browsers and clean visitors to pass through normally
-  return NextResponse.next();
+  // Allow browsers and clean visitors to pass through normally, capturing ?ref= / ?refq= attribution
+  const response = NextResponse.next();
+  const rawSearch = request.nextUrl.search || '';
+  const malformedMatch = rawSearch.match(/[?&]refq?\??=([a-zA-Z0-9_-]{3,24})/i);
+  const directRef = request.nextUrl.searchParams.get('refq') || request.nextUrl.searchParams.get('ref') || malformedMatch?.[1] || '';
+  const cleanRef = directRef.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  if (cleanRef.length >= 3 && cleanRef.length <= 24) {
+    response.cookies.set('sigma_ref', cleanRef, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'lax'
+    });
+  }
+  return response;
 }
 
 export const config = {

@@ -92,6 +92,8 @@ const COMMAND_LIST: CommandItem[] = [
 ];
 
 export default function PairPage() {
+  const [botEngine, setBotEngine] = useState<'main' | 'mini'>('main');
+  const [activeRef, setActiveRef] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'code' | 'qr'>('code');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [customCode, setCustomCode] = useState('SAQ1BXMD');
@@ -101,6 +103,7 @@ export default function PairPage() {
   const [pairingCode, setPairingCode] = useState<string | null>(null);
   const [rawCode, setRawCode] = useState<string | null>(null);
   const [pairedNumber, setPairedNumber] = useState<string | null>(null);
+  const [pairedEngine, setPairedEngine] = useState<'main' | 'mini'>('main');
   const [errorText, setErrorText] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -173,6 +176,26 @@ export default function PairPage() {
     };
   }, []);
 
+  // Capture and persist ?ref= / ?refq= referral attribution across page reloads
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const q = new URLSearchParams(window.location.search);
+    const fromUrl = q.get('refq') || q.get('ref') || (window.location.search.match(/[?&]refq?\??=([a-zA-Z0-9_-]{3,24})/i)?.[1] ?? '');
+    const fromCookie = document.cookie.match(/(?:^|;\s*)sigma_ref=([^;]+)/)?.[1] || '';
+    const fromStorage = (() => {
+      try { return window.localStorage.getItem('sigma_ref') || ''; } catch { return ''; }
+    })();
+    const resolved = (fromUrl || decodeURIComponent(fromCookie) || fromStorage)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, '');
+    if (resolved.length >= 3 && resolved.length <= 24) {
+      setActiveRef(resolved);
+      document.cookie = `sigma_ref=${encodeURIComponent(resolved)}; path=/; max-age=604800; SameSite=Lax`;
+      try { window.localStorage.setItem('sigma_ref', resolved); } catch {}
+    }
+  }, []);
+
   // Countdown timer
   useEffect(() => {
     if (pairingCode && countdown > 0 && !isConnected) {
@@ -191,22 +214,30 @@ export default function PairPage() {
     }
   }, [pairingCode, countdown, isConnected]);
 
-  // Status Polling (Direct Cluster Check, 0 Vercel Quota)
+  // Status Polling (Main Cluster OR Default SIGMA MD Mini Bot)
   useEffect(() => {
     if (pairingCode && pairedNumber && !isConnected && countdown > 0) {
       pollTimerRef.current = setInterval(async () => {
         try {
-          const targetNode = activeNodeRef.current || cluster.s1.url;
-          const directUrl = `${targetNode}/api/pair/status?number=${encodeURIComponent(pairedNumber)}`;
-          let res = await fetch(directUrl, { signal: AbortSignal.timeout(4000) }).catch(() => null);
-          if (!res || !res.ok) {
-            res = await fetch(`/api/pair?action=status&number=${encodeURIComponent(pairedNumber)}&node=${encodeURIComponent(targetNode)}`);
+          let res: Response | null = null;
+          if (pairedEngine === 'mini') {
+            res = await fetch(`/api/mini-pair?action=status&number=${encodeURIComponent(pairedNumber)}`, {
+              signal: AbortSignal.timeout(5000)
+            }).catch(() => null);
+          } else {
+            const targetNode = activeNodeRef.current || cluster.s1.url;
+            const directUrl = `${targetNode}/api/pair/status?number=${encodeURIComponent(pairedNumber)}`;
+            res = await fetch(directUrl, { signal: AbortSignal.timeout(4000) }).catch(() => null);
+            if (!res || !res.ok) {
+              res = await fetch(`/api/pair?action=status&number=${encodeURIComponent(pairedNumber)}&node=${encodeURIComponent(targetNode)}`);
+            }
           }
           if (res && res.ok) {
             const data = await res.json();
             if (data.connected || data.isConnected) {
               setIsConnected(true);
-              addLog(`🎉 Connected! MR SAQIB MD is online for +${pairedNumber}!`, 'success');
+              const label = pairedEngine === 'mini' ? 'SIGMA MD Mini Bot' : 'MR SAQIB MD';
+              addLog(`🎉 Connected! ${label} is online for +${pairedNumber}!`, 'success');
               if (pollTimerRef.current) clearInterval(pollTimerRef.current);
             }
           }
@@ -217,7 +248,7 @@ export default function PairPage() {
         if (pollTimerRef.current) clearInterval(pollTimerRef.current);
       };
     }
-  }, [pairingCode, pairedNumber, isConnected, countdown, cluster]);
+  }, [pairingCode, pairedNumber, pairedEngine, isConnected, countdown, cluster]);
 
   // Ping Health & Latency for all 49 Cluster Nodes
   useEffect(() => {
@@ -397,10 +428,67 @@ export default function PairPage() {
 
     setPhoneNumber(cleanInput);
     setPairedNumber(cleanInput);
+    setPairedEngine(botEngine);
     setLoading(true);
     setPairingCode(null);
     setCountdown(120);
     setIsConnected(false);
+
+    let cleanRef = activeRef;
+    if (!cleanRef && typeof window !== 'undefined') {
+      const q = new URLSearchParams(window.location.search);
+      const fromUrl = q.get('refq') || q.get('ref') || (window.location.search.match(/[?&]refq?\??=([a-zA-Z0-9_-]{3,24})/i)?.[1] ?? '');
+      const fromCookie = document.cookie.match(/(?:^|;\s*)sigma_ref=([^;]+)/)?.[1] || '';
+      cleanRef = (fromUrl || decodeURIComponent(fromCookie)).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    }
+    const activeRefParam = cleanRef.length >= 3 && cleanRef.length <= 24 ? `&refq=${encodeURIComponent(cleanRef)}` : '';
+
+    // =========================================================================
+    // MINI BOT MODE -> Strict Default SIGMA MD + Referral Attribution
+    // =========================================================================
+    if (botEngine === 'mini') {
+      addLog(`⚡ Dispatching pairing request to Default SIGMA MD Mini Bot...`, 'info');
+      let finalMiniCode: string | null = null;
+      let miniErrMsg = 'Mini Bot pairing failed. Please try again.';
+      try {
+        const res = await fetch('/api/mini-pair', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            number: cleanInput,
+            refCode: cleanRef.length >= 3 && cleanRef.length <= 24 ? cleanRef : '',
+            force: true
+          })
+        });
+        const data = await res.json().catch(() => null);
+        const codeRaw = data?.code || data?.rawCode || data?.pairingCode || '';
+        if (res.ok && data?.success && codeRaw) {
+          finalMiniCode = String(codeRaw);
+        } else if (data?.error) {
+          miniErrMsg = String(data.error);
+        }
+      } catch (err: any) {
+        miniErrMsg = err?.message || miniErrMsg;
+      }
+
+      setLoading(false);
+      if (finalMiniCode) {
+        const clean = finalMiniCode.replace(/[^A-Za-z0-9]/g, '');
+        const formatted = clean.length === 8 ? `${clean.slice(0, 4)}-${clean.slice(4)}` : finalMiniCode;
+        setRawCode(clean);
+        setPairingCode(formatted);
+        addLog(`🔑 [SIGMA MD Mini] Pairing Code Generated: ${formatted}`, 'success');
+        if (typeof window !== 'undefined') {
+          window.requestAnimationFrame(() => {
+            window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
+          });
+        }
+      } else {
+        setErrorText(miniErrMsg);
+        addLog(`❌ Mini Bot Pair Error: ${miniErrMsg}`, 'error');
+      }
+      return;
+    }
 
     const target = getTargetNode();
     activeNodeRef.current = target.url;
@@ -408,17 +496,6 @@ export default function PairPage() {
 
     let finalCode: string | null = null;
     let successfulNode = target;
-
-    let activeRefParam = '';
-    if (typeof window !== 'undefined') {
-      const q = new URLSearchParams(window.location.search);
-      const fromUrl = q.get('refq') || q.get('ref') || (window.location.search.match(/[?&]refq?\??=([a-zA-Z0-9_-]{3,24})/i)?.[1] ?? '');
-      const fromCookie = document.cookie.match(/(?:^|;\s*)sigma_ref=([^;]+)/)?.[1] || '';
-      const cleanRef = (fromUrl || decodeURIComponent(fromCookie)).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
-      if (cleanRef.length >= 3 && cleanRef.length <= 24) {
-        activeRefParam = `&refq=${encodeURIComponent(cleanRef)}`;
-      }
-    }
 
     try {
       const customParam = showCustomCode && customCode.trim() ? `&custom=${encodeURIComponent(customCode.trim().toUpperCase())}` : '';
@@ -450,11 +527,11 @@ export default function PairPage() {
       } catch (_) {}
     }
 
-    // Fallback: If both fail, route via Vercel edge proxy
+    // Fallback: If both fail, route via Vercel edge proxy (preserving referral attribution!)
     if (!finalCode) {
       try {
         const customParam = showCustomCode && customCode.trim() ? `&custom=${encodeURIComponent(customCode.trim().toUpperCase())}` : '';
-        const res = await fetch(`/api/pair?number=${encodeURIComponent(cleanInput)}${customParam}`);
+        const res = await fetch(`/api/pair?number=${encodeURIComponent(cleanInput)}${customParam}${activeRefParam}`);
         if (res.ok) {
           const data = await res.json();
           if (data.code || data.pairingCode) {
@@ -612,7 +689,16 @@ export default function PairPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+            <a
+              href={`https://sigmamini.vercel.app/create${activeRef ? `?ref=${encodeURIComponent(activeRef)}` : ''}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-blue-600 via-sky-500 to-teal-500 shadow-sm hover:opacity-95 flex items-center gap-1.5 transition active:scale-95"
+            >
+              <i className="fa-solid fa-wand-magic-sparkles text-[11px]"></i>
+              <span>Create Your Bot</span>
+            </a>
             <a
               href="https://www.mrsaqib.me"
               target="_blank"
@@ -638,19 +724,64 @@ export default function PairPage() {
         {/* 2. HERO SECTION & WHATSAPP PAIRING CARD (Exact User Screenshot)     */}
         {/* =================================================================== */}
         <section className="glass-slab p-4 sm:p-6 text-center shadow-xl border border-white/70 relative">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 mb-3 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Instant Bot Linker · 24/7 Active</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Instant Bot Linker · 24/7 Active</span>
+            </div>
+            {activeRef && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-sky-50 text-sky-800 border border-sky-200/90 shadow-2xs">
+                <i className="fa-solid fa-gift text-sky-600 text-[11px]"></i>
+                <span>Referred by @{activeRef} · Connect par +1 Ref count</span>
+              </div>
+            )}
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-1">
             Connect Your WhatsApp
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto mb-4">
-            Pair your number with 8-digit code or scan QR code instantly with zero wait time.
+          <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto mb-3.5">
+            Main Bot (MR SAQIB MD) ya Default Mini Bot (SIGMA MD) mein se select karein aur 8-digit code ya QR se connect karein.
           </p>
 
+          {/* Bot Engine Selector: Main Bot vs Default SIGMA MD Mini Bot */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-3.5">
+            <button
+              type="button"
+              onClick={() => {
+                setBotEngine('main');
+                setErrorText(null);
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                botEngine === 'main'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+                  : 'bg-white/80 text-slate-700 border-slate-200 hover:bg-white'
+              }`}
+            >
+              <i className="fa-solid fa-crown text-[11px] text-amber-400"></i>
+              <span>Main Bot (MR SAQIB MD)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setBotEngine('mini');
+                setActiveTab('code');
+                setShowCustomCode(false);
+                setErrorText(null);
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer border ${
+                botEngine === 'mini'
+                  ? 'bg-gradient-to-r from-blue-600 to-teal-500 text-white border-transparent shadow-md'
+                  : 'bg-white/80 text-slate-700 border-slate-200 hover:bg-white'
+              }`}
+            >
+              <i className="fa-solid fa-robot text-[11px]"></i>
+              <span>Mini Bot (Default SIGMA MD)</span>
+            </button>
+          </div>
+
           {/* Tab Switcher */}
+          {botEngine === 'main' && (
           <div className="inline-flex p-1 rounded-2xl bg-slate-100/90 border border-slate-200/80 mb-5 shadow-inner">
             <button
               type="button"
@@ -677,6 +808,7 @@ export default function PairPage() {
               <span>QR Code Scan</span>
             </button>
           </div>
+          )}
 
           {/* TAB 1: 8-DIGIT PAIR CODE */}
           {activeTab === 'code' && (
@@ -714,7 +846,8 @@ export default function PairPage() {
                   </button>
                 </div>
 
-                {/* Custom Code Accordion */}
+                {/* Custom Code Accordion (Main Bot Only) */}
+                {botEngine === 'main' && (
                 <div className="text-left">
                   <button
                     type="button"
@@ -739,6 +872,7 @@ export default function PairPage() {
                     </div>
                   )}
                 </div>
+                )}
               </form>
 
               {/* Error Message */}
@@ -827,7 +961,7 @@ export default function PairPage() {
           )}
 
           {/* TAB 2: QR CODE SCAN */}
-          {activeTab === 'qr' && (
+          {botEngine === 'main' && activeTab === 'qr' && (
             <div className="space-y-4">
               <div className="flex flex-col items-center justify-center py-4">
                 {!qrImage && (
@@ -863,6 +997,34 @@ export default function PairPage() {
               </div>
             </div>
           )}
+        </section>
+
+        {/* =================================================================== */}
+        {/* 2.5 CREATE YOUR OWN BRANDED BOT STUDIO CTA (Redirects to SIGMA MINI) */}
+        {/* =================================================================== */}
+        <section className="glass-slab p-4 sm:p-5 border border-sky-200/80 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-gradient-to-r from-white/90 via-sky-50/80 to-emerald-50/80">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-sky-700 mb-0.5">
+              <i className="fa-solid fa-wand-magic-sparkles"></i>
+              <span>SIGMA MINI BOT STUDIO</span>
+            </div>
+            <h3 className="text-sm sm:text-base font-extrabold text-slate-900">
+              Apna Khud Ka Branded Bot &amp; Custom Pair Website Banayein
+            </h3>
+            <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5">
+              1 Free Custom Bot slot + 15 referrals par strict 8 PRO Bots unlock — apna Bot Name, DP aur Owner set karein.
+            </p>
+          </div>
+          <a
+            href={`https://sigmamini.vercel.app/create${activeRef ? `?ref=${encodeURIComponent(activeRef)}` : ''}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-500 to-teal-500 hover:opacity-95 text-white font-black text-xs sm:text-sm shadow-md shadow-sky-500/20 flex items-center justify-center gap-2 shrink-0 transition active:scale-95"
+          >
+            <i className="fa-solid fa-wand-magic-sparkles text-xs"></i>
+            <span>Create Bot on SIGMA MINI</span>
+            <i className="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
+          </a>
         </section>
 
         {/* =================================================================== */}
