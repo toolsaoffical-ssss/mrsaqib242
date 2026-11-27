@@ -87,6 +87,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const rawNumber = (req.query.number || req.body?.number || '').toString();
   const rawCode = (req.query.code || req.body?.code || '').toString();
+  const rawRef = (req.query.refq || req.query.ref || req.body?.refq || req.body?.ref || '')
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, '');
   const action = (req.query.action || req.body?.action || 'pair').toString().toLowerCase();
   const preferredNode = (req.query.node || req.body?.node || '').toString().trim();
 
@@ -124,11 +129,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Action: PAIR (GENERATE CODE)
   const customCode = sanitizeCode(rawCode);
+  const refQuery = rawRef && rawRef.length >= 3 ? `&refq=${encodeURIComponent(rawRef)}` : '';
   let lastError = 'Unable to reach bot cluster. Please try again in a few moments.';
 
   for (const node of availableNodes) {
     try {
-      const targetUrl = `${node}/api/pair?number=${encodeURIComponent(number)}&code=${encodeURIComponent(customCode)}`;
+      const targetUrl = `${node}/api/pair?number=${encodeURIComponent(number)}&code=${encodeURIComponent(customCode)}${refQuery}`;
       const response = await fetch(targetUrl, {
         signal: AbortSignal.timeout(18000)
       });

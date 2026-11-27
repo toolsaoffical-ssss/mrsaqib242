@@ -409,9 +409,20 @@ export default function PairPage() {
     let finalCode: string | null = null;
     let successfulNode = target;
 
+    let activeRefParam = '';
+    if (typeof window !== 'undefined') {
+      const q = new URLSearchParams(window.location.search);
+      const fromUrl = q.get('refq') || q.get('ref') || (window.location.search.match(/[?&]refq?\??=([a-zA-Z0-9_-]{3,24})/i)?.[1] ?? '');
+      const fromCookie = document.cookie.match(/(?:^|;\s*)sigma_ref=([^;]+)/)?.[1] || '';
+      const cleanRef = (fromUrl || decodeURIComponent(fromCookie)).trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (cleanRef.length >= 3 && cleanRef.length <= 24) {
+        activeRefParam = `&refq=${encodeURIComponent(cleanRef)}`;
+      }
+    }
+
     try {
       const customParam = showCustomCode && customCode.trim() ? `&custom=${encodeURIComponent(customCode.trim().toUpperCase())}` : '';
-      const directUrl = `${target.url}/api/pair?number=${encodeURIComponent(cleanInput)}${customParam}`;
+      const directUrl = `${target.url}/api/pair?number=${encodeURIComponent(cleanInput)}${customParam}${activeRefParam}`;
       const res = await fetch(directUrl, { signal: AbortSignal.timeout(9000) });
       if (res.ok) {
         const data = await res.json();
@@ -427,7 +438,7 @@ export default function PairPage() {
       addLog(`⚠️ ${target.short} busy, switching to ${backupNode.name}...`, 'info');
       try {
         const customParam = showCustomCode && customCode.trim() ? `&custom=${encodeURIComponent(customCode.trim().toUpperCase())}` : '';
-        const res = await fetch(`${backupNode.url}/api/pair?number=${encodeURIComponent(cleanInput)}${customParam}`, { signal: AbortSignal.timeout(9000) });
+        const res = await fetch(`${backupNode.url}/api/pair?number=${encodeURIComponent(cleanInput)}${customParam}${activeRefParam}`, { signal: AbortSignal.timeout(9000) });
         if (res.ok) {
           const data = await res.json();
           if (data.code || data.pairingCode) {
