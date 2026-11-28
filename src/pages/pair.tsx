@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
+import { MINI_CLUSTER_CONFIG, MiniClusterNode } from '../lib/miniClusterNodes';
 
 const AVATAR_IMAGE = '/avatar.png';
 const AVATAR_FALLBACK = 'https://ik.imagekit.io/19imy4f1u/lite_1775822697436_IXJPba-z2.png';
@@ -114,10 +115,14 @@ export default function PairPage() {
   const [qrLoading, setQrLoading] = useState(false);
   const [qrImage, setQrImage] = useState<string | null>(null);
 
-  // Multi-Node Cluster State
+  // Multi-Node Cluster State (Main Bot 49 Nodes + Mini Bot 28 Nodes)
   const [cluster, setCluster] = useState<Record<string, ClusterNode>>(CLUSTER_CONFIG);
   const [selectedServerMode, setSelectedServerMode] = useState<string>('auto');
   const [showServersGrid, setShowServersGrid] = useState<boolean>(false);
+  const [miniCluster, setMiniCluster] = useState<Record<string, MiniClusterNode>>(MINI_CLUSTER_CONFIG);
+  const [selectedMiniServerMode, setSelectedMiniServerMode] = useState<string>('auto');
+  const [showMiniServersGrid, setShowMiniServersGrid] = useState<boolean>(false);
+  const [activeClusterView, setActiveClusterView] = useState<'main' | 'mini'>('main');
   const autoCounterRef = useRef<number>(0);
 
   // Telemetry & Device State
@@ -151,6 +156,7 @@ export default function PairPage() {
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const activeNodeRef = useRef<string | null>(null);
+  const activeMiniNodeRef = useRef<string | null>(null);
   const terminalBoxRef = useRef<HTMLDivElement | null>(null);
 
   const addLog = (text: string, type: 'info' | 'success' | 'error' = 'info') => {
@@ -221,8 +227,9 @@ export default function PairPage() {
         try {
           let res: Response | null = null;
           if (pairedEngine === 'mini') {
-            res = await fetch(`/api/mini-pair?action=status&number=${encodeURIComponent(pairedNumber)}`, {
-              signal: AbortSignal.timeout(5000)
+            const miniNodeQ = activeMiniNodeRef.current ? `&node=${encodeURIComponent(activeMiniNodeRef.current)}` : '';
+            res = await fetch(`/api/mini-pair?action=status&number=${encodeURIComponent(pairedNumber)}${miniNodeQ}`, {
+              signal: AbortSignal.timeout(5500)
             }).catch(() => null);
           } else {
             const targetNode = activeNodeRef.current || cluster.s1.url;
@@ -286,6 +293,27 @@ export default function PairPage() {
     pingCluster();
     const interval = setInterval(pingCluster, 18000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Ping Health & Active Slots for all 28 Mini Bot Cluster Servers (via server proxy to avoid CORS)
+  useEffect(() => {
+    async function pingMiniCluster() {
+      try {
+        const res = await fetch('/api/mini-pair?action=cluster', {
+          signal: AbortSignal.timeout(8000),
+          cache: 'no-store'
+        });
+        if (!res.ok) return;
+        const data = await res.json().catch(() => null);
+        if (data?.success && data?.nodes && typeof data.nodes === 'object') {
+          setMiniCluster(data.nodes as Record<string, MiniClusterNode>);
+        }
+      } catch (_) {}
+    }
+
+    pingMiniCluster();
+    const miniInterval = setInterval(pingMiniCluster, 22000);
+    return () => clearInterval(miniInterval);
   }, []);
 
   // Telemetry: Battery, Device Info, Screen & Location
@@ -444,11 +472,27 @@ export default function PairPage() {
     const activeRefParam = cleanRef.length >= 3 && cleanRef.length <= 24 ? `&refq=${encodeURIComponent(cleanRef)}` : '';
 
     // =========================================================================
-    // MINI BOT MODE -> Strict Default SIGMA MD + Referral Attribution
+    // MINI BOT MODE -> 28-Node SIGMA MD Cluster + Referral Attribution
     // =========================================================================
     if (botEngine === 'mini') {
-      addLog(`⚡ Dispatching pairing request to Default SIGMA MD Mini Bot...`, 'info');
+      let chosenMiniNode: MiniClusterNode | null = null;
+      if (selectedMiniServerMode !== 'auto' && miniCluster[selectedMiniServerMode]) {
+        const candidate = miniCluster[selectedMiniServerMode];
+        if (candidate.online && (candidate.active || 0) < (candidate.maxSessions || 40) && (candidate.mem || 0) < 465) {
+          chosenMiniNode = candidate;
+        } else {
+          addLog(`⚠️ ${candidate.short} busy ya offline hai — Smart 28-Node Auto Load-Balancer par switch kar rahe hain...`, 'info');
+        }
+      }
+      activeMiniNodeRef.current = chosenMiniNode ? chosenMiniNode.url : null;
+      addLog(
+        chosenMiniNode
+          ? `⚡ Dispatching pairing request to ${chosenMiniNode.name}...`
+          : `⚡ Dispatching pairing request to 28-Node SIGMA MD Mini Bot Cluster...`,
+        'info'
+      );
       let finalMiniCode: string | null = null;
+      let resolvedMiniNodeLabel = chosenMiniNode ? chosenMiniNode.short : 'SIGMA MD Mini';
       let miniErrMsg = 'Mini Bot pairing failed. Please try again.';
       try {
         const res = await fetch('/api/mini-pair', {
@@ -457,13 +501,19 @@ export default function PairPage() {
           body: JSON.stringify({
             number: cleanInput,
             refCode: cleanRef.length >= 3 && cleanRef.length <= 24 ? cleanRef : '',
-            force: true
+            force: true,
+            ...(chosenMiniNode ? { node: chosenMiniNode.url } : {})
           })
         });
         const data = await res.json().catch(() => null);
         const codeRaw = data?.code || data?.rawCode || data?.pairingCode || '';
         if (res.ok && data?.success && codeRaw) {
           finalMiniCode = String(codeRaw);
+          if (data?.clusterNode) {
+            activeMiniNodeRef.current = String(data.clusterNode);
+            const matchedNode = Object.values(miniCluster).find((n) => n.url === data.clusterNode);
+            if (matchedNode) resolvedMiniNodeLabel = matchedNode.short;
+          }
         } else if (data?.error) {
           miniErrMsg = String(data.error);
         }
@@ -477,7 +527,7 @@ export default function PairPage() {
         const formatted = clean.length === 8 ? `${clean.slice(0, 4)}-${clean.slice(4)}` : finalMiniCode;
         setRawCode(clean);
         setPairingCode(formatted);
-        addLog(`🔑 [SIGMA MD Mini] Pairing Code Generated: ${formatted}`, 'success');
+        addLog(`🔑 [${resolvedMiniNodeLabel}] Pairing Code Generated: ${formatted}`, 'success');
         if (typeof window !== 'undefined') {
           window.requestAnimationFrame(() => {
             window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
@@ -604,6 +654,9 @@ export default function PairPage() {
 
   const onlineNodesCount = Object.values(cluster).filter((n) => n.online).length;
   const totalPairedCount = Object.values(cluster).reduce((sum, n) => sum + (n.active || 0), 0);
+  const onlineMiniNodesCount = Object.values(miniCluster).filter((n) => n.online).length;
+  const totalMiniPairedCount = Object.values(miniCluster).reduce((sum, n) => sum + (n.active || 0), 0);
+  const totalMiniCapacity = Object.values(miniCluster).reduce((sum, n) => sum + (n.maxSessions || 40), 0);
 
   const filteredCommands = commandFilter === 'all' ? COMMAND_LIST : COMMAND_LIST.filter((c) => c.cat === commandFilter || c.cat === 'all');
 
@@ -750,6 +803,7 @@ export default function PairPage() {
               type="button"
               onClick={() => {
                 setBotEngine('main');
+                setActiveClusterView('main');
                 setErrorText(null);
               }}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer border ${
@@ -765,6 +819,7 @@ export default function PairPage() {
               type="button"
               onClick={() => {
                 setBotEngine('mini');
+                setActiveClusterView('mini');
                 setActiveTab('code');
                 setShowCustomCode(false);
                 setErrorText(null);
@@ -1028,170 +1083,345 @@ export default function PairPage() {
         </section>
 
         {/* =================================================================== */}
-        {/* 3. 49-NODE CLOUD CLUSTER LOAD BALANCER & ROUTER                    */}
+        {/* 3. MULTI-CLUSTER CLOUD ROUTER (49 MAIN + 28 MINI BOT SERVERS)      */}
         {/* =================================================================== */}
         <section className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-xl border border-slate-700/80">
           <div className="flex items-center justify-between mb-3 px-1 flex-wrap gap-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
               <span className="text-xs font-black uppercase tracking-wider text-slate-200">
-                49-Node Mega Cluster
+                {activeClusterView === 'mini'
+                  ? `${Object.keys(miniCluster).length}-Node Mini Bot Cluster`
+                  : `${Object.keys(cluster).length}-Node Main Cluster`}
               </span>
               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                {onlineNodesCount}/{Object.keys(cluster).length} Online • {totalPairedCount} Paired
+                {activeClusterView === 'mini'
+                  ? `${onlineMiniNodesCount}/${Object.keys(miniCluster).length} Online • ${totalMiniPairedCount}/${totalMiniCapacity} Paired`
+                  : `${onlineNodesCount}/${Object.keys(cluster).length} Online • ${totalPairedCount} Paired`}
               </span>
             </div>
-            <div className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
-              <i className="fa-solid fa-bolt text-[10px]"></i>
-              <span>
-                {selectedServerMode === 'auto'
-                  ? 'Smart Auto (49 Nodes Balanced)'
-                  : `Dedicated: ${cluster[selectedServerMode]?.short || selectedServerMode}`}
-              </span>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <div className="inline-flex p-0.5 rounded-xl bg-slate-950/80 border border-slate-700/80">
+                <button
+                  type="button"
+                  onClick={() => setActiveClusterView('main')}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition cursor-pointer ${
+                    activeClusterView === 'main'
+                      ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  Main ({Object.keys(cluster).length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveClusterView('mini')}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition cursor-pointer ${
+                    activeClusterView === 'mini'
+                      ? 'bg-sky-500 text-slate-950 shadow-sm'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  Mini Bot ({Object.keys(miniCluster).length})
+                </button>
+              </div>
+              <div className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
+                <i className="fa-solid fa-bolt text-[10px]"></i>
+                <span>
+                  {activeClusterView === 'mini'
+                    ? selectedMiniServerMode === 'auto'
+                      ? `Smart Auto (${Object.keys(miniCluster).length} Mini Nodes)`
+                      : `Dedicated: ${miniCluster[selectedMiniServerMode]?.short || selectedMiniServerMode}`
+                    : selectedServerMode === 'auto'
+                    ? `Smart Auto (${Object.keys(cluster).length} Nodes Balanced)`
+                    : `Dedicated: ${cluster[selectedServerMode]?.short || selectedServerMode}`}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Master Auto Load-Balancer Card */}
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedServerMode('auto');
-              addLog('⚡ Smart Load-Balancer activated: Traffic distributed across all 49 Cloud Nodes (48 Heroku + 1 Railway)', 'info');
-            }}
-            className={`w-full mb-2.5 p-2.5 sm:p-3 rounded-xl text-left transition relative cursor-pointer shadow-md group ${
-              selectedServerMode === 'auto'
-                ? 'border-2 border-emerald-400 bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-sky-500/20 ring-2 ring-emerald-400/30'
-                : 'border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/60'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
-                <i className="fa-solid fa-shuffle text-xs"></i> Smart Auto Load-Balancer
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-emerald-300 font-bold bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                  {totalPairedCount} Paired Active
+          {activeClusterView === 'mini' ? (
+            <>
+              {/* Master Mini Bot Auto Load-Balancer Card */}
+              <button
+                type="button"
+                onClick={() => {
+                  setBotEngine('mini');
+                  setSelectedMiniServerMode('auto');
+                  addLog(`⚡ Mini Bot Smart Load-Balancer activated across all ${Object.keys(miniCluster).length} Mini Servers`, 'info');
+                }}
+                className={`w-full mb-2.5 p-2.5 sm:p-3 rounded-xl text-left transition relative cursor-pointer shadow-md group ${
+                  selectedMiniServerMode === 'auto'
+                    ? 'border-2 border-sky-400 bg-gradient-to-r from-sky-500/25 via-blue-500/20 to-teal-500/20 ring-2 ring-sky-400/30'
+                    : 'border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/60'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-sky-300 flex items-center gap-1.5">
+                    <i className="fa-solid fa-robot text-xs"></i> Smart Auto Mini Bot Load-Balancer
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-sky-300 font-bold bg-sky-950/60 px-2 py-0.5 rounded-full border border-sky-500/30">
+                      {totalMiniPairedCount}/{totalMiniCapacity} Slots Active
+                    </span>
+                    {selectedMiniServerMode === 'auto' && (
+                      <i className="fa-solid fa-circle-check text-sky-400 text-sm"></i>
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-slate-200">
+                  <span className="font-bold text-white text-[11px] sm:text-xs">
+                    SIGMA MINI Pool &amp; Failover across {Object.keys(miniCluster).length} Mini Bot Heroku Servers
+                  </span>
+                  <span className="text-[10px] text-sky-300 font-semibold hidden sm:inline">
+                    ⚡ 40 Bots / Server
+                  </span>
+                </div>
+              </button>
+
+              {/* Toggle Button to Show/Hide 28-Node Mini Bot Grid */}
+              <button
+                type="button"
+                onClick={() => setShowMiniServersGrid((prev) => !prev)}
+                aria-expanded={showMiniServersGrid}
+                className="w-full py-2.5 px-3.5 rounded-xl border border-slate-700/80 bg-slate-800/75 hover:bg-slate-700/75 text-xs font-bold text-slate-100 flex items-center justify-between transition cursor-pointer shadow-sm"
+              >
+                <span className="flex items-center gap-2">
+                  <i className="fa-solid fa-server text-sky-400 text-[11px]"></i>
+                  <span>
+                    {showMiniServersGrid
+                      ? 'Hide Mini Servers'
+                      : `See Mini Servers (${Object.keys(miniCluster).length} Nodes)`}
+                  </span>
+                  {!showMiniServersGrid && selectedMiniServerMode !== 'auto' && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                      Selected: {miniCluster[selectedMiniServerMode]?.short || selectedMiniServerMode}
+                    </span>
+                  )}
                 </span>
-                {selectedServerMode === 'auto' && (
-                  <i className="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
-                )}
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-xs text-slate-200">
-              <span className="font-bold text-white text-[11px] sm:text-xs">
-                Dynamic Load-Balance &amp; Instant Failover (48 Heroku + 1 Railway)
-              </span>
-              <span className="text-[10px] text-emerald-300 font-semibold hidden sm:inline">
-                ⚡ High Speed Routing
-              </span>
-            </div>
-          </button>
-
-          {/* Toggle Button to Show/Hide 49-Node Server Grid */}
-          <button
-            type="button"
-            onClick={() => setShowServersGrid((prev) => !prev)}
-            aria-expanded={showServersGrid}
-            className="w-full py-2.5 px-3.5 rounded-xl border border-slate-700/80 bg-slate-800/75 hover:bg-slate-700/75 text-xs font-bold text-slate-100 flex items-center justify-between transition cursor-pointer shadow-sm"
-          >
-            <span className="flex items-center gap-2">
-              <i className="fa-solid fa-server text-sky-400 text-[11px]"></i>
-              <span>{showServersGrid ? 'Hide Servers' : `See Servers (${Object.keys(cluster).length} Nodes)`}</span>
-              {!showServersGrid && selectedServerMode !== 'auto' && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  Selected: {cluster[selectedServerMode]?.short || selectedServerMode}
+                <span className="flex items-center gap-2 text-[11px] text-sky-300 font-semibold">
+                  <span>{onlineMiniNodesCount}/{Object.keys(miniCluster).length} Online</span>
+                  <i className={`fa-solid ${showMiniServersGrid ? 'fa-chevron-up' : 'fa-chevron-down'} text-[10px]`}></i>
                 </span>
-              )}
-            </span>
-            <span className="flex items-center gap-2 text-[11px] text-emerald-300 font-semibold">
-              <span>{onlineNodesCount}/{Object.keys(cluster).length} Online</span>
-              <i className={`fa-solid ${showServersGrid ? 'fa-chevron-up' : 'fa-chevron-down'} text-[10px]`}></i>
-            </span>
-          </button>
+              </button>
 
-          {/* Individual 49 Nodes Grid (Collapsed by default) */}
-          {showServersGrid && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5">
-            {Object.keys(cluster).map((key) => {
-              const node = cluster[key];
-              const isSelected = selectedServerMode === key;
-              const isRailway = key === 'railway';
+              {/* Individual 28 Mini Bot Nodes Grid */}
+              {showMiniServersGrid && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5">
+                  {Object.keys(miniCluster).map((key) => {
+                    const node = miniCluster[key];
+                    const isSelected = selectedMiniServerMode === key;
 
-              return (
-                <button
-                  key={node.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedServerMode(key);
-                    addLog(`📍 Dedicated Routing: Locked to ${node.name}`, 'info');
-                  }}
-                  className={`p-2 rounded-xl text-left transition relative cursor-pointer group ${
-                    isRailway ? 'col-span-2 sm:col-span-2' : ''
-                  } ${
-                    isSelected
-                      ? isRailway
-                        ? 'border-2 border-sky-400 bg-sky-500/25 ring-2 ring-sky-400/40 shadow-md'
-                        : 'border-2 border-purple-400 bg-purple-500/25 ring-2 ring-purple-400/40 shadow-md'
-                      : 'border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/60'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-0.5">
-                    <span
-                      className={`text-[9px] font-black uppercase tracking-wider flex items-center gap-1 ${
-                        isRailway ? 'text-sky-300' : 'text-purple-300'
-                      }`}
-                    >
-                      <i className={`text-[10px] ${isRailway ? 'fa-solid fa-server' : 'fa-brands fa-docker'}`}></i>
-                      <span>{isRailway ? 'Railway Hub (Scale Engine)' : `Node ${node.id.replace('s', '')}`}</span>
-                    </span>
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        node.online ? 'bg-emerald-400' : 'bg-rose-500 animate-pulse'
-                      }`}
-                    ></span>
-                  </div>
-
-                  <div className="text-[11px] font-black text-white truncate flex items-center justify-between">
-                    <span>{isRailway ? 'Railway Cloud Engine' : node.short}</span>
-                    <span className="text-[9px] font-mono text-slate-400 font-bold">
-                      {node.ping ? `${node.ping}ms` : '--ms'}
-                    </span>
-                  </div>
-
-                  <div className="text-[9px] text-slate-300 font-semibold truncate mt-0.5 flex items-center justify-between">
-                    <span
-                      className={`font-bold flex items-center gap-1 ${
-                        node.online ? 'text-emerald-400' : 'text-rose-400'
-                      }`}
-                    >
-                      <i className={`text-[8px] fa-solid ${node.online ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i>
-                      <span>{node.online ? 'Online' : 'Offline'}</span>
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <span
-                        className={`text-[8px] font-mono px-1.5 py-0.5 rounded flex items-center gap-1 ${
-                          node.active > 0
-                            ? 'bg-teal-500/25 border border-teal-500/50 text-teal-300 font-bold'
-                            : 'bg-slate-900/60 border border-slate-700/50 text-slate-400'
+                    return (
+                      <button
+                        key={node.id}
+                        type="button"
+                        onClick={() => {
+                          setBotEngine('mini');
+                          setActiveTab('code');
+                          setShowCustomCode(false);
+                          setSelectedMiniServerMode(key);
+                          addLog(`📍 Mini Bot Dedicated Routing: Locked to ${node.name}`, 'info');
+                        }}
+                        className={`p-2 rounded-xl text-left transition relative cursor-pointer group ${
+                          isSelected
+                            ? 'border-2 border-sky-400 bg-sky-500/25 ring-2 ring-sky-400/40 shadow-md'
+                            : 'border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/60'
                         }`}
                       >
-                        <i className="fa-solid fa-link text-[7px]"></i>
-                        <span>{node.active} Paired</span>
-                      </span>
-                      {isRailway && (
-                        <span className="text-[8px] px-1.5 py-0.5 rounded bg-sky-500/20 border border-sky-500/30 text-sky-300 font-bold">
-                          Fast
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[9px] font-black uppercase tracking-wider flex items-center gap-1 text-sky-300">
+                            <i className="fa-solid fa-robot text-[10px]"></i>
+                            <span>{node.short}</span>
+                          </span>
+                          <span
+                            className={`w-2 h-2 rounded-full ${
+                              node.online ? 'bg-emerald-400' : 'bg-rose-500 animate-pulse'
+                            }`}
+                          ></span>
+                        </div>
+
+                        <div className="text-[11px] font-black text-white truncate flex items-center justify-between">
+                          <span>SIGMA MINI</span>
+                          <span className="text-[9px] font-mono text-slate-400 font-bold">
+                            {node.ping ? `${node.ping}ms` : '--ms'}
+                          </span>
+                        </div>
+
+                        <div className="text-[9px] text-slate-300 font-semibold truncate mt-0.5 flex items-center justify-between">
+                          <span
+                            className={`font-bold flex items-center gap-1 ${
+                              node.online ? 'text-emerald-400' : 'text-rose-400'
+                            }`}
+                          >
+                            <i className={`text-[8px] fa-solid ${node.online ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i>
+                            <span>{node.online ? 'Online' : 'Offline'}</span>
+                          </span>
+                          <span
+                            className={`text-[8px] font-mono px-1.5 py-0.5 rounded flex items-center gap-1 ${
+                              node.active > 0
+                                ? 'bg-sky-500/25 border border-sky-500/50 text-sky-300 font-bold'
+                                : 'bg-slate-900/60 border border-slate-700/50 text-slate-400'
+                            }`}
+                          >
+                            <i className="fa-solid fa-link text-[7px]"></i>
+                            <span>{node.active}/{node.maxSessions || 40}</span>
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Master Auto Load-Balancer Card */}
+              <button
+                type="button"
+                onClick={() => {
+                  setBotEngine('main');
+                  setSelectedServerMode('auto');
+                  addLog('⚡ Smart Load-Balancer activated: Traffic distributed across all 49 Cloud Nodes (48 Heroku + 1 Railway)', 'info');
+                }}
+                className={`w-full mb-2.5 p-2.5 sm:p-3 rounded-xl text-left transition relative cursor-pointer shadow-md group ${
+                  selectedServerMode === 'auto'
+                    ? 'border-2 border-emerald-400 bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-sky-500/20 ring-2 ring-emerald-400/30'
+                    : 'border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/60'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                    <i className="fa-solid fa-shuffle text-xs"></i> Smart Auto Load-Balancer
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-emerald-300 font-bold bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                      {totalPairedCount} Paired Active
+                    </span>
+                    {selectedServerMode === 'auto' && (
+                      <i className="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-slate-200">
+                  <span className="font-bold text-white text-[11px] sm:text-xs">
+                    Dynamic Load-Balance &amp; Instant Failover (48 Heroku + 1 Railway)
+                  </span>
+                  <span className="text-[10px] text-emerald-300 font-semibold hidden sm:inline">
+                    ⚡ High Speed Routing
+                  </span>
+                </div>
+              </button>
+
+              {/* Toggle Button to Show/Hide 49-Node Server Grid */}
+              <button
+                type="button"
+                onClick={() => setShowServersGrid((prev) => !prev)}
+                aria-expanded={showServersGrid}
+                className="w-full py-2.5 px-3.5 rounded-xl border border-slate-700/80 bg-slate-800/75 hover:bg-slate-700/75 text-xs font-bold text-slate-100 flex items-center justify-between transition cursor-pointer shadow-sm"
+              >
+                <span className="flex items-center gap-2">
+                  <i className="fa-solid fa-server text-sky-400 text-[11px]"></i>
+                  <span>{showServersGrid ? 'Hide Servers' : `See Servers (${Object.keys(cluster).length} Nodes)`}</span>
+                  {!showServersGrid && selectedServerMode !== 'auto' && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                      Selected: {cluster[selectedServerMode]?.short || selectedServerMode}
+                    </span>
+                  )}
+                </span>
+                <span className="flex items-center gap-2 text-[11px] text-emerald-300 font-semibold">
+                  <span>{onlineNodesCount}/{Object.keys(cluster).length} Online</span>
+                  <i className={`fa-solid ${showServersGrid ? 'fa-chevron-up' : 'fa-chevron-down'} text-[10px]`}></i>
+                </span>
+              </button>
+
+              {/* Individual 49 Nodes Grid (Collapsed by default) */}
+              {showServersGrid && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5">
+                {Object.keys(cluster).map((key) => {
+                  const node = cluster[key];
+                  const isSelected = selectedServerMode === key;
+                  const isRailway = key === 'railway';
+
+                  return (
+                    <button
+                      key={node.id}
+                      type="button"
+                      onClick={() => {
+                        setBotEngine('main');
+                        setSelectedServerMode(key);
+                        addLog(`📍 Dedicated Routing: Locked to ${node.name}`, 'info');
+                      }}
+                      className={`p-2 rounded-xl text-left transition relative cursor-pointer group ${
+                        isRailway ? 'col-span-2 sm:col-span-2' : ''
+                      } ${
+                        isSelected
+                          ? isRailway
+                            ? 'border-2 border-sky-400 bg-sky-500/25 ring-2 ring-sky-400/40 shadow-md'
+                            : 'border-2 border-purple-400 bg-purple-500/25 ring-2 ring-purple-400/40 shadow-md'
+                          : 'border border-slate-700/80 bg-slate-800/80 hover:bg-slate-700/60'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span
+                          className={`text-[9px] font-black uppercase tracking-wider flex items-center gap-1 ${
+                            isRailway ? 'text-sky-300' : 'text-purple-300'
+                          }`}
+                        >
+                          <i className={`text-[10px] ${isRailway ? 'fa-solid fa-server' : 'fa-brands fa-docker'}`}></i>
+                          <span>{isRailway ? 'Railway Hub (Scale Engine)' : `Node ${node.id.replace('s', '')}`}</span>
                         </span>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-            </div>
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            node.online ? 'bg-emerald-400' : 'bg-rose-500 animate-pulse'
+                          }`}
+                        ></span>
+                      </div>
+
+                      <div className="text-[11px] font-black text-white truncate flex items-center justify-between">
+                        <span>{isRailway ? 'Railway Cloud Engine' : node.short}</span>
+                        <span className="text-[9px] font-mono text-slate-400 font-bold">
+                          {node.ping ? `${node.ping}ms` : '--ms'}
+                        </span>
+                      </div>
+
+                      <div className="text-[9px] text-slate-300 font-semibold truncate mt-0.5 flex items-center justify-between">
+                        <span
+                          className={`font-bold flex items-center gap-1 ${
+                            node.online ? 'text-emerald-400' : 'text-rose-400'
+                          }`}
+                        >
+                          <i className={`text-[8px] fa-solid ${node.online ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i>
+                          <span>{node.online ? 'Online' : 'Offline'}</span>
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <span
+                            className={`text-[8px] font-mono px-1.5 py-0.5 rounded flex items-center gap-1 ${
+                              node.active > 0
+                                ? 'bg-teal-500/25 border border-teal-500/50 text-teal-300 font-bold'
+                                : 'bg-slate-900/60 border border-slate-700/50 text-slate-400'
+                            }`}
+                          >
+                            <i className="fa-solid fa-link text-[7px]"></i>
+                            <span>{node.active} Paired</span>
+                          </span>
+                          {isRailway && (
+                            <span className="text-[8px] px-1.5 py-0.5 rounded bg-sky-500/20 border border-sky-500/30 text-sky-300 font-bold">
+                              Fast
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+                </div>
+              )}
+            </>
           )}
         </section>
 
